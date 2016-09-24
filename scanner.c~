@@ -10,8 +10,6 @@ int main(int argc, char *args[])
 
 	int c;
 	int state = 0;
-    int i = 0;
-    char s[128] = "";
 	while ((c = fgetc(stdin)) != EOF) {
 		printf("char: %c \n", c);
 
@@ -23,31 +21,21 @@ int main(int argc, char *args[])
 				printf("ahoj space pre %c \n", c);;
 			}
 
-			else if (isdigit(c)) {
-				s[i++] = c;
+			if (isdigit(c)) {
 				state = 1 /* number ? */ ;
-				printf("mozno cislo %c \n", c);
+				printf("ahoj 1 pre %c \n", c);;
 			}
 
-			else if (isalpha(c)) {
+			if (isalpha(c)) {
 				state = 2 /* string ? */ ;
-				printf("mozno string %c \n", c);
+				printf("ahoj znak pre %c \n", c);;
 			}
 			break;
 		case 1:	/* moybe number */
-			if (isdigit(c)) {
-				s[i++] = c;
-				state = 1 /* number ? */ ;
-			} else {
-               // chyba
-				state = 0;
-			}
+			printf("ahoj \n");
 			break;
 		}
 	}
-
-	s[i] = '\0';
-	printf("cislo %s \n", s);
 	return 0;
 
 }
