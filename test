@@ -5,4 +5,10 @@ testujem martin
 nieco
 >>>>>>> dev
 
+<<<<<<< HEAD
 a tu nieco nech je coflicts s druhou vetvou
+=======
+a este viac failov
+
+
+>>>>>>> feature
