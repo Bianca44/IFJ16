@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "error_codes.h"
+#include "scanner.c"
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,8 @@ int main(int argc, char *argv[])
 	}
 
 	int internal_error = OK;
+
+	init_scanner(argv[1]);
 
 	// bla bla
 

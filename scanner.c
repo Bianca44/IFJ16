@@ -3,51 +3,90 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "ial.h"
+#include "tokens_table.h"
 
-int main(int argc, char *args[])
+// enum pre stavy automatu
+
+// Todo
+int is_keyword(char* str) {
+	return 0;
+}
+
+int get_next_token(FILE * file)
 {
-	printf("IFJ 16 %d \n", argc);
 
 	int c;
 	int state = 0;
+
+	char str[256] = { '\0' };
 	int i = 0;
-	char s[128] = "";
-	while ((c = fgetc(stdin)) != EOF) {
-		printf("char: %c \n", c);
+	while (1) {
+		c = fgetc(file);
+		if (c == EOF) {
+			return c;
+		}
 
 		switch (state) {
-			printf("ahoj space pre %c \n", c);;
-		case 0 /*START*/:
+		case 0:
 			if (isspace(c)) {
-				state = 0;
-				printf("ahoj space pre %c \n", c);;
-			}
+				state = 0;	// stav medzier
+			} else {
+				if (isalpha(c)) {
+					state = 1;	// mozno string alebo cislo
+				} else if (isdigit(c)) {
+					state = 2;
 
-			else if (isdigit(c)) {
-				s[i++] = c;
-				state = 1 /* number ? */ ;
-				printf("mozno cislo %c \n", c);
-			}
+					// * / atd
+				} else {
+					printf(" nieco ine ");
+					return 5;
+				}
+				ungetc(c, file);
 
-			else if (isalpha(c)) {
-				state = 2 /* string ? */ ;
-				printf("mozno string %c \n", c);
 			}
 			break;
-		case 1:	/* moybe number */
-			if (isdigit(c)) {
-				s[i++] = c;
-				state = 1 /* number ? */ ;
+
+		case 1:
+			if (isalpha(c) || isdigit(c)) {
+				str[i++] = c;
 			} else {
-				// chyba
+				printf("string: %s \n", str);
+				ungetc(c, file);
+				str[i] = '\0';
 				state = 0;
+				return ID;
 			}
+			break;
+
+		case 2:
+			if (isdigit(c)) {
+				str[i++] = c;
+			} else {
+				printf("number: %s \n", str);
+				ungetc(c, file);
+				str[i] = '\0';
+				state = 0;
+				return NUMBER;
+			}
+			break;
+		default:
 			break;
 		}
 	}
 
-	s[i] = '\0';
-	printf("cislo %s \n", s);
-	return 0;
 
+}
+
+int init_scanner(char *filename)
+{
+
+	FILE *file;
+	file = fopen(filename, "r");
+
+	int s;
+	while ((s = get_next_token(file)) != EOF) {
+		printf("token: %d\n", s);
+	}
+
+	fclose(file);
 }
