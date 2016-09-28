@@ -10,8 +10,8 @@ int main(int argc, char *args[])
 
 	int c;
 	int state = 0;
-    int i = 0;
-    char s[128] = "";
+	int i = 0;
+	char s[128] = "";
 	while ((c = fgetc(stdin)) != EOF) {
 		printf("char: %c \n", c);
 
@@ -39,7 +39,7 @@ int main(int argc, char *args[])
 				s[i++] = c;
 				state = 1 /* number ? */ ;
 			} else {
-               // chyba
+				// chyba
 				state = 0;
 			}
 			break;
