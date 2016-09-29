@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "error_codes.h"
 #include "scanner.c"
+#include "strings.c"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,17 @@ int main(int argc, char *argv[])
 	int internal_error = OK;
 
 	init_scanner(argv[1]);
+
+	string s;
+	init_string(&s);
+	append_char(&s, 'c');
+	append_char(&s, 'a');
+	append_char(&s, 'u');
+
+	remove_last_char(&s);
+	printf("> %s <", s.data);
+
+	free_string(&s);
 
 	// bla bla
 

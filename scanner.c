@@ -8,7 +8,8 @@
 // enum pre stavy automatu
 
 // Todo
-int is_keyword(char* str) {
+int is_keyword(char *str)
+{
 	return 0;
 }
 
