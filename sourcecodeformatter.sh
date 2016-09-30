@@ -1,3 +1,3 @@
 #!/bin/sh
-indent -kr -i8 -l90 *.c
+indent -kr -i8 -l90 -brf -br *.c
 echo "Source files were reformatted"

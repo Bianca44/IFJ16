@@ -10,8 +10,7 @@ typedef struct {
 	int allocated_size;
 } string;
 
-bool init_string(string * str)
-{
+bool init_string(string * str) {
 	if ((str->data =
 	     (char *) malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
 		return false;
@@ -23,37 +22,31 @@ bool init_string(string * str)
 
 }
 
-void free_string(string * str)
-{
+void free_string(string * str) {
 	free(str->data);
 }
 
-void clear_string(string * str)
-{
+void clear_string(string * str) {
 	str->data[0] = '\0';
 	str->length = 0;
 }
 
-char *get_string(string * str)
-{
+char *get_string(string * str) {
 	return str->data;
 }
 
-int get_length(string * str)
-{
+int get_length(string * str) {
 	return str->length;
 }
 
-bool is_empty(string * str)
-{
+bool is_empty(string * str) {
 	if (str->length == 0) {
 		return true;
 	}
 	return false;
 }
 
-void remove_last_char(string * str)
-{
+void remove_last_char(string * str) {
 	if (is_empty(str)) {
 		return;
 	}
@@ -61,8 +54,7 @@ void remove_last_char(string * str)
 	str->data[--str->length] = '\0';
 }
 
-bool append_char(string * str, char c)
-{
+bool append_char(string * str, char c) {
 	if (str->length + 1 >= str->allocated_size) {
 		if ((str->data =
 		     (char *) realloc(str->data,

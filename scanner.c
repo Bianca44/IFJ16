@@ -19,7 +19,7 @@ int get_next_token(FILE * file)
 	int c;
 	int state = 0;
 
-	char str[256] = { '\0' };
+	char str[256] = { '\0' }; // rework to use string Object
 	int i = 0;
 	while (1) {
 		c = fgetc(file);
@@ -48,7 +48,7 @@ int get_next_token(FILE * file)
 			break;
 
 		case 1:
-			if (isalpha(c) || isdigit(c)) {
+			if (isalnum(c)) {
 				str[i++] = c;
 			} else {
 				printf("string: %s \n", str);
