@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "error_codes.h"
 #include "scanner.c"
-#include "strings.c"
+#include "strings.h"
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
@@ -20,7 +20,11 @@ int main(int argc, char *argv[]) {
 	append_char(&s, 'a');
 	append_char(&s, 'u');
 
-	remove_last_char(&s);
+	set_string(&s, "ahoj");
+	set_string(&s, "ahoj kk");
+	append_string(&s, "pp");
+
+	//remove_last_char(&s);
 	printf("> %s <", s.data);
 
 	free_string(&s);

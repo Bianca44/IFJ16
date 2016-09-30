@@ -4,22 +4,32 @@
 #include <ctype.h>
 #include "ial.h"
 #include "tokens_table.h"
+#include <string.h>
+#include "strings.h"
+
 
 // enum pre stavy automatu
 
+typedef struct {
+	int type;
+	union {
+		int value_int;
+		double value_double;
+		string value_string;
+	};
+} TToken;
+
 // Todo
-int is_keyword(char *str)
-{
+int is_keyword(char *str) {
 	return 0;
 }
 
-int get_next_token(FILE * file)
-{
+int get_next_token(FILE * file) {
 
 	int c;
 	int state = 0;
 
-	char str[256] = { '\0' }; // rework to use string Object
+	char str[256] = { '\0' };	// rework to use string Object
 	int i = 0;
 	while (1) {
 		c = fgetc(file);
@@ -78,11 +88,17 @@ int get_next_token(FILE * file)
 
 }
 
-int init_scanner(char *filename)
-{
+int init_scanner(char *filename) {
 
 	FILE *file;
 	file = fopen(filename, "r");
+	TToken new;
+	new.type = 42;
+	//strcpy(new.value_string, "hi");
+	string h;
+	init_string(&h);
+	append_char(&h, 'c');
+	printf("%d %s  < \n", new.type, h.data);
 
 	int s;
 	while ((s = get_next_token(file)) != EOF) {
