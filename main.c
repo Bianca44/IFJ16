@@ -21,8 +21,10 @@ int main(int argc, char *argv[]) {
 	append_char(&s, 'u');
 
 	set_string(&s, "ahoj");
-	set_string(&s, "ahoj kk");
+	set_string(&s, "ahojkk");
 	append_string(&s, "pp");
+	set_string(&s, "pkfgdnoklsnidANDOIAODnascznxcnpoaijf");
+	sort(&s);
 
 	//remove_last_char(&s);
 	printf("> %s <", s.data);

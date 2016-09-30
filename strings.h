@@ -34,5 +34,7 @@ void remove_last_char(string * str);
 
 bool append_char(string * str, char c);
 
+string sort(string * str);
+
 
 #endif

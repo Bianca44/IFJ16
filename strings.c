@@ -104,3 +104,58 @@ bool append_char(string * str, char c) {
 	str->data[str->length] = '\0';
 	return true;
 }
+
+
+
+void partition(char *text, int left, int right, int indexes[]) {
+    int median;
+
+    int i = left;
+    int j = right;
+
+    median = text[(i+j) / 2];
+
+    printf("%d median %d and \n", median, (i+j) % 2);
+
+    do {
+        while (text[i] < median) {
+            i++;
+        }
+
+        while (text[j] > median) {
+            j--;
+        }
+        if (i<=j) {
+            printf("Valuessss is %d %d %c <= %c \n", i, j, text[i], text[j]);
+            int c = text[i];
+            text[i] = text[j];
+            text[j] = c;
+
+            printf("String %s \n", text);
+            i++;
+            j--;
+        }
+    } while (i<=j);
+
+    indexes[0] = i;
+    indexes[1] = j;
+}
+
+void QuickSort(char *text, int left, int right) {
+    int indexes[2];
+    partition(text, left, right, indexes);
+
+    int i =indexes[0], j = indexes[1];
+
+    if (left < j)  {
+                QuickSort(text, left, j);
+    }
+    if (i < right) {
+                QuickSort(text, i, right);
+    }
+}
+
+string sort(string * str) {
+    QuickSort(str->data, 0, strlen(str->data) - 1);
+
+}
