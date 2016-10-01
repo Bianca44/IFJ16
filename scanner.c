@@ -92,7 +92,7 @@ int get_next_token(FILE * file) {
             return ASSIGN;
         } else {
             printf(" nieco ine ");
-            return 5;
+            return LEXICAL_ERROR;
         }
 
         }
@@ -111,12 +111,16 @@ int get_next_token(FILE * file) {
         break;
 
     case 2:
-        if (isdigit(c)) {
+        if (isalpha(c)) {
+            ungetc(c, file);
+            state = 0;
+            return LEXICAL_ERROR;
+        } else if (isdigit(c)) {
         str[i++] = c;
         } else if (c == '.') {
         str[i++] = c;
         state = 3;
-        } else {
+    } else {
         printf("number: %s \n", str);
         ungetc(c, file);
         str[i] = '\0';
@@ -237,6 +241,7 @@ int get_next_token(FILE * file) {
 
         break;
     default:
+        /* should not happen */
         break;
     }
     }
