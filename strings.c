@@ -6,7 +6,8 @@
 
 /* Inicializacia stringu na STRING_INITIAL_ALLOCATION bajtov */
 bool init_string(string * str) {
-    if ((str->data = (char *) malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
+    if ((str->data =
+	 (char *) malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
 	return false;
     }
     str->data[0] = '\0';
@@ -25,8 +26,10 @@ bool set_string(string * str, char *text) {
 /* Skopiruje text z jedneho stringu do druheho */
 bool copy_string(string * str, char *text) {
     int new_length = strlen(text);
+
     if (new_length + 1 >= str->allocated_size) {
-	if ((str->data = (char *) realloc(str->data, new_length * sizeof(char))) == NULL) {
+	if ((str->data =
+	     (char *) realloc(str->data, new_length * sizeof(char))) == NULL) {
 	    return false;
 	}
 	str->allocated_size = new_length;
@@ -40,10 +43,12 @@ bool copy_string(string * str, char *text) {
 /* Pripne text na koniec stringu */
 bool append_string(string * str, char *text) {
     int new_length = strlen(text);
+
     if (str->length + new_length + 1 >= str->allocated_size) {
 	if ((str->data =
 	     (char *) realloc(str->data,
-			      (str->length + new_length) * sizeof(char))) == NULL) {
+			      (str->length +
+			       new_length) * sizeof(char))) == NULL) {
 	    return false;
 	}
 	str->allocated_size = str->length + new_length;
@@ -91,7 +96,8 @@ bool append_char(string * str, char c) {
 	if ((str->data =
 	     (char *) realloc(str->data,
 			      (str->length +
-			       STRING_INITIAL_ALLOCATION) * sizeof(char))) == NULL) {
+			       STRING_INITIAL_ALLOCATION) *
+			      sizeof(char))) == NULL) {
 	    return false;
 	}
 	str->allocated_size = str->length + STRING_INITIAL_ALLOCATION;
@@ -121,13 +127,15 @@ void partition(char *text, int left, int right, int indexes[]) {
 	}
 	if (i <= j) {
 	    int c = text[i];
+
 	    text[i] = text[j];
 	    text[j] = c;
 
 	    i++;
 	    j--;
 	}
-    } while (i <= j);
+    }
+    while (i <= j);
 
     indexes[0] = i;
     indexes[1] = j;
@@ -135,6 +143,7 @@ void partition(char *text, int left, int right, int indexes[]) {
 
 void QuickSort(char *text, int left, int right) {
     int indexes[2];
+
     partition(text, left, right, indexes);
 
     int i = indexes[0], j = indexes[1];
@@ -183,13 +192,13 @@ void computeMatchJump(char *pattern, int matchJump[]) {
     q = m + 1;
 
     while (k > 0) {
-    	backup[k] = q;
-    	while ((q <= m) && (pattern[k] != pattern[q])) {
-        	    matchJump[q] = MIN(matchJump[k], m - k);
-        	    q = backup[q];
-        }
-        k--;
-        q--;
+	backup[k] = q;
+	while ((q <= m) && (pattern[k] != pattern[q])) {
+	    matchJump[q] = MIN(matchJump[k], m - k);
+	    q = backup[q];
+	}
+	k--;
+	q--;
     }
 
     for (k = 0; k <= q; k++) {
@@ -199,17 +208,18 @@ void computeMatchJump(char *pattern, int matchJump[]) {
     qq = backup[q];
 
     while (q < m) {
-    	while (q <= qq) {
-    	    matchJump[q] = MIN(matchJump[q], qq - q + m);
-    	    q++;
-    	}
-    	qq = backup[qq];
+	while (q <= qq) {
+	    matchJump[q] = MIN(matchJump[q], qq - q + m);
+	    q++;
+	}
+	qq = backup[qq];
     }
 
 }
 
 void find(string * str, char *pattern) {
     int j, k, str_length, max;
+
     j = k = str_length = 0;
 
     int matchJump[256];
@@ -223,13 +233,13 @@ void find(string * str, char *pattern) {
     j = k = max = strlen(pattern) - 1;
 
     while ((j <= str->length) && (k > 0)) {
-    	if (str->data[j] == pattern[k]) {
-    	    j--;
-    	    k--;
-    	} else {
-    	    j = j + MAX(charJump[(int) str->data[j]], matchJump[k]);
-    	    k = strlen(pattern) - 1;
-    	}
+	if (str->data[j] == pattern[k]) {
+	    j--;
+	    k--;
+	} else {
+	    j = j + MAX(charJump[(int) str->data[j]], matchJump[k]);
+	    k = strlen(pattern) - 1;
+	}
 
     }
 

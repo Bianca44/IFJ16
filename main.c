@@ -12,28 +12,24 @@ int main(int argc, char *argv[]) {
 
     int internal_error = OK;
 
-    //init_scanner(argv[1]);
+    init_scanner(argv[1]);
 
-    string s;
-    init_string(&s);
-    set_string(&s, "boxhoho");
+    /*string s;
+       init_string(&s);
+       set_string(&s, "boxhoho");
 
-    char *ss = "ho";
-    find(&s, ss);
+       char *ss = "ho";
+       find(&s, ss);
 
-    set_string(&s, "aaaxhxs");
-    find(&s, "hx");
+       set_string(&s, "aaaxhxs");
+       find(&s, "hx");
 
-    set_string(&s, "ahoj");
-    find(&s, "oj");
+       set_string(&s, "ahoj");
+       find(&s, "oj");
 
-    set_string(&s, "ahojkatkaado");
-    find(&s, "katka");
-    //sort(&s);
-
-    free_string(&s);
-
-    // bla bla
+       set_string(&s, "ahojkatkaado");
+       find(&s, "katka");
+       free_string(&s); */
 
     printf("path: %s \n", argv[1]);
     return internal_error;
