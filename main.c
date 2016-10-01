@@ -5,34 +5,36 @@
 #include "strings.h"
 
 int main(int argc, char *argv[]) {
-	if (argc != 2) {
-		fprintf(stderr, "bad arguments\n");
-		return ERROR_INTERPRET;
-	}
+    if (argc != 2) {
+	fprintf(stderr, "bad arguments\n");
+	return ERROR_INTERPRET;
+    }
 
-	int internal_error = OK;
+    int internal_error = OK;
 
-	init_scanner(argv[1]);
+    //init_scanner(argv[1]);
 
-	string s;
-	init_string(&s);
-	append_char(&s, 'c');
-	append_char(&s, 'a');
-	append_char(&s, 'u');
+    string s;
+    init_string(&s);
+    set_string(&s, "boxhoho");
 
-	set_string(&s, "ahoj");
-	set_string(&s, "ahojkk");
-	append_string(&s, "pp");
-	set_string(&s, "pkfgdnoklsnidANDOIAODnascznxcnpoaijf");
-	sort(&s);
+    char *ss = "ho";
+    find(&s, ss);
 
-	//remove_last_char(&s);
-	printf("> %s <", s.data);
+    set_string(&s, "aaaxhxs");
+    find(&s, "hx");
 
-	free_string(&s);
+    set_string(&s, "ahoj");
+    find(&s, "oj");
 
-	// bla bla
+    set_string(&s, "ahojkatkaado");
+    find(&s, "katka");
+    //sort(&s);
 
-	printf("path: %s \n", argv[1]);
-	return internal_error;
+    free_string(&s);
+
+    // bla bla
+
+    printf("path: %s \n", argv[1]);
+    return internal_error;
 }
