@@ -31,6 +31,7 @@
 #define DOUBLE_QUOTE 21
 #define BACKSLASH 22
 #define OCTAL 23
+#define COLON 24
 
 
 #endif // TOKENS_TABLE_H
