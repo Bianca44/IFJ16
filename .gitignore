@@ -35,3 +35,7 @@
 # Temp files
 *.c~
 *.h~
+
+#Our extensions
+*.pozn #vlastne pozn. kt. nie je potrebne zdielat
+*.tp 
