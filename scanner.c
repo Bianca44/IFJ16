@@ -22,6 +22,8 @@ typedef struct {
         };
 } TToken;
 
+/* is_data_type */
+
 bool is_keyword(char *str) {
         for (int i = 0; i < 17; i++) {
                 if (strcmp(keywords[i], str) == 0) {
@@ -48,7 +50,7 @@ int get_next_token(FILE * file) {
                 }
 
                 switch (state) {
-                case 0:
+                case 0: /* START */
                         if (isspace(c)) {
                                 state = 0; // stav medzier
                         } else {
@@ -110,7 +112,7 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
-                case 1:
+                case 1: /* STRING, ID */
                         if (c == '.') {
                                 str[i++] = c;
                                 state = 13;
@@ -125,7 +127,7 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
-                case 2:
+                case 2: /* INTEGER */
                         if (isalpha(c)) {
                                 ungetc(c, file);
                                 state = 0;
@@ -214,7 +216,8 @@ int get_next_token(FILE * file) {
                         } /*else if (c == '\\') {
                              printf(" dvojite slash\n");
                              return DOUBLE_BACKSLASH;
-                             } */else if (isalpha(c)) {
+                             } */
+                        else if (isalpha(c)) {
                                 ungetc(c, file);
                                 return LEXICAL_ERROR; /* napr. \p */
                         } else if (isdigit(c)) {
