@@ -118,7 +118,6 @@ int get_next_token(FILE * file) {
                                 printf("string: %s is keyword = %d \n", str, is_keyword(str));
                                 ungetc(c, file);
                                 str[i] = '\0';
-                                state = 0;
                                 return ID;
                         }
                         break;
@@ -150,7 +149,6 @@ int get_next_token(FILE * file) {
                                 printf("double: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
-                                state = 0;
                                 return DOUBLE;
                         }
                         break;
