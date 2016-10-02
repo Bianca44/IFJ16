@@ -195,6 +195,7 @@ int get_next_token(FILE * file) {
 		return BLOCK_COMMENT_END;
 	    } else {
 		printf("mul \n");
+        ungetc(c, file);
 		return MUL;
 	    }
 	    break;
