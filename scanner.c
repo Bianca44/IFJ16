@@ -161,12 +161,14 @@ int get_next_token(FILE * file) {
                                 str[i++] = c;
                         } else if (c == '-' || c == '+') {
                                 str[i++] = c;
-
-                        } else {
+                        } else if (isspace(c)) {
                                 printf("double: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 return DOUBLE;
+                        } else {
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
                         }
                         break;
 
