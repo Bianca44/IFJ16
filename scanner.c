@@ -217,15 +217,15 @@ int get_next_token(FILE * file) {
                              printf(" dvojite slash\n");
                              return DOUBLE_BACKSLASH;
                              } */
-                        else if (isalpha(c)) {
+                        else if (isspace(c)) {
                                 ungetc(c, file);
-                                return LEXICAL_ERROR; /* napr. \p */
+                                return BACKSLASH;
                         } else if (isdigit(c)) {
                                 state = 8;
                                 ungetc(c, file);
                         } else {
                                 ungetc(c, file);
-                                return BACKSLASH;
+                                return LEXICAL_ERROR; /* napr. \p \$*/
                         }
                         break;
 
@@ -296,8 +296,12 @@ int get_next_token(FILE * file) {
 
 
                 case 13:
-                        if (isalnum(c) || c == '_' || c == '$') {
+                        if (isalpha(c) || c == '_' || c == '$') {
                                 str[i++] = c;
+                        } else if (isdigit(c) || isspace(c)) {
+                              state = 0;
+                              ungetc(c, file);
+                              return LEXICAL_ERROR;
                         } else {
                                 printf("string special id: %s \n", str);
                                 ungetc(c, file);
