@@ -28,9 +28,8 @@
 #define COMMA 18
 #define NEG 19
 #define SIMPLE_QUOTE 20
-#define DOUBLE_QUOTE 21
-#define BACKSLASH 22
-#define OCTAL 23
+#define STRING_LITERAL 21
+
 #define COLON 24
 #define NOT_EQUAL 25
 #define LESS_EQUAL 26
@@ -38,9 +37,6 @@
 #define GREATER_EQUAL 28
 #define GREATER 29
 
-#define NEW_LINE 30
-#define TAB 31
-#define DOUBLE_BACKSLASH 32
 #define EQUAL 33
 #define SPECIAL_ID 34 /* plne kvatifikovany */
 

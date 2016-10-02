@@ -38,8 +38,6 @@ int get_next_token(FILE * file) {
         int c;
         int state = 0;
 
-        int octal_counter = 0;
-
         char str[256] = { '\0' }; // rework to use string
         int i = 0;
 
@@ -67,7 +65,7 @@ int get_next_token(FILE * file) {
                                 } else if (c == '\'') {
                                         return SIMPLE_QUOTE;
                                 } else if (c == '"') {
-                                        return DOUBLE_QUOTE;
+                                        state = 13;
                                 } else if (c == '+') {
                                         return ADD;
                                 } else if (c == '-') {
@@ -77,16 +75,13 @@ int get_next_token(FILE * file) {
                                 } else if (c == '/') {
                                         state = 5;
                                 } else if (c == '*') {
-                                        state = 6;
-                                } else if (c == '\\') {
-                                        str[i++] = '\\';
                                         state = 7;
                                 } else if (c == '!') {
-                                        state = 9;
+                                        state = 8;
                                 } else if (c == '<') {
-                                        state = 10;
+                                        state = 9;
                                 } else if (c == '>') {
-                                        state = 11;
+                                        state = 10;
                                 } else if (c == ';') {
                                         printf("semicolon \n");
                                         return SEMICOLON;
@@ -103,7 +98,7 @@ int get_next_token(FILE * file) {
                                         printf("right rounded bracket \n");
                                         return RIGHT_ROUNDED_BRACKET;
                                 } else if (c == '=') {
-                                        state = 12;
+                                        state = 11;
                                 } else {
                                         printf(" nieco ine ");
                                         return LEXICAL_ERROR;
@@ -115,7 +110,7 @@ int get_next_token(FILE * file) {
                 case 1: /* STRING, ID */
                         if (c == '.') {
                                 str[i++] = c;
-                                state = 13;
+                                state = 12;
                         } else if (isalnum(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                         } else {
@@ -177,14 +172,11 @@ int get_next_token(FILE * file) {
                         break;
 
                 case 5:
-                        state = 0;
                         if (c == '/') {
-                            state = 5;
-                        } else if (c == '\n') {
-                                printf("line comment \n");
-                                return LINE_COMMENT;
+                                state = 6;
                         } else if (c == '*') {
                                 printf("block comment start \n");
+                                state = 0;
                                 return BLOCK_COMMENT_START;
                         } else {
                                 printf("div \n");
@@ -195,6 +187,14 @@ int get_next_token(FILE * file) {
                         break;
 
                 case 6:
+                        if (c == '\n') {
+                                printf("line comment \n");
+                                state = 0;
+                                return LINE_COMMENT;
+                        }
+                        break;
+
+                case 7:
                         state = 0;
                         if (c == '/') {
                                 printf("block comment end \n");
@@ -206,59 +206,7 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
-                case 7:
-
-                        state = 0;
-                        if (c == 'n') {
-                                printf("\\n\n");
-                                return NEW_LINE;
-                        } else if (c == 't') {
-                                printf("\\t\n");
-                                return TAB;
-                        } /*else if (c == '\\') {
-                             printf(" dvojite slash\n");
-                             return DOUBLE_BACKSLASH;
-                             } */
-                        else if (isspace(c)) {
-                                ungetc(c, file);
-                                return BACKSLASH;
-                        } else if (isdigit(c)) {
-                                state = 8;
-                                ungetc(c, file);
-                        } else {
-                                ungetc(c, file);
-                                return LEXICAL_ERROR; /* napr. \p \$*/
-                        }
-                        break;
-
                 case 8:
-
-                        if (octal_counter < 3) {
-                                int digit = c - '0';
-                                if ((octal_counter == 0 && digit >= 0
-                                     && digit <= 3) || (octal_counter == 1
-                                                        && digit >= 0 && digit <= 7)
-                                    || (octal_counter == 2 && digit >= 1 && digit <= 7)) {
-                                        str[i++] = c;
-                                        octal_counter++;
-                                } else {
-                                        state = 0;
-                                        ungetc(c, file);
-                                        return LEXICAL_ERROR; /* \567 */
-                                }
-
-                        } else {
-                                state = 0;
-                                octal_counter = 0;
-                                ungetc(c, file);
-                                printf("octal: %s \n", str);
-                                return OCTAL;
-                        }
-
-
-                        break;
-
-                case 9:
                         state = 0;
                         if (c == '=') {
                                 return NOT_EQUAL;
@@ -267,7 +215,7 @@ int get_next_token(FILE * file) {
                                 return LEXICAL_ERROR; /* BOOLOP */
                         }
                         break;
-                case 10:
+                case 9:
                         state = 0;
                         if (c == '=') {
                                 return LESS_EQUAL;
@@ -276,7 +224,7 @@ int get_next_token(FILE * file) {
                                 return LESS;
                         }
                         break;
-                case 11:
+                case 10:
                         state = 0;
                         if (c == '=') {
                                 return GREATER_EQUAL;
@@ -286,7 +234,7 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
-                case 12:
+                case 11:
                         state = 0;
                         if (c == '=') {
                                 return EQUAL;
@@ -297,19 +245,35 @@ int get_next_token(FILE * file) {
                         break;
 
 
-                case 13:
+                case 12:
                         if (isalpha(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                         } else if (isdigit(c) || isspace(c)) {
-                              state = 0;
-                              ungetc(c, file);
-                              return LEXICAL_ERROR;
+                                state = 0;
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
                         } else {
                                 printf("string special id: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 state = 0;
                                 return SPECIAL_ID;
+                        }
+                        break;
+
+                case 13:
+                        if (c == '"') {
+                                str[i] = '\0';
+                                printf("string lit: %s \n", str);
+                                state = 0;
+                                return STRING_LITERAL;
+
+                        } else if (isspace(c)) {
+                                state = 0;
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
+                        } else {
+                                str[i++] = c;
                         }
                         break;
                 default:
