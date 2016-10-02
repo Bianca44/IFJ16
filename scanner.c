@@ -235,7 +235,7 @@ int get_next_token(FILE * file) {
                         if (isalpha(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                                 state = 13;
-                        } else if (isdigit(c)) {
+                        } else  {
                                 ungetc(c, file);
                                 return LEXICAL_ERROR;
                         } break;
