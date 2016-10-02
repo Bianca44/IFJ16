@@ -26,12 +26,17 @@
 
 #define DOT 17
 #define COMMA 18
-#define EXCLAMATION_MARK 19
+#define NEG 19
 #define SIMPLE_QUOTE 20
 #define DOUBLE_QUOTE 21
 #define BACKSLASH 22
 #define OCTAL 23
 #define COLON 24
+#define NOT_EQUAL 25
+#define LESS_EQUAL 26
+#define LESS 27
+#define GREATER_EQUAL 28
+#define GREATER 29
 
 
 #endif // TOKENS_TABLE_H

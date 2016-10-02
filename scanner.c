@@ -21,6 +21,7 @@ typedef struct {
 
 // Todo
 int is_keyword(char *str) {
+    (void) str;
     return 0;
 }
 
@@ -72,6 +73,12 @@ int get_next_token(FILE * file) {
 		} else if (c == '\\') {
 		    str[i++] = '\\';
 		    state = 7;
+		} else if (c == '!') {
+		    state = 9;
+		} else if (c == '<') {
+		    state = 10;
+		} else if (c == '>') {
+		    state = 11;
 		} else if (c == ';') {
 		    printf("semicolon \n");
 		    return SEMICOLON;
@@ -214,16 +221,16 @@ int get_next_token(FILE * file) {
 
 	    if (octal_counter < 3) {
 		int digit = c - '0';
-        if ((octal_counter == 0 && digit >= 0
+		if ((octal_counter == 0 && digit >= 0
 		     && digit <= 3) || (octal_counter == 1
 					&& digit >= 0 && digit <= 7)
 		    || (octal_counter == 2 && digit >= 1 && digit <= 7)) {
 		    str[i++] = c;
-            octal_counter++;
+		    octal_counter++;
 		} else {
 		    state = 0;
-			ungetc(c, file);
-			return LEXICAL_ERROR;	/* \567 */
+		    ungetc(c, file);
+		    return LEXICAL_ERROR;	/* \567 */
 		}
 
 	    } else {
@@ -235,6 +242,35 @@ int get_next_token(FILE * file) {
 	    }
 
 
+	    break;
+
+	case 9:
+	    state = 0;
+	    if (c == '=') {
+		return NOT_EQUAL;
+	    } else {
+		ungetc(c, file);
+		return LEXICAL_ERROR; /* BOOLOP */
+	    }
+	    break;
+	case 10:
+	    state = 0;
+	    if (c == '=') {
+		return LESS_EQUAL;
+	    } else {
+		ungetc(c, file);
+		return LESS;
+	    }
+	    break;
+	case 11:
+	    state = 0;
+	    if (c == '=') {
+		state = 0;
+		return GREATER_EQUAL;
+	    } else {
+		ungetc(c, file);
+		return GREATER;
+	    }
 	    break;
 	default:
 	    /* should not happen */
