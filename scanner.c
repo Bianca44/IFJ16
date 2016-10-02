@@ -214,21 +214,19 @@ int get_next_token(FILE * file) {
 
 	    if (octal_counter < 3) {
 		int digit = c - '0';
-
-		if ((octal_counter == 0 && digit >= 0
+        if ((octal_counter == 0 && digit >= 0
 		     && digit <= 3) || (octal_counter == 1
 					&& digit >= 0 && digit <= 7)
 		    || (octal_counter == 2 && digit >= 1 && digit <= 7)) {
 		    str[i++] = c;
-		    octal_counter++;
+            octal_counter++;
 		} else {
 		    state = 0;
 			ungetc(c, file);
 			return LEXICAL_ERROR;	/* \567 */
-           }
 		}
 
-	    else {
+	    } else {
 		state = 0;
 		octal_counter = 0;
 		ungetc(c, file);
