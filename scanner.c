@@ -52,14 +52,15 @@ int get_next_token(FILE * file) {
                         if (isspace(c)) {
                                 state = 0; // stav medzier
                         } else {
-                                if (isalpha(c) || c == '_' || c == '$') {
-                                        state = 1; // mozno string alebo cislo
-                                        str[i++] = c;
-                                } else if (isdigit(c)) {
+                                if (isdigit(c)) {
                                         state = 2;
                                         str[i++] = c;
                                 } else if (c == '.') {
-                                        return DOT;
+                                    state = 3;
+                                    str[i++] = c;
+                                } else if (isalpha(c) || c == '_' || c == '$') {
+                                        state = 1; // mozno string alebo cislo
+                                        str[i++] = c;
                                 } else if (c == ',') {
                                         return COMMA;
                                 } else if (c == '\'') {

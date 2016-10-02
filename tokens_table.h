@@ -24,7 +24,6 @@
 #define BLOCK_COMMENT_START 15
 #define BLOCK_COMMENT_END 16
 
-#define DOT 17
 #define COMMA 18
 #define NEG 19
 #define SIMPLE_QUOTE 20
