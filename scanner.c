@@ -75,7 +75,7 @@ int get_next_token(FILE * file) {
                                 } else if (c == '/') {
                                         state = 5;
                                 } else if (c == '*') {
-                                        state = 7;
+                                        return MUL;
                                 } else if (c == '!') {
                                         state = 8;
                                 } else if (c == '<') {
@@ -175,9 +175,7 @@ int get_next_token(FILE * file) {
                         if (c == '/') {
                                 state = 6;
                         } else if (c == '*') {
-                                printf("block comment start \n");
-                                state = 0;
-                                return BLOCK_COMMENT_START;
+                                state = 14;
                         } else {
                                 printf("div \n");
                                 state = 0;
@@ -186,23 +184,12 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
+
                 case 6:
                         if (c == '\n') {
                                 printf("line comment \n");
                                 state = 0;
                                 return LINE_COMMENT;
-                        }
-                        break;
-
-                case 7:
-                        state = 0;
-                        if (c == '/') {
-                                printf("block comment end \n");
-                                return BLOCK_COMMENT_END;
-                        } else {
-                                printf("mul \n");
-                                ungetc(c, file);
-                                return MUL;
                         }
                         break;
 
@@ -274,6 +261,28 @@ int get_next_token(FILE * file) {
                                 return LEXICAL_ERROR;
                         } else {
                                 str[i++] = c;
+                        }
+                        break;
+
+                case 14:
+                        if (c == '*') {
+                                state = 15;
+                        } else if (c == '\n') {
+                                state = 0;
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
+                        }
+                        break;
+
+                case 15:
+                        if (c == '/') {
+                                printf("block comment \n");
+                                state = 0;
+                                return BLOCK_COMMENT;                 // zostavam
+                        } else {
+                                state = 0;
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
                         }
                         break;
                 default:

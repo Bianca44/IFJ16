@@ -21,8 +21,7 @@
 #define ASSIGN 13
 
 #define LINE_COMMENT 14
-#define BLOCK_COMMENT_START 15
-#define BLOCK_COMMENT_END 16
+#define BLOCK_COMMENT 15
 
 #define DOT 17
 #define COMMA 18
