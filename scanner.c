@@ -101,7 +101,7 @@ int get_next_token(FILE * file) {
                                 } else if (c == '=') {
                                         state = 10;
                                 } else {
-                                        printf(" nieco ine ");
+                                        //printf(" nieco ine ");
                                         return LEXICAL_ERROR;
                                 }
 
@@ -302,7 +302,13 @@ int init_scanner(char *filename) {
 
         FILE *file;
 
-        file = fopen(filename, "r");
+        if (filename == NULL) {
+                file = stdin;
+        }
+        else {
+
+                file = fopen(filename, "r");
+        }
 
         int s;
 

@@ -6,8 +6,8 @@
 
 int main(int argc, char *argv[]) {
         if (argc != 2) {
-                fprintf(stderr, "bad arguments\n");
-                return ERROR_INTERPRET;
+                //fprintf(stderr, "bad arguments\n");
+                //return ERROR_INTERPRET;
         }
 
         int internal_error = OK;
