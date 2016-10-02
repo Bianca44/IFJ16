@@ -44,7 +44,7 @@ int get_next_token(FILE * file) {
         while (1) {
                 c = fgetc(file);
                 if (c == EOF) {
-                        return c;
+                        return (state > 0) ? LEXICAL_ERROR : c;
                 }
 
                 switch (state) {
@@ -76,7 +76,7 @@ int get_next_token(FILE * file) {
                                 } else if (c == '/') {
                                         state = 5;
                                 } else if (c == '*') {
-                                        state = 6;
+                                        return MUL;
                                 } else if (c == '!') {
                                         state = 7;
                                 } else if (c == '<') {
@@ -128,11 +128,15 @@ int get_next_token(FILE * file) {
                                 state = 3;
                         }  else if (isdigit(c)) {
                                 str[i++] = c;
-                        } else {
+                        } else if (isspace(c)) {
                                 printf("number: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 return NUMBER;
+                        }
+                        else {
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
                         }
                         break;
 
@@ -142,6 +146,24 @@ int get_next_token(FILE * file) {
                         } else if (c == 'e' || c == 'E') {
                                 str[i++] = c;
                                 state = 4;
+                        } else if (isspace(c)) {
+                                printf("number: %s \n", str);
+                                ungetc(c, file);
+                                str[i] = '\0';
+                                return DOUBLE;
+                        }
+                        else {
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
+                        }
+                        break;
+
+                case 4 /* with e */:
+                        if (isdigit(c)) {
+                                str[i++] = c;
+                        } else if (c == '-' || c == '+') {
+                                str[i++] = c;
+                                state = 15;
                         } else if (isspace(c)) {
                                 printf("double: %s \n", str);
                                 ungetc(c, file);
@@ -153,10 +175,8 @@ int get_next_token(FILE * file) {
                         }
                         break;
 
-                case 4 /* with e */:
+                case 15 /* with e */:
                         if (isdigit(c)) {
-                                str[i++] = c;
-                        } else if (c == '-' || c == '+') {
                                 str[i++] = c;
                         } else if (isspace(c)) {
                                 printf("double: %s \n", str);
@@ -173,8 +193,7 @@ int get_next_token(FILE * file) {
                         if (c == '/') {
                                 state = 14;
                         } else if (c == '*') {
-                                printf("block comment start \n");
-                                return BLOCK_COMMENT_START;
+                                state = 6;
                         } else {
                                 ungetc(c, file);
                                 return DIV;
@@ -189,13 +208,15 @@ int get_next_token(FILE * file) {
                         break;
 
                 case 6:
+                        if (c == '*') {
+                                state = 16;
+                        }
+                        break;
+
+                case 16:
                         if (c == '/') {
-                                printf("block comment end \n");
-                                return BLOCK_COMMENT_END;
-                        } else {
-                                printf("mul \n");
-                                ungetc(c, file);
-                                return MUL;
+                                printf("block comment\n");
+                                return BLOCK_COMMENT;
                         }
                         break;
 
