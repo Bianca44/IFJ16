@@ -62,7 +62,7 @@ int get_next_token(FILE * file) {
         } else if (c == '+') {
             return ADD;
         } else if (c == '-') {
-            return ADD;
+            return SUB;
         } else if (c == ':') { /* < >  8strana pdf*/
             return COLON;
         } else if (c == '/') {
@@ -169,6 +169,8 @@ int get_next_token(FILE * file) {
         return BLOCK_COMMENT_START;
         } else {
         printf("div \n");
+        state = 0;
+        ungetc(c, file);
         return DIV;
         }
         break;
@@ -178,7 +180,7 @@ int get_next_token(FILE * file) {
         if (c == '/') {
         printf("block comment end \n");
         return BLOCK_COMMENT_END;
-        } else {
+    } else {
         printf("mul \n");
         return MUL;
         }
@@ -196,11 +198,15 @@ int get_next_token(FILE * file) {
         } else if (c == '\\') {
         printf(" dvojite slash\n");
         return 125;
+        } else if (isalnum(c)) {
+            state = 0;
+            ungetc(c, file);
+            return LEXICAL_ERROR; /* napr. \p */
         } else if (isdigit(c)) {
-        state = 8;
-        ungetc(c, file);
+            state = 8;
+            ungetc(c, file);
         } else {
-        return BACKSLASH;
+            return BACKSLASH;
         }
         break;
 
@@ -258,7 +264,13 @@ int init_scanner(char *filename) {
     int s;
 
     while ((s = get_next_token(file)) != EOF) {
-    printf("token: %d\n", s);
+        printf("token: %d ", s);
+        if (s == LEXICAL_ERROR) {
+            printf(" (lexikalna chyba) \n");
+            //break;
+        } else {
+            printf("\n");
+        }
     }
 
     fclose(file);
