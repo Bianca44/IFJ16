@@ -56,8 +56,8 @@ int get_next_token(FILE * file) {
                                         state = 2;
                                         str[i++] = c;
                                 } else if (c == '.') {
-                                    state = 3;
-                                    str[i++] = c;
+                                        state = 3;
+                                        str[i++] = c;
                                 } else if (isalpha(c) || c == '_' || c == '$') {
                                         state = 1; // mozno string alebo cislo
                                         str[i++] = c;
@@ -145,11 +145,14 @@ int get_next_token(FILE * file) {
                         } else if (c == 'e' || c == 'E') {
                                 str[i++] = c;
                                 state = 4;
-                        } else {
+                        } else if (isspace(c)) {
                                 printf("double: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 return DOUBLE;
+                        } else {
+                                ungetc(c, file);
+                                return LEXICAL_ERROR;
                         }
                         break;
 
