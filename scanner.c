@@ -205,22 +205,22 @@ int get_next_token(FILE * file) {
 	    state = 0;
 	    if (c == 'n') {
 		printf("\\n\n");
-		return 123;
+		return NEW_LINE;
 	    } else if (c == 't') {
 		printf("\\t\n");
-		return 124;
-	    } else if (c == '\\') {
+		return TAB;
+    } /*else if (c == '\\') {
 		printf(" dvojite slash\n");
-		return 125;
-	    } else if (isalpha(c)) {
-		state = 0;
+		return DOUBLE_BACKSLASH;
+    } */else if (isalpha(c)) {
 		ungetc(c, file);
 		return LEXICAL_ERROR;	/* napr. \p */
-	    } else if (isdigit(c)) {
+    } else if (isdigit(c)) {
 		state = 8;
 		ungetc(c, file);
 	    } else {
-		return BACKSLASH;
+            ungetc(c, file);
+		    return BACKSLASH;
 	    }
 	    break;
 

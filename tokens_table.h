@@ -38,5 +38,9 @@
 #define GREATER_EQUAL 28
 #define GREATER 29
 
+#define NEW_LINE 30
+#define TAB 31
+#define DOUBLE_BACKSLASH 32
+
 
 #endif // TOKENS_TABLE_H
