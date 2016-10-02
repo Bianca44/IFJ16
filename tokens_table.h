@@ -41,6 +41,8 @@
 #define NEW_LINE 30
 #define TAB 31
 #define DOUBLE_BACKSLASH 32
+#define EQUAL 33
+#define SPECIAL_ID 34 /* plne kvatifikovany */
 
 
 #endif // TOKENS_TABLE_H

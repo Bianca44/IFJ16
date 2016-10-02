@@ -52,12 +52,12 @@ int get_next_token(FILE * file) {
                         if (isspace(c)) {
                                 state = 0; // stav medzier
                         } else {
-                                if (isalpha(c)) {
+                                if (isalpha(c) || c == '_' || c == '$') {
                                         state = 1; // mozno string alebo cislo
-                                        ungetc(c, file);
+                                        str[i++] = c;
                                 } else if (isdigit(c)) {
                                         state = 2;
-                                        ungetc(c, file);
+                                        str[i++] = c;
                                 } else if (c == '.') {
                                         return DOT;
                                 } else if (c == ',') {
@@ -101,8 +101,7 @@ int get_next_token(FILE * file) {
                                         printf("right rounded bracket \n");
                                         return RIGHT_ROUNDED_BRACKET;
                                 } else if (c == '=') {
-                                        printf("assign\n");
-                                        return ASSIGN;
+                                        state = 12;
                                 } else {
                                         printf(" nieco ine ");
                                         return LEXICAL_ERROR;
@@ -112,7 +111,10 @@ int get_next_token(FILE * file) {
                         break;
 
                 case 1:
-                        if (isalnum(c)) {
+                        if (c == '.') {
+                                str[i++] = c;
+                                state = 13;
+                        } else if (isalnum(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                         } else {
                                 printf("string: %s is keyword = %d \n", str, is_keyword(str));
@@ -272,11 +274,33 @@ int get_next_token(FILE * file) {
                 case 11:
                         state = 0;
                         if (c == '=') {
-                                state = 0;
                                 return GREATER_EQUAL;
                         } else {
                                 ungetc(c, file);
                                 return GREATER;
+                        }
+                        break;
+
+                case 12:
+                        state = 0;
+                        if (c == '=') {
+                                return EQUAL;
+                        } else {
+                                ungetc(c, file);
+                                return ASSIGN;
+                        }
+                        break;
+
+
+                case 13:
+                        if (isalnum(c) || c == '_' || c == '$') {
+                                str[i++] = c;
+                        } else {
+                                printf("string special id: %s \n", str);
+                                ungetc(c, file);
+                                str[i] = '\0';
+                                state = 0;
+                                return SPECIAL_ID;
                         }
                         break;
                 default:
