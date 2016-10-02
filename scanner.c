@@ -223,18 +223,12 @@ int get_next_token(FILE * file) {
 		    octal_counter++;
 		} else {
 		    state = 0;
-		    if (octal_counter == 3) {
-			octal_counter = 0;
-			ungetc(c, file);
-			return BACKSLASH;
-		    } else {
-			state = 0;
 			ungetc(c, file);
 			return LEXICAL_ERROR;	/* \567 */
-		    }
+           }
 		}
 
-	    } else {
+	    else {
 		state = 0;
 		octal_counter = 0;
 		ungetc(c, file);
