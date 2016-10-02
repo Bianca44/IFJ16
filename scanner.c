@@ -179,6 +179,8 @@ int get_next_token(FILE * file) {
                 case 5:
                         state = 0;
                         if (c == '/') {
+                            state = 5;
+                        } else if (c == '\n') {
                                 printf("line comment \n");
                                 return LINE_COMMENT;
                         } else if (c == '*') {
