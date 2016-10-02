@@ -1,6 +1,7 @@
 // test
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include "ial.h"
 #include "tokens_table.h"
@@ -9,6 +10,8 @@
 
 
 // enum pre stavy automatu
+
+char *keywords[17] = { "boolean", "break", "class", "continue", "do", "double", "else", "false", "for", "if", "int", "return", "String", "static", "true", "void", "while"};
 
 typedef struct {
     int type;			// token type
@@ -19,10 +22,13 @@ typedef struct {
     };
 } TToken;
 
-// Todo
-int is_keyword(char *str) {
-    (void) str;
-    return 0;
+bool is_keyword(char *str) {
+    for (int i = 0; i < 17; i++) {
+        if (strcmp(keywords[i] , str) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 int get_next_token(FILE * file) {
@@ -109,7 +115,7 @@ int get_next_token(FILE * file) {
 	    if (isalnum(c)) {
 		str[i++] = c;
 	    } else {
-		printf("string: %s \n", str);
+		printf("string: %s is keyword = %d \n", str, is_keyword(str));
 		ungetc(c, file);
 		str[i] = '\0';
 		state = 0;
