@@ -128,14 +128,11 @@ int get_next_token(FILE * file) {
                                 state = 3;
                         }  else if (isdigit(c)) {
                                 str[i++] = c;
-                        } else if (isspace(c)) {
+                        } else {
                                 printf("number: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 return NUMBER;
-                        } else {
-                                ungetc(c, file);
-                                return LEXICAL_ERROR;
                         }
                         break;
 
@@ -174,18 +171,20 @@ int get_next_token(FILE * file) {
 
                 case 5:
                         if (c == '/') {
-                                state = 6;
-                        } else if (c == '\n') {
-                                printf("line comment \n");
-                                return LINE_COMMENT;
+                                state = 14;
                         } else if (c == '*') {
                                 printf("block comment start \n");
-                                state = 0;
                                 return BLOCK_COMMENT_START;
                         } else {
-                                printf("div \n");
                                 ungetc(c, file);
                                 return DIV;
+                        }
+                        break;
+
+                case 14:
+                        if (c == '\n') {
+                                printf("line comment \n");
+                                return LINE_COMMENT;
                         }
                         break;
 
