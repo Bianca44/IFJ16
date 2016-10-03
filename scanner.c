@@ -145,31 +145,47 @@ int get_next_token(FILE * file) {
                 case 3 /* maybe float */:
                         if (isdigit(c)) {
                                 str[i++] = c;
-                        } else if (c == 'e' || c == 'E') {
-                                str[i++] = c;
-                                state = 4;
+                                state = 17;
+                        } else {
+                            return LEXICAL_ERROR; 
+                        }
+              
+                        break;
+
+                case 17:
+                        if (isdigit(c)) {
+                            str[i++] = c;    
+                        } else if (c == 'e' || c == 'E'){
+                            str[i++] = c;
+                            state = 4;
                         } else {
                                 printf("number: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
                                 return DOUBLE;
                         }
-
+                     
                         break;
 
                 case 4 /* with e */:
-                        state = 15;
                         if (isdigit(c)) {
                                 str[i++] = c;
+                                state = 15;
                         } else if (c == '-' || c == '+') {
                                 str[i++] = c;
+                                state = 18;
                         } else {
-                                ungetc(str[i-1], file); // vratime e
-                                ungetc(c, file);
-                                str[i-1] = '\0';
-                                printf("double: %s \n", str);
-                                return DOUBLE;
+                                return LEXICAL_ERROR;
                         } 
+                        break;
+
+                case 18 ://plus, minus
+                        if (isdigit(c)) {
+                                str[i++] = c;
+                                state = 15;
+                        } else {
+                                return LEXICAL_ERROR;
+                        }
                         break;
 
                 case 15 /* with e */:
