@@ -164,10 +164,10 @@ int get_next_token(FILE * file) {
                         } else if (c == '-' || c == '+') {
                                 str[i++] = c;
                         } else {
-                                ungetc(str[i-1], file); // vratime e
-                                ungetc(c, file);
-                                str[i-1] = '\0';
                                 printf("double: %s \n", str);
+                                printf("%c\n", str[i-1]);
+                                ungetc(c, file);
+                                str[i] = '\0';
                                 return DOUBLE;
                         } 
                         break;
