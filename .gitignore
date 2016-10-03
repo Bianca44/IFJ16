@@ -39,3 +39,4 @@
 #Our extensions
 *.pozn #vlastne pozn. kt. nie je potrebne zdielat
 *.tp 
+main
