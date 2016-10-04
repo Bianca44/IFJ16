@@ -30,10 +30,10 @@ bool is_keyword(char *str) {
 }
 
 Token create_token(int type, char attr[]) {
-    Token t;
-    t.type = type;
-    strcpy(t.attr, attr);
-    return t;
+        Token t;
+        t.type = type;
+        strcpy(t.attr, attr);
+        return t;
 }
 
 Token get_next_token(FILE * file) {
@@ -73,7 +73,7 @@ Token get_next_token(FILE * file) {
                                         sprintf(str,"%c",c);
                                         return create_token(COMMA, str);
                                 } else if (c == '\'') {
-                                    sprintf(str,"%c",c);
+                                        sprintf(str,"%c",c);
                                         return create_token(SIMPLE_QUOTE, str);
                                 } else if (c == '"') {
                                         state = 12;
@@ -98,7 +98,7 @@ Token get_next_token(FILE * file) {
                                 } else if (c == '&') {
                                         state = 20;
                                 } else if (c == ';') {
-                                    sprintf(str,"%c",c);
+                                        sprintf(str,"%c",c);
                                         return create_token(SEMICOLON, str);
                                 } else if (c == '{') {
                                         sprintf(str,"%c",c);
@@ -110,7 +110,7 @@ Token get_next_token(FILE * file) {
                                         sprintf(str,"%c",c);
                                         return create_token(LEFT_ROUNDED_BRACKET, str);
                                 } else if (c == ')') {
-                                    sprintf(str,"%c",c);
+                                        sprintf(str,"%c",c);
                                         return create_token(RIGHT_ROUNDED_BRACKET, str);
                                 } else if (c == '=') {
                                         state = 10;
@@ -154,7 +154,7 @@ Token get_next_token(FILE * file) {
                                 str[i++] = c;
                                 state = 17;
                         } else {
-                            return create_token(LEXICAL_ERROR, "");
+                                return create_token(LEXICAL_ERROR, "");
                         }
 
                         break;
@@ -181,7 +181,7 @@ Token get_next_token(FILE * file) {
                                 str[i++] = c;
                                 state = 18;
                         } else {
-                            return create_token(LEXICAL_ERROR, "");
+                                return create_token(LEXICAL_ERROR, "");
                         }
                         break;
 
@@ -190,7 +190,7 @@ Token get_next_token(FILE * file) {
                                 str[i++] = c;
                                 state = 15;
                         } else {
-                            ungetc(c, file);
+                                ungetc(c, file);
                                 return create_token(LEXICAL_ERROR, "");
                         }
                         break;
@@ -255,21 +255,21 @@ Token get_next_token(FILE * file) {
                         break;
                 case 9:
                         if (c == '=') {
-                                return  create_token(GREATER_EQUAL, ">=");
+                                return create_token(GREATER_EQUAL, ">=");
                         } else {
                                 ungetc(c, file);
                                 sprintf(str,"%c",c);
-                                return  create_token(GREATER,  str);
+                                return create_token(GREATER,  str);
                         }
                         break;
 
                 case 10:
                         if (c == '=') {
-                                return  create_token(EQUAL, "==");
+                                return create_token(EQUAL, "==");
                         } else {
                                 ungetc(c, file);
                                 sprintf(str,"%c",c);
-                                return  create_token(ASSIGN, str);
+                                return create_token(ASSIGN, str);
                         }
                         break;
 
@@ -280,7 +280,7 @@ Token get_next_token(FILE * file) {
                                 state = 13;
                         } else  {
                                 ungetc(c, file);
-                                return  create_token(LEXICAL_ERROR, "");
+                                return create_token(LEXICAL_ERROR, "");
                         } break;
 
 
@@ -316,14 +316,14 @@ Token get_next_token(FILE * file) {
                         }
                         break;
 
-                        case 20:  // &&
-                                if (c == '&') {
-                                        return create_token(LOGICAL_AND, "&&");
-                                } else {
-                                        ungetc(c, file);
-                                        return create_token(LEXICAL_ERROR, "");
-                                }
-                                break;
+                case 20:          // &&
+                        if (c == '&') {
+                                return create_token(LOGICAL_AND, "&&");
+                        } else {
+                                ungetc(c, file);
+                                return create_token(LEXICAL_ERROR, "");
+                        }
+                        break;
                 default:
                         /* should not happen */
                         break;
@@ -350,9 +350,9 @@ int init_scanner(char *filename) {
         while ((s = get_next_token(file)).type != EOF) {
                 printf("[%d]", s.type);
                 if (strlen(s.attr) != 0) {
-                    printf("[%s]\n", s.attr);
+                        printf("[%s]\n", s.attr);
                 } else {
-                    printf("\n");
+                        printf("\n");
                 }
         }
 
