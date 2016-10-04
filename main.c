@@ -31,6 +31,5 @@ int main(int argc, char *argv[]) {
            find(&s, "katka");
            free_string(&s); */
 
-        printf("path: %s \n", argv[1]);
         return internal_error;
 }

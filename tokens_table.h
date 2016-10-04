@@ -23,6 +23,9 @@
 #define LINE_COMMENT 14
 #define BLOCK_COMMENT 15
 
+#define LOGICAL_AND 16
+#define LOGICAL_OR 17
+
 #define COMMA 18
 #define NEG 19
 #define SIMPLE_QUOTE 20

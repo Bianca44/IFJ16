@@ -15,12 +15,8 @@ char *keywords[17] = { "boolean", "break", "class", "continue", "do", "double", 
 
 typedef struct {
         int type;       // token type
-        union {
-                int value_int;
-                double value_double;
-                string value_string;
-        };
-} TToken;
+        char attr[256]; // tmp 256
+} Token;
 
 /* is_data_type */
 
@@ -33,7 +29,14 @@ bool is_keyword(char *str) {
         return false;
 }
 
-int get_next_token(FILE * file) {
+Token create_token(int type, char attr[]) {
+    Token t;
+    t.type = type;
+    strcpy(t.attr, attr);
+    return t;
+}
+
+Token get_next_token(FILE * file) {
 
         int c;
         int state = 0;
@@ -44,11 +47,11 @@ int get_next_token(FILE * file) {
         while (1) {
                 c = fgetc(file);
                 if (c == EOF) {
-                        if (state == 14){
-                            printf("line comment test\n");
-                            return LINE_COMMENT;
+                        if (state == 14) {
+                                printf("line comment test\n");
+                                return create_token(LINE_COMMENT, "");
                         } else {
-                            return (state > 0) ? LEXICAL_ERROR : c;
+                                return (state > 0) ? create_token(LEXICAL_ERROR, "") : create_token(EOF, "");
                         }
                 }
 
@@ -67,47 +70,54 @@ int get_next_token(FILE * file) {
                                         state = 1; // mozno string alebo cislo
                                         str[i++] = c;
                                 } else if (c == ',') {
-                                        return COMMA;
+                                        sprintf(str,"%c",c);
+                                        return create_token(COMMA, str);
                                 } else if (c == '\'') {
-                                        return SIMPLE_QUOTE;
+                                    sprintf(str,"%c",c);
+                                        return create_token(SIMPLE_QUOTE, str);
                                 } else if (c == '"') {
                                         state = 12;
                                 } else if (c == '+') {
-                                        return ADD;
+                                        return create_token(ADD, "+");
                                 } else if (c == '-') {
-                                        return SUB;
+                                        return create_token(SUB, "-");
                                 } else if (c == ':') {
-                                        return COLON;
+                                        return create_token(COLON, ":");
                                 } else if (c == '/') {
                                         state = 5;
                                 } else if (c == '*') {
-                                        return MUL;
+                                        return create_token(MUL, "*");
                                 } else if (c == '!') {
                                         state = 7;
                                 } else if (c == '<') {
                                         state = 8;
                                 } else if (c == '>') {
                                         state = 9;
+                                } else if (c == '|') {
+                                        state = 19;
+                                } else if (c == '&') {
+                                        state = 20;
                                 } else if (c == ';') {
-                                        printf("semicolon \n");
-                                        return SEMICOLON;
+                                    sprintf(str,"%c",c);
+                                        return create_token(SEMICOLON, str);
                                 } else if (c == '{') {
-                                        printf("left curved bracket \n");
-                                        return LEFT_CURVED_BRACKET;
+                                        sprintf(str,"%c",c);
+                                        return create_token(LEFT_CURVED_BRACKET, str);
                                 } else if (c == '}') {
-                                        printf("right curved bracket \n");
-                                        return RIGHT_CURVED_BRACKET;
+                                        sprintf(str,"%c",c);
+                                        return create_token(RIGHT_CURVED_BRACKET, str);
                                 } else if (c == '(') {
-                                        printf("left round bracket \n");
-                                        return LEFT_ROUNDED_BRACKET;
+                                        sprintf(str,"%c",c);
+                                        return create_token(LEFT_ROUNDED_BRACKET, str);
                                 } else if (c == ')') {
-                                        printf("right rounded bracket \n");
-                                        return RIGHT_ROUNDED_BRACKET;
+                                    sprintf(str,"%c",c);
+                                        return create_token(RIGHT_ROUNDED_BRACKET, str);
                                 } else if (c == '=') {
                                         state = 10;
                                 } else {
                                         //printf(" nieco ine ");
-                                        return LEXICAL_ERROR;
+                                        sprintf(str,"%c",c);
+                                        return create_token(LEXICAL_ERROR, str);
                                 }
 
                         }
@@ -120,10 +130,8 @@ int get_next_token(FILE * file) {
                         } else if (isalnum(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                         } else {
-                                printf("string: %s is keyword = %d \n", str, is_keyword(str));
                                 ungetc(c, file);
-                                str[i] = '\0';
-                                return ID;
+                                return create_token(ID, str);
                         }
                         break;
 
@@ -134,10 +142,9 @@ int get_next_token(FILE * file) {
                         }  else if (isdigit(c)) {
                                 str[i++] = c;
                         }  else {
-                                printf("number: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
-                                return NUMBER;
+                                return create_token(NUMBER, str);
 
                         }
                         break;
@@ -147,24 +154,23 @@ int get_next_token(FILE * file) {
                                 str[i++] = c;
                                 state = 17;
                         } else {
-                            return LEXICAL_ERROR; 
+                            return create_token(LEXICAL_ERROR, "");
                         }
-              
+
                         break;
 
                 case 17:
                         if (isdigit(c)) {
-                            str[i++] = c;    
-                        } else if (c == 'e' || c == 'E'){
-                            str[i++] = c;
-                            state = 4;
+                                str[i++] = c;
+                        } else if (c == 'e' || c == 'E') {
+                                str[i++] = c;
+                                state = 4;
                         } else {
-                                printf("number: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
-                                return DOUBLE;
+                                return create_token(DOUBLE, str);
                         }
-                     
+
                         break;
 
                 case 4 /* with e */:
@@ -175,16 +181,17 @@ int get_next_token(FILE * file) {
                                 str[i++] = c;
                                 state = 18;
                         } else {
-                                return LEXICAL_ERROR;
-                        } 
+                            return create_token(LEXICAL_ERROR, "");
+                        }
                         break;
 
-                case 18 ://plus, minus
+                case 18: //plus, minus
                         if (isdigit(c)) {
                                 str[i++] = c;
                                 state = 15;
                         } else {
-                                return LEXICAL_ERROR;
+                            ungetc(c, file);
+                                return create_token(LEXICAL_ERROR, "");
                         }
                         break;
 
@@ -192,13 +199,12 @@ int get_next_token(FILE * file) {
                         if (isdigit(c)) {
                                 str[i++] = c;
                         } else {
-                                printf("double: %s \n", str);
                                 ungetc(c, file);
-                                str[i] = '\0';
-                                return DOUBLE;
-                        } 
+                                sprintf(str,"%c",c);
+                                return create_token(DOUBLE, str);
+                        }
                         break;
- 
+
                 case 5:
                         if (c == '/') {
                                 state = 14;
@@ -206,14 +212,14 @@ int get_next_token(FILE * file) {
                                 state = 6;
                         } else {
                                 ungetc(c, file);
-                                return DIV;
+                                sprintf(str,"%c",c);
+                                return create_token(DIV, str);
                         }
                         break;
 
                 case 14:
                         if (c == '\n') {
-                                printf("line comment \n");
-                                return LINE_COMMENT;
+                                return create_token(LINE_COMMENT, "");
                         }
                         break;
 
@@ -225,42 +231,45 @@ int get_next_token(FILE * file) {
 
                 case 16:
                         if (c == '/') {
-                                printf("block comment\n");
-                                return BLOCK_COMMENT;
+                                return create_token(BLOCK_COMMENT, "");
                         }
                         break;
 
                 case 7:
                         if (c == '=') {
-                                return NOT_EQUAL;
+                                return create_token(LESS_EQUAL, "!=");
                         } else {
                                 ungetc(c, file);
-                                return LEXICAL_ERROR; /* BOOLOP */
+                                sprintf(str,"%c",c);
+                                return create_token(NEG, str);
                         }
                         break;
                 case 8:
                         if (c == '=') {
-                                return LESS_EQUAL;
+                                return create_token(LESS_EQUAL, "<");
                         } else {
                                 ungetc(c, file);
-                                return LESS;
+                                sprintf(str,"%c",c);
+                                return create_token(LESS, str);
                         }
                         break;
                 case 9:
                         if (c == '=') {
-                                return GREATER_EQUAL;
+                                return  create_token(GREATER_EQUAL, ">=");
                         } else {
                                 ungetc(c, file);
-                                return GREATER;
+                                sprintf(str,"%c",c);
+                                return  create_token(GREATER,  str);
                         }
                         break;
 
                 case 10:
                         if (c == '=') {
-                                return EQUAL;
+                                return  create_token(EQUAL, "==");
                         } else {
                                 ungetc(c, file);
-                                return ASSIGN;
+                                sprintf(str,"%c",c);
+                                return  create_token(ASSIGN, str);
                         }
                         break;
 
@@ -271,19 +280,18 @@ int get_next_token(FILE * file) {
                                 state = 13;
                         } else  {
                                 ungetc(c, file);
-                                return LEXICAL_ERROR;
+                                return  create_token(LEXICAL_ERROR, "");
                         } break;
 
 
                 case 12:
                         if (c == '"') {
                                 str[i] = '\0';
-                                printf("string lit: %s \n", str);
-                                return STRING_LITERAL;
+                                return create_token(STRING_LITERAL, str);
 
                         } else if (c == '\n') {
                                 ungetc(c, file);
-                                return LEXICAL_ERROR;
+                                return create_token(LEXICAL_ERROR, "");
                         } else {
                                 str[i++] = c;
                         }
@@ -293,12 +301,29 @@ int get_next_token(FILE * file) {
                         if (isalnum(c) || c == '_' || c == '$') {
                                 str[i++] = c;
                         } else {
-                                printf("string special id: %s \n", str);
                                 ungetc(c, file);
                                 str[i] = '\0';
-                                return SPECIAL_ID;
+                                return create_token(SPECIAL_ID, str);
                         }
                         break;
+
+                case 19:    // ||
+                        if (c == '|') {
+                                return create_token(LOGICAL_OR, "||");
+                        } else {
+                                ungetc(c, file);
+                                return create_token(LEXICAL_ERROR, "");
+                        }
+                        break;
+
+                        case 20:  // &&
+                                if (c == '&') {
+                                        return create_token(LOGICAL_AND, "&&");
+                                } else {
+                                        ungetc(c, file);
+                                        return create_token(LEXICAL_ERROR, "");
+                                }
+                                break;
                 default:
                         /* should not happen */
                         break;
@@ -320,15 +345,14 @@ int init_scanner(char *filename) {
                 file = fopen(filename, "r");
         }
 
-        int s;
+        Token s;
 
-        while ((s = get_next_token(file)) != EOF) {
-                printf("token: %d ", s);
-                if (s == LEXICAL_ERROR) {
-                        printf(" (lexikalna chyba) \n");
-                        //break;
+        while ((s = get_next_token(file)).type != EOF) {
+                printf("[%d]", s.type);
+                if (strlen(s.attr) != 0) {
+                    printf("[%s]\n", s.attr);
                 } else {
-                        printf("\n");
+                    printf("\n");
                 }
         }
 
