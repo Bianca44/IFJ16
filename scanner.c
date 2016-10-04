@@ -45,7 +45,7 @@ int get_next_token(FILE * file) {
                 c = fgetc(file);
                 if (c == EOF) {
                         if (state == 14){
-                            printf("line comment \n");
+                            printf("line comment test\n");
                             return LINE_COMMENT;
                         } else {
                             return (state > 0) ? LEXICAL_ERROR : c;
