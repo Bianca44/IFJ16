@@ -13,6 +13,10 @@
 
 char *keywords[17] = { "boolean", "break", "class", "continue", "do", "double", "else", "false", "for", "if", "int", "return", "String", "static", "true", "void", "while"};
 
+char *token_names[31] = { "ID", "KEYWORD", "NUMBER", "DOUBLE", "ADD", "SUB", "MUL", "DIV", "SEMICOLON",  "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET", "LEFT_ROUNDED_BRACKET", "RIGHT_ROUNDED_BRACKET",  "ASSIGN",  "LINE_COMMENT", "BLOCK_COMMENT",  "LOGICAL_AND", "LOGICAL_OR", "COMMA", "NEG", "SIMPLE_QUOTE", "STRING_LITERAL",  "COLON", "NOT_EQUAL", "LESS_EQUAL", "LESS", "GREATER_EQUAL", "GREATER",  "EQUAL", "SPECIAL_ID", "LEXICAL_ERROR"};
+
+
+
 typedef struct {
         int type;       // token type
         char attr[256]; // tmp 256
@@ -200,7 +204,7 @@ Token get_next_token(FILE * file) {
                                 str[i++] = c;
                         } else {
                                 ungetc(c, file);
-                                sprintf(str,"%c",c);
+                                //sprintf(str,"%c",c); WTF YOU JUST DID THERE ? why ?
                                 return create_token(DOUBLE, str);
                         }
                         break;
@@ -348,7 +352,7 @@ int init_scanner(char *filename) {
         Token s;
 
         while ((s = get_next_token(file)).type != EOF) {
-                printf("[%d]", s.type);
+                printf("[%s]", token_names[s.type]);
                 if (strlen(s.attr) != 0) {
                         printf("[%s]\n", s.attr);
                 } else {

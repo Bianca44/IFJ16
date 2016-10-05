@@ -4,6 +4,7 @@
 #include "scanner.c"
 #include "strings.h"
 
+
 int main(int argc, char *argv[]) {
         if (argc != 2) {
                 //fprintf(stderr, "bad arguments\n");
