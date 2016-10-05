@@ -1,26 +1,13 @@
-// test
+// mtest
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include "ial.h"
-#include "tokens_table.h"
 #include <string.h>
 #include "strings.h"
+#include "scanner.h"
 
-
-// enum pre stavy automatu
-
-char *keywords[17] = { "boolean", "break", "class", "continue", "do", "double", "else", "false", "for", "if", "int", "return", "String", "static", "true", "void", "while"};
-
-char *token_names[31] = { "ID", "KEYWORD", "NUMBER", "DOUBLE", "ADD", "SUB", "MUL", "DIV", "SEMICOLON",  "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET", "LEFT_ROUNDED_BRACKET", "RIGHT_ROUNDED_BRACKET",  "ASSIGN",  "LINE_COMMENT", "BLOCK_COMMENT",  "LOGICAL_AND", "LOGICAL_OR", "COMMA", "NEG", "SIMPLE_QUOTE", "STRING_LITERAL",  "COLON", "NOT_EQUAL", "LESS_EQUAL", "LESS", "GREATER_EQUAL", "GREATER",  "EQUAL", "SPECIAL_ID", "LEXICAL_ERROR"};
-
-
-
-typedef struct {
-        int type;       // token type
-        char attr[256]; // tmp 256
-} Token;
 
 /* is_data_type */
 
@@ -52,7 +39,6 @@ Token get_next_token(FILE * file) {
                 c = fgetc(file);
                 if (c == EOF) {
                         if (state == 14) {
-                                printf("line comment test\n");
                                 return create_token(LINE_COMMENT, "");
                         } else {
                                 return (state > 0) ? create_token(LEXICAL_ERROR, "") : create_token(EOF, "");

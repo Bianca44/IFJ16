@@ -9,34 +9,22 @@ typedef struct {
 	char *data;
 	int length;
 	int allocated_size;
-} string;
+} *string;
 
 
 
 
-bool init_string(string * str);
+bool init_string(string  str);
 
-void free_string(string * str);
-void clear_string(string * str);
+void clear_string(string str);
 
-bool set_string(string *str, char *text);
+void remove_last_char(string str);
 
-bool copy_string(string *str, char *text);
+bool append_char(string str, char c);
 
-bool append_string(string *str, char *text);
+void  sort(string str);
 
-char *get_string(string * str);
-int get_length(string * str);
-
-bool is_empty(string * str);
-
-void remove_last_char(string * str);
-
-bool append_char(string * str, char c);
-
-void  sort(string * str);
-
-void find(string *str, char* search);
+void find(string str, char* search);
 
 
 #endif
