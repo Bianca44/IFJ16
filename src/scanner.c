@@ -12,12 +12,12 @@ int save_token(token *t, int type, string *attr) {
         if (attr != NULL) {
                 t->attr.data = strdup(attr->data);
                 t->attr.length = attr->length;
-                t->attr.allocated_size = attr->length +1;
+                t->attr.allocated_size = attr->length + 1;
                 clear_string(attr);
         } else {
                 t->attr.data =  NULL;
                 t->attr.length = 0;
-                t->attr.allocated_size =0;
+                t->attr.allocated_size = 0;
         }
         return type;
 }
@@ -68,7 +68,6 @@ int get_next_token(token *t, FILE * file) {
                                 } else if (c == '"') {
                                         state = 12;
                                         init_string(&s);
-                                        append_char(&s, c);
                                 } else if (c == '+') {
                                         return save_token(t, ADD, NULL);
                                 } else if (c == '-') {
@@ -264,7 +263,6 @@ int get_next_token(token *t, FILE * file) {
 
                 case 12:
                         if (c == '"') {
-                                append_char(&s, c);
                                 return save_token(t, STRING_LITERAL, &s);
 
                         } else if (c == '\n') {
@@ -320,8 +318,15 @@ int init_scanner(char *filename) {
                 file = fopen(filename, "r");
         }
 
+        if (file == NULL) {
+                printf("File not found\n");
+                return -2;
+        }
+
         token t;
         while (get_next_token(&t, file) != EOF) {
+
+                #if LEXICAL_TESTS
                 printf("[%s]", token_names[t.type]);
                 if (t.attr.data != NULL) {
                         printf("[%s]\n", t.attr.data);
@@ -329,6 +334,7 @@ int init_scanner(char *filename) {
                 } else {
                         printf("\n");
                 }
+                #endif
         }
 
         fclose(file);
