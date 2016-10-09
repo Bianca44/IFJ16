@@ -222,7 +222,7 @@ int get_next_token(token *t, FILE * file) {
 
                 case 7:
                         if (c == '=') {
-                                return save_token(t, LESS_EQUAL, NULL);
+                                return save_token(t, NOT_EQUAL, NULL);
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, NEG, NULL);
