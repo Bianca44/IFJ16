@@ -9,7 +9,7 @@
 
 int save_token(token *t, int type, string *attr) {
         t->type = type;
-        if (attr != NULL) {
+        if (attr != NULL && type < KEYWORD_TOKENS_OFFSET) {
                 t->attr.data = strdup(attr->data);
                 t->attr.length = attr->length;
                 t->attr.allocated_size = attr->length + 1;
@@ -22,13 +22,18 @@ int save_token(token *t, int type, string *attr) {
         return type;
 }
 
-bool is_keyword(char *str) {
-        for (int i = 0; i < 17; i++) {
-                if (strcmp(keywords[i], str) == 0) {
-                        return true;
+int detect_keyword(string *str) {
+        if (str->length > LONGEST_KEYWORD) {
+                return ID;
+        }
+
+        for (int i = 0; i < KEYWORDS_COUNT; i++) {
+                if (strcmp(keywords[i], str->data) == 0) {
+                        return i + KEYWORD_TOKENS_OFFSET;
                 }
         }
-        return false;
+
+        return ID;
 }
 
 int get_next_token(token *t, FILE * file) {
@@ -115,7 +120,7 @@ int get_next_token(token *t, FILE * file) {
                                 append_char(&s, c);
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, ID, &s);
+                                return save_token(t, detect_keyword(&s), &s);
                         }
                         break;
 
@@ -150,7 +155,7 @@ int get_next_token(token *t, FILE * file) {
                                 state = 4;
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, DOUBLE, &s);
+                                return save_token(t, FLOAT, &s);
                         }
 
                         break;
@@ -182,7 +187,7 @@ int get_next_token(token *t, FILE * file) {
                                 append_char(&s, c);
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, DOUBLE, &s);
+                                return save_token(t, FLOAT, &s);
                         }
                         break;
 
