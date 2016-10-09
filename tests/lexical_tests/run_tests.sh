@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DIR=$(pwd)
-TESTS_COUNT=5
+TESTS_COUNT=6
 
 cd ../../src
 make -s
