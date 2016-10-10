@@ -40,5 +40,5 @@
 *.tp
 
 # Binary files
-/main
-/main_lexical_tests
+main
+main_lexical_tests
