@@ -36,8 +36,9 @@
 *.c~
 *.h~
 
-#Our extensions
-*.pozn #vlastne pozn. kt. nie je potrebne zdielat
+# Our extensions
 *.tp
-main
-main_lexical_tests
+
+# Binary files
+/main
+/main_lexical_tests

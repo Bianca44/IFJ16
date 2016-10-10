@@ -335,11 +335,14 @@ int init_scanner(char *filename) {
                 printf("[%s]", token_names[t.type]);
                 if (t.attr.data != NULL) {
                         printf("[%s]\n", t.attr.data);
-                        clear_string(&t.attr);
                 } else {
                         printf("\n");
                 }
                 #endif
+
+                if (t.attr.data != NULL) {
+                        clear_string(&t.attr);
+                }
         }
 
         fclose(file);
