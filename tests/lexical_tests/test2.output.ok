@@ -1,3 +1,2 @@
-[BLOCK_COMMENT]
 [STRING_LITERAL][literal \n]
-[LINE_COMMENT]
+[ID][test]

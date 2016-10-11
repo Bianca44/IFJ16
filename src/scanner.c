@@ -204,7 +204,7 @@ int get_next_token(token *t, FILE * file) {
 
                 case 14:
                         if (c == '\n') {
-                                return save_token(t, LINE_COMMENT, NULL);
+                                state = 0;
                         }
                         break;
 
@@ -216,7 +216,7 @@ int get_next_token(token *t, FILE * file) {
 
                 case 16:
                         if (c == '/') {
-                                return save_token(t, BLOCK_COMMENT, NULL);
+                                state = 0;
                         }
                         break;
 
