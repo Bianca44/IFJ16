@@ -1,37 +1,16 @@
 class HelloWorld {
-    static void main() {
+    static int a = 9;
+    static void main(int p, int a, String x) {
         int a = 45;
-
-    }
-    static void zolo() {
-        int a = 45;
-
-    }
-    static void zolo() {
-        int a = 45;
-
-    }
-    static void zolo() {
-        int a = 45;
-
     }
 }
 
-class Kokot {
-    static void main() {
+class HelloWorld2 {
+    static int a = 9;
+    static void main(int p, int a, String x) {
         int a = 45;
-
     }
-    static void zolo() {
+    static void main3(int p) {
         int a = 45;
-
-    }
-    static void zolo() {
-        int a = 45;
-
-    }
-    static void zolo() {
-        int a = 45;
-
     }
 }
