@@ -6,6 +6,7 @@
 #include <string.h>
 #include "strings.h"
 #include "scanner.h"
+#include "parser.c"
 
 int save_token(token *t, int type, string *attr) {
         t->type = type;
@@ -344,6 +345,9 @@ int init_scanner(char *filename) {
                         clear_string(&t.attr);
                 }
         }
+
+        rewind(file);
+        parse(file);
 
         fclose(file);
 

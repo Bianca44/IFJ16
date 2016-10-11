@@ -1,0 +1,37 @@
+class HelloWorld {
+    static void main() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+}
+
+class Kokot {
+    static void main() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+    static void zolo() {
+        int a = 45;
+
+    }
+}
