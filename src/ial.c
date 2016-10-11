@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
-        printf("hello world\n");
+        printf("argc= %d argv = %s\n", argc, argv[0]);
         return 0;
 }
