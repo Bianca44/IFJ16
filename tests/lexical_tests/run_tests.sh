@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TESTS_COUNT=7
+TESTS_COUNT=8
 
 cd ../../src
 make -s
