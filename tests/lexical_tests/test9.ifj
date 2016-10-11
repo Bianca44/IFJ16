@@ -1,0 +1,10 @@
+/
+class main{
+    int token = 5;
+    int s = Hello.get_token();
+} //end main
+/*
+blok
+*/
+//koment
+///
