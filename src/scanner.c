@@ -10,7 +10,7 @@
 int save_token(token *t, int type, string *attr) {
         t->type = type;
         if (attr != NULL && type < KEYWORD_TOKENS_OFFSET) {
-                t->attr.data = strdup(attr->data);
+                t->attr.data = clone_string(attr->data);
                 t->attr.length = attr->length;
                 t->attr.allocated_size = attr->length + 1;
                 clear_string(attr);
@@ -68,8 +68,6 @@ int get_next_token(token *t, FILE * file) {
                                         append_char(&s, c);
                                 } else if (c == ',') {
                                         return save_token(t, COMMA, NULL);
-                                } else if (c == '\'') {
-                                        return save_token(t, SIMPLE_QUOTE, NULL);
                                 } else if (c == '"') {
                                         state = 12;
                                         init_string(&s);
@@ -132,7 +130,7 @@ int get_next_token(token *t, FILE * file) {
                                 append_char(&s, c);
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, INTEGER, &s);
+                                return save_token(t, INT_LITERAL, &s);
 
                         }
                         break;
@@ -155,7 +153,7 @@ int get_next_token(token *t, FILE * file) {
                                 state = 4;
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, FLOAT, &s);
+                                return save_token(t, DOUBLE_LITERAL, &s);
                         }
 
                         break;
@@ -187,7 +185,7 @@ int get_next_token(token *t, FILE * file) {
                                 append_char(&s, c);
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, FLOAT, &s);
+                                return save_token(t, DOUBLE_LITERAL, &s);
                         }
                         break;
 

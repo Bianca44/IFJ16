@@ -24,7 +24,7 @@ void remove_last_char(string *str);
 
 bool append_char(string *str, char c);
 
-char *strdup (const char *s);
+char *clone_string(const char *s);
 
 
 #endif

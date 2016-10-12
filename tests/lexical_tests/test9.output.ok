@@ -5,7 +5,7 @@
 [INT]
 [ID][token]
 [ASSIGN]
-[INTEGER][5]
+[INT_LITERAL][5]
 [SEMICOLON]
 [INT]
 [ID][s]
