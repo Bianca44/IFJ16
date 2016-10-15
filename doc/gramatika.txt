@@ -1,0 +1,42 @@
+<class-list> -> class ID { <class-elements> } <class-list>
+<class-elements> -> static <data-type> ID = E; <class-elements>
+<class-elements> -> static <return-type> ID ( <param-list> ) { <method-elements> } <class-elements>
+
+<literal> -> INT_LITERAL
+<literal> -> DOUBLE_LITERAL
+<literal> -> STRING_LITERAL
+
+<data-type> -> int 
+<data-type> -> double
+<data-type> -> String
+<data-type> -> boolean
+
+<return-type> -> void
+<return-type> -> int 
+<return-type> -> double
+<return-type> -> String
+<return-type> -> boolean
+
+<param-list> -> epsilon
+<param-list> -> <param> , <param-list>
+<param> -> <data-type> ID = E; 
+<param> -> <data-type> ID = <literal>
+
+<method-elements> -> epsilon
+<method-elements> -> if <E> then <compound-statement> else <compound-statement>; <method-elements>
+<method-elements> -> if <E> then <compound-statement>; <method-elements>
+<method-elements> -> return <E>;
+
+
+<compound-statement> -> { <statement-list> } <compound-statement>
+<statement-list> -> <statement>; <statement-list>
+<statement> -> ID = <E>; <statement>
+<statement> -> <method>; <statement>
+
+<E> -> <literal>
+<E> -> <E> <op> <E>
+<E> -> (E)
+<E> -> <method>
+<method> -> ID (<param-list>)
+
+<op> -> všetky operatori
