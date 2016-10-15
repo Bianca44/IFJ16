@@ -23,20 +23,32 @@
 <param> -> <data-type> ID = <literal>
 
 <method-elements> -> epsilon
-<method-elements> -> if <E> then <compound-statement> else <compound-statement>; <method-elements>
-<method-elements> -> if <E> then <compound-statement>; <method-elements>
+<method-elements> -> <statement-list> <method-elements>
+<method-elements> -> if <E> <condition-statement> else <condition-statement>; <method-elements>
+<method-elements> -> if <E> <condition-statement>; <method-elements>
+<method-elements> -> while <E> <condition-statement>;
 <method-elements> -> return <E>;
 
 
-<compound-statement> -> { <statement-list> } <compound-statement>
+<condition-statement> -> { <statement-list> } <condition-statement>
+<condition-statement> -> <statement>
 <statement-list> -> <statement>; <statement-list>
 <statement> -> ID = <E>; <statement>
+<statement> -> <data-type> ID = E; <statement>
 <statement> -> <method>; <statement>
 
+
+//pravidla pre precedencnu analyzu
 <E> -> <literal>
+<E> -> ! <E>
 <E> -> <E> <op> <E>
 <E> -> (E)
 <E> -> <method>
-<method> -> ID (<param-list>)
+<method> -> ID (<param-list>);
 
-<op> -> všetky operatori
+<op> -> ADD
+<op> -> SUB
+<op> -> DIV
+<op> -> MUL
+<op> -> LOGICAL_AND
+<op> -> LOGICAL_OR
