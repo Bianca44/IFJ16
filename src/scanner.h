@@ -22,9 +22,9 @@ char *token_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBL
 typedef struct {
         int type;
         union {
-                char * string_val;
-                int int_val;
-                double double_val;
+                char * string_value;
+                int int_value;
+                double double_value;
         } attr;
 } token_t;
 
