@@ -1,10 +1,13 @@
-<class-list> -> class ID { <class-elements> } <class-list>
-<class-elements> -> static <data-type> ID = E; <class-elements>
-<class-elements> -> static <return-type> ID ( <param-list> ) { <method-elements> } <class-elements>
+<class-list> -> class <ID> { <class-elements> } <class-list>
+<class-elements> -> static <data-type> <ID> = <E>; <class-elements>
+<class-elements> -> static <return-type> <ID> ( <param-list> ) { <method-elements> } <class-elements>
 
+<ID> id
 <literal> -> INT_LITERAL
 <literal> -> DOUBLE_LITERAL
 <literal> -> STRING_LITERAL
+<literal> -> true
+<literal> -> false
 
 <data-type> -> int 
 <data-type> -> double
@@ -19,36 +22,41 @@
 
 <param-list> -> epsilon
 <param-list> -> <param> , <param-list>
-<param> -> <data-type> ID = E; 
-<param> -> <data-type> ID = <literal>
+<param> -> <data-type> <ID> = <E>; 
 
 <method-elements> -> epsilon
 <method-elements> -> <statement-list> <method-elements>
-<method-elements> -> if <E> <condition-statement> else <condition-statement>; <method-elements>
-<method-elements> -> if <E> <condition-statement>; <method-elements>
-<method-elements> -> while <E> <condition-statement>;
+<method-elements> -> if <E> <condition-statement> <else> <method-elements>
+<method-elements> -> while <E> <condition-statement>; <method-elements>
 <method-elements> -> return <E>;
+<method-elements> -> ;
+<else> -> else <condition-statement> 
+<else> -> epsilon
 
-
-<condition-statement> -> { <statement-list> } <condition-statement>
+<condition-statement> -> { <statement-list> }
 <condition-statement> -> <statement>
+<statement-list> -> epsilon
 <statement-list> -> <statement>; <statement-list>
-<statement> -> ID = <E>; <statement>
-<statement> -> <data-type> ID = E; <statement>
+<statement> -> epsilon
+<statement> -> <ID> = <E>; <statement>
+<statement> -> <data-type> <ID> = <E>; <statement>
 <statement> -> <method>; <statement>
 
 
 //pravidla pre precedencnu analyzu
 <E> -> <literal>
-<E> -> ! <E>
+<E> -> !<E>
 <E> -> <E> <op> <E>
 <E> -> (E)
 <E> -> <method>
-<method> -> ID (<param-list>);
+<method> -> <ID> (<callparam-list>);
+<callparam-list> -> epsilon
+<callparam-list> -> <E>,<callparam-list>
 
-<op> -> ADD
-<op> -> SUB
-<op> -> DIV
-<op> -> MUL
-<op> -> LOGICAL_AND
-<op> -> LOGICAL_OR
+
+<op> -> +
+<op> -> -
+<op> -> /
+<op> -> *
+<op> -> &&
+<op> -> || 
