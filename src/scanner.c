@@ -7,22 +7,33 @@
 #include "strings.h"
 #include "scanner.h"
 
-int save_token(token *t, int type, string *attr) {
+int save_token(token_t *t, int type, string_t *attr) {
         t->type = type;
-        if (attr != NULL && type < KEYWORD_TOKENS_OFFSET) {
-                t->attr.data = clone_string(attr->data);
-                t->attr.length = attr->length;
-                t->attr.allocated_size = attr->length + 1;
-                clear_string(attr);
-        } else {
-                t->attr.data =  NULL;
-                t->attr.length = 0;
-                t->attr.allocated_size = 0;
+        if (attr != NULL) {
+                switch (type) {
+                case ID:
+                case SPECIAL_ID:
+                case STRING_LITERAL:
+                        t->attr.string_val = attr->data;
+                        break;
+                case INT_LITERAL:
+                        t->attr.int_val = atoi(attr->data);
+                        clear_string(attr);
+                        break;
+
+                case DOUBLE_LITERAL:
+                        t->attr.double_val = atof(attr->data);
+                        clear_string(attr);
+                        break;
+                default:
+                        clear_string(attr);
+                        break;
+                }
         }
         return type;
 }
 
-int detect_keyword(string *str) {
+int detect_keyword(string_t *str) {
         if (str->length > LONGEST_KEYWORD) {
                 return ID;
         }
@@ -36,12 +47,12 @@ int detect_keyword(string *str) {
         return ID;
 }
 
-int get_next_token(token *t, FILE * file) {
+int get_next_token(token_t *t, FILE * file) {
 
         int c;
         int state = 0;
 
-        string s;
+        string_t s;
 
         while (1) {
                 c = fgetc(file);
@@ -145,19 +156,6 @@ int get_next_token(token *t, FILE * file) {
 
                         break;
 
-                case 17:
-                        if (isdigit(c)) {
-                                append_char(&s, c);
-                        } else if (c == 'e' || c == 'E') {
-                                append_char(&s, c);
-                                state = 4;
-                        } else {
-                                ungetc(c, file);
-                                return save_token(t, DOUBLE_LITERAL, &s);
-                        }
-
-                        break;
-
                 case 4:
                         if (isdigit(c)) {
                                 append_char(&s, c);
@@ -167,25 +165,6 @@ int get_next_token(token *t, FILE * file) {
                                 state = 18;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
-                        }
-                        break;
-
-                case 18:
-                        if (isdigit(c)) {
-                                append_char(&s, c);
-                                state = 15;
-                        } else {
-                                ungetc(c, file);
-                                return save_token(t, LEXICAL_ERROR, NULL);
-                        }
-                        break;
-
-                case 15:
-                        if (isdigit(c)) {
-                                append_char(&s, c);
-                        } else {
-                                ungetc(c, file);
-                                return save_token(t, DOUBLE_LITERAL, &s);
                         }
                         break;
 
@@ -200,21 +179,9 @@ int get_next_token(token *t, FILE * file) {
                         }
                         break;
 
-                case 14:
-                        if (c == '\n') {
-                                state = 0;
-                        }
-                        break;
-
                 case 6:
                         if (c == '*') {
                                 state = 16;
-                        }
-                        break;
-
-                case 16:
-                        if (c == '/') {
-                                state = 0;
                         }
                         break;
 
@@ -226,6 +193,7 @@ int get_next_token(token *t, FILE * file) {
                                 return save_token(t, NEG, NULL);
                         }
                         break;
+
                 case 8:
                         if (c == '=') {
                                 return save_token(t, LESS_EQUAL, NULL);
@@ -234,6 +202,7 @@ int get_next_token(token *t, FILE * file) {
                                 return save_token(t, LESS, NULL);
                         }
                         break;
+
                 case 9:
                         if (c == '=') {
                                 return save_token(t, GREATER_EQUAL, NULL);
@@ -263,7 +232,6 @@ int get_next_token(token *t, FILE * file) {
                         }
                         break;
 
-
                 case 12:
                         if (c == '"') {
                                 return save_token(t, STRING_LITERAL, &s);
@@ -285,6 +253,50 @@ int get_next_token(token *t, FILE * file) {
                         }
                         break;
 
+                case 14:
+                        if (c == '\n') {
+                                state = 0;
+                        }
+                        break;
+
+                case 15:
+                        if (isdigit(c)) {
+                                append_char(&s, c);
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, DOUBLE_LITERAL, &s);
+                        }
+                        break;
+
+                case 16:
+                        if (c == '/') {
+                                state = 0;
+                        }
+                        break;
+
+                case 17:
+                        if (isdigit(c)) {
+                                append_char(&s, c);
+                        } else if (c == 'e' || c == 'E') {
+                                append_char(&s, c);
+                                state = 4;
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, DOUBLE_LITERAL, &s);
+                        }
+
+                        break;
+
+                case 18:
+                        if (isdigit(c)) {
+                                append_char(&s, c);
+                                state = 15;
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, LEXICAL_ERROR, NULL);
+                        }
+                        break;
+
                 case 19:
                         if (c == '|') {
                                 return save_token(t, LOGICAL_OR, NULL);
@@ -302,6 +314,7 @@ int get_next_token(token *t, FILE * file) {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
                         break;
+
                 default:
                         break;
                 }
@@ -326,20 +339,32 @@ int init_scanner(char *filename) {
                 return -2;
         }
 
-        token t;
+        token_t t;
         while (get_next_token(&t, file) != EOF) {
 
                 #if LEXICAL_TESTS
                 printf("[%s]", token_names[t.type]);
-                if (t.attr.data != NULL) {
-                        printf("[%s]\n", t.attr.data);
-                } else {
+                switch (t.type) {
+                case ID:
+                case SPECIAL_ID:
+                case STRING_LITERAL:
+                        printf("[%s]\n", t.attr.string_val);
+                        break;
+                case INT_LITERAL:
+                        printf("[%d]\n", t.attr.int_val);
+                        break;
+
+                case DOUBLE_LITERAL:
+                        printf("[%g]\n", t.attr.double_val);
+                        break;
+                default:
                         printf("\n");
+                        break;
                 }
                 #endif
 
-                if (t.attr.data != NULL) {
-                        clear_string(&t.attr);
+                if (t.type == ID || t.type == SPECIAL_ID || t.type == STRING_LITERAL) {
+                        free(t.attr.string_val);
                 }
         }
 

@@ -21,8 +21,12 @@ char *token_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBL
 
 typedef struct {
         int type;
-        string attr;
-} token;
+        union {
+                char * string_val;
+                int int_val;
+                double double_val;
+        } attr;
+} token_t;
 
 enum tokens { LEXICAL_ERROR, ID, INT_LITERAL, DOUBLE_LITERAL, ADD, SUB, MUL, DIV, SEMICOLON, LEFT_CURVED_BRACKET,
               RIGHT_CURVED_BRACKET, LEFT_ROUNDED_BRACKET, RIGHT_ROUNDED_BRACKET, ASSIGN, LOGICAL_AND, LOGICAL_OR,
@@ -31,6 +35,6 @@ enum tokens { LEXICAL_ERROR, ID, INT_LITERAL, DOUBLE_LITERAL, ADD, SUB, MUL, DIV
               INT, RETURN, STRING, STATIC, TRUE, VOID, WHILE };
 
 
-int get_next_token (token * t, FILE * file);
+int get_next_token (token_t * t, FILE * file);
 
 #endif // SCANNER_H

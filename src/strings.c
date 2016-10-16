@@ -4,7 +4,7 @@
 #include <string.h>
 #include "strings.h"
 
-bool init_string(string *str) {
+bool init_string(string_t *str) {
         if ((str->data = malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
                 return false;
         }
@@ -15,7 +15,7 @@ bool init_string(string *str) {
 
 }
 
-bool copy_string(string *str, char text[]) {
+bool copy_string(string_t *str, char *text) {
         int new_length = strlen(text);
         if (new_length + 1 >= str->allocated_size) {
                 if ((str->data =
@@ -30,13 +30,13 @@ bool copy_string(string *str, char text[]) {
         return true;
 }
 
-void clear_string(string *str) {
+void clear_string(string_t *str) {
         free(str->data);
         str->length = 0;
         str->allocated_size = 0;
 }
 
-void remove_last_char(string *str) {
+void remove_last_char(string_t *str) {
         if (str->length == 0) {
                 return;
         }
@@ -44,7 +44,7 @@ void remove_last_char(string *str) {
         str->data[str->length] = '\0';
 }
 
-bool append_char(string *str, char c) {
+bool append_char(string_t *str, char c) {
         if (str->length + 1 >= str->allocated_size) {
                 int new_size = (str->length + STRING_INITIAL_ALLOCATION) * sizeof(char);
                 if ((str->data = (char *) realloc(str->data, new_size)) == NULL) {

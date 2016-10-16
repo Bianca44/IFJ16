@@ -9,20 +9,20 @@ typedef struct {
     char *data;
     int length;
     int allocated_size;
-} string;
+} string_t;
 
 
 
 
-bool init_string(string *str);
+bool init_string(string_t *str);
 
-bool copy_string(string *str, char text[]);
+bool copy_string(string_t *str, char *text);
 
-void clear_string(string *str);
+void clear_string(string_t *str);
 
-void remove_last_char(string *str);
+void remove_last_char(string_t *str);
 
-bool append_char(string *str, char c);
+bool append_char(string_t *str, char c);
 
 char *clone_string(const char *s);
 
