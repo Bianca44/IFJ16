@@ -1,62 +1,67 @@
-<class-list> -> class <ID> { <class-elements> } <class-list>
-<class-elements> -> static <data-type> <ID> = <E>; <class-elements>
-<class-elements> -> static <return-type> <ID> ( <param-list> ) { <method-elements> } <class-elements>
-
-<ID> id
-<literal> -> INT_LITERAL
-<literal> -> DOUBLE_LITERAL
-<literal> -> STRING_LITERAL
-<literal> -> true
-<literal> -> false
-
-<data-type> -> int 
-<data-type> -> double
-<data-type> -> String
-<data-type> -> boolean
-
-<return-type> -> void
-<return-type> -> int 
-<return-type> -> double
-<return-type> -> String
-<return-type> -> boolean
-
-<param-list> -> epsilon
-<param-list> -> <param> , <param-list>
-<param> -> <data-type> <ID> = <E>; 
-
-<method-elements> -> epsilon
-<method-elements> -> <statement-list> <method-elements>
-<method-elements> -> if <E> <condition-statement> <else> <method-elements>
-<method-elements> -> while <E> <condition-statement>; <method-elements>
-<method-elements> -> return <E>;
-<method-elements> -> ;
-<else> -> else <condition-statement> 
-<else> -> epsilon
-
-<condition-statement> -> { <statement-list> }
-<condition-statement> -> <statement>
-<statement-list> -> epsilon
-<statement-list> -> <statement>; <statement-list>
-<statement> -> epsilon
-<statement> -> <ID> = <E>; <statement>
-<statement> -> <data-type> <ID> = <E>; <statement>
-<statement> -> <method>; <statement>
-
-
-//pravidla pre precedencnu analyzu
-<E> -> <literal>
-<E> -> !<E>
-<E> -> <E> <op> <E>
-<E> -> (E)
-<E> -> <method>
-<method> -> <ID> (<callparam-list>);
-<callparam-list> -> epsilon
-<callparam-list> -> <E>,<callparam-list>
-
-
-<op> -> +
-<op> -> -
-<op> -> /
-<op> -> *
-<op> -> &&
-<op> -> || 
+  1 <class-list> -> class <ID> { <class-elements> } <class-list>
+  2 <class-elements> -> static <data-type> <ID> = <E>; <class-elements>
+  3 <class-elements> -> static <return-type> <ID> ( <param-list> ) { <method-elements> } <class-elements>
+  4 
+  5 <ID> id
+  6 <ID> special_id
+  7 <literal> -> INT_LITERAL
+  8 <literal> -> DOUBLE_LITERAL
+  9 <literal> -> STRING_LITERAL
+ 10 //TODO true, false sa nemoze vyskytovat vo vyraze s operatorom
+ 11 <bool-literal> -> true
+ 12 <bool-literal> -> false
+ 13 
+ 14 <data-type> -> int
+ 15 <data-type> -> double
+ 16 <data-type> -> String
+ 17 <data-type> -> boolean
+ 18 
+ 19 <return-type> -> void
+ 20 <return-type> -> int
+ 21 <return-type> -> double
+ 22 <return-type> -> String
+ 23 <return-type> -> boolean
+ 24 
+ 25 <param-list> -> epsilon
+ 26 <param-list> -> <param> <next-param>
+ 27 <next-param> -> ,<param> <next-param>
+ 28 <next-param> -> epsilon
+ 29 <param> -> <data-type> <ID>
+ 30 
+ 31 <method-elements> -> epsilon
+ 32 <method-elements> -> <statement-list> <method-elements>
+ 33 <method-elements> -> if <E> <condition-statement> <else> <method-elements>
+ 34 <method-elements> -> while <E> <condition-statement>; <method-elements>
+ 35 <method-elements> -> return <E>;
+ 36 <method-elements> -> ;
+ 37 <else> -> else <condition-statement>
+ 38 <else> -> epsilon
+ 39 
+ 40 <condition-statement> -> { <statement-list> }
+ 41 <condition-statement> -> <statement>
+ 42 <statement-list> -> epsilon
+ 43 <statement-list> -> <statement>; <statement-list>
+ 44 <statement> -> epsilon
+ 45 <statement> -> <ID> = <E>; <statement>
+ 46 <statement> -> <data-type> <ID> = <E>; <statement>
+ 47 <statement> -> <method>; <statement>
+ 48 
+ 49 //pravidla pre precedencnu analyzu
+ 50 <E> -> <ID>
+ 51 <E> -> <literal>
+ 52 <E> -> !<E>
+ 53 <E> -> <E> <op> <E>
+ 54 <E> -> (E)
+ 55 <E> -> <method>
+ 56 <method> -> <ID> (<call-param-list>);
+ 57 <call-param-list> -> epsilon
+ 58 <call-param-list> -> <E> <next-param-list>
+ 59 <next-param-list> -> ,<E> <next-param-list>
+ 60 <next-param-list> -> epsilon
+ 61 
+ 62 <op> -> +
+ 63 <op> -> -
+ 64 <op> -> /
+ 65 <op> -> *
+ 66 <op> -> &&
+ 67 <op> -> ||
