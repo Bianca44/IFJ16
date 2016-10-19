@@ -23,18 +23,19 @@
 <next-param-list> -> epsilon
 <method-elements> -> <declaration> <method-elements>
 <method-elements> -> epsilon
-<method-elements> -> ;
+<method-elements> -> ; <method-elements>
 <method-elements> -> <statement-list> <method-elements>
+<statement-list> -> <statement> <statement-list>
+<statement-list> -> epsilon
 <statement> -> epsilon
 <statement> -> ; 
 <statement> -> <method>; 
 <statement> -> <ID> = <E>; 
 <statement> -> if (<E>) <condition-list> <else> 
 <statement> -> while (<E>) <condition-list>
-<statement-list> -> <statement> <statement-list>
- 
-<else> -> epsilon
-<else> -> ; 
+<statement> -> return;
+<statement> -> return <E>;
+<else> -> epsilon 
 <else> -> else <condition-list>
 <statement-list> -> {<statement-list>} <statement-list>
 <condition-list> -> {<statement-list>}
