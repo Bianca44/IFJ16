@@ -1,89 +1,41 @@
 <class-list> -> class <ID> { <class-elements> } <class-list>
-<class-elements> -> static <data-type> <ID> = <expression>; <class-elements>
-<class-elements> -> static <return-type> <ID> ( <param-list> ) { <method-elements> } <class-elements>
-   
-<ID> id
-<ID> special_id
-<literal> -> INT_LITERAL
-<literal> -> DOUBLE_LITERAL
-<bool-literal> -> true
-<bool-literal> -> false
-  
+<class-elements> -> static <declaration> <class-elements>
+<class-elements> -> static <return-type> <ID> ( <formal-param-list> ) { <method-elements> } <class-elements>
+<declaration> -> <data-type> <ID>;
+<declaration> -> <data-type> <ID> = <E>;
+<ID> -> id
+<ID> -> special_id
 <data-type> -> int
 <data-type> -> double
 <data-type> -> String
 <data-type> -> boolean
-  
 <return-type> -> void
-<return-type> -> int
-<return-type> -> double
-<return-type> -> String
-<return-type> -> boolean
-  
-<param-list> -> epsilon
-<param-list> -> <param> <next-param>
+<return-type> -> <data-type> 
+<formal-param-list> -> epsilon
+<formal-param-list> -> <param> <next-param>
 <next-param> -> ,<param> <next-param>
 <next-param> -> epsilon
 <param> -> <data-type> <ID>
-  
-<method-elements> -> epsilon
-<method-elements> -> <statement-list> <method-elements>
-<method-elements> -> if <expression> <condition-statement> <else> <method-elements>
-<method-elements> -> while <expression> <condition-statement>; <method-elements>
-<method-elements> -> return <expression>;
-<method-elements> -> ;
-<else> -> else <condition-statement>
-<else> -> epsilon
-
-<condition-statement> -> { <condition-statement-list> }
-<condition-statement> -> <statement-list> //TODO ak nie je po if zlozeny prikaz,mozme definovat lok.premennu ?
-
-//pridane kvoli zabraneniu definicie lokalnej premennej v bloku
-<condition-statement-list> -> epsilon
-<condition-statement-list> -> <condition-stat>; <condition-statement-list>
-<condition-stat> -> epsilon
-<condition-stat> -> <ID> = <expression>; <condition-statement>
-<condition-stat> -> <method>; <condition-statement>  
-<statement-list> -> epsilon
-<statement-list> -> <statement>; <statement-list>
-<statement> -> epsilon
-<statement> -> <data-type> <ID> = <expression>; <statement>
-<statement> -> <method>; <statement>
-
-//TODO ak sa priradi do ID bool, nemoze sa potom pouzit s operatormi <,>,atd.
-<expression> -> <string>
-<expression> -> <bool>
-<expression> -> <E>
-<string> -> STRING_LITERAL
-<string> -> <string> + <string>
-<bool> -> <bool-literal> 
-//<bool> -> <ID>
-<bool> -> <bool> <bool-op> <bool>
-<bool> -> !<bool>
-//<E> -> <ID>
-<E> -> <literal>
-<E> -> <E> <op> <E>
-<E> -> (E)
-<E> -> <method>
-<method> -> <ID> (<call-param-list>);
-<call-param-list> -> epsilon
-<call-param-list> -> <E> <next-param-list>
+<method> -> <ID> (<real-param-list>)
+<real-param-list> -> epsilon
+<real-param-list> -> <E> <next-param-list>
 <next-param-list> -> ,<E> <next-param-list>
 <next-param-list> -> epsilon
-
-<bool-op> -> &&
-<bool-op> -> ||
-<bool-op> -> ==
-<bool-op> -> != 
-<op> -> +
-<op> -> -
-<op> -> /
-<op> -> *
-<op> -> &&
-<op> -> ||
-<op> -> <
-<op> -> > 
-<op> -> <=
-<op> -> >=
-<op> -> ==
-<op> -> !=
+<method-elements> -> <declaration> <method-elements>
+<method-elements> -> epsilon
+<method-elements> -> ;
+<method-elements> -> <statement-list> <method-elements>
+<statement> -> epsilon
+<statement> -> ; 
+<statement> -> <method>; 
+<statement> -> <ID> = <E>; 
+<statement> -> if (<E>) <condition-list> <else> 
+<statement> -> while (<E>) <condition-list>
+<statement-list> -> <statement> <statement-list>
+ 
+<else> -> epsilon
+<else> -> ; 
+<else> -> else <condition-list>
+<statement-list> -> {<statement-list>} <statement-list>
+<condition-list> -> {<statement-list>}
+<condition-list> -> <statement>
