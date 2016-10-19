@@ -1,0 +1,91 @@
+Empty(class-list) = {}
+Empty(class-elements) = {}
+Empty(data-type) = {}
+Empty(return-type) = {}
+Empty(ID) = {}
+Empty(literal) = {}
+Empty(bool-literal) = {}
+Empty(expresion) = {}
+Empty(param-list) = {epsilon}
+Empty(next-param) = {epsilon}
+Empty(param) = {} ?? mozno bude epsilon
+Empty(method-elements) = {epsilon}
+Empty(else) = {epsilon}
+Empty(condition-statement-list) = {epsilon}
+Empty(condition-statement) = {}
+Empty(condition-stat) = {epsilon}
+Empty(statement-list) = {int,double,String,boolean}
+Empty(statement) = {epsilon}
+Empty(expression) = {}
+Empty(string) = {}
+Empty(bool) = {}
+Empty(E) = {}
+Empty(method) = {}
+Empty(call-param-list) = {epsilon}
+Empty(next-param-list) = {epsilon}
+Empty(bool-op) = {}
+Empty(op) = {}
+
+First(class-list) = {class}
+First(class-elements) = {static}
+First(data-type) = {int,double,String,boolean}
+First(return-type) = {void,int,double,String,boolean}
+First(ID) = {id,special_id}
+First(literal) = {INT_LITERAL,DOUBLE_LITERAL}
+First(bool-literal) = {true,false}
+First(expression) = {STRING_LITERAL,INT_LITERAL,DOUBLE_LITERAL,true,false,!,id,special_id,(}
+First(param-list) = {int,double,String,boolean}
+First(next-param) = {,}
+First(param) = {int,double,String,boolean}
+First(method-elements) = {if,while,return,";",int,double,String,boolean,id,special_id}
+First(else) = {else}
+First(condition-statement-list) = {id,special_id} //TODO
+First(condition-statement) = {"{",} //TODO
+First(condition-stat) = {id,special_id}
+First(statement-list) = {int,double,String,boolean,id,special_id}
+First(statement) = {int,double,String,boolean,id,special_id}
+First(expression) = {STRING_LITERAL,INT_LITERAL,DOUBLE_LITERAL,true,false,!,(,id,special_id}
+First(string) = {STRING_LITERAL}
+First(bool) = {true,false,!}
+First(E) = {id,special_id,INT_LITERAL,DOUBLE_LITERAL,(}
+First(method) = {id,special_id}
+First(call-param-list) = {id,special_id,INT_LITERAL,DOUBLE_LITERAL,(}
+First(next-param-list) = {,}
+First(bool-op) = {&&,||,==,!=}
+First(op) = {+,-,*,/,<,>,<=,>=,==,!=}
+
+Follow(class-list) = {}
+Empty(class-elements) = {"}"}
+Empty(data-type) = {id_special_id}
+Empty(return-type) = {id,special_id}
+Empty(ID) = {=,(,+,}
+Empty(literal) = {}
+Empty(bool-literal) = {}
+Empty(expresion) = {}
+Empty(param-list) = {epsilon}
+Empty(next-param) = {epsilon}
+Empty(param) = {} ?? mozno bude epsilon
+Empty(method-elements) = {epsilon}
+Empty(else) = {epsilon}
+Empty(condition-statement-list) = {epsilon}
+Empty(condition-statement) = {}
+Empty(condition-stat) = {epsilon}
+Empty(statement-list) = {int,double,String,boolean}
+Empty(statement) = {epsilon}
+Empty(expression) = {}
+Empty(string) = {}
+Empty(bool) = {}
+Empty(E) = {}
+Empty(method) = {}
+Follow(call-param-list) = {epsilon}
+Empty(next-param-list) = {epsilon}
+Empty(bool-op) = {}
+Empty(op) = {}
+
+
+
+
+
+
+
+
