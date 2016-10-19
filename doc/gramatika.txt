@@ -27,7 +27,7 @@
 <method-elements> -> <statement-list> <method-elements>
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
-<statement> -> epsilon
+//<statement> -> epsilon
 <statement> -> ; 
 <statement> -> <method>; 
 <statement> -> <ID> = <E>; 
