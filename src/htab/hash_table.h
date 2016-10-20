@@ -7,29 +7,47 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 /*testing list*/
-typedef struct htab_listitem{
-    char *key;
+/* key */
+typedef char * tKey;
+
+typedef struct tHTitem{
+    tKey key;
     unsigned data;
-    struct htab_listitem *next;
-} * t_htab_listitem_ptr;
+    struct tHTitem *next;
+} tHTitem;
 
 
 /* hash table */
-typedef struct hash_table{
-    unsigned htab_size;
-    unsigned (*hash_fun_ptr)(const char *str, unsigned htab_size);
-    unsigned n_items;
-    void *ptr[];
-} t_hash_table;
+typedef struct tHTable{
+    unsigned ht_size; //size of table
+    unsigned (*hash_code_ptr)(const tKey, unsigned ht_size); // hash function
+    unsigned n_items; // number of items in table TODO
+    void *ptr[]; // flexible array member 
+} tHTable;
 
 /* funcions implementing hash table */
-unsigned int hash_function(const char *str, unsigned htab_size); 
-t_hash_table * hash_table_init(unsigned size);
-void hash_table_free(t_hash_table *t, void (* dispose_func)(void *));
-void * hash_table_search_add(t_hash_table *t, void * (*list_find_add)(void *), const char *key);
+unsigned hash_code(const tKey key, unsigned ht_size);
+ 
+tHTable * ht_init(unsigned ht_size, unsigned (*hash_code_ptr)(const tKey, unsigned ht_size));
+void * ht_search(tHTable * ptrht, const tKey key, void *(* item_search_ptr)(void *, tKey key));
+void ht_insert(tHTable * ptrht, const tKey key, void * data, void (*item_insert_first_ptr)(void *, void *));
+
+void item_insert_first(void * item, void * data);
+
+void * ht_read(tHTable * ptrht, const tKey key, void * (* item_get_value_ptr)(void *),void *(* item_search_ptr)(void *, tKey key));
+
+void * item_get_value(void *item);
+
+void ht_Delete (tHTable *ptrht, const tKey key, void (*item_delete_ptr)(void *));
+void item_delete(void *item);
+
+void ht_clear_all(tHTable *ptrht, void (* dispose_func_ptr)(void *));
+void ht_free(tHTable *ptrht, void (* dispose_func_ptr)(void *));
+//void * hash_table_search_add(tHTable *ptrht, void * (*list_find_add)(void *), const tKey key);
+
 /*functions implementing lists*/
 //uvolnenie, alokovanie
-void * find_add_listitem(void * list);
-void dispose_htab_listitem(void * list);
+void * item_search(void * item, tKey key);
+void dispose_ht_item(void * list);
 #endif /*HASH_TABLE_H*/
 

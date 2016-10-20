@@ -9,99 +9,131 @@
  * @param htab_size size of hash table
  * @return index according to which we can store/access word in table 
  */
-
-unsigned int hash_function(const char *str, unsigned htab_size) { 
-  unsigned int h=0; 
+unsigned hash_code(const tKey key, unsigned ht_size) { 
+  unsigned h=0; 
   const unsigned char *p; 
-  for(p=(const unsigned char*)str; *p!='\0'; p++)
+  for(p=(const unsigned char*)key; *p!='\0'; p++)
   {
     h = 65599*h + *p; 
   }
-  return h % htab_size; 
+  return h % ht_size; 
 }
-
-
 /**
  * @brief Initializes new hash table
- * @param size size of hash table
- * @param size_of_item size needed for allocating one item
+ * @param ht_size size of hash table
  * @return hash table (pointer) or NULL in case of failure
  */
+tHTable * ht_init(unsigned ht_size, unsigned int (*hash_code_ptr)(const tKey, unsigned)){
 
-t_hash_table * hash_table_init(unsigned size){
-    t_hash_table *new_table;
-
-    if((new_table = malloc(sizeof(t_hash_table) + size * sizeof(void *))) == NULL){
+    tHTable *new_table;
+    //allocating space for table 
+    if((new_table = malloc(sizeof(tHTable) + ht_size * sizeof(void *))) == NULL){
        return NULL; //error
     }
 
     /*setting values of new hash table*/
-    new_table->htab_size = size;
-    new_table->hash_fun_ptr = &hash_function;
+    new_table->ht_size = ht_size;
+    new_table->hash_code_ptr = hash_code_ptr;
     new_table->n_items = 0;
     
-    for(unsigned i=0; i<size; i++){
+    for(unsigned i=0; i < ht_size; i++){
         new_table->ptr[i] = NULL;
     }
-   /* 
-    struct htab_listitem *item;
-    item = malloc(sizeof(struct htab_listitem));
-    item->data = 42;
-    new_table->ptr[0] = item;
-   */      
-    return new_table;
+
+   return new_table;
 }
 
 /**
- * @brief Frees and delete whole table
- * @param t table to be freed
+ * @brief Frees and delete all items in table but not table itself
+ * @param ptrht table to be freed
  * @param dispose_func function that dispose list of items
- * @pre t is not NULL
+ * @pre ptrht is not NULL
  */
 
-void hash_table_free(t_hash_table *t, void (* dispose_func)(void *)){
+void ht_clear_all(tHTable *ptrht, void (* dispose_func_ptr)(void *)){
 
     void *item;
 
-    for(unsigned i = 0; i < t->htab_size; i++){
+    for(unsigned i = 0; i < ptrht->ht_size; i++){
         
-        item = t->ptr[i];
+        item = ptrht->ptr[i];
 
         if(item == NULL){
             continue;
         }
-        
-        dispose_func(item);
+        //if TODO 
+        dispose_func_ptr(item);
 
-        //t->ptr[i] = NULL;
+        ptrht->ptr[i] = NULL;
         
     }
-    //t->n = 0;
-    free(t); 
+
+    ptrht->n_items = 0;
 }
 
-
-void * hash_table_search_add(t_hash_table *t, void * (*list_find_add)(void *), const char *key){
-        
-    unsigned index = t->hash_fun_ptr(key, t->htab_size);
-    void * tmp = t->ptr[index];    
-    printf("in func %d\n", index);
-
-    return list_find_add(tmp);
+void ht_free(tHTable *ptrht,void (* dispose_func_ptr)(void *)){
     
+    ht_clear_all(ptrht, dispose_func_ptr);  
+    free(ptrht); 
 }
 
-void * find_add_listitem(void * list){
-    t_htab_listitem_ptr tmp = list;
+void * ht_search(tHTable * ptrht, const tKey key, void *(* item_search_ptr)(void *, tKey key)){
+    //getting index
+    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+    //accesing list of synonyms
+    void *item = ptrht->ptr[index];
+    
+    return item_search_ptr(item, key); 
+}
+
+void ht_insert(tHTable * ptrht, const tKey key, void * data, void (*item_insert_first_ptr)(void *, void *)){    
+    //getting index
+    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+    void * item = ptrht->ptr[index];
+    item_insert_first_ptr(&item, data);
+}
+
+void * ht_read(tHTable * ptrht, const tKey key, void * (* item_get_value_ptr)(void *),void *(* item_search_ptr)(void *, tKey key)){
+    
+    void * item;
+
+    if((item = ht_search(ptrht, key, item_search_ptr)) == NULL){
+        return NULL;
+    }
+
+    return item_get_value_ptr(item); 
+}
+
+void * item_get_value(void *item){
+    return item;
+}
+
+void ht_Delete (tHTable *ptrht, const tKey key, void (*item_delete_ptr)(void *)) {
+    //getting index
+    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+    void * item = ptrht->ptr[index];
+
+    item_delete_ptr(item);
+}
+
+void item_delete(void *item){
+
+}
+//Functions for lists
+void * item_search(void * item, tKey key){
+    tHTitem * tmp = item;
     printf("sdad\n");
 
     return tmp;
 }
 
 
-void dispose_htab_listitem(void * list){
+void dispose_ht_item(void * list){
     
     //t_htab_listitem_ptr tmp = list;
     
     return ;
+}
+void item_insert_first(void * item, void * data){
+    return;
 }
