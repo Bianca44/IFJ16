@@ -2,9 +2,9 @@
 <class-elements> -> static <declaration-element> <class-elements>
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
-<value> -> ;
-<value> -> = <E>;
-<declaration> -> <value>
+<value> -> epsilon
+<value> -> = <E>
+<declaration> -> <value>;
 <declaration> -> <method-declaration>
 <method-declaration> -> ( <param-list> ) { <method-elements> }
 <ID> -> id
@@ -23,7 +23,7 @@
 <param-value> -> <E> <next-param-value>
 <next-param-value> -> ,<E> <next-param-value>
 <next-param-value> -> epsilon
-<method-elements> -> <param> <value> <method-elements>
+<method-elements> -> <param> <value>; <method-elements>
 <method-elements> -> epsilon
 <method-elements> -> ; <method-elements>
 <method-elements> -> <statement-list> <method-elements>
