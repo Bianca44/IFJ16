@@ -5,83 +5,59 @@ void parse_class(FILE *file); // will return error code
 void parse_method(FILE *file);
 void parse_param_list(FILE *file);
 
+FILE* source = NULL;
+
 void parse(FILE *file) {
-        token t;
-        int state = 0;
-        int type = get_next_token(&t, file);
-
-        //  Useless automat for now.
-        switch (state) {
-        case 0:     // parse class
-                while (type == CLASS) {
-                        parse_class(file);
-                        type = get_next_token(&t, file);
-                }
-
-                printf("AST created, all is OK\nCheck previous lines for error.\n");
-                break;
-
-        default: break;
-        }
+        source = FILE;
 
 }
 
-void parse_class(FILE *file) {
+token check_token(token *t, int expected_token) {
+    token t;
+    int type = get_next_token(&t, file);
+    if (type == expected_token) {
+        return t;
+    } else {
+        return NULL;
+    }
+}
 
-        token t;
-        int type = get_next_token(&t, file);
-        if (type != ID) {
-                printf("No CLASS ID\n");
+void parse_class() {
+    token t;
+    if (check_token(&t, CLASS) == NULL) {
+        // chyba
+    }
+    if (check_token(&t, ID) == NULL) {
+        // chyba
+    }
+
+}
+
+void parse_class_element() {
+    token t;
+    if (check_token(&t, STATIC) == NULL) {
+        // chyba
+    }
+
+}
+
+void parse_declaration_element() {
+    token t;
+    if (check_token(&t, CLASS) != NULL) {
+        if (check_token(&t, CLASS) != NULL) {
+            parse_method_declaration();
         }
-        type = get_next_token(&t, file);
-        if (type != LEFT_CURVED_BRACKET) {
-                printf("Missing {\n");
-        }
+    } else {
+        parse_param();
+        parse_declaration();
+    }
+}
 
-        while (1) {
-
-                type = get_next_token(&t, file);
-
-                if (type == RIGHT_CURVED_BRACKET) {
-                        break; // Koniec classy
-
-                }
-
-                if (type != STATIC) {
-                        printf("No STATIC\n");
-                        break;
-                }
-
-                type = get_next_token(&t, file);
-
-                if (type == VOID) {
-                        type = get_next_token(&t, file);
-                        if (type != ID) {
-                                printf("No METHOD ID\n");
-                        }
-                        parse_method(file);
-                }
-
-                if (type != INT && type !=  DOUBLE) {
-                        printf("Bad return type / data type\n");
-                        break;
-                }
-
-                type = get_next_token(&t, file);
-                if (type != ID) {
-                        printf("No METHOD ID\n");
-                }
-
-                type = get_next_token(&t, file);
-                if (type != ASSIGN) {
-                        parse_method(file);
-                } else {
-
-                        //parse_expr(file);
-                        //printf("hi\n");
-                        break;
-                }
-        }
+void parse_param() {
+    parse_data_type();
+    if (check_token(&t, ID) == NULL) {
+        // chyba
+    }
 }
 
 void parse_method(FILE *file) {
