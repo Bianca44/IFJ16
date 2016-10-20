@@ -1,5 +1,7 @@
 <class-list> -> class <ID> { <class-element> } <class-list>
+<class-list> -> epsilon
 <class-element> -> static <declaration-element> <class-element>
+<class-element> -> epsilon
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
 <declaration> -> epsilon;
