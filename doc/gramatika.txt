@@ -1,12 +1,12 @@
-<class-list> -> class <ID> { <class-elements> } <class-list>
-<class-elements> -> static <declaration-element> <class-elements>
+<class-list> -> class <ID> { <class-element> } <class-list>
+<class-element> -> static <declaration-element> <class-element>
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
 <value> -> epsilon
 <value> -> = <E>
 <declaration> -> <value>;
 <declaration> -> <method-declaration>
-<method-declaration> -> ( <param-list> ) { <method-elements> }
+<method-declaration> -> ( <param-list> ) { <method-element> }
 <ID> -> id
 <ID> -> special_id
 <data-type> -> int
@@ -23,10 +23,10 @@
 <param-value> -> <E> <next-param-value>
 <next-param-value> -> ,<E> <next-param-value>
 <next-param-value> -> epsilon
-<method-elements> -> <param> <value>; <method-elements>
-<method-elements> -> epsilon
-<method-elements> -> ; <method-elements>
-<method-elements> -> <statement-list> <method-elements>
+<method-element> -> <param> <value>; <method-element>
+<method-element> -> epsilon
+<method-element> -> ; <method-element>
+<method-element> -> <statement-list> <method-element>
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
 <statement> -> ;
