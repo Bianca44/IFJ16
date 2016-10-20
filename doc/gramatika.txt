@@ -28,11 +28,11 @@
 <value> -> epsilon
 <value> -> = <E>
 <method-element> -> <data-type> id <value>; <method-element>
-<method-element> -> epsilon
-//<method-element> -> ; <method-element>
 <method-element> -> <statement-list> <method-element>
+<method-element> -> epsilon
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
+<statement-list> -> {<statement-list>} <statement-list>
 <statement> -> ;
 <statement> -> <ID> <call-assign>;
 <statement> -> if (<E>) <condition-list> <else>
@@ -42,6 +42,5 @@
 <return-value> -> <E>
 <else> -> epsilon
 <else> -> else <condition-list>
-<statement-list> -> {<statement-list>} <statement-list>
 <condition-list> -> {<statement-list>}
 <condition-list> -> <statement>
