@@ -1,41 +1,43 @@
 <class-list> -> class <ID> { <class-elements> } <class-list>
-<class-elements> -> static <declaration> <class-elements>
-<class-elements> -> static <return-type> <ID> ( <formal-param-list> ) { <method-elements> } <class-elements>
-<declaration> -> <data-type> <ID>;
-<declaration> -> <data-type> <ID> = <E>;
+<class-elements> -> static <declaration-element> <class-elements>
+<declaration-element> -> <param> <declaration>
+<declaration-element> -> void id <method-declaration>
+<value> -> ;
+<value> -> = <E>;
+<declaration> -> <value>
+<declaration> -> <method-declaration>
+<method-declaration> -> ( <param-list> ) { <method-elements> }
 <ID> -> id
 <ID> -> special_id
 <data-type> -> int
 <data-type> -> double
 <data-type> -> String
 <data-type> -> boolean
-<return-type> -> void
-<return-type> -> <data-type> 
-<formal-param-list> -> epsilon
-<formal-param-list> -> <param> <next-param>
+<param-list> -> epsilon
+<param-list> -> <param> <next-param>
 <next-param> -> ,<param> <next-param>
 <next-param> -> epsilon
-<param> -> <data-type> <ID>
-<method> -> <ID> (<real-param-list>)
-<real-param-list> -> epsilon
-<real-param-list> -> <E> <next-param-list>
-<next-param-list> -> ,<E> <next-param-list>
-<next-param-list> -> epsilon
-<method-elements> -> <declaration> <method-elements>
+<param> -> <data-type> id
+<method> -> <ID> (<param-value>)
+<param-value> -> epsilon
+<param-value> -> <E> <next-param-value>
+<next-param-value> -> ,<E> <next-param-value>
+<next-param-value> -> epsilon
+<method-elements> -> <param> <value> <method-elements>
 <method-elements> -> epsilon
 <method-elements> -> ; <method-elements>
 <method-elements> -> <statement-list> <method-elements>
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
-//<statement> -> epsilon
-<statement> -> ; 
-<statement> -> <method>; 
-<statement> -> <ID> = <E>; 
-<statement> -> if (<E>) <condition-list> <else> 
+<statement> -> ;
+<statement> -> <method>;
+<statement> -> <ID> = <E>;
+<statement> -> if (<E>) <condition-list> <else>
 <statement> -> while (<E>) <condition-list>
-<statement> -> return;
-<statement> -> return <E>;
-<else> -> epsilon 
+<statement> -> return <return-value>;
+<return-value> -> epsilon
+<return-value> -> <E>
+<else> -> epsilon
 <else> -> else <condition-list>
 <statement-list> -> {<statement-list>} <statement-list>
 <condition-list> -> {<statement-list>}
