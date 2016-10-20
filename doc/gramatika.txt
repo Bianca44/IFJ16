@@ -2,9 +2,8 @@
 <class-element> -> static <declaration-element> <class-element>
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
-<value> -> epsilon
-<value> -> = <E>
-<declaration> -> <value>;
+<declaration> -> epsilon;
+<declaration> -> = <E>;
 <declaration> -> <method-declaration>
 <method-declaration> -> ( <param-list> ) { <method-element> }
 <ID> -> id
@@ -18,20 +17,22 @@
 <next-param> -> ,<param> <next-param>
 <next-param> -> epsilon
 <param> -> <data-type> id
-<method> -> <ID> (<param-value>)
+<call-assign> -> (<param-value>)
+<call-assign> -> = <E>
 <param-value> -> epsilon
 <param-value> -> <E> <next-param-value>
 <next-param-value> -> ,<E> <next-param-value>
 <next-param-value> -> epsilon
-<method-element> -> <param> <value>; <method-element>
+<value> -> epsilon
+<value> -> = <E>
+<method-element> -> <data-type> id <value>; <method-element>
 <method-element> -> epsilon
 <method-element> -> ; <method-element>
 <method-element> -> <statement-list> <method-element>
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
 <statement> -> ;
-<statement> -> <method>;
-<statement> -> <ID> = <E>;
+<statement> -> <ID> <call-assign>;
 <statement> -> if (<E>) <condition-list> <else>
 <statement> -> while (<E>) <condition-list>
 <statement> -> return <return-value>;
