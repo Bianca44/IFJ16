@@ -43,9 +43,7 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
 
 void free_token_buffer(token_buffer_t *token_buf) {
         for (int i = 0; i < token_buf->length; i++) {
-                if (token_buf->list[i] != NULL) {
-                        free(token_buf->list[i]);
-                }
+                free(token_buf->list[i]);
         }
 
         free(token_buf->list);
