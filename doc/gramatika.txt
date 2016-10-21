@@ -4,7 +4,7 @@
 <class-element> -> epsilon
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
-<declaration> -> epsilon;
+<declaration> -> ;
 <declaration> -> = <E>;
 <declaration> -> <method-declaration>
 <method-declaration> -> ( <param-list> ) { <method-element> }
