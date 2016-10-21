@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "token_buffer.h"
 
 
 int main(int argc, char *argv[]) {
