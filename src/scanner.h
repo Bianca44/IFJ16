@@ -1,6 +1,8 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
+#include "strings.h"
+
 #define LONGEST_KEYWORD 8
 #define KEYWORDS_COUNT 17
 #define TOKENS_COUNT 44
@@ -28,6 +30,8 @@ typedef struct {
 
 int get_next_token (token_t * t, FILE * file);
 int init_scanner(char *filename);
+int save_token(token_t *t, int type, string_t *attr);
+int detect_keyword(string_t *str);
 
 enum states { SPACE, IDENTIFICATOR, NUMBER, NUM_DOUBLE, SCIENTIC_DOUBLE, SLASH, COMMENT, EXCLAMATION, COMPARE_LESS,  COMPARE_GREATER,
               COMPARE_ASSIGN, QUALIFIED_ID, LITERAL, QUALIFIED_ID_END, LINE_COMMENT_END, DOUBLE_END, BLOCK_COMMENT_END, SIMPLE_DOUBLE, SCIENTIC_DOUBLE_EXP, OR, AND };
