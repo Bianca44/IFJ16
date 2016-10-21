@@ -33,6 +33,7 @@ bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t) {
 
 token_t* get_next_token_buffer(token_buffer_t *token_buf) {
         static int i = 0;
+
         if (i < token_buf->length) {
                 return token_buf->list[i++];
         } else {
@@ -42,8 +43,13 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
 
 void free_token_buffer(token_buffer_t *token_buf) {
         for (int i = 0; i < token_buf->length; i++) {
-                free(token_buf->list[i]);
+                if (token_buf->list[i] != NULL) {
+                        free(token_buf->list[i]);
+                }
         }
 
         free(token_buf->list);
+        token_buf->length = 0;
+        token_buf->allocated_size = 0;
+
 }

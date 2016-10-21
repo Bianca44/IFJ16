@@ -32,6 +32,11 @@ int main(void) {
         printf("cislo %d\n", get_next_token_buffer(&tb)->type);
         printf("cislo %g\n", get_next_token_buffer(&tb)->attr.double_value);
 
+        for (int i = 0; i < 1000; i++) {
+            t.type = i;
+            add_token_to_buffer(&tb, &t);
+        }
+
         free_token_buffer(&tb);
 
         return 0;
