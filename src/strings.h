@@ -12,8 +12,6 @@ typedef struct {
 } string_t;
 
 
-
-
 bool init_string(string_t *str);
 
 void clear_string(string_t *str);

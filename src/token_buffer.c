@@ -3,37 +3,6 @@
 #include <string.h>
 #include "token_buffer.h"
 
-int test(void) {
-        token_buffer_t tb;
-        init_token_buffer(&tb);
-        token_t t;
-        t.type = 42;
-
-        add_token_to_buffer(&tb, &t);
-        t.type = 43;
-        t.attr.string_value = "hello";
-        add_token_to_buffer(&tb, &t);
-        t.type = 44;
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        add_token_to_buffer(&tb, &t);
-        printf("cislo %d\n", tb.list[11]->type);
-        printf("cislo %d\n", tb.allocated_size);
-        printf("cislo %d\n", get_next_token_buffer(&tb).type);
-        printf("data %s\n", get_next_token_buffer(&tb).attr.string_value);
-        printf("cislo %d\n", get_next_token_buffer(&tb).type);
-        free_token_buffer(&tb);
-
-        return 0;
-}
-
 bool init_token_buffer(token_buffer_t *token_buf) {
         token_buf->list = (token_t **) malloc(TOKEN_BUFFER_INITIAL_ALLOCATION * sizeof(token_t));
         if (token_buf->list == NULL) {
@@ -62,9 +31,13 @@ bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t) {
         return true;
 }
 
-token_t get_next_token_buffer(token_buffer_t *token_buf) {
+token_t* get_next_token_buffer(token_buffer_t *token_buf) {
         static int i = 0;
-        return *token_buf->list[i++];
+        if (i < token_buf->length) {
+                return token_buf->list[i++];
+        } else {
+                return NULL;
+        }
 }
 
 void free_token_buffer(token_buffer_t *token_buf) {

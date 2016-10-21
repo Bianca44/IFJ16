@@ -27,10 +27,11 @@ int main(void) {
         add_token_to_buffer(&tb, &t);
         printf("cislo %d\n", tb.list[11]->type);
         printf("cislo %d\n", tb.allocated_size);
-        printf("cislo %d\n", get_next_token_buffer(&tb).type);
-        printf("data %s\n", get_next_token_buffer(&tb).attr.string_value);
-        printf("cislo %d\n", get_next_token_buffer(&tb).type);
-        printf("cislo %g\n", get_next_token_buffer(&tb).attr.double_value);
+        printf("cislo %d\n", get_next_token_buffer(&tb)->type);
+        printf("data %s\n", get_next_token_buffer(&tb)->attr.string_value);
+        printf("cislo %d\n", get_next_token_buffer(&tb)->type);
+        printf("cislo %g\n", get_next_token_buffer(&tb)->attr.double_value);
+
         free_token_buffer(&tb);
 
         return 0;
