@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include "ial.h"
 #include <string.h>
-#include "strings.h"
 #include "scanner.h"
+#include "strings.h"
 
 int save_token(token_t *t, int type, string_t *attr) {
         t->type = type;
@@ -61,7 +60,7 @@ int get_next_token(token_t *t, FILE * file) {
                 }
 
                 switch (state) {
-                case 0:
+                case SPACE:
                         if (isspace(c)) {
                                 state = 0;
                         } else {
@@ -121,7 +120,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 1:
+                case IDENTIFICATOR:
                         if (c == '.') {
                                 append_char(&s, c);
                                 state = 11;
@@ -133,7 +132,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 2:
+                case NUMBER:
                         if (c == '.') {
                                 append_char(&s, c);
                                 state = 3;
@@ -146,7 +145,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 3:
+                case NUM_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = 17;
@@ -156,7 +155,7 @@ int get_next_token(token_t *t, FILE * file) {
 
                         break;
 
-                case 4:
+                case SCIENTIC_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = 15;
@@ -168,7 +167,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 5:
+                case SLASH:
                         if (c == '/') {
                                 state = 14;
                         } else if (c == '*') {
@@ -179,13 +178,13 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 6:
+                case COMMENT:
                         if (c == '*') {
                                 state = 16;
                         }
                         break;
 
-                case 7:
+                case EXCLAMATION:
                         if (c == '=') {
                                 return save_token(t, NOT_EQUAL, NULL);
                         } else {
@@ -194,7 +193,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 8:
+                case COMPARE_LESS:
                         if (c == '=') {
                                 return save_token(t, LESS_EQUAL, NULL);
                         } else {
@@ -203,7 +202,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 9:
+                case COMPARE_GREATER:
                         if (c == '=') {
                                 return save_token(t, GREATER_EQUAL, NULL);
                         } else {
@@ -212,7 +211,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 10:
+                case COMPARE_ASSIGN:
                         if (c == '=') {
                                 return save_token(t, EQUAL, NULL);
                         } else {
@@ -222,7 +221,7 @@ int get_next_token(token_t *t, FILE * file) {
                         break;
 
 
-                case 11:
+                case QUALIFIED_ID:
                         if (isalpha(c) || c == '_' || c == '$') {
                                 append_char(&s, c);
                                 state = 13;
@@ -232,7 +231,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 12:
+                case LITERAL:
                         if (c == '"') {
                                 return save_token(t, STRING_LITERAL, &s);
 
@@ -244,7 +243,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 13:
+                case QUALIFIED_ID_END:
                         if (isalnum(c) || c == '_' || c == '$') {
                                 append_char(&s, c);
                         } else {
@@ -253,13 +252,13 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 14:
+                case LINE_COMMENT_END:
                         if (c == '\n') {
                                 state = 0;
                         }
                         break;
 
-                case 15:
+                case DOUBLE_END:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                         } else {
@@ -268,13 +267,13 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 16:
+                case BLOCK_COMMENT_END:
                         if (c == '/') {
                                 state = 0;
                         }
                         break;
 
-                case 17:
+                case SCIENTIC_DOUBLE_EXP:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                         } else if (c == 'e' || c == 'E') {
@@ -287,7 +286,7 @@ int get_next_token(token_t *t, FILE * file) {
 
                         break;
 
-                case 18:
+                case SIMPLE_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = 15;
@@ -297,7 +296,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 19:
+                case OR:
                         if (c == '|') {
                                 return save_token(t, LOGICAL_OR, NULL);
                         } else {
@@ -306,7 +305,7 @@ int get_next_token(token_t *t, FILE * file) {
                         }
                         break;
 
-                case 20:
+                case AND:
                         if (c == '&') {
                                 return save_token(t, LOGICAL_AND, NULL);
                         } else {

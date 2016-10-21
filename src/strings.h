@@ -24,7 +24,4 @@ void remove_last_char(string_t *str);
 
 bool append_char(string_t *str, char c);
 
-char *clone_string(const char *s);
-
-
-#endif
+#endif // STRINGS_H

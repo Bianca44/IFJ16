@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include "strings.h"
@@ -56,11 +56,4 @@ bool append_char(string_t *str, char c) {
         str->length++;
         str->data[str->length] = '\0';
         return true;
-}
-
-char *clone_string(const char *s) {
-        char *d = malloc (strlen (s) + 1);
-        if (d == NULL) return NULL;
-        strcpy (d,s);
-        return d;
 }
