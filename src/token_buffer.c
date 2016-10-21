@@ -25,7 +25,7 @@ bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t) {
         }
 
         int i = token_buf->length;
-        token_buf->list[i] =(token_t *) malloc(sizeof(token_t));
+        token_buf->list[i] = (token_t *) malloc(sizeof(token_t));
         memcpy(token_buf->list[i], t, sizeof(token_t));
         token_buf->length++;
         return true;
