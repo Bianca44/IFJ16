@@ -1,13 +1,13 @@
 #include <stdlib.h>
+#include <string.h> //TODO
 #include <stdio.h>
 #include "hash_table.h"
 
 /**TODO
- * Hash funcion, for each string function generates index 
- * this index is than used for storing/accessing item in hash table
- * @param str word
- * @param htab_size size of hash table
- * @return index according to which we can store/access word in table 
+ * Hash funcion
+ * @param key key
+ * @param ht_size size of hash table
+ * @return index to table
  */
 unsigned hash_code(const tKey key, unsigned ht_size) { 
   unsigned h=0; 
@@ -18,22 +18,27 @@ unsigned hash_code(const tKey key, unsigned ht_size) {
   }
   return h % ht_size; 
 }
+
 /**
  * @brief Initializes new hash table
  * @param ht_size size of hash table
+ * @param hash_code_ptr hash function
+ * @param dispose_func_ptr dispose function for data
  * @return hash table (pointer) or NULL in case of failure
  */
-tHTable * ht_init(unsigned ht_size, unsigned int (*hash_code_ptr)(const tKey, unsigned)){
+tHTable * ht_init(unsigned ht_size, unsigned (*hash_code_ptr)(const tKey, unsigned),
+                  void (*dispose_func_ptr)(tData data)){
 
     tHTable *new_table;
     //allocating space for table 
-    if((new_table = malloc(sizeof(tHTable) + ht_size * sizeof(void *))) == NULL){
+    if((new_table = malloc(sizeof(tHTable) + ht_size * sizeof(tSTitem *))) == NULL){
        return NULL; //error
     }
 
     /*setting values of new hash table*/
     new_table->ht_size = ht_size;
     new_table->hash_code_ptr = hash_code_ptr;
+    new_table->dispose_func_ptr = dispose_func_ptr;
     new_table->n_items = 0;
     
     for(unsigned i=0; i < ht_size; i++){
@@ -43,6 +48,132 @@ tHTable * ht_init(unsigned ht_size, unsigned int (*hash_code_ptr)(const tKey, un
    return new_table;
 }
 
+/*
+ * @brief searches for item in table 
+ * @param ptrht hash table
+ * @param key key
+ * @pre ptrht != NULL and key == NULLL
+ * @return item/NULL
+ */
+
+tSTitem * ht_search(tHTable * ptrht, const tKey key){
+    //getting index
+    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+    //accesing list of synonyms
+    tSTitem *first = ptrht->ptr[index];
+    
+    while(first != NULL){
+        //TODO strcmp
+        if(strcmp(first->key, key) == 0){
+            return first;
+        }
+ 
+        first = first->next;
+    }
+    // not found 
+    return NULL;
+}
+
+/*
+ * @brief inserts item to table with given key, if item exists data are updated
+ * @param ptrht hash table
+ * @param key key
+ * @param data data to be added
+ */
+
+void ht_insert(tHTable * ptrht, const tKey key, tData data){    
+
+    tSTitem * item = ht_search(ptrht, key);
+    if(item == NULL){
+        //getting index
+        unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+        //accesing list of synonyms
+        tSTitem *first = ptrht->ptr[index];
+ 
+        //adding item
+        tSTitem * new;
+
+        if((new = malloc(sizeof(tSTitem))) == NULL){
+            return ; //error            
+        }
+
+        if((new->key = malloc(sizeof(char) * (strlen(key)+1))) == NULL){
+            free(new);
+            return ; //error
+        }
+
+        //TODO str
+        strcpy(new->key, key);
+        new->data = data;
+        //adding to beginning
+        new->next = first;
+        ptrht->ptr[index] = new;
+        //TODO
+        ptrht->n_items += 1;
+    }
+    else{
+        //actualizing item
+        //TODO dealocate old data ?
+        item->data = data;
+    }    
+
+}
+
+/*
+ * @brief reads data of item with given key
+ * @param ptrht hash table
+ * @param key key
+ * @return data of given item or NULL if item doesnt exist
+ */
+
+tData ht_read(tHTable * ptrht, const tKey key){
+    
+    tSTitem * item;
+
+    if((item = ht_search(ptrht, key)) == NULL){
+        return NULL;
+    }
+
+    return item->data;
+}
+
+/*
+ * @brief deletes item with given key, if item isnt in table nothing happens
+ * @param ptrht hash table
+ * @param key key
+ */
+void ht_delete (tHTable * ptrht, tKey key){ 
+    //getting index
+    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+    //accesing list of synonyms
+    tSTitem * tmp = ptrht->ptr[index];
+    tSTitem * tmp_prev = tmp;
+     
+    while(tmp != NULL){
+        //TODO strcmp
+        if(strcmp(tmp->key, key) == 0){
+            //item to be deleted is first
+            if(tmp == tmp_prev){
+                ptrht->ptr[index] = tmp->next;
+            }
+            else{
+                tmp_prev->next = tmp->next;
+            }
+            //freeing item
+            free(tmp->key);
+            ptrht->dispose_func_ptr(tmp->data);
+            free(tmp);
+            ptrht->n_items -= 1;
+            return; 
+        }
+        tmp_prev = tmp;
+        tmp = tmp->next;
+    }
+
+    return;
+}
+
+
 /**
  * @brief Frees and delete all items in table but not table itself
  * @param ptrht table to be freed
@@ -50,20 +181,26 @@ tHTable * ht_init(unsigned ht_size, unsigned int (*hash_code_ptr)(const tKey, un
  * @pre ptrht is not NULL
  */
 
-void ht_clear_all(tHTable *ptrht, void (* dispose_func_ptr)(void *)){
+void ht_clear_all(tHTable *ptrht){
 
-    void *item;
-
+    tSTitem *first, *tmp;
+    //going through lists od synonyms
     for(unsigned i = 0; i < ptrht->ht_size; i++){
         
-        item = ptrht->ptr[i];
+        first = ptrht->ptr[i];
 
-        if(item == NULL){
+        if(first == NULL){
             continue;
         }
-        //if TODO 
-        dispose_func_ptr(item);
-
+        
+        //list of synonyms is not empty
+        while(first != NULL){
+            tmp = first;
+            first = first->next;
+            free(tmp->key);
+            ptrht->dispose_func_ptr(tmp->data);
+            free(tmp);
+        }
         ptrht->ptr[i] = NULL;
         
     }
@@ -71,69 +208,36 @@ void ht_clear_all(tHTable *ptrht, void (* dispose_func_ptr)(void *)){
     ptrht->n_items = 0;
 }
 
-void ht_free(tHTable *ptrht,void (* dispose_func_ptr)(void *)){
+/**
+ * @brief Frees the whole table 
+ * @param ptrht hash table
+ */
+
+void ht_free(tHTable *ptrht){
     
-    ht_clear_all(ptrht, dispose_func_ptr);  
+    ht_clear_all(ptrht);  
     free(ptrht); 
 }
+/**
+ * @brief functions for disposing test structure
+ * @param data to be disposed
+ * @pre data != NULL
+ */
+void dispose_func(tData data){
 
-void * ht_search(tHTable * ptrht, const tKey key, void *(* item_search_ptr)(void *, tKey key)){
-    //getting index
-    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-    //accesing list of synonyms
-    void *item = ptrht->ptr[index];
-    
-    return item_search_ptr(item, key); 
-}
-
-void ht_insert(tHTable * ptrht, const tKey key, void * data, void (*item_insert_first_ptr)(void *, void *)){    
-    //getting index
-    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-    void * item = ptrht->ptr[index];
-    item_insert_first_ptr(&item, data);
-}
-
-void * ht_read(tHTable * ptrht, const tKey key, void * (* item_get_value_ptr)(void *),void *(* item_search_ptr)(void *, tKey key)){
-    
-    void * item;
-
-    if((item = ht_search(ptrht, key, item_search_ptr)) == NULL){
-        return NULL;
-    }
-
-    return item_get_value_ptr(item); 
-}
-
-void * item_get_value(void *item){
-    return item;
-}
-
-void ht_Delete (tHTable *ptrht, const tKey key, void (*item_delete_ptr)(void *)) {
-    //getting index
-    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-    void * item = ptrht->ptr[index];
-
-    item_delete_ptr(item);
-}
-
-void item_delete(void *item){
-
-}
-//Functions for lists
-void * item_search(void * item, tKey key){
-    tHTitem * tmp = item;
-    printf("sdad\n");
-
-    return tmp;
-}
-
-
-void dispose_ht_item(void * list){
-    
-    //t_htab_listitem_ptr tmp = list;
-    
+    free(((struct test *)(data))->str); 
+    free((struct test *)(data));
     return ;
 }
-void item_insert_first(void * item, void * data){
-    return;
+
+struct test * create_test(int x, char * str){
+
+    struct test * tmp;
+    tmp = malloc(sizeof(struct test));
+    tmp->str = malloc(sizeof(char)*(strlen(str)+1));
+    strcpy(tmp->str, str);
+    tmp->x = x;
+
+    return tmp; 
 }
+

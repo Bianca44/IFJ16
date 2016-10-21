@@ -5,11 +5,28 @@
 int main() {
     
     tHTable *t;
-    t = ht_init(10, hash_code); 
-        
-    //printf("table %d %d\n",t->htab_size, ((struct htab_listitem *)(t->ptr[0]))->data);
-    //printf("%d\n",(int *)hash_table_search_add(t, find_add_listitem, "asdsfsdfdfd"));
-    ht_clear_all(t, dispose_ht_item);
-    ht_free(t, dispose_ht_item);
+    t = ht_init(11, hash_code, dispose_func);
+    struct test * a = create_test(42, "Sasha");
+    struct test *b, *c = create_test(42, "Nein");
+
+
+    ht_insert(t, "X", a);
+    ht_insert(t, "Y", c);
+    b = ht_read(t, "X"); 
+    printf("%d %s %d\n", b->x, b->str, t->n_items);
+    ht_delete(t, "X");
+    b = ht_read(t, "X"); 
+    printf("%d\n",b);  
+
+    printf("%d \n", t->n_items);
+
+    b = ht_read(t, "Y"); 
+    printf("%d %s %d\n", b->x, b->str, t->n_items);
+    ht_delete(t, "X");
+    b = ht_read(t, "X"); 
+    printf("%d \n",b);  
+
+    ht_free(t);
+
     return 0;
 }
