@@ -128,15 +128,11 @@ int parse_param() {
                         // aj ciarka, aj lava zatvorka aj prava zatvorka
                         get_next_token(&t, file);
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
-                                if (parse_declaration()) {
-                                        return OK;
-                                }
+                                return parse_declaration();
                         } else if (t.type == COMMA) {
                                 get_next_token(&t, file);
                                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                                        if (parse_next_param()) {
-                                                return OK;
-                                        }
+                                        return parse_next_param();
                                 }
                         }
                 }
@@ -167,9 +163,7 @@ int parse_class_element() {
         }
 
         else if (t.type == STATIC) {
-                if (parse_declaration_element()) {
-                        return OK;
-                }
+                return parse_declaration_element();
         }
         return SYN_ERROR;
 }
