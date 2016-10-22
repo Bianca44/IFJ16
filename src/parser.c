@@ -133,6 +133,7 @@ int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_next_token(&t, file) == ID) {
                         printf("id %s = ", t.attr.string_value);
+                        // aj ciarka, aj lava zatvorka aj prava zatvorka
                         if (parse_declaration()) {
                                 return OK;
                         }
