@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "scanner.h"
+#include "parser.c"
 
 #if LEXICAL_TESTS
 char *token_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
@@ -350,11 +351,10 @@ int init_scanner(char *filename) {
                 printf("File not found\n");
                 return -2;
         }
-
+        #if LEXICAL_TESTS
         token_t t;
         while (get_next_token(&t, file) != EOF) {
 
-                #if LEXICAL_TESTS
                 printf("[%s]", token_names[t.type]);
                 switch (t.type) {
                 case ID:
@@ -373,11 +373,16 @@ int init_scanner(char *filename) {
                         printf("\n");
                         break;
                 }
-                #endif
-
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == STRING_LITERAL) {
                         free(t.attr.string_value);
                 }
+        }
+        #endif
+
+        if (parse(file)) {
+            printf("Parsed OK\n");
+        } else {
+            printf("Parsed FAIL\n");
         }
 
         fclose(file);
