@@ -1,6 +1,4 @@
-class tt { /*static int p(int a){
-}*/
-           static int p(int a){
+class tt { static int p(int a, int b, String c){
            }
            static int c = 42;
            static void x() {

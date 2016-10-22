@@ -40,8 +40,8 @@ int parse_method_element() {
 }
 
 int parse_next_param() {
-        if (get_next_token(&t, file) == RIGHT_ROUNDED_BRACKET) {
-                return OK;
+        if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                return parse_param();
         }
 
         return SYN_ERROR;
@@ -96,7 +96,6 @@ int parse_value() {
 }
 
 int parse_declaration() {
-        get_next_token(&t, file);
         if (t.type == LEFT_ROUNDED_BRACKET) {
 
                 if (parse_method_declaration ()) {
@@ -108,7 +107,7 @@ int parse_declaration() {
                 } else {
                         return OK;
                 }
-        } else if (t.type == ASSIGN) {
+        }  else if (t.type == ASSIGN) {
                 return parse_value();
         } else if (t.type == SEMICOLON) {
                 if (get_next_token(&t, file) == STATIC) {
@@ -127,12 +126,20 @@ int parse_param() {
                 if (get_next_token(&t, file) == ID) {
                         printf("id %s = ", t.attr.string_value);
                         // aj ciarka, aj lava zatvorka aj prava zatvorka
-                        if (parse_declaration()) {
-                                return OK;
+                        get_next_token(&t, file);
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
+                                if (parse_declaration()) {
+                                        return OK;
+                                }
+                        } else if (t.type == COMMA) {
+                                get_next_token(&t, file);
+                                if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                                        if (parse_next_param()) {
+                                                return OK;
+                                        }
+                                }
                         }
                 }
-        } else if (t.type == COMMA) {
-
         }
         return SYN_ERROR;
 
