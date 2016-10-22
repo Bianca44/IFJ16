@@ -1,4 +1,4 @@
-<class-list> -> class <ID> { <class-element> } <class-list>
+<class-list> -> class id { <class-element> } <class-list>
 <class-list> -> epsilon
 <class-element> -> static <declaration-element> <class-element>
 <class-element> -> epsilon
