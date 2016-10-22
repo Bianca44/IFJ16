@@ -48,20 +48,16 @@ int parse_next_param() {
 }
 
 int parse_param_list() {
-        if (get_next_token(&t, file) == RIGHT_ROUNDED_BRACKET) {
+        get_next_token(&t, file);
+        if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
-                        if (parse_method_element()) {
-                                if (t.type == RIGHT_CURVED_BRACKET) {
-                                        return OK;
-
-                                }
-                        }
+                        return parse_method_element();
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (parse_param()) {
-                        return parse_method_element();
-
-
+                        if (t.type == LEFT_CURVED_BRACKET) {
+                                return parse_method_element();
+                        }
                 }
         }
         return SYN_ERROR;
@@ -71,17 +67,14 @@ int parse_param_list() {
 int parse_method_declaration () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 if (parse_param_list()) {
-                        if (t.type == RIGHT_CURVED_BRACKET) {
-                                if (get_next_token(&t, file) == STATIC) {
-                                        return parse_class_element();
-                                } else {
-                                        return OK;
-                                }
+                        if (get_next_token(&t, file) == STATIC) {
+                                return parse_class_element();
+                        } else {
+                                return OK;
                         }
-
                 }
 
-        } //
+        }
         return SYN_ERROR;
 }
 
@@ -97,19 +90,14 @@ int parse_value() {
                                 }
                         }
                 }
-        } else if (t.type == SEMICOLON) {
-                if (get_next_token(&t, file) == STATIC) {
-                        return parse_class_element();
-                } else if (t.type == RIGHT_CURVED_BRACKET) {
-                        return OK;
-
-                }
         }
+
         return SYN_ERROR;
 }
 
 int parse_declaration() {
-        if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
+        get_next_token(&t, file);
+        if (t.type == LEFT_ROUNDED_BRACKET) {
 
                 if (parse_method_declaration ()) {
                         return parse_class_element();
@@ -120,10 +108,15 @@ int parse_declaration() {
                 } else {
                         return OK;
                 }
-        }
-
-        else {
+        } else if (t.type == ASSIGN) {
                 return parse_value();
+        } else if (t.type == SEMICOLON) {
+                if (get_next_token(&t, file) == STATIC) {
+                        return parse_class_element();
+                } else  {
+                        return OK;
+
+                }
         }
 
         return SYN_ERROR;
@@ -138,21 +131,22 @@ int parse_param() {
                                 return OK;
                         }
                 }
+        } else if (t.type == COMMA) {
 
         }
-
         return SYN_ERROR;
 
 }
 
 int parse_declaration_element() {
-        if (get_next_token(&t, file) == VOID) {
+        get_next_token(&t, file);
+        if (t.type == VOID) {
                 if (get_next_token(&t, file) == ID) {
                         if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
                         }
                 }
-        } else {
+        } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 return parse_param();
         }
 
@@ -174,7 +168,7 @@ int parse_class_element() {
 }
 
 int parse_class_list() {
-        if (t.type == CLASS) {
+        if (get_next_token(&t, file) == CLASS) {
                 if (get_next_token(&t, file) == ID) {
                         if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
                                 get_next_token(&t, file);
@@ -191,19 +185,12 @@ int parse_class_list() {
                                 }
                         }
                 }
-        }
-
-        return SYN_ERROR;
+        } else if (t.type == EOF) {
+                return OK;
+        } return SYN_ERROR;
 }
 int parse(FILE *source) {
         file = source;
-        get_next_token(&t, file);
-        if (t.type != LEXICAL_ERROR) {
-                return parse_class_list();
-        } else if (t.type == EOF) {
-                return OK;
-        } else {
-                return SYN_ERROR;
-        }
+        return parse_class_list();
 
 }
