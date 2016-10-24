@@ -29,8 +29,9 @@
 <value> -> = <E>
 <method-element> -> <data-type> id <value>; <method-element>
 <method-element> -> epsilon
-<method-element> -> <element-list>
-<element-list> -> <statement> <method-element>
+<method-element> -> <element-list>  <method-element>
+<element-list> -> <statement>
+<element-list> -> {<statement-list>}
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
 <statement-list> -> {<statement-list>} <statement-list>
