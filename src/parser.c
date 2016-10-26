@@ -151,13 +151,7 @@ int parse_element_list() {
 }
 
 int parse_method_element() {
-        if (t.type == LEFT_CURVED_BRACKET) {
-                get_next_token(&t, file);
-                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
-                        return parse_method_element();
-                }
-        }
-        else if (t.type == RIGHT_CURVED_BRACKET) {
+        if (t.type == RIGHT_CURVED_BRACKET) {
                 return OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (parse_param()) {
@@ -205,17 +199,26 @@ int parse_param_list() {
         get_next_token(&t, file);
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
-                        return parse_method_element();
+                        get_next_token(&t, file);
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
+                                return parse_method_element();
+                        }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (parse_param()) {
                         get_next_token(&t, file);
                         if (t.type == LEFT_CURVED_BRACKET) {
-                                return parse_method_element();
+                                get_next_token(&t, file);
+                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
+                                        return parse_method_element();
+                                }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
                                         if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
-                                                return parse_method_element();
+                                                get_next_token(&t, file);
+                                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
+                                                        return parse_method_element();
+                                                }
                                         }
                                 }
                         }
