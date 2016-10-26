@@ -1,5 +1,5 @@
 class tt { static int p(int a, int b, String g){
-                   a = 5;
+                   a = 5; {}
                    k(5,5,6);
                    return 9;
                    b = 9;

@@ -150,6 +150,20 @@ int parse_element_list() {
         return SYN_ERROR;
 }
 
+int parse_statement_list() {
+        if (t.type == RIGHT_CURVED_BRACKET) {
+                return OK;
+        } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                if (parse_statement()) {
+                        get_next_token(&t, file);
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                                return parse_statement_list();
+                        }
+                }
+        }
+        return SYN_ERROR;
+}
+
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 return OK;
@@ -159,7 +173,7 @@ int parse_method_element() {
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
                                         get_next_token(&t, file);
-                                        if (t.type == RIGHT_CURVED_BRACKET) {
+                                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
                                                 return parse_method_element();
                                         }
                                 }
@@ -168,8 +182,18 @@ int parse_method_element() {
         } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
                 if(parse_element_list()) {
                         get_next_token(&t, file);
-                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID) {
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
                                 return parse_method_element();
+                        }
+                }
+        } else if (t.type == LEFT_CURVED_BRACKET) {
+                get_next_token(&t, file);
+                if (t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                        if(parse_statement_list()) {
+                                get_next_token(&t, file);
+                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
+                                        return parse_method_element();
+                                }
                         }
                 }
         }
