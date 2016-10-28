@@ -152,6 +152,10 @@ int parse_condition_list() {
         return SYN_ERROR;
 }
 
+int parse_else() {
+    return OK;
+}
+
 int parse_statement() {
         if (t.type == SEMICOLON) {
                 return OK;
@@ -168,7 +172,7 @@ int parse_statement() {
                         if (parse_expression()) {
                                 if (parse_condition_list()) {
 
-                                    printf("tok %s\n", t_names[t.type]);
+                                        /*printf("tok %s\n", t_names[t.type]);
                                         //get_next_token(&t, file);
                                         if (t.type == ELSE) {
                                             printf("tok %s\n", t_names[t.type]);
@@ -176,7 +180,8 @@ int parse_statement() {
                                         }
                                         else { // long
                                             return OK;
-                                        }
+                                        }*/
+                                        return parse_else();
                                 }
                                 // ELSE
 
@@ -216,7 +221,7 @@ int parse_element_list() {
 int parse_statement_list() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 return OK;
-        } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+        } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (parse_statement()) {
                         get_next_token(&t, file);
                         if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
