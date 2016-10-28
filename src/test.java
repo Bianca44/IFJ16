@@ -1,5 +1,9 @@
 class tt { static int p(int a, int b, String g){
+                while (1);
+                {return 9;return 9;return 9;}
+                if (9) ;
                 a = 5;
+                {return 9;return 9;return 9;}
                 {return 9;return 9;return 9;}
                    k(5,5,6);
                    return 9;

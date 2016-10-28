@@ -40,7 +40,7 @@ int parse_expression() {
            }*/
         // TODO
 
-        while (t.type != SEMICOLON) {
+        while (t.type != SEMICOLON && t.type != RIGHT_ROUNDED_BRACKET) {
                 get_next_token(&t, file);
         }
         return OK;
@@ -74,16 +74,6 @@ int parse_next_param_value() {
                                 return parse_next_param_value();
                         }
                 }
-                /*if (t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // HACK expr
-                        if(parse_expression()) {
-                            get_next_token(&t, file);
-                            if (t.type == RIGHT_ROUNDED_BRACKET) {
-                                    return OK;
-                            } else if (t.type == COMMA) {
-                                    return parse_next_param_value();
-                            }
-                        }
-                   }*/
         }
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 return OK;
@@ -133,44 +123,69 @@ int parse_call_assign() {
         return SYN_ERROR;
 }
 
+int parse_statement();
+
+int parse_condition_list() {
+        if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                return parse_statement();
+        }
+        return SYN_ERROR;
+}
+
 int parse_statement() {
         if (t.type == SEMICOLON) {
                 return OK;
         }
         else if (t.type == RETURN) {
-                if(parse_return_value()) {
-                        return OK;
-                }
+                return parse_return_value();
         }
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
-                if(parse_call_assign()) {
-                        return OK;
-                }
+                return parse_call_assign();
 
         } else if (t.type == IF) {
-                printf("som tu\n");
+                if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
+                        if (parse_expression()) {
+                                get_next_token(&t, file);
+                                if (parse_condition_list()) {
+                                        return OK;
+                                }
+                                // else missing
+
+                        }
+                }
+        } else if (t.type == WHILE) {
+                if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
+                        if (parse_expression()) {
+                                get_next_token(&t, file);
+                                if (parse_condition_list()) {
+                                        return OK;
+                                }
+                                // else missing
+
+                        }
+                }
         }
         return SYN_ERROR;
 }
+
+int parse_statement_list();
 
 int parse_element_list() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 return OK;
         }
-        else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+        else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 return parse_statement();
-        } /*else if (t.type == LEFT_CURVED_BRACKET) {
+        }
+        else if (t.type == LEFT_CURVED_BRACKET) {
                 get_next_token(&t, file);
-                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                         if(parse_statement_list()) {
-                                get_next_token(&t, file);
-                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
-                                        return parse_method_element();
-                                }
+                                return OK;
                         }
                 }
-        }*/
+        }
 
         return SYN_ERROR;
 }
@@ -181,16 +196,16 @@ int parse_statement_list() {
         } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
                 if (parse_statement()) {
                         get_next_token(&t, file);
-                        if (t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                 return parse_statement_list();
                         }
                 }
         } else if (t.type == LEFT_CURVED_BRACKET) {
                 get_next_token(&t, file);
-                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                         if(parse_statement_list()) {
                                 get_next_token(&t, file);
-                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
+                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF || t.type == WHILE) {
                                         return parse_method_element();
                                 }
                         }
@@ -208,27 +223,17 @@ int parse_method_element() {
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
                                         get_next_token(&t, file);
-                                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
+                                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF || t.type == WHILE) {
                                                 return parse_method_element();
                                         }
                                 }
                         }
                 }
-        } else if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+        } else if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if(parse_element_list()) {
                         get_next_token(&t, file);
-                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF || t.type == WHILE) {
                                 return parse_method_element();
-                        }
-                }
-        } else if (t.type == LEFT_CURVED_BRACKET) {
-                get_next_token(&t, file);
-                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
-                        if(parse_statement_list()) {
-                                get_next_token(&t, file);
-                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON ||t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF) {
-                                        return parse_method_element();
-                                }
                         }
                 }
         }
@@ -259,7 +264,7 @@ int parse_param_list() {
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
                         get_next_token(&t, file);
-                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                        if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                 return parse_method_element();
                         }
                 }
@@ -268,14 +273,14 @@ int parse_param_list() {
                         get_next_token(&t, file);
                         if (t.type == LEFT_CURVED_BRACKET) {
                                 get_next_token(&t, file);
-                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                         return parse_method_element();
                                 }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
                                         if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
                                                 get_next_token(&t, file);
-                                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF) {
+                                                if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                                         return parse_method_element();
                                                 }
                                         }
