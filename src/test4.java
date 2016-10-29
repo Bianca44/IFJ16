@@ -11,8 +11,8 @@ static void run()
         else {
                 vysl = factorial(a);
                 neg = 0 - vysl;
-                //ifj16.print("Vysledek: " + vysl);
-                //ifj16.print(" (zaporny: " + neg+ ")\n");
+                ifj16.print("Vysledek: " + vysl);
+                ifj16.print(" (zaporny: " + neg+ ")\n");
         }
 }
 static int factorial(int n) // Definice funkce pro vypocet faktorialu
