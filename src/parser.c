@@ -344,8 +344,7 @@ int parse_method_declaration () {
 
 int parse_value() {
         if (t.type == ASSIGN) {
-                if (parse_expression()) { /* parse exp */
-                        printf(" %d\n", t.attr.int_value);
+                if (parse_expression()) {
                         if (t.type == SEMICOLON) {
                                 return OK;
                         }
@@ -387,7 +386,6 @@ int parse_declaration() {
 int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_next_token(&t, file) == ID) {
-                        printf("id %s = ", t.attr.string_value);
                         return OK;
                 }
         }
