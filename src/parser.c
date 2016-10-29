@@ -39,9 +39,20 @@ int parse_method_element();
 
 int parse_expression() {
 
-        // TODO
+        while (t.type != SEMICOLON) {
+                // ulozit
+                get_next_token(&t, file);
+        }
+        return OK;
 
-        while (t.type != SEMICOLON && t.type != RIGHT_ROUNDED_BRACKET && t.type != COMMA) {
+}
+
+int parse_param_expression() {
+        // riesi aj if (exp)
+        // hlavne pre ifj16.print(str+str)
+        // ale teda aj pre vsetky funkcie foo (exp, next_param);
+        while (t.type != RIGHT_ROUNDED_BRACKET && t.type != COMMA) {
+                // ulozit
                 get_next_token(&t, file);
         }
         return OK;
@@ -84,7 +95,7 @@ int parse_param_value () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_next_token(&t, file);
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
-                        if (parse_expression()) { // just for ifj16.print
+                        if (parse_param_expression()) { // just for ifj16.print
                                 if (t.type == COMMA) {
                                         return parse_next_param_value();
                                 } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -188,16 +199,16 @@ int parse_statement() {
 
         } else if (t.type == IF) {
                 if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
-                        if (parse_expression()) {
+                        if (parse_param_expression()) {
                                 if (parse_condition_list()) {
-                                    return parse_else();
+                                        return parse_else();
                                 }
 
                         }
                 }
         } else if (t.type == WHILE) {
                 if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
-                        if (parse_expression()) {
+                        if (parse_param_expression()) {
                                 return parse_condition_list();
                         }
                 }
