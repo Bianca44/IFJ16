@@ -190,8 +190,7 @@ int parse_statement() {
                 if (get_next_token(&t, file) == LEFT_ROUNDED_BRACKET) {
                         if (parse_expression()) {
                                 if (parse_condition_list()) {
-
-                                        return parse_else();
+                                    return parse_else();
                                 }
 
                         }
