@@ -430,13 +430,14 @@ int parse_class_element() {
 }
 
 int parse_class_list() {
-        if (get_next_token(&t, file) == CLASS) {
+        if (t.type == CLASS) {
                 if (get_next_token(&t, file) == ID) {
                         if (get_next_token(&t, file) == LEFT_CURVED_BRACKET) {
                                 get_next_token(&t, file);
                                 if (parse_class_element()) {
                                         if (t.type == RIGHT_CURVED_BRACKET) {
-                                                if (get_next_token(&t, file) == CLASS) {
+                                                get_next_token(&t, file);
+                                                if (t.type == CLASS) {
                                                         return parse_class_list();
                                                 } else if (t.type == EOF) {
                                                         return OK;
@@ -453,6 +454,11 @@ int parse_class_list() {
 }
 int parse(FILE *source) {
         file = source;
-        return parse_class_list();
+        get_next_token(&t, file);
+        if (t.type == CLASS || t.type == EOF) {
+                return parse_class_list();
+        } else {
+                return SYN_ERROR;
+        }
 
 }
