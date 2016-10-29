@@ -2,26 +2,26 @@ class tt { static int p(int a, int b, String g){
 
                 if (9) a = 5;
                 while (1) {
-                    {return 9;return 9;return 9;}
+                    //{return 9;return 9;return 9;}
                     k(5,5,6);
                     b = 9+6;
-                    {return 9;return 9;return 9;}
+                    //{return 9;return 9;return 9;}
                     return 9;
                 }
                     if (9) {
-                        {return 9;return 9;return 9;}
+                        //{return 9;return 9;return 9;}
                         k(5,5,6);
                         b = 9+6;
-                        {return 9;return 9;return 9;}
+                        //{return 9;return 9;return 9;}
                         return 9;
                     }
 
                     if (9) int a = 5;
                     {
-                        {return 9;return 9;return 9;}
+                        //{return 9;return 9;return 9;}
                         k(5,5,6);
                         b = 9+6;
-                        {return 9;return 9;return 9;}
+                        //{return 9;return 9;return 9;}
                         return 9;
                     }
                     int a = 9;
@@ -34,7 +34,7 @@ class tt { static int p(int a, int b, String g){
                 {return 9;return 9;return 9;}
                 {return 9;return 9;return 9;}
                    k(5,5,6);
-                   int a = 5;
+                   double a = 5;
                    return 9;
                    {{{return 9;return 9;}}}
                    b = 9+6;
