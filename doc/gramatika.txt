@@ -6,7 +6,6 @@
 <declaration-element> -> void id <method-declaration>
 <declaration> -> ;
 <declaration> -> = <E>;
-***<declaration> -> = <ID>(<declaration>); ***
 <declaration> -> <method-declaration>
 <method-declaration> -> ( <param-list> ) { <method-element> }
 <ID> -> id
@@ -22,7 +21,6 @@
 <param> -> <data-type> id
 <call-assign> -> (<param-value>)
 <call-assign> -> = <E>
-***<call-assign> -> = <ID>(<param-value>)***
 <param-value> -> epsilon
 <param-value> -> <E> <next-param-value>
 <next-param-value> -> ,<E> <next-param-value>
