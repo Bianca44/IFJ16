@@ -36,8 +36,25 @@ int parse_class_element();
 int parse_param();
 int parse_value();
 int parse_method_element();
+int parse_param_value ();
 
 int parse_expression() {
+
+
+        // ID co je funkcia alebo premenna
+        // ak funkcia, parsuje takto:
+
+        /*if (t.type == ID || t.type == SPECIAL_ID) {
+                get_next_token(&t, file);
+                if (t.type == LEFT_ROUNDED_BRACKET) {
+                        if (parse_param_value()) {
+                                get_next_token(&t, file);
+                                if (t.type == SEMICOLON) {
+                                    return OK;
+                                }
+                        }
+                }
+        }*/
 
         while (t.type != SEMICOLON) {
                 // ulozit
