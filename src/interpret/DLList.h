@@ -34,5 +34,6 @@ void DLActualize (tDLList *, void *);
 void DLSucc (tDLList *);
 void DLPred (tDLList *);
 int DLActive (tDLList *);
-
+void DLSetActive(tDLList *L, tDLElemPtr e);
+tDLElemPtr DLActiveElem(tDLList *L);
 #endif

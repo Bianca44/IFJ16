@@ -31,5 +31,7 @@ typedef struct tInst{
 
 
 tInst *init_inst();
+tInst *init_inst2();
 void dispose_inst(void *);
+void dispose_inst2(void *);
 #endif //INSTRUCTIONS_H

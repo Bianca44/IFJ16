@@ -268,5 +268,12 @@ int DLActive (tDLList *L) {
 
     return (L->Act != NULL);
 }
+//TODO
 
+tDLElemPtr DLActiveElem (tDLList *L) {
+    return L->Act;
+}
 
+void DLSetActive (tDLList *L, tDLElemPtr e){
+    L->Act = e;
+}

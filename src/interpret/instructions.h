@@ -1,7 +1,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 #include "datatypes.h"
-
+#include "DLList.h"
 enum instructions {
     //INPUT
     I_RINT,
@@ -10,13 +10,9 @@ enum instructions {
     I_RBOOL,
     //ARITHMETIC
     I_ADD,
-    I_ADD_DBL,
     I_MUL,
-    I_MUL_DBL,
     I_SUB,
-    I_SUB_DBL,
     I_DIV,
-    I_DIV_DBL,
     //CONVERSIONS
 
     //LOGICAL
@@ -28,6 +24,7 @@ enum instructions {
     I_GE,
     I_NOT,
     //BUILT-IN AND OTHER  
+    I_ASSIGN,
     I_CAT,
     I_TO_STRING,
     I_STRCMP,
@@ -45,16 +42,25 @@ enum instructions {
     I_RETURN,
     //JUMPS
     I_GOTO,
-    I_JT,
-    I_JF,
+    I_JC,
+    I_JE,
+    I_JLE,
+    I_JG,
+    I_JGE,
+    I_LABEL
+
+
 };
 
 void i_add(tVar *op1, tVar *op2, tVar *result);
 void i_sub(tVar *op1, tVar *op2, tVar *result);
 void i_mul(tVar *op1, tVar *op2, tVar *result);
 void i_div(tVar *op1, tVar *op2, tVar *result);
-
-
+void i_assign(tVar *op1, tVar *op2, tVar *result);
+void i_g(tVar *op1, tVar *op2, tVar *result);
+void i_jc(tVar *op1, tDLList *op2, tDLElemPtr result);
+void i_goto(tVar *op1, tDLList *op2, tDLElemPtr result);
+void i_label(tVar *op1, tVar *op2, tVar *result);
 
 
 #endif //INSTRUCTIONS_H

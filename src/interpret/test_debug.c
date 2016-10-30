@@ -9,41 +9,69 @@
 int main(){
 /*
     d_print("durko je %s","bilbo shwaggins");
-    d_message("test:"); */
+    d_message("test:");*/
 
+    tDLList L;
+    DLInitList(&L, dispose_inst2);
+   
+    /**
+     * result = 23 + 10
+     * result = 23 - 10 
+     * result = 23 * 10
+     * result = 23 / 10
+     * if(10 > 5)
+     *      x = 15;
+     * else
+     *      x = 42;     
+     */    
+
+        
+    /*testovanie aritmetickych instrukcii*/ 
+    tInst_fun *af[] = {i_add, i_sub, i_mul, i_div};
     
-/*
-    tVar x;
-    x.i = 10;
-    x.type = INT;
-    x.initialized = true;
-    tInst *i = init_inst();
-    void *j;
-    tVar *a[3];
-    i->f = i_add;
-    a[0] = i->op1 = malloc(sizeof(tVar));
-    a[1] = i->op2 = malloc(sizeof(tVar));
-    a[2] = i->result = malloc(sizeof(tVar));
-    i->op1->i = 1;
-    i->op2->i = 2;
-    i->result->i = 3;
+    for(unsigned j=0; j < 4; j++){
+        tInst *i = init_inst2();
 
-    i->f(&x,&x,&x);
-    printf("%d %u %d \n", x.i, x.type, x.initialized);
-    printf("%lu\n", sizeof(x));
+        i->op1->i = 23;
+        i->op2->i = 10;
+        i->f = af[j];
+        DLInsertLast(&L, i);
+    }    
+    
+    // 10 > 5
+    tInst *i = init_inst2();
+    i->op1->i = 10;
+    i->op2->i = 5;
+    i->f = i_g; //less
+    DLInsertLast(&L, i);
+    //jump 
+ //   tInst *j = init_inst2();
+//    j->f = i_jc;
+//    j->op1->b = false;    
+//    j->op2 = &L;
+//    DLInsertLast(&L, j);
+    //assign1
+    i = init_inst2();
+    i->f = i_assign;
+    i->op1->i = 15;
+    DLInsertLast(&L, i);
 
-    tDLList l;
-    DLInitList(&l, dispose_inst);
-    DLInsertFirst(&l, i);
-    DLFirst(&l);
-    DLCopy(&l, &j);
-    ((tInst *)j)->f(((tInst *)j)->op1, ((tInst *)j)->op2, ((tInst *)j)->result);
-    printf("%d %d %d %d\n", ((tInst *)j)->op1->i, ((tInst *)j)->op2->i, ((tInst *)j)->result->i,
-    ((tInst *)j)->result->i);
-    DLDisposeList(&l);   
-    free(a[0]);
-    free(a[1]);
-    free(a[2]); 
-*/
+    //label
+    i = init_inst2();
+    i->f = i_label; 
+    DLInsertLast(&L, i);
+    //seting adress to label
+//    DLLast(&L);
+   // j->result = DLActiveElem(&L);
+
+    //assign2
+    i = init_inst2();
+    i->f = i_assign;
+    i->op1->i = 42;
+    DLInsertLast(&L, i);
+
+    interpret_tac(&L);
+    DLDisposeList(&L);
+    
     return 0;
 }
