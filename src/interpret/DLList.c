@@ -4,11 +4,12 @@
 
 //TODO ial, komenty, odstranit nepotrebne
 
-void DLInitList (tDLList *L) {
+void DLInitList (tDLList *L, void (*dispose_fun)(void *)) {
 
     L->First = NULL;
     L->Act = NULL;
     L->Last = NULL;
+    L->dispose_fun = dispose_fun;
 
 }
 
@@ -18,6 +19,7 @@ void DLDisposeList (tDLList *L) {
         tDLElemPtr tmp;
         tmp = L->First; //odlizime si ukazatel na prvy prvok - mazany
         L->First = L->First->rptr; //posunieme sa
+        L->dispose_fun(tmp->data);
         free(tmp);
     }
     //navrat do incializacneho stavu
@@ -120,6 +122,7 @@ void DLDeleteFirst (tDLList *L) {
             L->First = L->First->rptr;
             L->First->lptr = NULL;
         }
+        L->dispose_fun(tmp->data);
         free(tmp);
     }
 }	
@@ -139,6 +142,7 @@ void DLDeleteLast (tDLList *L) {
             L->Last = L->Last->lptr;
             L->Last->rptr = NULL;
         }
+        L->dispose_fun(tmp->data);
         free(tmp);
     }
 }
@@ -156,6 +160,7 @@ void DLPostDelete (tDLList *L) {
         else{
             tmp->rptr->lptr = L->Act;
         }
+        L->dispose_fun(tmp->data);
         free(tmp);
     }
 }
@@ -173,6 +178,7 @@ void DLPreDelete (tDLList *L) {
         else{
             tmp->lptr->rptr = L->Act;
         }
+        L->dispose_fun(tmp->data);
         free(tmp);
     }
 

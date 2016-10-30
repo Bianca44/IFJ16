@@ -12,9 +12,10 @@ typedef struct {
     tDLElemPtr First;
     tDLElemPtr Act;
     tDLElemPtr Last;
+    void (*dispose_fun)(void *);
 } tDLList;
 
-void DLInitList (tDLList *);
+void DLInitList (tDLList *, void (*dispose_fun)(void *));
 void DLDisposeList (tDLList *);
 void DLInsertFirst (tDLList *, void *);
 void DLInsertLast(tDLList *, void *);

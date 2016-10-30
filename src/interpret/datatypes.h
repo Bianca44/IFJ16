@@ -29,4 +29,7 @@ typedef struct tInst{
     tVar *result;
 } tInst;
 
+
+tInst *init_inst();
+void dispose_inst(void *);
 #endif //INSTRUCTIONS_H

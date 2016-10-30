@@ -5,11 +5,13 @@ CC=gcc
 .PHONY: all clean r_test
 
 all:test
-test:test_debug.o instructions.o DLList.o datatypes.h
+test:test_debug.o instructions.o DLList.o interpret.o datatypes.h DLList.h instructions.h
 	$(CC) $(CFLAGS) -o $@ $^
 instructions.o:instructions.c instructions.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 DLList.o:DLList.c DLList.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+interpret.o:interpret.c interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 ntest:ntest_debug.o
 	$(CC) $(CFLAGS) -o $@ $<
