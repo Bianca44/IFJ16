@@ -146,7 +146,9 @@ int parse_condition_list() {
                 get_next_token(&t, file);
                 if (parse_statement_list()) {
                         get_next_token(&t, file);
-                        return OK;
+                        if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+                                return OK;
+                        }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (parse_param()) {
