@@ -1,12 +1,13 @@
-<class-list> -> class <ID> { <class-elements> } <class-list>
-<class-elements> -> static <declaration-element> <class-elements>
+<class-list> -> class id { <class-element> } <class-list>
+<class-list> -> epsilon
+<class-element> -> static <declaration-element> <class-element>
+<class-element> -> epsilon
 <declaration-element> -> <param> <declaration>
 <declaration-element> -> void id <method-declaration>
-<value> -> ;
-<value> -> = <E>;
-<declaration> -> <value>
+<declaration> -> ;
+<declaration> -> = <E>;
 <declaration> -> <method-declaration>
-<method-declaration> -> ( <param-list> ) { <method-elements> }
+<method-declaration> -> ( <param-list> ) { <method-element> }
 <ID> -> id
 <ID> -> special_id
 <data-type> -> int
@@ -18,20 +19,24 @@
 <next-param> -> ,<param> <next-param>
 <next-param> -> epsilon
 <param> -> <data-type> id
-<method> -> <ID> (<param-value>)
+<call-assign> -> (<param-value>)
+<call-assign> -> = <E>
 <param-value> -> epsilon
 <param-value> -> <E> <next-param-value>
 <next-param-value> -> ,<E> <next-param-value>
 <next-param-value> -> epsilon
-<method-elements> -> <param> <value> <method-elements>
-<method-elements> -> epsilon
-<method-elements> -> ; <method-elements>
-<method-elements> -> <statement-list> <method-elements>
+<value> -> epsilon
+<value> -> = <E>
+<method-element> -> <data-type> id <value>; <method-element>
+<method-element> -> epsilon
+<method-element> -> <element-list>  <method-element>
+<element-list> -> <statement>
+<element-list> -> {<statement-list>}
 <statement-list> -> <statement> <statement-list>
 <statement-list> -> epsilon
+<statement-list> -> {<statement-list>} <statement-list>
 <statement> -> ;
-<statement> -> <method>;
-<statement> -> <ID> = <E>;
+<statement> -> <ID> <call-assign>;
 <statement> -> if (<E>) <condition-list> <else>
 <statement> -> while (<E>) <condition-list>
 <statement> -> return <return-value>;
@@ -39,6 +44,5 @@
 <return-value> -> <E>
 <else> -> epsilon
 <else> -> else <condition-list>
-<statement-list> -> {<statement-list>} <statement-list>
 <condition-list> -> {<statement-list>}
 <condition-list> -> <statement>

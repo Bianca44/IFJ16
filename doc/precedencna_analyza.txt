@@ -1,0 +1,30 @@
+Pravidlo
+<E> -> <expression-item>
+<expression-item> -> <expression-item> <op> <expression-item>
+<expression-item> -> (<expression-item>)
+<expession-item> -> INT_LITERAL
+<expression-item> -> DOUBLE_LITERAL
+<expression-item> -> <ID>
+<expression-item> -> <ID> <call-assign>
+<op> -> +
+<op> -> -
+<op> -> *
+<op> -> /
+<op> -> <
+<op> -> >
+<op> -> <=
+<op> -> >=
+<op> -> !=
+<bool-item> -> <bool-item> <bool-op> <bool-item>
+<bool-item> -> (<bool-item>)
+<bool-item> -> true
+<bool-item> -> false
+<bool-item> -> <expression-item> 
+<bool-op> -> ==
+<bool-op> -> &&
+<bool-op> -> || 
+
+<E> -> <string-item>
+<string-item> -> <string-item> + <string-item>
+<string-item> -> STRING_LITERAL
+

@@ -7,7 +7,7 @@
 #define MIN(a,b) (((a)<(b)) ? (a) : (b))
 
 void sort (char *str);
-void quickSort (char *str, int left, int right);
+void quick_sort(char *str, int left, int right);
 void partition (char *str, int left, int right, int indexes []);
 void compute_jumps(char *p, int jump[]);
 void compute_match_jump(char* p, int match_jump[]);
@@ -28,7 +28,7 @@ void sort(char *str) {
         quick_sort(str, 0, (strlen(str)-1));
 }
 
-void quick_sort (char *str, int left, int right) {
+void quick_sort(char *str, int left, int right) {
         int indexes[2];
         partition (str, left, right, indexes);
 

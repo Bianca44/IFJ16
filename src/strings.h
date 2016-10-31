@@ -16,11 +16,7 @@ typedef struct {
 
 bool init_string(string_t *str);
 
-bool copy_string(string_t *str, char *text);
-
 void clear_string(string_t *str);
-
-void remove_last_char(string_t *str);
 
 bool append_char(string_t *str, char c);
 
