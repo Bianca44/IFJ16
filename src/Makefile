@@ -2,8 +2,8 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -Wextra -Werror -pedantic
 
 all:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c strings.c token_buffer.c -o main
-	$(CC) $(CFLAGS) main.c scanner.c parser.c strings.c token_buffer.c -o main_lexical_tests -DLEXICAL_TESTS
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c strings.c token_buffer.c -o main
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c strings.c token_buffer.c -o main_lexical_tests -DLEXICAL_TESTS
 
 test:
 	$(CC) $(CFLAGS) ial.c -o ial

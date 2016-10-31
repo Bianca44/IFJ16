@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "scanner.h"
 #include "parser.h"
+#include "symbol_table.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -22,11 +23,11 @@ int parser_error_flag = 0; // no error
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
 int get_token() {
-    get_next_token(&t, file);
-    if (t.type == LEXICAL_ERROR) {
-        parser_error_flag = LEXICAL_ANALYSIS_ERROR;
-    }
-    return t.type;
+        get_next_token(&t, file);
+        if (t.type == LEXICAL_ERROR) {
+                parser_error_flag = LEXICAL_ANALYSIS_ERROR;
+        }
+        return t.type;
 }
 
 int parse_expression() {
@@ -480,12 +481,22 @@ int parse_class_list() {
 
 int parse(FILE *source) {
         file = source;
+
+        // Experiments
+        char *s = "test";
+        insert_class(s);
+        insert_class("daco");
+        printf("Val is %d\n", get_symbol_table_for_class("daco"));
+        print_list();
+
+        // End of experiments
+
         get_token();
         if (t.type == CLASS || t.type == EOF) {
                 if (parse_class_list()) {
-                    return PARSED_OK;
+                        return PARSED_OK;
                 } else {
-                    return SYNTACTIC_ANALYSIS_ERROR;
+                        return SYNTACTIC_ANALYSIS_ERROR;
                 }
         } else {
                 return SYNTACTIC_ANALYSIS_ERROR;
