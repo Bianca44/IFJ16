@@ -40,3 +40,15 @@ int get_symbol_table_for_class(char *class_name) {
 
     return -1;
 }
+
+void free_class_list() {
+    if (class_list == NULL) {
+        return;
+    }
+    class_t  * current = class_list;
+    while (current != NULL) {
+            class_t* tmp = current->next;
+            free(current);
+            current = tmp;
+    }
+}

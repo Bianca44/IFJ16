@@ -11,5 +11,6 @@ typedef struct class {
 void print_list();
 bool insert_class(char* class_name);
 int get_symbol_table_for_class(char *class_name);
+void free_class_list();
 
 #endif //SYMBOL_TABLE_H

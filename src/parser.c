@@ -488,7 +488,7 @@ int parse(FILE *source) {
         insert_class("daco");
         printf("Val is %d\n", get_symbol_table_for_class("daco"));
         print_list();
-
+        free_class_list();
         // End of experiments
 
         get_token();
