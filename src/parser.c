@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "scanner.h"
 #include "parser.h"
+#include "symbol_table.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -13,13 +14,14 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
                                 "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
 
 
+int parser_error_flag = 0; // no error
 token_t t;
 FILE *file;
-int parser_error_flag = 0; // no error
-#define PARSING_FAILED 1
-#define PARSED_OK 0
+#define PARSE_ERROR 0
+#define PARSED_OK 1
 #define LEXICAL_ANALYSIS_ERROR 1
 #define SYNTACTIC_ANALYSIS_ERROR 2
+
 
 int get_token() {
     get_next_token(&t, file);
@@ -28,6 +30,7 @@ int get_token() {
     }
     return t.type;
 }
+
 
 int parse_expression() {
 
@@ -45,7 +48,7 @@ int parse_expression() {
                                 }
                         }
                 }
-           }*/
+        }*/
 
         while (t.type != SEMICOLON) {
                 // ulozit
@@ -77,7 +80,7 @@ int parse_return_value() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 
@@ -96,7 +99,7 @@ int parse_next_param_value() {
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 return PARSED_OK;
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_param_value () {
@@ -115,7 +118,7 @@ int parse_param_value () {
                 return PARSED_OK;
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_call_assign() {
@@ -139,7 +142,7 @@ int parse_call_assign() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_condition_list() {
@@ -163,7 +166,7 @@ int parse_condition_list() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_else() {
@@ -179,7 +182,7 @@ int parse_else() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_statement() {
@@ -228,7 +231,7 @@ int parse_statement() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_element_list() {
@@ -250,7 +253,7 @@ int parse_element_list() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_statement_list() {
@@ -273,7 +276,7 @@ int parse_statement_list() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_method_element() {
@@ -298,7 +301,7 @@ int parse_method_element() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 
 }
 
@@ -317,7 +320,7 @@ int parse_next_param() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_param_list() {
@@ -349,7 +352,7 @@ int parse_param_list() {
                         }
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 
 }
 
@@ -364,7 +367,7 @@ int parse_method_declaration () {
                 }
 
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_value() {
@@ -378,11 +381,12 @@ int parse_value() {
                 return PARSED_OK;
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
+
                 if (parse_method_declaration ()) {
                         return parse_class_element();
                 }
@@ -404,7 +408,7 @@ int parse_declaration() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_param() {
@@ -413,7 +417,7 @@ int parse_param() {
                         return PARSED_OK;
                 }
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 
 }
 
@@ -439,7 +443,7 @@ int parse_declaration_element() {
                 }
         }
 
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 
@@ -451,12 +455,13 @@ int parse_class_element() {
         else if (t.type == STATIC) {
                 return parse_declaration_element();
         }
-        return PARSING_FAILED;
+        return PARSE_ERROR;
 }
 
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
+                    insert_class(t.attr.string_value);
                         if (get_token() == LEFT_CURVED_BRACKET) {
                                 get_token();
                                 if (parse_class_element()) {
@@ -467,7 +472,7 @@ int parse_class_list() {
                                                 } else if (t.type == EOF) {
                                                         return PARSED_OK;
                                                 } else {
-                                                        return PARSING_FAILED;
+                                                        return PARSE_ERROR;
                                                 }
                                         }
                                 }
@@ -475,14 +480,19 @@ int parse_class_list() {
                 }
         } else if (t.type == EOF) {
                 return PARSED_OK;
-        } return PARSING_FAILED;
+        } return PARSE_ERROR;
 }
-
 int parse(FILE *source) {
         file = source;
         get_token();
         if (t.type == CLASS || t.type == EOF) {
-                if (parse_class_list()) {
+                init_class_list();
+                if(parse_class_list()) {
+
+                    printf("cislo je %d\n", get("Main"));
+                    //tHTable * c = get_symbol_table_for_class("Main");
+                    printf("cislo je %d\n", get("Game"));
+                    free_class_list();
                     return PARSED_OK;
                 } else {
                     return SYNTACTIC_ANALYSIS_ERROR;
@@ -490,7 +500,5 @@ int parse(FILE *source) {
         } else {
                 return SYNTACTIC_ANALYSIS_ERROR;
         }
-
-        return SYNTACTIC_ANALYSIS_ERROR;
 
 }

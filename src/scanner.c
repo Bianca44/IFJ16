@@ -246,12 +246,24 @@ int get_next_token(token_t *t, FILE * file) {
                 case LITERAL:
                         if (c == '"') {
                                 return save_token(t, STRING_LITERAL, &s);
-
                         } else if (c == '\n') {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
+                        } else if (c == '\\') {
+                                append_char(&s, c);
+                                state = LITERAL_SLASH;
                         } else {
                                 append_char(&s, c);
+                        }
+                        break;
+
+                case LITERAL_SLASH:
+                        if (c == '"' || c == 'n' || c == 't' || c == '\\' || isdigit(c)) {
+                                append_char(&s, c);
+                                state = LITERAL;
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, LEXICAL_ERROR, NULL);
                         }
                         break;
 
@@ -379,7 +391,7 @@ int init_scanner(char *filename) {
         rewind(file);
         #endif
 
-        if (parse(file) == 0) {
+        if (parse(file) == 1) {
                 printf("SYNTACTIC ANALYSIS\tOK\n");
         } else {
                 // chyba 2
