@@ -8,12 +8,11 @@
 tHTable *class_list;
 
 void dispose_class_list(tData data) {
-        free((class_t *)(data));
+        ht_free((tHTable *)(data));
 }
 
 void dispose_class_symbol_table(tData data) {
-        //free((tHTable *)(data)); // TODO
-        ht_free((tHTable *)(data));
+        ht_free((tHTable *)(data)); // TODO
 }
 
 void init_class_list() {
@@ -21,33 +20,23 @@ void init_class_list() {
 }
 
 bool insert_class(char* class_name) {
-        class_t * new_class = NULL;
-        new_class = malloc(sizeof(class_t));
-        if (new_class == NULL) {
-                return false;
-        }
-        new_class->a = 5;
-        new_class->class_symbol_table = ht_init(11, hash_code, dispose_class_symbol_table);
-        ht_insert(class_list, class_name, new_class);
+        tHTable *symbol_table = ht_init(11, hash_code, dispose_class_symbol_table);
+        ht_insert(class_list, class_name, symbol_table);
         return true;
 }
 
 int get(char* class_name) {
-        class_t * p = ht_read(class_list, class_name);
+        tHTable * p = ht_read(class_list, class_name);
         if (p == NULL) return -1;
-        return p->a;
+        return p->n_items;
 }
 
 tHTable * get_symbol_table_for_class(char* class_name) {
-        class_t * p = ht_read(class_list, class_name);
+        tHTable * p = ht_read(class_list, class_name);
         if (p == NULL) return NULL;
-        return p->class_symbol_table;
+        return p;
 }
 
 void free_class_list() {
         ht_free(class_list);
-}
-
-void free_class_symbol_table() {
-        //ht_free(class_symbol_table);
 }
