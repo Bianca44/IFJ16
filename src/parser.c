@@ -23,8 +23,8 @@ FILE *file;
 #define LEXICAL_ANALYSIS_ERROR 1
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
-extern var_t current_variable;
 extern string_t param_data_types;
+extern variable_t current_variable;
 extern function_t current_function;
 
 
