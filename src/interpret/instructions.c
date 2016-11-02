@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "datatypes.h"
 #include "instructions.h"
+#include "interpret.h"
 #define UNUSED(x) (void)(x)
 
 tInst *init_inst2(){
@@ -54,6 +55,7 @@ void i_div(tVar *op1, tVar *op2, tVar *result){
 
 void i_g(tVar *op1, tVar *op2, tVar *result){
     result->b = (bool)(op1->i > op2->i);
+    op1->i = op1->i - 1; //TODO
 }
 
 void i_assign(tVar *op1, tVar *op2, tVar *result){
@@ -63,15 +65,15 @@ void i_assign(tVar *op1, tVar *op2, tVar *result){
 // TODO 
 // TODO
 // TODO
-void i_jc(tVar *op1, tDLList *op2, tDLElemPtr result){
+void i_jnc(tVar *op1, tVar *op2, tVar *result){
     if(!op1->b){
-        op2->Act = result;
+        ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
     }
 }
 
-void i_goto(tVar *op1, tDLList *op2, tDLElemPtr result){
+void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
-    op2->Act = result;
+    ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
 }
 
 void i_label(tVar *op1, tVar *op2, tVar *result){
@@ -80,6 +82,15 @@ void i_label(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
 }
 
+void i_f_call(tVar *op1, tVar *op2, tVar *result){
+    
+    interpret_tac((tDLList *)op1->s);
+    if(result != NULL){
+        //uloz vysledok TODO
+    }
+    pop_frame(&frame_stack);
+
+}
 
 
 

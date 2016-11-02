@@ -6,6 +6,9 @@
 #include "DLList.h"
 #include "interpret.h"
 
+
+tFrameStack frame_stack;
+
 int main(){
 /*
     d_print("durko je %s","bilbo shwaggins");
@@ -45,31 +48,92 @@ int main(){
     i->f = i_g; //less
     DLInsertLast(&L, i);
     //jump 
- //   tInst *j = init_inst2();
-//    j->f = i_jc;
-//    j->op1->b = false;    
-//    j->op2 = &L;
-//    DLInsertLast(&L, j);
+    tInst *j = init_inst2();
+    j->f = i_jnc;
+    j->op1->b = true;
+    j->op2->s = (char *)&L;
+    DLInsertLast(&L, j);
+
     //assign1
     i = init_inst2();
     i->f = i_assign;
-    i->op1->i = 15;
+    i->op1->i = 12;
     DLInsertLast(&L, i);
+
+    //goto
+    tInst *k = init_inst2();
+    k->f = i_goto;
+    k->op2->s = (char *)&L;
+    DLInsertLast(&L, k);
 
     //label
     i = init_inst2();
     i->f = i_label; 
     DLInsertLast(&L, i);
     //seting adress to label
-//    DLLast(&L);
-   // j->result = DLActiveElem(&L);
-
+    DLLast(&L);
+    j->result->s = (char *)DLActiveElem(&L);
+    
     //assign2
     i = init_inst2();
     i->f = i_assign;
     i->op1->i = 42;
     DLInsertLast(&L, i);
+//label pre cyklus nizsie aj podm vyssie
+    //label
+    i = init_inst2();
+    i->f = i_label; 
+    DLInsertLast(&L, i);
+    //seting adress to label
+    DLLast(&L);
+    k->result->s = (char *)DLActiveElem(&L);
 
+//cyklus
+    // 10 > 5
+    i = init_inst2();
+    i->op1->i = 10;
+    i->op2->i = 0;
+    i->f = i_g; //less
+    tVar *p = i->result;
+    DLInsertLast(&L, i);
+    //jump 
+    j = init_inst2();
+    j->f = i_jnc;
+    j->op1 = p;
+    j->op2->s = &L;
+    DLInsertLast(&L, j);
+
+    //assign1
+    i = init_inst2();
+    i->f = i_assign;
+    i->op1->i = 15;
+    DLInsertLast(&L, i);
+
+    //goto
+    k = init_inst2();
+    k->f = i_goto;
+    k->op2->s = &L;
+    k->result->s = DLActiveElem(&L);
+    DLInsertLast(&L, k);
+
+
+    //label end
+    i = init_inst2();
+    i->f = i_label; 
+    DLInsertLast(&L, i);
+    //seting adress to label
+    DLLast(&L);
+    j->result->s = DLActiveElem(&L);
+   
+
+
+//koniec cyklu
+ 
+    //assign2
+    i = init_inst2();
+    i->f = i_assign;
+    i->op1->i = 42;
+    DLInsertLast(&L, i); 
     interpret_tac(&L);
     DLDisposeList(&L);
     

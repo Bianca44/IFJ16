@@ -58,9 +58,10 @@ void i_mul(tVar *op1, tVar *op2, tVar *result);
 void i_div(tVar *op1, tVar *op2, tVar *result);
 void i_assign(tVar *op1, tVar *op2, tVar *result);
 void i_g(tVar *op1, tVar *op2, tVar *result);
-void i_jc(tVar *op1, tDLList *op2, tDLElemPtr result);
-void i_goto(tVar *op1, tDLList *op2, tDLElemPtr result);
+void i_jnc(tVar *op1, tVar *op2, tVar *result);
+void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_label(tVar *op1, tVar *op2, tVar *result);
+void i_f_call(tVar *op1, tVar *op2, tVar *result);
 
 
 #endif //INSTRUCTIONS_H

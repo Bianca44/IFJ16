@@ -7,7 +7,7 @@ CC=gcc
 all:test
 test:test_debug.o instructions.o DLList.o interpret.o datatypes.h DLList.h instructions.h
 	$(CC) $(CFLAGS) -o $@ $^
-instructions.o:instructions.c instructions.h
+instructions.o:instructions.c instructions.h interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 DLList.o:DLList.c DLList.h
 	$(CC) $(CFLAGS) -c -o $@ $<
