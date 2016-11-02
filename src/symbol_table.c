@@ -42,10 +42,15 @@ tHTable * get_symbol_table_for_class(char* class_name) {
         return p;
 }
 
-bool insert_symbol_table_item(char * id_name, void * data) {
-        tHTable * sym_table = get_symbol_table_for_class(current_class);
+bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data) {
+        tHTable * sym_table = get_symbol_table_for_class(class_name);
         ht_insert(sym_table, id_name, data);
         return true;
+
+}
+
+bool insert_symbol_table_item(char * id_name, void * data) {
+        return insert_symbol_table_item_class(current_class, id_name, data);
 
 }
 

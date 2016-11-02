@@ -16,6 +16,7 @@ bool insert_class(char* class_name);
 int get(char* class_name);
 void free_class_list();
 bool exists_class(char* class_name);
+bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data);
 bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
 
