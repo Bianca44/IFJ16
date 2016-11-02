@@ -20,6 +20,22 @@ void clear_string(string_t *str) {
         str->length = 0;
         str->allocated_size = 0;
 }
+
+bool copy_string(string_t *str, char *text) {
+        int new_length = strlen(text);
+        if (new_length + 1 >= str->allocated_size) {
+                if ((str->data =
+                             (char *) realloc(str->data, new_length * sizeof(char))) == NULL) {
+                        return false;
+                }
+                str->allocated_size = new_length;
+        }
+        strcpy(str->data, text);
+        str->length = new_length;
+        str->data[str->length] = '\0';
+        return true;
+}
+
 bool append_char(string_t *str, char c) {
         if (str->length + 1 >= str->allocated_size) {
                 int new_size = (str->length + STRING_INITIAL_ALLOCATION) * sizeof(char);

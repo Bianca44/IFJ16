@@ -8,7 +8,7 @@ typedef enum {TINT, TDOUBLE, TSTRING, TBOOLEAN} data_type;
 typedef struct {
     char * id_name;
     int data_type;
-} var_t;
+} variable_t;
 
 typedef struct {
     char * id_name;

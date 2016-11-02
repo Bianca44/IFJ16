@@ -9,7 +9,7 @@
 
 tHTable *class_list;
 char* current_class;
-var_t current_variable;
+variable_t current_variable;
 function_t current_function;
 
 string_t param_data_types;

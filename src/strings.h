@@ -18,6 +18,8 @@ bool init_string(string_t *str);
 
 void clear_string(string_t *str);
 
+bool copy_string(string_t *str, char *text);
+
 bool append_char(string_t *str, char c);
 
 #endif // STRINGS_H
