@@ -461,8 +461,14 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
-                    insert_class(t.attr.string_value);
-                        if (get_token() == LEFT_CURVED_BRACKET) {
+                    if (!exists_class(t.attr.string_value)) {
+                        insert_class(t.attr.string_value);
+                        set_current_class(t.attr.string_value);
+                        insert_symbol_table_item("ahoj", t.attr.string_value);
+                    } else {
+                        printf("class redefined\n");
+                    }
+                    if (get_token() == LEFT_CURVED_BRACKET) {
                                 get_token();
                                 if (parse_class_element()) {
                                         if (t.type == RIGHT_CURVED_BRACKET) {
