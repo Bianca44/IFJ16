@@ -24,11 +24,11 @@ FILE *file;
 
 
 int get_token() {
-    get_next_token(&t, file);
-    if (t.type == LEXICAL_ERROR) {
-        parser_error_flag = LEXICAL_ANALYSIS_ERROR;
-    }
-    return t.type;
+        get_next_token(&t, file);
+        if (t.type == LEXICAL_ERROR) {
+                parser_error_flag = LEXICAL_ANALYSIS_ERROR;
+        }
+        return t.type;
 }
 
 
@@ -48,7 +48,7 @@ int parse_expression() {
                                 }
                         }
                 }
-        }*/
+           }*/
 
         while (t.type != SEMICOLON) {
                 // ulozit
@@ -461,14 +461,14 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
-                    if (!exists_class(t.attr.string_value)) {
-                        insert_class(t.attr.string_value);
-                        set_current_class(t.attr.string_value);
-                        insert_symbol_table_item("ahoj", t.attr.string_value);
-                    } else {
-                        printf("class redefined\n");
-                    }
-                    if (get_token() == LEFT_CURVED_BRACKET) {
+                        if (!exists_class(t.attr.string_value)) {
+                                insert_class(t.attr.string_value);
+                                set_current_class(t.attr.string_value);
+                                //insert_symbol_table_item("ahoj", t.attr.string_value);
+                        } else {
+                                printf("class redefined\n");
+                        }
+                        if (get_token() == LEFT_CURVED_BRACKET) {
                                 get_token();
                                 if (parse_class_element()) {
                                         if (t.type == RIGHT_CURVED_BRACKET) {
@@ -495,13 +495,12 @@ int parse(FILE *source) {
                 init_class_list();
                 if(parse_class_list()) {
 
-                    printf("cislo je %d\n", get("Main"));
-                    //tHTable * c = get_symbol_table_for_class("Main");
-                    printf("cislo je %d\n", get("Game"));
-                    free_class_list();
-                    return PARSED_OK;
+                        printf("cislo je %d\n", get("Main"));
+                        printf("cislo je %d\n", get("Game"));
+                        free_class_list();
+                        return PARSED_OK;
                 } else {
-                    return SYNTACTIC_ANALYSIS_ERROR;
+                        return SYNTACTIC_ANALYSIS_ERROR;
                 }
         } else {
                 return SYNTACTIC_ANALYSIS_ERROR;

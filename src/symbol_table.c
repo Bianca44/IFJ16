@@ -21,7 +21,7 @@ void init_class_list() {
 }
 
 void set_current_class(char *class_name) {
-    current_class = class_name;
+        current_class = class_name;
 }
 
 bool insert_class(char* class_name) {
@@ -43,14 +43,14 @@ tHTable * get_symbol_table_for_class(char* class_name) {
 }
 
 bool insert_symbol_table_item(char * id_name, void * data) {
-    tHTable * sym_table = get_symbol_table_for_class(current_class);
-    ht_insert(sym_table, id_name, data);
-    return true;
+        tHTable * sym_table = get_symbol_table_for_class(current_class);
+        ht_insert(sym_table, id_name, data);
+        return true;
 
 }
 
 bool exists_class(char* class_name) {
-    return get_symbol_table_for_class(class_name) != NULL;
+        return get_symbol_table_for_class(class_name) != NULL;
 }
 
 void free_class_list() {
