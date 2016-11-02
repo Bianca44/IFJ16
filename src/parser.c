@@ -4,6 +4,7 @@
 #include "scanner.h"
 #include "parser.h"
 #include "symbol_table.h"
+#include "strings.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -23,6 +24,8 @@ FILE *file;
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
 extern var_t current_variable;
+extern string_t param_data_types;
+extern function_t current_function;
 
 
 int get_token() {
@@ -283,8 +286,16 @@ int parse_statement_list() {
 
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
+                printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
+                if (!is_declared(current_function.id_name)) {
+                        put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types);
+                } else {
+                        printf("function redefined\n");
+                }
+                current_function.local_vars_count = 0;
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                current_function.local_vars_count++;
                 if (parse_param()) {
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
@@ -313,6 +324,7 @@ int parse_next_param() {
         } else if (t.type == COMMA) {
                 get_token();
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                        append_param_data_types(t.type);
                         if (parse_param()) {
                                 get_token();
                                 if (t.type== RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
@@ -327,6 +339,7 @@ int parse_next_param() {
 
 int parse_param_list() {
         get_token();
+        init_string(&param_data_types);
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_token() == LEFT_CURVED_BRACKET) {
                         get_token();
@@ -335,6 +348,7 @@ int parse_param_list() {
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                append_param_data_types(t.type);
                 if (parse_param()) {
                         get_token();
                         if (t.type == LEFT_CURVED_BRACKET) {
@@ -344,6 +358,8 @@ int parse_param_list() {
                                 }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
+                                        current_function.param_data_types = param_data_types.data;
+                                        current_function.params_count = param_data_types.length;
                                         if (get_token() == LEFT_CURVED_BRACKET) {
                                                 get_token();
                                                 if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -361,10 +377,9 @@ int parse_param_list() {
 int parse_method_declaration () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 if (parse_param_list()) {
-                        if (get_token() == STATIC) {
+                        get_token();
+                        if (t.type == STATIC || t.type == RIGHT_CURVED_BRACKET) {
                                 return parse_class_element();
-                        } else {
-                                return PARSED_OK;
                         }
                 }
 
@@ -389,9 +404,7 @@ int parse_value() {
 int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
 
-                if (parse_method_declaration ()) {
-                        return parse_class_element();
-                }
+                return parse_method_declaration ();
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_token() == STATIC) {
                         return parse_class_element();
@@ -427,26 +440,27 @@ int parse_param() {
 int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
+                current_function.data_type = t.type;
                 if (get_token() == ID) {
+                        current_function.id_name = t.attr.string_value;
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 current_variable.data_type = t.type;
+                current_function.data_type = t.type;
                 if(parse_param()) {
+                        current_function.id_name = t.attr.string_value;
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
 
                                 if (t.type == ASSIGN || t.type == SEMICOLON) {
-                                        printf("id %s dt %d\n", current_variable.id_name, current_variable.data_type);
-                                        printf("decl %d\n~idem vlozit~\n", is_declared(current_variable.id_name));
                                         if (!is_declared(current_variable.id_name)) {
                                                 put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
                                         } else {
                                                 printf("variable redefined\n");
                                         }
-                                        printf("decl %d\n", is_declared(current_variable.id_name));
                                 }
                                 return parse_declaration();
                         } else if (t.type == COMMA) {

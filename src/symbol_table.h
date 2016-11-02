@@ -10,6 +10,14 @@ typedef struct {
     int data_type;
 } var_t;
 
+typedef struct {
+    char * id_name;
+    int data_type;
+    int params_count;
+    int local_vars_count;
+    char * param_data_types;
+} function_t;
+
 typedef struct symbol_table_item {
         char * id_name;
         int data_type;
@@ -43,6 +51,8 @@ bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
 symbol_table_item_t * create_symbol_table_item();
 bool put_variable_symbol_table(char * id_name, int data_type, int offset);
+bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types);
 bool is_declared(char * id_name);
+void append_param_data_types(int type);
 
 #endif //SYMBOL_TABLE_H
