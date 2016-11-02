@@ -22,6 +22,8 @@ FILE *file;
 #define LEXICAL_ANALYSIS_ERROR 1
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
+extern var_t current_variable;
+
 
 int get_token() {
         get_next_token(&t, file);
@@ -414,6 +416,7 @@ int parse_declaration() {
 int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
+                        current_variable.id_name = t.attr.string_value;
                         return PARSED_OK;
                 }
         }
@@ -430,9 +433,17 @@ int parse_declaration_element() {
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                current_variable.data_type = t.type;
                 if(parse_param()) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
+
+                                if (t.type == ASSIGN || t.type == SEMICOLON) {
+                                        printf("id %s dt %d\n", current_variable.id_name, current_variable.data_type);
+                                        printf("decl %d\n~idem vlozit~\n", is_declared(current_variable.id_name));
+                                        put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                        printf("decl %d\n", is_declared(current_variable.id_name));
+                                }
                                 return parse_declaration();
                         } else if (t.type == COMMA) {
                                 get_token();
@@ -464,7 +475,6 @@ int parse_class_list() {
                         if (!exists_class(t.attr.string_value)) {
                                 insert_class(t.attr.string_value);
                                 set_current_class(t.attr.string_value);
-                                //insert_symbol_table_item("ahoj", t.attr.string_value);
                         } else {
                                 printf("class redefined\n");
                         }

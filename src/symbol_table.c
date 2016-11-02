@@ -7,6 +7,7 @@
 
 tHTable *class_list;
 char* current_class;
+var_t current_variable;
 
 void dispose_class_list(tData data) {
         ht_free((tHTable *)(data));
@@ -67,13 +68,23 @@ symbol_table_item_t * create_symbol_table_item() {
     return p;
 }
 
-bool put_variable_symbol_table(char * id_name, data_type, int offset) {
+bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
     symbol_table_item_t * p = create_symbol_table_item();
-    p->id_name = "bb";
-    p->data_type = 2;
+    p->id_name = id_name;
+    p->data_type = data_type;
     p->declared = true;
     p->content.variable.offset = offset;
+    insert_symbol_table_item(id_name, p);
     return true;
+}
+
+bool is_declared(char * id_name) {
+    tHTable * sym_table = get_symbol_table_for_class(current_class);
+    symbol_table_item_t * sym_table_item = ht_read(sym_table, id_name);
+    if (sym_table_item == NULL) {
+        return false;
+    }
+    return sym_table_item->declared;
 }
 
 void free_class_list() {
