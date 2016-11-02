@@ -58,6 +58,24 @@ bool exists_class(char* class_name) {
         return get_symbol_table_for_class(class_name) != NULL;
 }
 
+symbol_table_item_t * create_symbol_table_item() {
+    symbol_table_item_t * p = (symbol_table_item_t *) malloc(sizeof(struct symbol_table_item));
+    /*p->id_name = "hello";
+    p->content.variable.offset = 5;
+    printf("%s\n", p->id_name);
+    printf("%d\n", p->content.variable.offset);*/
+    return p;
+}
+
+bool put_variable_symbol_table(char * id_name, data_type, int offset) {
+    symbol_table_item_t * p = create_symbol_table_item();
+    p->id_name = "bb";
+    p->data_type = 2;
+    p->declared = true;
+    p->content.variable.offset = offset;
+    return true;
+}
+
 void free_class_list() {
         ht_free(class_list);
 }

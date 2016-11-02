@@ -3,13 +3,30 @@
 
 #include "ial.h"
 
-enum data_types {TINT, TDOUBLE, TSTRING, TBOOLEAN};
+typedef enum {TINT, TDOUBLE, TSTRING, TBOOLEAN} data_type;
 
-typedef struct class {
-    // TS pre triedy
-    int a ;
-    tHTable *class_symbol_table;
-} class_t;
+typedef struct symbol_table_item {
+        char * id_name;
+        int data_type;
+        bool declared;
+        union {
+                struct {
+                        int offset;
+                        union {
+                                char * string_value;
+                                int int_value;
+                                double double_value;
+                                bool bool_value;
+                        } value;
+                } variable;
+
+                struct {
+                        int params_count;
+                        int local_vars_count;
+                        char * param_data_types; // e.g. idbs
+                } function;
+        } content;
+} symbol_table_item_t;
 
 void init_class_list();
 bool insert_class(char* class_name);
@@ -19,5 +36,6 @@ bool exists_class(char* class_name);
 bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data);
 bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
+symbol_table_item_t * create_symbol_table_item();
 
 #endif //SYMBOL_TABLE_H
