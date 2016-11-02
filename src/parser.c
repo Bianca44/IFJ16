@@ -441,7 +441,11 @@ int parse_declaration_element() {
                                 if (t.type == ASSIGN || t.type == SEMICOLON) {
                                         printf("id %s dt %d\n", current_variable.id_name, current_variable.data_type);
                                         printf("decl %d\n~idem vlozit~\n", is_declared(current_variable.id_name));
-                                        put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                        if (!is_declared(current_variable.id_name)) {
+                                                put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                        } else {
+                                                printf("variable redefined\n");
+                                        }
                                         printf("decl %d\n", is_declared(current_variable.id_name));
                                 }
                                 return parse_declaration();

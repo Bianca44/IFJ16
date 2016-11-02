@@ -46,6 +46,7 @@ class tt { static int p(int a, int b, String g){
            }
            static int d;
            static int k = 42;
+		   static int c = 42;
            static int p() {
            }
 }
