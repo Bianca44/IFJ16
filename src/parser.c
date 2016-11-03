@@ -535,7 +535,6 @@ int parse(FILE *source) {
         if (t.type == CLASS || t.type == EOF) {
                 init_class_list();
                 // test
-                create_symbol_table_item();
                 if(parse_class_list()) {
 
                         printf("cislo je %d\n", get("Main"));
