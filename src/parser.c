@@ -5,6 +5,7 @@
 #include "parser.h"
 #include "symbol_table.h"
 #include "strings.h"
+#include "token_buffer.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -16,7 +17,9 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
 
 
 int parser_error_flag = 0; // no error
+bool is_first_pass = true;
 token_t t;
+token_buffer_t token_buffer;
 FILE *file;
 #define PARSE_ERROR 0
 #define PARSED_OK 1
@@ -29,7 +32,12 @@ extern function_t current_function;
 
 
 int get_token() {
-        get_next_token(&t, file);
+        if (is_first_pass) {
+            get_next_token(&t, file);
+            add_token_to_buffer(&token_buffer, &t);
+        } else {
+            t = *get_next_token_buffer(&token_buffer);
+        }
         if (t.type == LEXICAL_ERROR) {
                 parser_error_flag = LEXICAL_ANALYSIS_ERROR;
         }
@@ -518,6 +526,11 @@ int parse_class_list() {
 }
 int parse(FILE *source) {
         file = source;
+
+        printf("first pass %d\n", is_first_pass);
+        if (is_first_pass) {
+            init_token_buffer(&token_buffer);
+        }
         get_token();
         if (t.type == CLASS || t.type == EOF) {
                 init_class_list();
@@ -528,6 +541,12 @@ int parse(FILE *source) {
                         printf("cislo je %d\n", get("Main"));
                         printf("cislo je %d\n", get("Game"));
                         free_class_list();
+
+                        if (is_first_pass) {
+                            is_first_pass = false;
+                        } else {
+                            free_token_buffer(&token_buffer);
+                        }
                         return PARSED_OK;
                 } else {
                         return SYNTACTIC_ANALYSIS_ERROR;

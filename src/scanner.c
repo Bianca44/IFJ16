@@ -394,6 +394,9 @@ int init_scanner(char *filename) {
 
         if (parse(file) == 1) {
                 printf("SYNTACTIC ANALYSIS\tOK\n");
+                printf("SECOND PASS\n");
+                //rewind(file);
+                parse(file);
         } else {
                 // chyba 2
                 printf("SYNTACTIC ANALYSIS\tFAILED\n");
