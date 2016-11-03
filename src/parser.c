@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "scanner.h"
 #include "parser.h"
 #include "symbol_table.h"
@@ -33,10 +34,11 @@ extern function_t current_function;
 
 int get_token() {
         if (is_first_pass) {
-            get_next_token(&t, file);
-            add_token_to_buffer(&token_buffer, &t);
+                t.attr.string_value = NULL;
+                get_next_token(&t, file);
+                add_token_to_buffer(&token_buffer, &t);
         } else {
-            t = *get_next_token_buffer(&token_buffer);
+                t = *get_next_token_buffer(&token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
                 parser_error_flag = LEXICAL_ANALYSIS_ERROR;
@@ -294,13 +296,15 @@ int parse_statement_list() {
 
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
-                printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
-                if (!is_declared(current_function.id_name)) {
-                        put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types);
-                } else {
-                        printf("function redefined\n");
+                if (is_first_pass) {
+                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
+                        if (!is_declared(current_function.id_name)) {
+                                put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types);
+                        } else {
+                                printf("FUNCTION REDECLARED\n");
+                        }
+                        current_function.local_vars_count = 0;
                 }
-                current_function.local_vars_count = 0;
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 current_function.local_vars_count++;
@@ -464,13 +468,14 @@ int parse_declaration_element() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
 
                                 if (t.type == ASSIGN || t.type == SEMICOLON) {
-                                        if (!is_declared(current_variable.id_name)) {
-                                                put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
-                                        } else {
-                                                printf("variable redefined\n");
+                                        if (is_first_pass) {
+                                                if (!is_declared(current_variable.id_name)) {
+                                                        put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                                } else {
+                                                        printf("VAR REDECLARED\n");
+                                                }
                                         }
-                                }
-                                return parse_declaration();
+                                } return parse_declaration();
                         } else if (t.type == COMMA) {
                                 get_token();
                                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -498,11 +503,13 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
-                        if (!exists_class(t.attr.string_value)) {
-                                insert_class(t.attr.string_value);
-                                set_current_class(t.attr.string_value);
-                        } else {
-                                printf("class redefined\n");
+                        if (is_first_pass) {
+                                if (!exists_class(t.attr.string_value)) {
+                                        insert_class(t.attr.string_value);
+                                        set_current_class(t.attr.string_value);
+                                } else {
+                                        printf("CLASS REDECLARED\n");
+                                }
                         }
                         if (get_token() == LEFT_CURVED_BRACKET) {
                                 get_token();
@@ -527,27 +534,31 @@ int parse_class_list() {
 int parse(FILE *source) {
         file = source;
 
-        printf("first pass %d\n", is_first_pass);
         if (is_first_pass) {
-            init_token_buffer(&token_buffer);
+                init_token_buffer(&token_buffer);
         }
         get_token();
         if (t.type == CLASS || t.type == EOF) {
-                init_class_list();
-                // test
+                if (is_first_pass) {
+                        init_class_list();
+                }
                 if(parse_class_list()) {
 
-                        printf("cislo je %d\n", get("Main"));
-                        printf("cislo je %d\n", get("Game"));
-                        free_class_list();
+                        if (is_first_pass) {
+                                // over ci je main a run v nej
+                        }
+                        else {
+                                free_class_list();
+                        }
 
                         if (is_first_pass) {
-                            is_first_pass = false;
+                                is_first_pass = false;
                         } else {
-                            free_token_buffer(&token_buffer);
+                                free_token_buffer(&token_buffer);
                         }
                         return PARSED_OK;
                 } else {
+                        free_token_buffer(&token_buffer);
                         return SYNTACTIC_ANALYSIS_ERROR;
                 }
         } else {

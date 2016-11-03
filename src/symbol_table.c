@@ -19,7 +19,7 @@ void dispose_class_list(tData data) {
 }
 
 void dispose_class_symbol_table(tData data) {
-        free((char *)(data)); // TODO hack
+        free((symbol_table_item_t *)(data)); // TODO
 }
 
 void init_class_list() {
@@ -37,12 +37,16 @@ bool insert_class(char* class_name) {
 }
 
 int get(char* class_name) {
+        if (class_list == NULL) return -1;
         tHTable * p = ht_read(class_list, class_name);
         if (p == NULL) return -1;
         return p->n_items;
 }
 
 tHTable * get_symbol_table_for_class(char* class_name) {
+    if (class_list == NULL) {
+        printf("fail\n");
+    }
         tHTable * p = ht_read(class_list, class_name);
         if (p == NULL) return NULL;
         return p;

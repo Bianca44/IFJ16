@@ -54,5 +54,6 @@ bool put_variable_symbol_table(char * id_name, int data_type, int offset);
 bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types);
 bool is_declared(char * id_name);
 void append_param_data_types(int type);
+tHTable * get_symbol_table_for_class(char* class_name);
 
 #endif //SYMBOL_TABLE_H
