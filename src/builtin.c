@@ -9,7 +9,7 @@ int compare (char *s1, char *s2);
 char * substr (char *s, int i, int n);
 
 
-void main () {
+int main2 () {
 
 	//length
 	char str [] = "blablabla";
@@ -29,7 +29,7 @@ void main () {
 	char *ot = substr(source, position, length_of_substring);
     printf("Substr: %s\n", ot);
 
-	return;
+	return 0;
 }
 
 int length (char *string) {
@@ -41,30 +41,38 @@ int compare (char *s1, char *s2) {
 	if (comparison < 0) {
 		return -1;
 	}
-	if (comparison > 0) {
+	else if (comparison > 0) {
 		return 1;
 	}
-	if (comparison == 0) {
+	else if (comparison == 0) {
 		return 0;
+	} else {
+		return -1;
 	}
 }
 
 char *substr (char *s, int i, int n) {
-	char *new_s;
-
+	if (i<0 || n < 0) {
+		return NULL;
+	}
+	char *new_str = (char *) malloc((n + 1) * sizeof(char));
+	if (new_str == NULL) {
+		return NULL;
+	}
 	//osetrenie stavu, kedy pozadujeme zacinajuci index > ako dlzka samotneho retazca
-	if (i> strlen(s)) {
+	if (i > (int) strlen(s)) {
 		printf("ERROR: index je mimo rozsah daneho retazca!\n");
 	}
 
 	//osetrenie kedy pozadovana dlzka hladaneho podretazca je dlhsia ako samotny retazec
-	if (n>(strlen(s)-i)) {
+	if (n > (int) strlen(s) - i) {
 		printf("ERROR: dlzka pozadovaneho retazca je vacsia ako povodny retazec! \n");
 	}
 
 	for (int j = 0; j<n; j++, i++) {
-		new_s [j] = s[i];
+		new_str[j] = s[i];
 	}
+	new_str[n] = '\0';
 	//printf("%s\n",new_s);
-	return new_s;
+	return new_str;
 }
