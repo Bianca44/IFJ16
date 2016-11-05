@@ -27,7 +27,7 @@ class tt { static int p(int a, int b, String g){
                     int a = 9;
                     return 9;
                 {return 9;return 9;return 9;}
-                if (9) ;
+                //if (9) ;
                 a = 5;
                 while (1) a = a+5;
                 int a = 5;
@@ -38,7 +38,7 @@ class tt { static int p(int a, int b, String g){
                    return 9;
                    {{{return 9;return 9;}}}
                    b = 9+6;
-                   ;
+                   //;
                    return 9+5;
            }
            static int c = 42;

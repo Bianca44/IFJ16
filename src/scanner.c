@@ -247,7 +247,7 @@ int get_next_token(token_t *t, FILE * file) {
                 case LITERAL:
                         if (c == '"') {
                                 return save_token(t, STRING_LITERAL, &s);
-                        } else if (c == '\n') {
+                        } else if (c <= 31) {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         } else if (c == '\\') {
