@@ -24,4 +24,6 @@ int parse_class_element();
 int parse_class_list();
 int parse(FILE *source);
 
+void add_builtin_functions();
+
 #endif // PARSER_H
