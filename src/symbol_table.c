@@ -7,7 +7,7 @@
 #include "ial.h"
 #include "scanner.h"
 
-tHTable *class_list;
+symbol_table_t *class_list;
 char* current_class;
 variable_t current_variable;
 function_t current_function;
@@ -38,22 +38,22 @@ bool insert_class(char* class_name) {
 
 int get(char* class_name) {
         if (class_list == NULL) return -1;
-        tHTable * p = ht_read(class_list, class_name);
+        symbol_table_t * p = ht_read(class_list, class_name);
         if (p == NULL) return -1;
         return p->n_items;
 }
 
-tHTable * get_symbol_table_for_class(char* class_name) {
-    if (class_list == NULL) {
-        printf("fail\n");
-    }
-        tHTable * p = ht_read(class_list, class_name);
+symbol_table_t * get_symbol_table_for_class(char* class_name) {
+        if (class_list == NULL) {
+                return NULL;
+        }
+        symbol_table_t * p = ht_read(class_list, class_name);
         if (p == NULL) return NULL;
         return p;
 }
 
 bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data) {
-        tHTable * sym_table = get_symbol_table_for_class(class_name);
+        symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
         ht_insert(sym_table, id_name, data);
         return true;
 
@@ -93,6 +93,15 @@ bool put_function_symbol_table(char * id_name, int data_type, int params_count, 
         p->declared = true;
         insert_symbol_table_item(id_name, p);
         return true;
+}
+
+symbol_table_item_t * get_function_symbol_table(char * class_name, char * id_name) {
+        symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
+        if (sym_table == NULL) {
+                return NULL;
+        }
+        symbol_table_item_t * sym_table_item = ht_read(sym_table, id_name);
+        return sym_table_item;
 }
 
 bool is_declared(char * id_name) {

@@ -545,10 +545,18 @@ int parse(FILE *source) {
                 if (is_first_pass) {
                         init_class_list();
                 }
-                if(parse_class_list()) {
+                if (parse_class_list()) {
 
                         if (is_first_pass) {
                                 // over ci je main a run v nej
+                                symbol_table_item_t * run_method = get_function_symbol_table("Main", "run");
+                                if (run_method == NULL) {
+                                        printf("No RUN in Main class or no MAIN class\n");
+                                } else {
+                                        if (!(run_method->data_type == VOID) || !(run_method->content.function.params_count == 0)) {
+                                                printf("Weird RUN in Main class\n");
+                                        }
+                                }
                         }
                         else {
                                 free_class_list();
