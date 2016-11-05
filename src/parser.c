@@ -534,6 +534,11 @@ int parse_class_list() {
                 return PARSED_OK;
         } return PARSE_ERROR;
 }
+
+
+void add_built_functions() {
+    // todo
+}
 int parse(FILE *source) {
         file = source;
 
@@ -544,6 +549,7 @@ int parse(FILE *source) {
         if (t.type == CLASS || t.type == EOF) {
                 if (is_first_pass) {
                         init_class_list();
+                        add_built_functions();
                 }
                 if (parse_class_list()) {
 
