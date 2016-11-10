@@ -21,7 +21,6 @@ int parser_error_flag = 0; // no error
 bool is_first_pass = true;
 token_t t;
 token_buffer_t token_buffer;
-FILE *file;
 #define PARSE_ERROR 0
 #define PARSED_OK 1
 #define LEXICAL_ANALYSIS_ERROR 1
@@ -35,7 +34,7 @@ extern function_t current_function;
 int get_token() {
         if (is_first_pass) {
                 t.attr.string_value = NULL;
-                get_next_token(&t, file);
+                get_next_token(&t);
                 add_token_to_buffer(&token_buffer, &t);
         } else {
                 t = *get_next_token_buffer(&token_buffer);
@@ -89,6 +88,10 @@ int parse_return_value() {
         if (t.type == RETURN) {
                 get_token();
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // HACK expr
+                        if (current_function.data_type == VOID) {
+                                printf("return E in VOID error\n");
+                        }
+
                         return parse_expression();
                 } else if (t.type == SEMICOLON) {
                         return PARSED_OK;
@@ -163,10 +166,6 @@ int parse_call_assign() {
 int parse_condition_list() {
         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (parse_statement()) {
-                        /*get_token();
-                           if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                                return PARSED_OK;
-                           }*/
                         return PARSED_OK;
                 }
         } else if (t.type == LEFT_CURVED_BRACKET) {
@@ -537,11 +536,9 @@ int parse_class_list() {
 
 
 void add_builtin_functions() {
-    // todo
+        // todo
 }
-int parse(FILE *source) {
-        file = source;
-
+int parse() {
         if (is_first_pass) {
                 init_token_buffer(&token_buffer);
         }

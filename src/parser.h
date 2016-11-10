@@ -22,7 +22,7 @@ int parse_param();
 int parse_declaration_element();
 int parse_class_element();
 int parse_class_list();
-int parse(FILE *source);
+int parse();
 
 void add_builtin_functions();
 

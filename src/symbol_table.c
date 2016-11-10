@@ -78,6 +78,7 @@ bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
         p->id_name = id_name;
         p->data_type = data_type;
         p->content.variable.offset = offset;
+        p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
         return true;
@@ -90,6 +91,7 @@ bool put_function_symbol_table(char * id_name, int data_type, int params_count, 
         p->content.function.params_count = params_count;
         p->content.function.local_vars_count = local_vars_count;
         p->content.function.param_data_types = param_data_types;
+        p->is_function = true;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
         return true;

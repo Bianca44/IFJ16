@@ -22,6 +22,7 @@ typedef struct {
 typedef struct symbol_table_item {
         char * id_name;
         int data_type;
+        bool is_function;
         bool declared;
         union {
                 struct {
