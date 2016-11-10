@@ -20,7 +20,7 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
 int parser_error_flag = 0; // no error
 int function_offset = 0;
 bool is_first_pass = true;
-bool generate_instructions = false;
+bool is_second_pass = false;
 token_t t;
 token_buffer_t token_buffer;
 #define PARSE_ERROR 0
@@ -39,7 +39,7 @@ int get_token() {
                 t.attr.string_value = NULL;
                 get_next_token(&t);
                 add_token_to_buffer(&token_buffer, &t);
-        } else {
+        } else /* second pass */ {
                 t = *get_next_token_buffer(&token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
@@ -482,7 +482,7 @@ int parse_declaration() {
                                 printf("VAR REDECLARED\n");
                         }
                 }
-                
+
                 if (parse_value()) {
                         if (t.type == SEMICOLON) {
                                 if (get_token() == STATIC) {
@@ -529,12 +529,14 @@ int parse_declaration_element() {
                         current_variable.data_type = t.type;
                         current_function.data_type = t.type;
                 }
-                if(parse_param()) {
-                        if (is_first_pass) { current_function.id_name = t.attr.string_value;
-                                             current_function.symbol_table = create_function_symbol_table();
-                                             /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
-                                                symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
-                                                printf("%d\n", o->data_type);*/
+
+                if (parse_param()) {
+                        if (is_first_pass) {
+                                current_function.id_name = t.attr.string_value;
+                                current_function.symbol_table = create_function_symbol_table();
+                                /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
+                                   symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
+                                   printf("%d\n", o->data_type);*/
                         }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
@@ -616,15 +618,14 @@ int parse() {
                                                 printf("Weird RUN in Main class\n");
                                         }
                                 }
-                        }
-                        else {
+                        } else /* second pass */ {
                                 free_class_list();
                         }
 
                         if (is_first_pass) {
                                 is_first_pass = false;
-                                generate_instructions = true;
-                        } else {
+                                is_second_pass = true;
+                        } else /* second pass */ {
                                 free_token_buffer(&token_buffer);
                         }
                         return PARSED_OK;
