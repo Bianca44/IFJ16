@@ -317,7 +317,12 @@ int parse_method_element() {
                 function_variable.data_type = t.type; // TODO
                 if (parse_param()) {
                         printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-
+                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                function_variable.offset++;
+                        } else {
+                                printf("VAR IN FUNC REDECLARED\n");
+                        }
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
@@ -349,7 +354,12 @@ int parse_next_param() {
                         function_variable.data_type = t.type;
                         if (parse_param()) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                function_variable.offset++;
+                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        function_variable.offset++;
+                                } else {
+                                        printf("VAR IN FUNC REDECLARED\n");
+                                }
                                 get_token();
                                 if (t.type== RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
                                         return parse_next_param();
@@ -376,7 +386,12 @@ int parse_param_list() {
                 function_variable.data_type = t.type;
                 if (parse_param()) {
                         printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                        function_variable.offset++;
+                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                function_variable.offset++;
+                        } else {
+                                printf("VAR IN FUNC REDECLARED\n");
+                        }
 
                         get_token();
                         if (t.type == LEFT_CURVED_BRACKET) {
@@ -471,7 +486,7 @@ int parse_declaration_element() {
                 current_function.data_type = t.type;
                 if (get_token() == ID) {
                         current_function.id_name = t.attr.string_value;
-                        current_function.function_symbol_table = create_function_symbol_table(); // PASS ONE
+                        current_function.symbol_table = create_function_symbol_table(); // PASS ONE
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
                         }
@@ -481,9 +496,9 @@ int parse_declaration_element() {
                 current_function.data_type = t.type;
                 if(parse_param()) {
                         current_function.id_name = t.attr.string_value;
-                        current_function.function_symbol_table = create_function_symbol_table();
-                        /*put_function_variable_symbol_table(current_function.function_symbol_table, "test", 25, 5);
-                           symbol_table_item_t * o = ht_read(current_function.function_symbol_table, "test");
+                        current_function.symbol_table = create_function_symbol_table();
+                        /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
+                           symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
                            printf("%d\n", o->data_type);*/
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {

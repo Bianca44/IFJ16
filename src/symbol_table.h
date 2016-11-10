@@ -18,7 +18,7 @@ typedef struct {
     int params_count;
     int local_vars_count;
     char * param_data_types;
-    symbol_table_t * function_symbol_table;
+    symbol_table_t * symbol_table;
 } function_t;
 
 typedef struct symbol_table_item {
@@ -62,5 +62,6 @@ symbol_table_t * get_symbol_table_for_class(char* class_name);
 symbol_table_item_t * get_function_symbol_table(char * class_name, char * id_name);
 symbol_table_t * create_function_symbol_table();
 bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset);
+bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 
 #endif //SYMBOL_TABLE_H

@@ -134,6 +134,14 @@ bool is_declared(char * id_name) {
         return sym_table_item->declared;
 }
 
+bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
+        symbol_table_item_t * sym_table_item = ht_read(symbol_table, id_name);
+        if (sym_table_item == NULL) {
+                return false;
+        }
+        return sym_table_item->declared;
+}
+
 void append_param_data_types(int type) {
         char data_type_char = 0;
         switch (type) {
