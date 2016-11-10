@@ -75,7 +75,7 @@ int parse_expression(bool ends_semicolon) {
                 }
            }*/
 
-        printf("IN EXPR: ");
+        if (is_second_pass) printf("IN EXPR: ");
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
@@ -84,12 +84,14 @@ int parse_expression(bool ends_semicolon) {
                 }
                 //printf("%s, ", t_names[t.type]);
 
-                if (t.type == SPECIAL_ID) {
-                        printf("%s is declared %d\n", t.attr.string_value, is_special_id_declared(t.attr.string_value));
+                if (is_second_pass) {
+                    if (t.type == SPECIAL_ID) {
+                            printf("%s is declared %d\n", t.attr.string_value, is_special_id_declared(t.attr.string_value));
+                    }
                 }
                 get_token();
         }
-        printf("\n");
+        if (is_second_pass) printf("\n");
         return PARSED_OK;
 
 }
@@ -227,6 +229,11 @@ int parse_statement() {
         }
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
+                if (is_second_pass && t.type == SPECIAL_ID) {
+                    if (!is_special_id_declared(t.attr.string_value)) {
+                        printf("SPECIAL ID NOT DECLARED\n");
+                    }
+                }
                 if(parse_call_assign()) {
                         get_token();
                         if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -518,7 +525,7 @@ int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
                 if (is_first_pass) {
-                    current_function.data_type = t.type;
+                        current_function.data_type = t.type;
                 }
                 if (get_token() == ID) {
                         if (is_first_pass) {
@@ -599,22 +606,23 @@ int parse_class_list() {
 
 
 void add_builtin_functions() {
-        insert_class("ifj16");
-        set_current_class("ifj16");
+        char *ifj_class = copy_string("ifj16");
+        insert_class(ifj_class);
+        set_current_class(ifj_class);
 
-        put_function_symbol_table("sort", STRING, 1, 0, "s", NULL);
-        put_function_symbol_table("find", INT, 2, 0, "ss", NULL);
-        put_function_symbol_table("length", INT, 1, 0, "s", NULL);
-        put_function_symbol_table("compare", INT, 2, 0, "ss", NULL);
-        put_function_symbol_table("substr", INT, 3, 0, "ssi", NULL);
-        put_function_symbol_table("print", VOID, 1, 0, "s", NULL);
+        put_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL);
+        put_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL);
+        put_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL);
+        put_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL);
+        put_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL);
+        put_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL);
 
-        put_function_symbol_table("readInt", INT, 0, 0, NULL, NULL);
-        put_function_symbol_table("readDouble", DOUBLE, 0, 0, NULL, NULL);
-        put_function_symbol_table("readString", INT, 0, 0, NULL, NULL);
+        put_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL);
+        put_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL);
+        put_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL);
 
         /*symbol_table_item_t * run_method = get_symbol_table_class_item("ifj16", "sort");
-        printf("NAME %s\n", run_method->id_name);*/
+           printf("NAME %s\n", run_method->id_name);*/
 }
 int parse() {
 

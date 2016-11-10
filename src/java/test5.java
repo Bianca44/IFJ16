@@ -17,7 +17,7 @@ static void run()
 // end of class Main
 class Game
 {
-static void play(String str, int a, boolean p, double a, int b, boolean a, int p)
+static void play(String str)
 {
         ifj16.print("Zadejte nejakou posloupnost vsech malych pismen a-h, ");
         ifj16.print("pricemz se pismena nesmeji v posloupnosti opakovat:");
