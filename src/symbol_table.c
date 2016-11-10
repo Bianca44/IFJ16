@@ -103,13 +103,14 @@ bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_
         return true;
 }
 
-bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types) {
+bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
         p->content.function.params_count = params_count;
         p->content.function.local_vars_count = local_vars_count;
         p->content.function.param_data_types = param_data_types;
+        p->content.function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
         insert_symbol_table_item(id_name, p);

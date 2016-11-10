@@ -40,7 +40,8 @@ typedef struct symbol_table_item {
                 struct {
                         int params_count;
                         int local_vars_count;
-                        char * param_data_types; // e.g. idbs
+                        char * param_data_types;
+                        symbol_table_t * symbol_table;
                 } function;
         } content;
 } symbol_table_item_t;
@@ -55,7 +56,7 @@ bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
 symbol_table_item_t * create_symbol_table_item();
 bool put_variable_symbol_table(char * id_name, int data_type, int offset);
-bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types);
+bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table);
 bool is_declared(char * id_name);
 void append_param_data_types(int type);
 symbol_table_t * get_symbol_table_for_class(char* class_name);

@@ -303,8 +303,7 @@ int parse_method_element() {
                 if (is_first_pass) {
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
-                                // TODO
-                                put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types);
+                                put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types, current_function.symbol_table);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
