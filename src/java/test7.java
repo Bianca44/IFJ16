@@ -1,8 +1,8 @@
 class Main
 {
-static void run
-        ()
-{
-        id = foo(2,3);
-}
+    static int a = 4 ;
+
+    static void a () {
+        //a = 5;
+    }
 }
