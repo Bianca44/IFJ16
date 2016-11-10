@@ -1,8 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-int parse_expression();
-int parse_param_expression();
+int parse_expression(bool ends_semicolon);
 int parse_return_value();
 int parse_next_param_value();
 int parse_param_value ();

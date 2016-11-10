@@ -18,7 +18,7 @@ bool init_string(string_t *str);
 
 void clear_string(string_t *str);
 
-bool set_string(char *ptr, char *text);
+char * copy_string(char *text);
 
 bool append_char(string_t *str, char c);
 

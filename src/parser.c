@@ -49,8 +49,15 @@ int get_token() {
 }
 
 
-int parse_expression() {
+/*    PARSING   */
 
+
+int parse_expression(bool ends_semicolon) {
+
+
+        if (t.type == SEMICOLON || t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
+                return PARSE_ERROR;
+        }
 
         // ID co je funkcia alebo premenna
         // ak funkcia, parsuje takto:
@@ -59,34 +66,30 @@ int parse_expression() {
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET) {
                         if (parse_param_value()) {
-                                get_token();
-                                if (t.type == SEMICOLON) {
-                                    return PARSED_OK;
+                                if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                        if (get_token() == SEMICOLON) {
+                                                return PARSED_OK;
+                                        }
                                 }
                         }
                 }
            }*/
 
-        if (t.type == SEMICOLON) {
-                return PARSE_ERROR;
-        }
+        printf("IN EXPR: ");
+        while (1) {
+                if (ends_semicolon) {
+                        if (t.type == SEMICOLON) break;
+                } else {
+                        if (t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) break;
+                }
+                //printf("%s, ", t_names[t.type]);
 
-        while (t.type != SEMICOLON) {
-                // ulozit
+                if (t.type == SPECIAL_ID) {
+                        printf("%s is declared %d\n", t.attr.string_value, is_special_id_declared(t.attr.string_value));
+                }
                 get_token();
         }
-        return PARSED_OK;
-
-}
-
-int parse_param_expression() {
-        // riesi aj if (exp)
-        // hlavne pre ifj16.print(str+str)
-        // ale teda aj pre vsetky funkcie foo (exp, next_param);
-        while (t.type != RIGHT_ROUNDED_BRACKET && t.type != COMMA) {
-                // ulozit
-                get_token();
-        }
+        printf("\n");
         return PARSED_OK;
 
 }
@@ -99,7 +102,7 @@ int parse_return_value() {
                                 printf("return E in VOID error\n");
                         }
 
-                        return parse_expression();
+                        return parse_expression(true);
                 } else if (t.type == SEMICOLON) {
                         return PARSED_OK;
                 }
@@ -131,7 +134,7 @@ int parse_param_value () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_token();
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
-                        if (parse_param_expression()) { // just for ifj16.print
+                        if (parse_expression(false)) { // just for ifj16.print
                                 if (t.type == COMMA) {
                                         return parse_next_param_value();
                                 } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -152,7 +155,7 @@ int parse_call_assign() {
                 if (t.type == ASSIGN) {
                         get_token();
                         if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                                return parse_expression();
+                                return parse_expression(true);
                         }
                 }
         } if (t.type == LEFT_ROUNDED_BRACKET) {
@@ -235,7 +238,7 @@ int parse_statement() {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
                         if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
-                                if (parse_param_expression()) {
+                                if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
@@ -250,7 +253,7 @@ int parse_statement() {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
                         if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
-                                if (parse_param_expression()) {
+                                if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 return parse_condition_list();
@@ -456,7 +459,7 @@ int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
                 if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                        return parse_expression();
+                        return parse_expression(true);
                 }
         } if (t.type == SEMICOLON) {
                 return PARSED_OK;
@@ -514,7 +517,9 @@ int parse_param() {
 int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
-                if (is_first_pass) {current_function.data_type = t.type; }
+                if (is_first_pass) {
+                    current_function.data_type = t.type;
+                }
                 if (get_token() == ID) {
                         if (is_first_pass) {
                                 current_function.id_name = t.attr.string_value;
@@ -594,9 +599,25 @@ int parse_class_list() {
 
 
 void add_builtin_functions() {
-        // todo
+        insert_class("ifj16");
+        set_current_class("ifj16");
+
+        put_function_symbol_table("sort", STRING, 1, 0, "s", NULL);
+        put_function_symbol_table("find", INT, 2, 0, "ss", NULL);
+        put_function_symbol_table("length", INT, 1, 0, "s", NULL);
+        put_function_symbol_table("compare", INT, 2, 0, "ss", NULL);
+        put_function_symbol_table("substr", INT, 3, 0, "ssi", NULL);
+        put_function_symbol_table("print", VOID, 1, 0, "s", NULL);
+
+        put_function_symbol_table("readInt", INT, 0, 0, NULL, NULL);
+        put_function_symbol_table("readDouble", DOUBLE, 0, 0, NULL, NULL);
+        put_function_symbol_table("readString", INT, 0, 0, NULL, NULL);
+
+        /*symbol_table_item_t * run_method = get_symbol_table_class_item("ifj16", "sort");
+        printf("NAME %s\n", run_method->id_name);*/
 }
 int parse() {
+
         if (is_first_pass) {
                 init_token_buffer(&token_buffer);
         }
@@ -610,7 +631,7 @@ int parse() {
 
                         if (is_first_pass) {
                                 // over ci je main a run v nej
-                                symbol_table_item_t * run_method = get_function_symbol_table("Main", "run");
+                                symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
                                 if (run_method == NULL) {
                                         printf("No RUN in Main class or no MAIN class\n");
                                 } else {

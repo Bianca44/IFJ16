@@ -43,14 +43,6 @@ symbol_table_t * create_function_symbol_table() {
         return p;
 }
 
-
-int get(char* class_name) {
-        if (class_list == NULL) return -1;
-        symbol_table_t * p = ht_read(class_list, class_name);
-        if (p == NULL) return -1;
-        return p->n_items;
-}
-
 symbol_table_t * get_symbol_table_for_class(char* class_name) {
         if (class_list == NULL) {
                 return NULL;
@@ -117,7 +109,7 @@ bool put_function_symbol_table(char * id_name, int data_type, int params_count, 
         return true;
 }
 
-symbol_table_item_t * get_function_symbol_table(char * class_name, char * id_name) {
+symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name) {
         symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
         if (sym_table == NULL) {
                 return NULL;
@@ -163,6 +155,22 @@ void append_param_data_types(int type) {
         }
 
         append_char(&param_data_types, data_type_char);
+}
+
+bool is_special_id_declared(char * id_name) {
+        char *special_id = copy_string(id_name);
+        char *class;
+        char *method;
+        char *delimeter = ".";
+        class = strtok(special_id, delimeter);
+        method = strtok(NULL, delimeter);
+
+        symbol_table_item_t * item = get_symbol_table_class_item(class, method);
+        free(special_id);
+        if (item == NULL) {
+                return false;
+        }
+        return item->declared;
 }
 
 void free_class_list() {

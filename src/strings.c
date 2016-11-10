@@ -21,14 +21,15 @@ void clear_string(string_t *str) {
         str->allocated_size = 0;
 }
 
-bool set_string(char *ptr, char *text) {
+char * copy_string(char *text) {
+        char *ptr;
         int length = strlen(text);
         if ((ptr = (char *) malloc((length + 1) * sizeof(char))) == NULL) {
                 return false;
         }
         strcpy(ptr, text);
         ptr[length] = '\0';
-        return true;
+        return ptr;
 }
 
 bool append_char(string_t *str, char c) {
