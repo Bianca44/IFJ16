@@ -20,6 +20,7 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
 int parser_error_flag = 0; // no error
 int function_offset = 0;
 bool is_first_pass = true;
+bool generate_instructions = false;
 token_t t;
 token_buffer_t token_buffer;
 #define PARSE_ERROR 0
@@ -616,6 +617,7 @@ int parse() {
 
                         if (is_first_pass) {
                                 is_first_pass = false;
+                                generate_instructions = true;
                         } else {
                                 free_token_buffer(&token_buffer);
                         }
