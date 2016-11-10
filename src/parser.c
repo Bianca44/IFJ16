@@ -475,6 +475,14 @@ int parse_declaration() {
                         return PARSED_OK;
                 }
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
+                if (is_first_pass) {
+                        if (!is_declared(current_variable.id_name)) {
+                                put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                        } else {
+                                printf("VAR REDECLARED\n");
+                        }
+                }
+                
                 if (parse_value()) {
                         if (t.type == SEMICOLON) {
                                 if (get_token() == STATIC) {
@@ -530,17 +538,6 @@ int parse_declaration_element() {
                         }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
-
-                                if (is_first_pass) {
-                                        if (t.type == ASSIGN || t.type == SEMICOLON) {
-                                                if (!is_declared(current_variable.id_name)) {
-                                                        put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
-                                                } else {
-                                                        printf("VAR REDECLARED\n");
-                                                }
-
-                                        }
-                                }
                                 return parse_declaration();
                         }
                 }
