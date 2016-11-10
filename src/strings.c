@@ -21,18 +21,13 @@ void clear_string(string_t *str) {
         str->allocated_size = 0;
 }
 
-bool copy_string(string_t *str, char *text) {
-        int new_length = strlen(text);
-        if (new_length + 1 >= str->allocated_size) {
-                if ((str->data =
-                             (char *) realloc(str->data, new_length * sizeof(char))) == NULL) {
-                        return false;
-                }
-                str->allocated_size = new_length;
+bool set_string(char *ptr, char *text) {
+        int length = strlen(text);
+        if ((ptr = (char *) malloc((length + 1) * sizeof(char))) == NULL) {
+                return false;
         }
-        strcpy(str->data, text);
-        str->length = new_length;
-        str->data[str->length] = '\0';
+        strcpy(ptr, text);
+        ptr[length] = '\0';
         return true;
 }
 
