@@ -1,4 +1,4 @@
-CFLAGS=-std=c11 -pedantic -Wall -Wextra
+CFLAGS=-std=c11 -pedantic -Wall -Wextra -O2
 CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -DNDEBUG
 CC=gcc
 

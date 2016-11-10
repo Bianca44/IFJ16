@@ -13,6 +13,7 @@ enum data_type {
 
 typedef struct tVar {
     enum data_type type;
+    char *name;
     union {
         int i;
         double d;

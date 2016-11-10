@@ -91,7 +91,7 @@ int main(){
 //cyklus
     // 10 > 5
     i = init_inst2();
-    i->op1->i = 10;
+    i->op1->i = 100000000;
     i->op2->i = 0;
     i->f = i_g; //less
     tVar *p = i->result;
@@ -135,7 +135,7 @@ int main(){
     i->op1->i = 42;
     DLInsertLast(&L, i); 
     interpret_tac(&L);
-    DLDisposeList(&L);
+    //DLDisposeList(&L);
     
     return 0;
 }
