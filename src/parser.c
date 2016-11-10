@@ -18,6 +18,7 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
 
 
 int parser_error_flag = 0; // no error
+int function_offset = 0;
 bool is_first_pass = true;
 token_t t;
 token_buffer_t token_buffer;
@@ -28,6 +29,7 @@ token_buffer_t token_buffer;
 
 extern string_t param_data_types;
 extern variable_t current_variable;
+extern variable_t function_variable;
 extern function_t current_function;
 
 
@@ -301,16 +303,21 @@ int parse_method_element() {
                 if (is_first_pass) {
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
+                                // TODO
                                 put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
                         current_function.local_vars_count = 0;
+                        function_variable.offset = 0;
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 current_function.local_vars_count++;
+                function_variable.data_type = t.type; // TODO
                 if (parse_param()) {
+                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
@@ -339,7 +346,10 @@ int parse_next_param() {
                 get_token();
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                         append_param_data_types(t.type);
+                        function_variable.data_type = t.type;
                         if (parse_param()) {
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                function_variable.offset++;
                                 get_token();
                                 if (t.type== RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
                                         return parse_next_param();
@@ -363,7 +373,11 @@ int parse_param_list() {
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 append_param_data_types(t.type);
+                function_variable.data_type = t.type;
                 if (parse_param()) {
+                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+                        function_variable.offset++;
+
                         get_token();
                         if (t.type == LEFT_CURVED_BRACKET) {
                                 get_token();
@@ -417,7 +431,6 @@ int parse_value() {
 
 int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
-
                 return parse_method_declaration ();
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_token() == STATIC) {
@@ -444,6 +457,7 @@ int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
                         current_variable.id_name = t.attr.string_value;
+                        function_variable.id_name = t.attr.string_value;
                         return PARSED_OK;
                 }
         }
@@ -457,6 +471,7 @@ int parse_declaration_element() {
                 current_function.data_type = t.type;
                 if (get_token() == ID) {
                         current_function.id_name = t.attr.string_value;
+                        current_function.function_symbol_table = create_function_symbol_table(); // PASS ONE
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
                         }
@@ -466,6 +481,10 @@ int parse_declaration_element() {
                 current_function.data_type = t.type;
                 if(parse_param()) {
                         current_function.id_name = t.attr.string_value;
+                        current_function.function_symbol_table = create_function_symbol_table();
+                        /*put_function_variable_symbol_table(current_function.function_symbol_table, "test", 25, 5);
+                           symbol_table_item_t * o = ht_read(current_function.function_symbol_table, "test");
+                           printf("%d\n", o->data_type);*/
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
 
@@ -478,11 +497,6 @@ int parse_declaration_element() {
                                                 }
                                         }
                                 } return parse_declaration();
-                        } else if (t.type == COMMA) {
-                                get_token();
-                                if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                                        return parse_next_param();
-                                }
                         }
                 }
         }

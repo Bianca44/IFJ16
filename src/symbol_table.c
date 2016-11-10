@@ -10,6 +10,7 @@
 symbol_table_t *class_list;
 char* current_class;
 variable_t current_variable;
+variable_t function_variable;
 function_t current_function;
 
 string_t param_data_types;
@@ -36,6 +37,13 @@ bool insert_class(char* class_name) {
         return true;
 }
 
+symbol_table_t * create_function_symbol_table() {
+        symbol_table_t * p = ht_init(11, hash_code, dispose_class_symbol_table);
+        if (p == NULL) return NULL;
+        return p;
+}
+
+
 int get(char* class_name) {
         if (class_list == NULL) return -1;
         symbol_table_t * p = ht_read(class_list, class_name);
@@ -53,8 +61,8 @@ symbol_table_t * get_symbol_table_for_class(char* class_name) {
 }
 
 bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data) {
-        symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
-        ht_insert(sym_table, id_name, data);
+        symbol_table_t * symbol_table = get_symbol_table_for_class(class_name);
+        ht_insert(symbol_table, id_name, data);
         return true;
 
 }
@@ -81,6 +89,17 @@ bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
+        return true;
+}
+
+bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
+        symbol_table_item_t * p = create_symbol_table_item();
+        p->id_name = id_name;
+        p->data_type = data_type;
+        p->content.variable.offset = offset;
+        p->is_function = false;
+        p->declared = true;
+        ht_insert(symbol_table, id_name, p);
         return true;
 }
 
