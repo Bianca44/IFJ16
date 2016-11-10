@@ -312,15 +312,19 @@ int parse_method_element() {
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                current_function.local_vars_count++;
-                function_variable.data_type = t.type; // TODO
+                if (is_first_pass) {
+                        current_function.local_vars_count++;
+                        function_variable.data_type = t.type;
+                }
                 if (parse_param()) {
-                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                function_variable.offset++;
-                        } else {
-                                printf("VAR IN FUNC REDECLARED\n");
+                        if (is_first_pass) {
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        function_variable.offset++;
+                                } else {
+                                        printf("VAR IN FUNC REDECLARED\n");
+                                }
                         }
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
@@ -349,15 +353,19 @@ int parse_next_param() {
         } else if (t.type == COMMA) {
                 get_token();
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                        append_param_data_types(t.type);
-                        function_variable.data_type = t.type;
+                        if (is_first_pass) {
+                                append_param_data_types(t.type);
+                                function_variable.data_type = t.type;
+                        }
                         if (parse_param()) {
-                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                        function_variable.offset++;
-                                } else {
-                                        printf("VAR IN FUNC REDECLARED\n");
+                                if (is_first_pass) {
+                                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                                function_variable.offset++;
+                                        } else {
+                                                printf("VAR IN FUNC REDECLARED\n");
+                                        }
                                 }
                                 get_token();
                                 if (t.type== RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
@@ -381,15 +389,19 @@ int parse_param_list() {
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                append_param_data_types(t.type);
-                function_variable.data_type = t.type;
+                if (is_first_pass) {
+                        append_param_data_types(t.type);
+                        function_variable.data_type = t.type;
+                }
                 if (parse_param()) {
-                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                function_variable.offset++;
-                        } else {
-                                printf("VAR IN FUNC REDECLARED\n");
+                        if (is_first_pass) {
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
+                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        function_variable.offset++;
+                                } else {
+                                        printf("VAR IN FUNC REDECLARED\n");
+                                }
                         }
 
                         get_token();
@@ -400,8 +412,10 @@ int parse_param_list() {
                                 }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
-                                        current_function.param_data_types = param_data_types.data;
-                                        current_function.params_count = param_data_types.length;
+                                        if (is_first_pass) {
+                                                current_function.param_data_types = param_data_types.data;
+                                                current_function.params_count = param_data_types.length;
+                                        }
                                         if (get_token() == LEFT_CURVED_BRACKET) {
                                                 get_token();
                                                 if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -470,8 +484,10 @@ int parse_declaration() {
 int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
-                        current_variable.id_name = t.attr.string_value;
-                        function_variable.id_name = t.attr.string_value;
+                        if (is_first_pass) {
+                                current_variable.id_name = t.attr.string_value;
+                                function_variable.id_name = t.attr.string_value;
+                        }
                         return PARSED_OK;
                 }
         }
@@ -482,23 +498,28 @@ int parse_param() {
 int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
-                current_function.data_type = t.type;
+                if (is_first_pass) {current_function.data_type = t.type; }
                 if (get_token() == ID) {
-                        current_function.id_name = t.attr.string_value;
-                        current_function.symbol_table = create_function_symbol_table(); // PASS ONE
+                        if (is_first_pass) {
+                                current_function.id_name = t.attr.string_value;
+                                current_function.symbol_table = create_function_symbol_table();
+                        }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                current_variable.data_type = t.type;
-                current_function.data_type = t.type;
+                if (is_first_pass) {
+                        current_variable.data_type = t.type;
+                        current_function.data_type = t.type;
+                }
                 if(parse_param()) {
-                        current_function.id_name = t.attr.string_value;
-                        current_function.symbol_table = create_function_symbol_table();
-                        /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
-                           symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
-                           printf("%d\n", o->data_type);*/
+                        if (is_first_pass) { current_function.id_name = t.attr.string_value;
+                                             current_function.symbol_table = create_function_symbol_table();
+                                             /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
+                                                symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
+                                                printf("%d\n", o->data_type);*/
+                        }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
 
