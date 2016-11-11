@@ -13,7 +13,6 @@ enum data_type {
 
 typedef struct tVar {
     enum data_type type;
-    char *name;
     union {
         int i;
         double d;
@@ -49,7 +48,7 @@ typedef struct tFSElem {
 typedef struct tFrameStack{
     tFSElem *top;
     tFSElem *prepared;
-}tFrameStack;
+} tFrameStack;
     
 extern tFrameStack frame_stack;
 

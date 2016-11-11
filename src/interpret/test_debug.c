@@ -5,18 +5,56 @@
 #include "instructions.h"
 #include "DLList.h"
 #include "interpret.h"
+#include "symbol_table.h"
+#include "ial.h"
+
 
 
 tFrameStack frame_stack;
+symbol_table_t *class_list;
+char* current_class;
+variable_t current_variable;
+variable_t function_variable;
+function_t current_function;
+
+string_t param_data_types;
 
 int main(){
+
+    //filling symbol table for test purposes
+    init_class_list();
+
+    char * name = "Main";
+    current_class = name;
+    //set_current_class(name);
+    insert_class(name);
+    
+    symbol_table_t * t = get_symbol_table_for_class(name);
+    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
+    
+    symbol_table_t * f = create_function_symbol_table();
+
+    put_function_variable_symbol_table(f, "par1", TDOUBLE, 0);
+
+    put_function_symbol_table("test", TINT, 2, 3, "di", f);
+    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
+   
+    symbol_table_item_t *i = ht_read(f, "par1");
+    d_print("%d", i->data_type);
+    //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
+    
+    
+    ht_free(class_list);
+
+
+    
 /*
     d_print("durko je %s","bilbo shwaggins");
-    d_message("test:");*/
+    d_message("test:");
 
     tDLList L;
     DLInitList(&L, dispose_inst2);
-   
+ */
     /**
      * result = 23 + 10
      * result = 23 - 10 
@@ -28,8 +66,8 @@ int main(){
      *      x = 42;     
      */    
 
-        
-    /*testovanie aritmetickych instrukcii*/ 
+   /*     
+    testovanie aritmetickych instrukcii
     tInst_fun *af[] = {i_add, i_sub, i_mul, i_div};
     
     for(unsigned j=0; j < 4; j++){
@@ -39,8 +77,8 @@ int main(){
         i->op2->i = 10;
         i->f = af[j];
         DLInsertLast(&L, i);
-    }    
-    
+    } */ 
+/*    
     // 10 > 5
     tInst *i = init_inst2();
     i->op1->i = 10;
@@ -91,7 +129,7 @@ int main(){
 //cyklus
     // 10 > 5
     i = init_inst2();
-    i->op1->i = 100000000;
+    i->op1->i = 1;
     i->op2->i = 0;
     i->f = i_g; //less
     tVar *p = i->result;
@@ -136,6 +174,9 @@ int main(){
     DLInsertLast(&L, i); 
     interpret_tac(&L);
     //DLDisposeList(&L);
-    
+
+    tFrameStack frame_stack;
+    init_frame_stack(&frame_stack);
+*/    
     return 0;
 }

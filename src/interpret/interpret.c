@@ -4,18 +4,35 @@
 #include "datatypes.h"
 #include "debug.h"
 
+tFrame * init_frame(unsigned size){
+    
+    tFrame * new_frame;
+    if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar *))) == NULL){
+        //TODO calloc ?
+    }
+
+    tVar * result;
+    if((result = malloc(sizeof(tVar))) == NULL){
+        //TODO
+    }
+
+    new_frame->result = result;
+    
+    return new_frame;
+}
+
 void dispose_frame(tFrame *frame){
     free(frame->result);
     free(frame);
 }
 
-tFrameStack init_frame_stack(tFrameStack *stack){
+void init_frame_stack(tFrameStack *stack){
     stack->top = NULL;
     stack->prepared = NULL;
 }
 
 tFrame * top_frame(tFrameStack *stack){
-    stack->top->frame;
+    return stack->top->frame;
 }
 
 void push_frame(tFrameStack *stack, tFrame * frame){
@@ -26,17 +43,20 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     }
     
     ptr->frame = frame;
-    
+    //adding new frame to stack top 
     ptr->next = stack->top;
     stack->top = ptr->next;
 }
    
 void pop_frame(tFrameStack *stack){
     
+    tFSElem *tmp;
+
     if(stack->top != NULL){
-        tFSElem *tmp;
         tmp = stack->top;
+        //change stack top
         stack->top = stack->top->next;
+        //free frame
         dispose_frame(tmp->frame);
         free(tmp);
     }
@@ -53,7 +73,7 @@ int interpret_tac(tDLList *inst_tape){
         DLCopy(inst_tape, (void **)&inst);
         
         inst->f(inst->op1, inst->op2, inst->result);
-        //d_print("%d \n", inst->result->i); //TODO
+        d_print("%d \n", inst->result->i); //TODO
         DLSucc(inst_tape);  
     } 
      
