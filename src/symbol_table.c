@@ -16,7 +16,7 @@ function_t current_function;
 string_t param_data_types;
 
 void dispose_class_list(tData data) {
-        ht_free((tHTable *)(data));
+        ht_free((symbol_table_t *)(data));
 }
 
 void dispose_class_symbol_table(tData data) {
@@ -24,7 +24,7 @@ void dispose_class_symbol_table(tData data) {
 }
 
 void init_class_list() {
-        class_list = ht_init(11, hash_code, dispose_class_list); /* TODO */
+        class_list = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_list); /* TODO */
 }
 
 void set_current_class(char *class_name) {
@@ -32,13 +32,13 @@ void set_current_class(char *class_name) {
 }
 
 bool insert_class(char* class_name) {
-        tHTable *symbol_table = ht_init(11, hash_code, dispose_class_symbol_table);
+        symbol_table_t *symbol_table = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_symbol_table);
         ht_insert(class_list, class_name, symbol_table);
         return true;
 }
 
 symbol_table_t * create_function_symbol_table() {
-        symbol_table_t * p = ht_init(11, hash_code, dispose_class_symbol_table);
+        symbol_table_t * p = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_symbol_table);
         if (p == NULL) return NULL;
         return p;
 }

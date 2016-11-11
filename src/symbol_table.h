@@ -3,6 +3,9 @@
 
 #include "ial.h"
 
+// TODO
+#define SYMBOL_TABLE_SIZE 11
+
 typedef tHTable symbol_table_t;
 typedef enum {TINT, TDOUBLE, TSTRING, TBOOLEAN} data_type;
 
