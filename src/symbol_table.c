@@ -172,79 +172,7 @@ bool is_special_id_declared(char * id_name) {
         }
         return item->declared;
 }
-//TODO pri pristupe k param_data_types stringu v hlavnom programe vypisuje Main 
-bool add_builtin(){
-    
-    if(!(insert_class("ifj16"))){        
-         
-        return false;     
-    }
-    set_current_class("ifj16");
-    if(!(put_function_symbol_table("readInt",INT,0,0,NULL))){
-        
-        return false;
-    }
-    if(!(put_function_symbol_table("readDouble",DOUBLE,0,0,NULL))){
-    
-        return false;
-    }
-    if(!(put_function_symbol_table("readString",STRING,0,0,NULL))){
-        
-        return false;
-    }
-    //TODO funkcia print, parameter je term alebo konkatenace
-    if(!(put_function_symbol_table("print",VOID,0,0,NULL))){
-        
-        return false;
-    }
-    //TODO pocty loakalnych premennych funkcii, mozem ich nastavit hned na pocet parametrov ?
-    if(!(init_string(&param_data_types))){
-        
-        return false;
-    }
-    append_param_data_types(STRING);
-    if(!(put_function_symbol_table("length",INT,1,1,param_data_types.data))){
-        
-        return false;
-    }
-    if(!(put_function_symbol_table("sort",STRING,1,1,param_data_types.data))){
-        
-        return false;
-    }
-    clear_string(&param_data_types); 
-    if(!(init_string(&param_data_types))){
-        
-         return false;
-     }
-    append_param_data_types(STRING);
-    append_param_data_types(INT);
-    append_param_data_types(INT);
-    if(!(put_function_symbol_table("substr",STRING,3,3,param_data_types.data))){
-    
-        return false;
-    }
-    clear_string(&param_data_types);
-    
-    if(!(init_string(&param_data_types))){
-        
-         return false;
-    }
-    append_param_data_types(STRING);
-    append_param_data_types(STRING);
-    if(!(put_function_symbol_table("compare",INT,2,2,param_data_types.data))){
- 
-         return false;
-    }
-    if(!(put_function_symbol_table("find",INT,2,2,param_data_types.data))){
-    
-        return false;
-    }
 
-    clear_string(&param_data_types);
-
- 
-    return true;
-}
 
 
 
