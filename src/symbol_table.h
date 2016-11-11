@@ -49,7 +49,7 @@ typedef struct symbol_table_item {
                         char * param_data_types;
                         symbol_table_t * symbol_table;
                 } function;
-        } content;
+        };
 } symbol_table_item_t;
 
 void init_class_list();

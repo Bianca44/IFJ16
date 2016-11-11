@@ -76,8 +76,8 @@ symbol_table_item_t * create_symbol_table_item() {
 bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
-        p->data_type = data_type;
-        p->content.variable.offset = offset;
+        p->variable.data_type = data_type;
+        p->variable.offset = offset;
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
@@ -87,8 +87,8 @@ bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
 bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
-        p->data_type = data_type;
-        p->content.variable.offset = offset;
+        p->variable.data_type = data_type;
+        p->variable.offset = offset;
         p->is_function = false;
         p->declared = true;
         ht_insert(symbol_table, id_name, p);
@@ -98,11 +98,11 @@ bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * 
 bool insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
-        p->data_type = data_type;
-        p->content.function.params_count = params_count;
-        p->content.function.local_vars_count = local_vars_count;
-        p->content.function.param_data_types = param_data_types;
-        p->content.function.symbol_table = symbol_table;
+        p->function.return_type = data_type;
+        p->function.params_count = params_count;
+        p->function.local_vars_count = local_vars_count;
+        p->function.param_data_types = param_data_types;
+        p->function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
         insert_symbol_table_item(id_name, p);

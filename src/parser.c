@@ -643,7 +643,7 @@ int parse() {
                                 if (run_method == NULL) {
                                         printf("No RUN in Main class or no MAIN class\n");
                                 } else {
-                                        if (!(run_method->data_type == VOID) || !(run_method->content.function.params_count == 0)) {
+                                        if (!(run_method->function.return_type == VOID) || !(run_method->function.params_count == 0)) {
                                                 printf("Weird RUN in Main class\n");
                                         }
                                 }

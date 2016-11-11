@@ -34,7 +34,7 @@ int main(){
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
    
     symbol_table_item_t *i = ht_read(f, "par1");
-    d_print("%d", i->data_type == DOUBLE);
+    d_print("%d", i->variable.data_type == DOUBLE);
     //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
     
     

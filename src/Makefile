@@ -22,13 +22,16 @@ strings.o:strings.c strings.h
 
 ntest:ntest_debug.o
 	$(CC) $(CFLAGS) -o $@ $<
-ntest_debug.o:test_debug.c	
+ntest_debug.o:test_debug.c
 	$(CC) $(CFLAGS_N) -c -o $@ $<
+
+parser:
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c token_buffer.c -o main
 
 r_test:
 	./test
 
 clean:
-	rm *.o 
+	rm *.o
 	rm test
 	rm ntest
