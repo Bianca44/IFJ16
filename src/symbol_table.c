@@ -73,7 +73,7 @@ symbol_table_item_t * create_symbol_table_item() {
         return p;
 }
 
-bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
+bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
@@ -84,7 +84,7 @@ bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
         return true;
 }
 
-bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
+bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
@@ -95,7 +95,7 @@ bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_
         return true;
 }
 
-bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
+bool insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
