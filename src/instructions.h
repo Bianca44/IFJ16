@@ -23,7 +23,7 @@ void dispose_inst(void *);
 void dispose_inst2(void *);
 
 
-enum instructions {
+typedef enum instructions {
     //INPUT
     I_RINT,
     I_RDBL,
@@ -69,9 +69,9 @@ enum instructions {
     I_JG,
     I_JGE,
     I_LABEL
+}tInst_name;
 
-
-};
+tInst * generate(tInst_name instruction, tVar *op1, tVar *op2, tVar *result);
 
 void i_add(tVar *op1, tVar *op2, tVar *result);
 void i_sub(tVar *op1, tVar *op2, tVar *result);

@@ -13,6 +13,7 @@ tFrameStack frame_stack;
 
 string_t param_data_types;
 
+
 int main(){
 
     //filling symbol table for test purposes
@@ -29,15 +30,26 @@ int main(){
     symbol_table_t * f = create_function_symbol_table();
 
     insert_function_variable_symbol_table(f, "par1", DOUBLE, 0);
+    insert_function_variable_symbol_table(f, "par2", INT, 1);
+    insert_function_variable_symbol_table(f, "a", INT, 1);
+    insert_function_variable_symbol_table(f, "b", INT, 1);
+    insert_function_variable_symbol_table(f, "c", INT, 1);
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
    
     symbol_table_item_t *i = ht_read(f, "par1");
     d_print("%d", i->variable.data_type == DOUBLE);
+
+    
     //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
     
-    
+    tDLList L;
+    DLInitList(&L, dispose_inst);
+ 
+       
+      
+    DLDisposeList(&L);
     ht_free(class_list);
 
 

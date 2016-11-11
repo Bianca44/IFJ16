@@ -4,6 +4,14 @@
 
 #define UNUSED(x) (void)(x)
 
+tInst * generate(tInst_name instruction, tVar *op1, tVar *op2, tVar *result){
+    
+    
+    
+    
+    
+}
+
 tInst *init_inst2(){
     tInst *new;
     if((new = malloc(sizeof(tInst))) == NULL){
