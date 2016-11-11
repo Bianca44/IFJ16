@@ -10,7 +10,6 @@
 #include "scanner.h"
 
 tFrameStack frame_stack;
-char *current_class;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
@@ -23,13 +22,13 @@ int main(){
     init_class_list();
 
     char * name = "Main";
-    current_class = name;
     //set_current_class(name);
     insert_class(name);
-    
+    set_current_class(name);
+
     symbol_table_t * t = get_symbol_table_for_class(name);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-    
+
     symbol_table_t * f = create_function_symbol_table();
 
     insert_function_variable_symbol_table(f, "par1", DOUBLE, 0);
@@ -40,23 +39,23 @@ int main(){
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-   
-    symbol_table_item_t *i = ht_read(f, "par1");
+
+    symbol_table_item_t *i = get_symbol_table_function_item(f, "par1");
     d_print("%d", i->variable.data_type == DOUBLE);
 
-    
+
     //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
-    
+
     tDLList L;
     DLInitList(&L, dispose_inst);
- 
-       
-      
+
+
+
     DLDisposeList(&L);
-    ht_free(class_list);
+    free_class_list();
 
 
-    
+
 /*
     d_print("durko je %s","bilbo shwaggins");
     d_message("test:");
@@ -66,19 +65,19 @@ int main(){
  */
     /**
      * result = 23 + 10
-     * result = 23 - 10 
+     * result = 23 - 10
      * result = 23 * 10
      * result = 23 / 10
      * if(10 > 5)
      *      x = 15;
      * else
-     *      x = 42;     
-     */    
+     *      x = 42;
+     */
 
-   /*     
+   /*
     testovanie aritmetickych instrukcii
     tInst_fun *af[] = {i_add, i_sub, i_mul, i_div};
-    
+
     for(unsigned j=0; j < 4; j++){
         tInst *i = init_inst2();
 
@@ -86,15 +85,15 @@ int main(){
         i->op2->i = 10;
         i->f = af[j];
         DLInsertLast(&L, i);
-    } */ 
-/*    
+    } */
+/*
     // 10 > 5
     tInst *i = init_inst2();
     i->op1->i = 10;
     i->op2->i = 5;
     i->f = i_g; //less
     DLInsertLast(&L, i);
-    //jump 
+    //jump
     tInst *j = init_inst2();
     j->f = i_jnc;
     j->op1->b = true;
@@ -115,12 +114,12 @@ int main(){
 
     //label
     i = init_inst2();
-    i->f = i_label; 
+    i->f = i_label;
     DLInsertLast(&L, i);
     //seting adress to label
     DLLast(&L);
     j->result->s = (char *)DLActiveElem(&L);
-    
+
     //assign2
     i = init_inst2();
     i->f = i_assign;
@@ -129,7 +128,7 @@ int main(){
 //label pre cyklus nizsie aj podm vyssie
     //label
     i = init_inst2();
-    i->f = i_label; 
+    i->f = i_label;
     DLInsertLast(&L, i);
     //seting adress to label
     DLLast(&L);
@@ -143,7 +142,7 @@ int main(){
     i->f = i_g; //less
     tVar *p = i->result;
     DLInsertLast(&L, i);
-    //jump 
+    //jump
     j = init_inst2();
     j->f = i_jnc;
     j->op1 = p;
@@ -166,26 +165,26 @@ int main(){
 
     //label end
     i = init_inst2();
-    i->f = i_label; 
+    i->f = i_label;
     DLInsertLast(&L, i);
     //seting adress to label
     DLLast(&L);
     j->result->s = DLActiveElem(&L);
-   
+
 
 
 //koniec cyklu
- 
+
     //assign2
     i = init_inst2();
     i->f = i_assign;
     i->op1->i = 42;
-    DLInsertLast(&L, i); 
+    DLInsertLast(&L, i);
     interpret_tac(&L);
     //DLDisposeList(&L);
 
     tFrameStack frame_stack;
     init_frame_stack(&frame_stack);
-*/    
+*/
     return 0;
 }

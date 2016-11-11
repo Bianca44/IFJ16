@@ -122,11 +122,17 @@ bool is_declared(char * id_name) {
         return sym_table_item->declared;
 }
 
-bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
+symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name) {
         symbol_table_item_t * sym_table_item = ht_read(symbol_table, id_name);
         if (sym_table_item == NULL) {
-                return false;
+                return NULL;
         }
+
+        return sym_table_item;
+}
+
+bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
+        symbol_table_item_t * sym_table_item = get_symbol_table_function_item(symbol_table, id_name);
         return sym_table_item->declared;
 }
 

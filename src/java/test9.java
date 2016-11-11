@@ -1,4 +1,4 @@
-class Main { static int a (int x, int s) {
-                  int x = 6;
+class Main { static int run () {
+                  s = 6;
            }
 }
