@@ -16,7 +16,7 @@ function_t current_function;
 string_t param_data_types;
 
 void dispose_class_list(tData data) {
-        ht_free((tHTable *)(data));
+        ht_free((symbol_table_t *)(data));
 }
 
 void dispose_class_symbol_table(tData data) {
@@ -24,7 +24,7 @@ void dispose_class_symbol_table(tData data) {
 }
 
 void init_class_list() {
-        class_list = ht_init(11, hash_code, dispose_class_list); /* TODO */
+        class_list = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_list); /* TODO */
 }
 
 void set_current_class(char *class_name) {
@@ -32,13 +32,13 @@ void set_current_class(char *class_name) {
 }
 
 bool insert_class(char* class_name) {
-        tHTable *symbol_table = ht_init(11, hash_code, dispose_class_symbol_table);
+        symbol_table_t *symbol_table = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_symbol_table);
         ht_insert(class_list, class_name, symbol_table);
         return true;
 }
 
 symbol_table_t * create_function_symbol_table() {
-        symbol_table_t * p = ht_init(11, hash_code, dispose_class_symbol_table);
+        symbol_table_t * p = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_symbol_table);
         if (p == NULL) return NULL;
         return p;
 }
@@ -73,7 +73,7 @@ symbol_table_item_t * create_symbol_table_item() {
         return p;
 }
 
-bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
+bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
@@ -84,7 +84,7 @@ bool put_variable_symbol_table(char * id_name, int data_type, int offset) {
         return true;
 }
 
-bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
+bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;
@@ -95,7 +95,7 @@ bool put_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_
         return true;
 }
 
-bool put_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
+bool insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->data_type = data_type;

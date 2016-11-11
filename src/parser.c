@@ -322,7 +322,7 @@ int parse_method_element() {
                 if (is_first_pass) {
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
-                                put_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types, current_function.symbol_table);
+                                insert_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types, current_function.symbol_table);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
@@ -339,7 +339,7 @@ int parse_method_element() {
                         if (is_first_pass) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
                                 if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
                                         function_variable.offset++;
                                 } else {
                                         printf("VAR IN FUNC REDECLARED\n");
@@ -380,7 +380,7 @@ int parse_next_param() {
                                 if (is_first_pass) {
                                         printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
                                         if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                                put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                                insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
                                                 function_variable.offset++;
                                         } else {
                                                 printf("VAR IN FUNC REDECLARED\n");
@@ -416,7 +416,7 @@ int parse_param_list() {
                         if (is_first_pass) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
                                 if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                        put_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
+                                        insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
                                         function_variable.offset++;
                                 } else {
                                         printf("VAR IN FUNC REDECLARED\n");
@@ -487,7 +487,7 @@ int parse_declaration() {
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 if (is_first_pass) {
                         if (!is_declared(current_variable.id_name)) {
-                                put_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                insert_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
                         } else {
                                 printf("VAR REDECLARED\n");
                         }
@@ -546,7 +546,7 @@ int parse_declaration_element() {
                         if (is_first_pass) {
                                 current_function.id_name = t.attr.string_value;
                                 current_function.symbol_table = create_function_symbol_table();
-                                /*put_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
+                                /*insert_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
                                    symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
                                    printf("%d\n", o->data_type);*/
                         }
@@ -610,16 +610,16 @@ void add_builtin_functions() {
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
-        put_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL);
-        put_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL);
-        put_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL);
-        put_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL);
-        put_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL);
-        put_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL);
+        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL);
+        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL);
+        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL);
+        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL);
+        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL);
+        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL);
 
-        put_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL);
-        put_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL);
-        put_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL);
+        insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL);
+        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL);
+        insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL);
 
         /*symbol_table_item_t * run_method = get_symbol_table_class_item("ifj16", "sort");
            printf("NAME %s\n", run_method->id_name);*/

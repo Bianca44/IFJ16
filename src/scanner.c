@@ -73,49 +73,43 @@ int get_next_token(token_t *t) {
         while (1) {
                 c = fgetc(file);
                 if (c == EOF) {
-                        return save_token(t, (state > 0) ? LEXICAL_ERROR : EOF, NULL);
+                        return save_token(t, (state > SPACE) ? LEXICAL_ERROR : EOF, NULL);
                 }
 
                 switch (state) {
                 case SPACE:
-                        if (isspace(c)) {
-                                state = 0;
-                        } else {
+                        if (!isspace(c)) {
                                 if (isdigit(c)) {
-                                        state = 2;
-                                        init_string(&s);
-                                        append_char(&s, c);
-                                } else if (c == '.') {
-                                        state = 3;
+                                        state = NUMBER;
                                         init_string(&s);
                                         append_char(&s, c);
                                 } else if (isalpha(c) || c == '_' || c == '$') {
-                                        state = 1;
+                                        state = IDENTIFICATOR;
                                         init_string(&s);
                                         append_char(&s, c);
                                 } else if (c == ',') {
                                         return save_token(t, COMMA, NULL);
                                 } else if (c == '"') {
-                                        state = 12;
+                                        state = LITERAL;
                                         init_string(&s);
                                 } else if (c == '+') {
                                         return save_token(t, ADD, NULL);
                                 } else if (c == '-') {
                                         return save_token(t, SUB, NULL);
                                 } else if (c == '/') {
-                                        state = 5;
+                                        state = SLASH;
                                 } else if (c == '*') {
                                         return save_token(t, MUL, NULL);
                                 } else if (c == '!') {
-                                        state = 7;
+                                        state = EXCLAMATION;
                                 } else if (c == '<') {
-                                        state = 8;
+                                        state = COMPARE_LESS;
                                 } else if (c == '>') {
-                                        state = 9;
+                                        state = COMPARE_GREATER;
                                 } else if (c == '|') {
-                                        state = 19;
+                                        state = OR;
                                 } else if (c == '&') {
-                                        state = 20;
+                                        state = AND;
                                 } else if (c == ';') {
                                         return save_token(t, SEMICOLON, NULL);
                                 } else if (c == '{') {
@@ -127,7 +121,7 @@ int get_next_token(token_t *t) {
                                 } else if (c == ')') {
                                         return save_token(t, RIGHT_ROUNDED_BRACKET, NULL);
                                 } else if (c == '=') {
-                                        state = 10;
+                                        state = COMPARE_ASSIGN;
                                 } else {
                                         return save_token(t, LEXICAL_ERROR, NULL);
                                 }
@@ -138,7 +132,7 @@ int get_next_token(token_t *t) {
                 case IDENTIFICATOR:
                         if (c == '.') {
                                 append_char(&s, c);
-                                state = 11;
+                                state = QUALIFIED_ID;
                         } else if (isalnum(c) || c == '_' || c == '$') {
                                 append_char(&s, c);
                         } else {
@@ -150,7 +144,7 @@ int get_next_token(token_t *t) {
                 case NUMBER:
                         if (c == '.') {
                                 append_char(&s, c);
-                                state = 3;
+                                state = NUM_DOUBLE;
                         } else if (isdigit(c)) {
                                 append_char(&s, c);
                         } else {
@@ -163,7 +157,7 @@ int get_next_token(token_t *t) {
                 case NUM_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = 17;
+                                state = SIMPLE_DOUBLE;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -173,10 +167,10 @@ int get_next_token(token_t *t) {
                 case SCIENTIC_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = 15;
+                                state = DOUBLE_END;
                         } else if (c == '-' || c == '+') {
                                 append_char(&s, c);
-                                state = 18;
+                                state = SCIENTIC_DOUBLE_EXP;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -184,9 +178,9 @@ int get_next_token(token_t *t) {
 
                 case SLASH:
                         if (c == '/') {
-                                state = 14;
+                                state = LINE_COMMENT_END;
                         } else if (c == '*') {
-                                state = 6;
+                                state = COMMENT;
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, DIV, NULL);
@@ -195,7 +189,7 @@ int get_next_token(token_t *t) {
 
                 case COMMENT:
                         if (c == '*') {
-                                state = 16;
+                                state = BLOCK_COMMENT_END;
                         }
                         break;
 
@@ -239,7 +233,7 @@ int get_next_token(token_t *t) {
                 case QUALIFIED_ID:
                         if (isalpha(c) || c == '_' || c == '$') {
                                 append_char(&s, c);
-                                state = 13;
+                                state = QUALIFIED_ID_END;
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
@@ -312,7 +306,7 @@ int get_next_token(token_t *t) {
 
                 case LINE_COMMENT_END:
                         if (c == '\n') {
-                                state = 0;
+                                state = SPACE;
                         }
                         break;
 
@@ -327,7 +321,7 @@ int get_next_token(token_t *t) {
 
                 case BLOCK_COMMENT_END:
                         if (c == '/') {
-                                state = 0;
+                                state = SPACE;
                         }
                         break;
 
@@ -336,7 +330,7 @@ int get_next_token(token_t *t) {
                                 append_char(&s, c);
                         } else if (c == 'e' || c == 'E') {
                                 append_char(&s, c);
-                                state = 4;
+                                state = SCIENTIC_DOUBLE;
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, DOUBLE_LITERAL, &s);
@@ -347,7 +341,7 @@ int get_next_token(token_t *t) {
                 case SIMPLE_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = 15;
+                                state = DOUBLE_END;
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);

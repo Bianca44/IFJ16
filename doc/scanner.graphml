@@ -1593,29 +1593,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e29" source="n1" target="n13">
-      <data key="d10">
-        <y:GenericEdge configuration="com.yworks.bpmn.Connection">
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="1267.8589544120248" y="558.2207001399199"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="delta"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="7.814453125" x="247.3245953829496" y="-10.571403867347385">.<y:LabelModel>
-              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="12.10627407498517" distanceToCenter="true" position="left" ratio="0.9781905750599539" segment="0"/>
-            </y:ModelParameter>
-            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
-          <y:StyleProperties>
-            <y:Property class="com.yworks.yfiles.bpmn.view.BPMNTypeEnum" name="com.yworks.bpmn.type" value="CONNECTION_TYPE_SEQUENCE_FLOW"/>
-          </y:StyleProperties>
-        </y:GenericEdge>
-      </data>
-    </edge>
-    <edge id="e30" source="n2" target="n28">
+    <edge id="e29" source="n2" target="n28">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1637,7 +1615,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e31" source="n12" target="n29">
+    <edge id="e30" source="n12" target="n29">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1659,7 +1637,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e32" source="n29" target="n29">
+    <edge id="e31" source="n29" target="n29">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1681,7 +1659,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e33" source="n29" target="n30">
+    <edge id="e32" source="n29" target="n30">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1701,7 +1679,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e34" source="n3" target="n31">
+    <edge id="e33" source="n3" target="n31">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1721,7 +1699,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e35" source="n13" target="n38">
+    <edge id="e34" source="n13" target="n38">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="-8.784655667269444" ty="0.0"/>
@@ -1741,7 +1719,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e36" source="n13" target="n39">
+    <edge id="e35" source="n13" target="n39">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1763,7 +1741,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e37" source="n14" target="n39">
+    <edge id="e36" source="n14" target="n39">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1783,7 +1761,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e38" source="n14" target="n40">
+    <edge id="e37" source="n14" target="n40">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="21.564020717911195" ty="2.9491061526626936">
@@ -1801,6 +1779,18 @@
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e38" source="n33" target="n33">
+      <data key="d10">
+        <y:ArcEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="2039.121337890625" y="583.234619140625"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
+        </y:ArcEdge>
       </data>
     </edge>
     <edge id="e39" source="n33" target="n33">
@@ -1827,19 +1817,7 @@
         </y:ArcEdge>
       </data>
     </edge>
-    <edge id="e41" source="n33" target="n33">
-      <data key="d10">
-        <y:ArcEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="2039.121337890625" y="583.234619140625"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
-        </y:ArcEdge>
-      </data>
-    </edge>
-    <edge id="e42" source="n33" target="n32">
+    <edge id="e41" source="n33" target="n32">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1857,6 +1835,18 @@
         </y:PolyLineEdge>
       </data>
     </edge>
+    <edge id="e42" source="n33" target="n33">
+      <data key="d10">
+        <y:ArcEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="2039.121337890625" y="583.234619140625"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
+        </y:ArcEdge>
+      </data>
+    </edge>
     <edge id="e43" source="n33" target="n33">
       <data key="d10">
         <y:ArcEdge>
@@ -1870,18 +1860,6 @@
       </data>
     </edge>
     <edge id="e44" source="n33" target="n33">
-      <data key="d10">
-        <y:ArcEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="2039.121337890625" y="583.234619140625"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
-        </y:ArcEdge>
-      </data>
-    </edge>
-    <edge id="e45" source="n33" target="n33">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1903,7 +1881,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e46" source="n5" target="n34">
+    <edge id="e45" source="n5" target="n34">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1920,7 +1898,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e47" source="n34" target="n35">
+    <edge id="e46" source="n34" target="n35">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1938,7 +1916,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e48" source="n1" target="n36">
+    <edge id="e47" source="n1" target="n36">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1958,7 +1936,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e49" source="n37" target="n37">
+    <edge id="e48" source="n37" target="n37">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1980,7 +1958,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e50" source="n5" target="n37">
+    <edge id="e49" source="n5" target="n37">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2000,7 +1978,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e51" source="n38" target="n14">
+    <edge id="e50" source="n38" target="n14">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2020,7 +1998,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e52" source="n38" target="n38">
+    <edge id="e51" source="n38" target="n38">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2042,7 +2020,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e53" source="n38" target="n32">
+    <edge id="e52" source="n38" target="n32">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2062,7 +2040,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e54" source="n40" target="n33">
+    <edge id="e53" source="n40" target="n33">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2082,7 +2060,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e55" source="n40" target="n39">
+    <edge id="e54" source="n40" target="n39">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2102,7 +2080,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e56" source="n14" target="n33">
+    <edge id="e55" source="n14" target="n33">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="-7.428372070465715" ty="-5.009666459467786"/>
@@ -2122,7 +2100,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e57" source="n1" target="n41">
+    <edge id="e56" source="n1" target="n41">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2142,7 +2120,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e58" source="n41" target="n42">
+    <edge id="e57" source="n41" target="n42">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2162,7 +2140,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e59" source="n41" target="n43">
+    <edge id="e58" source="n41" target="n43">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2182,7 +2160,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e60" source="n1" target="n44">
+    <edge id="e59" source="n1" target="n44">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2202,7 +2180,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e61" source="n44" target="n45">
+    <edge id="e60" source="n44" target="n45">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2222,7 +2200,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e62" source="n44" target="n43">
+    <edge id="e61" source="n44" target="n43">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2242,7 +2220,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e63" source="n34" target="n34">
+    <edge id="e62" source="n34" target="n34">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2264,7 +2242,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e64" source="n37" target="n1">
+    <edge id="e63" source="n37" target="n1">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2284,7 +2262,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e65" source="n35" target="n1">
+    <edge id="e64" source="n35" target="n1">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2304,7 +2282,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e66" source="n35" target="n35">
+    <edge id="e65" source="n35" target="n35">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2326,7 +2304,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e67" source="n1" target="n10">
+    <edge id="e66" source="n1" target="n10">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2346,7 +2324,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e68" source="n1" target="n1">
+    <edge id="e67" source="n1" target="n1">
       <data key="d10">
         <y:ArcEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2358,7 +2336,7 @@
         </y:ArcEdge>
       </data>
     </edge>
-    <edge id="e69" source="n1" target="n48">
+    <edge id="e68" source="n1" target="n48">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2375,7 +2353,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e70" source="n1" target="n47">
+    <edge id="e69" source="n1" target="n47">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2392,7 +2370,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e71" source="n1" target="n46">
+    <edge id="e70" source="n1" target="n46">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2409,7 +2387,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e72" source="n4" target="n51">
+    <edge id="e71" source="n4" target="n51">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2426,7 +2404,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e73" source="n51" target="n27">
+    <edge id="e72" source="n51" target="n27">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2446,7 +2424,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e74" source="n51" target="n26">
+    <edge id="e73" source="n51" target="n26">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2466,6 +2444,18 @@
         </y:GenericEdge>
       </data>
     </edge>
+    <edge id="e74" source="n51" target="n51">
+      <data key="d10">
+        <y:ArcEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="122.1828384399414" y="976.227783203125"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
+        </y:ArcEdge>
+      </data>
+    </edge>
     <edge id="e75" source="n51" target="n51">
       <data key="d10">
         <y:ArcEdge>
@@ -2479,19 +2469,6 @@
       </data>
     </edge>
     <edge id="e76" source="n51" target="n51">
-      <data key="d10">
-        <y:ArcEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="122.1828384399414" y="976.227783203125"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
-        </y:ArcEdge>
-      </data>
-    </edge>
-    <edge id="e77" source="n51" target="n51">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
