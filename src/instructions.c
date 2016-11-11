@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "datatypes.h"
 #include "instructions.h"
 #include "interpret.h"
 

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpret.h"
-#include "datatypes.h"
+#include "instructions.h"
 #include "debug.h"
 
 tFrame * init_frame(unsigned size){

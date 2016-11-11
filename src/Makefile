@@ -13,12 +13,13 @@ DLList.o:DLList.c DLList.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 interpret.o:interpret.c interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
-strings.o:strings.c strings.h
-	$(CC) $(CFLAGS) -c -o $@ $<
 ial.o:ial.c ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 symbol_table.o:symbol_table.c symbol_table.h ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+strings.o:strings.c strings.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 ntest:ntest_debug.o
 	$(CC) $(CFLAGS) -o $@ $<
 ntest_debug.o:test_debug.c	

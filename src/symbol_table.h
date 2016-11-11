@@ -1,13 +1,13 @@
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
+#include <stdbool.h>
 #include "ial.h"
 
 // TODO
 #define SYMBOL_TABLE_SIZE 11
 
 typedef tHTable symbol_table_t;
-typedef enum {TINT, TDOUBLE, TSTRING, TBOOLEAN} data_type;
 
 typedef struct {
     char * id_name;
@@ -24,23 +24,26 @@ typedef struct {
     symbol_table_t * symbol_table;
 } function_t;
 
+typedef struct tVar {
+    int data_type;
+    union {
+        int i;
+        double d;
+        char *s;
+        bool b;
+    };
+    bool initialized;
+    int offset;
+} tVar;
+
 typedef struct symbol_table_item {
         char * id_name;
-        int data_type;
         bool is_function;
         bool declared;
         union {
+                tVar variable;
                 struct {
-                        int offset;
-                        union {
-                                char * string_value;
-                                int int_value;
-                                double double_value;
-                                bool bool_value;
-                        } value;
-                } variable;
-
-                struct {
+                        int return_type;
                         int params_count;
                         int local_vars_count;
                         char * param_data_types;
@@ -67,5 +70,12 @@ symbol_table_t * create_function_symbol_table();
 bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset);
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 bool is_special_id_declared(char * id_name);
+
+
+extern symbol_table_t *class_list;
+extern char* current_class;
+extern variable_t current_variable;
+extern variable_t function_variable;
+extern function_t current_function;
 
 #endif //SYMBOL_TABLE_H

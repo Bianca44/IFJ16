@@ -1,7 +1,28 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
-#include "datatypes.h"
+
 #include "DLList.h"
+#include "symbol_table.h"
+
+
+typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
+
+typedef struct tInst{
+    tInst_fun *f;
+    tVar *op1_st;
+    tVar *op1;
+    tVar *op2_st;
+    tVar *op2;
+    tVar *result_st;
+    tVar *result;
+} tInst;
+
+tInst *init_inst();
+tInst *init_inst2();
+void dispose_inst(void *);
+void dispose_inst2(void *);
+
+
 enum instructions {
     //INPUT
     I_RINT,

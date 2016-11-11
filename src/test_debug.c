@@ -1,21 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "debug.h"
-#include "datatypes.h"
 #include "instructions.h"
 #include "DLList.h"
 #include "interpret.h"
 #include "symbol_table.h"
 #include "ial.h"
-
-
+#include "strings.h"
+#include "scanner.h"
 
 tFrameStack frame_stack;
-symbol_table_t *class_list;
-char* current_class;
-variable_t current_variable;
-variable_t function_variable;
-function_t current_function;
 
 string_t param_data_types;
 
@@ -34,13 +28,13 @@ int main(){
     
     symbol_table_t * f = create_function_symbol_table();
 
-    put_function_variable_symbol_table(f, "par1", TDOUBLE, 0);
+    insert_function_variable_symbol_table(f, "par1", DOUBLE, 0);
 
-    put_function_symbol_table("test", TINT, 2, 3, "di", f);
+    insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
    
     symbol_table_item_t *i = ht_read(f, "par1");
-    d_print("%d", i->data_type);
+    d_print("%d", i->data_type == DOUBLE);
     //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
     
     

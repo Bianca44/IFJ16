@@ -1,7 +1,24 @@
 #ifndef INTERPRET_H
 #define INTERPRET_H
 #include "DLList.h"
-#include "datatypes.h"
+#include "symbol_table.h"
+
+typedef struct tFrame{       
+    tVar *result;
+    tVar *local[]; //flexible array member    
+}tFrame;
+
+typedef struct tFSElem {
+    tFrame *frame;
+    struct tFSElem * next;
+} tFSElem;
+
+typedef struct tFrameStack{
+    tFSElem *top;
+    tFSElem *prepared;
+} tFrameStack;
+    
+extern tFrameStack frame_stack;
 
 int interpret_tac(tDLList *inst_tape);
 
