@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "ial.h"
-
+#include "strings.h"
 // TODO
 #define SYMBOL_TABLE_SIZE 11
 
@@ -75,5 +75,6 @@ extern symbol_table_item_t current_variable;
 extern symbol_table_item_t function_variable;
 extern symbol_table_item_t current_function;
 extern string_t param_data_types;
-
+extern symbol_table_t *class_list;
+extern char* current_class;
 #endif //SYMBOL_TABLE_H

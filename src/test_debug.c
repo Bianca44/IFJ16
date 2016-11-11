@@ -10,9 +10,12 @@
 #include "scanner.h"
 
 tFrameStack frame_stack;
-
+char *current_class;
+symbol_table_t *class_list;
+symbol_table_item_t current_variable;
+symbol_table_item_t function_variable;
+symbol_table_item_t current_function;
 string_t param_data_types;
-
 
 int main(){
 
