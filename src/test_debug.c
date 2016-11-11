@@ -16,6 +16,11 @@ symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 string_t param_data_types;
 
+tVar * get_adress(char *id, symbol_table_t *t){
+   
+    return &((symbol_table_item_t *)ht_read(t, id))->variable;
+}
+
 int main(){
 
     //filling symbol table for test purposes
@@ -49,7 +54,14 @@ int main(){
     tDLList L;
     DLInitList(&L, dispose_inst);
 
+    tVar pomocna;
+    pomocna.i = 10; 
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("a",f)));
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("b",f)));
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("c",f)));
+    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
 
+    interpret_tac(&L);  
 
     DLDisposeList(&L);
     free_class_list();
