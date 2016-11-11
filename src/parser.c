@@ -83,7 +83,13 @@ int parse_expression(bool ends_semicolon) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                 } else {
-                        if (t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) break;
+                        if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                // pocet zatvoriek -1 ak je to ukoncovaci znak
+                                // napr. if (...)
+                                break;
+                        }
+
+                        if (t.type == COMMA) break;
                 }
                 //printf("%s, ", t_names[t.type]);
 
@@ -92,12 +98,12 @@ int parse_expression(bool ends_semicolon) {
                                 printf("EXPR: SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
                         }
                         else if (t.type == ID) {
-                            if (!is_declared(t.string_value)) {
-                                    symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                    if(!is_declared_in_function(function_symbol_table, t.string_value)) {
-                                            printf("EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
-                                    }
-                            }
+                                if (!is_declared(t.string_value)) {
+                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                        if(!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                                printf("EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                        }
+                                }
                         }
                 }
                 get_token();
@@ -341,12 +347,16 @@ int parse_statement_list() {
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 if (is_first_pass) {
+                        current_function.function.param_data_types = (param_data_types.length > 0) ? param_data_types.data : NULL; /* for consistency */
+                        current_function.function.params_count = param_data_types.length;
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
+
+                        clear_string(&param_data_types); /* vyprazdni string ale neuvolni */
                         current_function.function.local_vars_count = 0;
                         function_variable.variable.offset = 0;
                 }
@@ -420,7 +430,6 @@ int parse_next_param() {
 
 int parse_param_list() {
         get_token();
-        init_string(&param_data_types);
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_token() == LEFT_CURVED_BRACKET) {
                         get_token();
@@ -452,10 +461,6 @@ int parse_param_list() {
                                 }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
-                                        if (is_first_pass) {
-                                                current_function.function.param_data_types = param_data_types.data;
-                                                current_function.function.params_count = param_data_types.length;
-                                        }
                                         if (get_token() == LEFT_CURVED_BRACKET) {
                                                 get_token();
                                                 if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -549,7 +554,7 @@ int parse_declaration_element() {
                         current_function.function.return_type = t.type;
                 }
                 if (get_token() == ID) {
-                        current_function.id_name = t.string_value; // need to know
+                        current_function.id_name = t.string_value; /* potrebne pre oba prechody */
 
                         if (is_first_pass) {
                                 current_function.function.symbol_table = create_function_symbol_table();
@@ -565,7 +570,7 @@ int parse_declaration_element() {
                 }
 
                 if (parse_param()) {
-                        current_function.id_name = t.string_value; // need to know
+                        current_function.id_name = t.string_value; /* potrebne pre oba prechody */
 
                         if (is_first_pass) {
                                 current_function.function.symbol_table = create_function_symbol_table();
@@ -595,7 +600,7 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
-                        current_class = t.string_value;
+                        current_class = t.string_value; /* potrebne pre oba prechody */
                         if (is_first_pass) {
                                 if (!exists_class(t.string_value)) {
                                         insert_class(t.string_value);
@@ -648,6 +653,7 @@ void add_builtin_functions() {
 int parse() {
 
         if (is_first_pass) {
+                init_string(&param_data_types);
                 init_token_buffer(&token_buffer);
         }
         get_token();
@@ -669,17 +675,20 @@ int parse() {
                                         }
                                 }
                         } else /* second pass */ {
-                                free_class_list();
+                                free_class_list(); // uvolni zoznam tried
                         }
 
                         if (is_first_pass) {
                                 is_first_pass = false;
                                 is_second_pass = true;
+                                free_string(&param_data_types); // uvolni string s parametrami pre funkcie
                         } else /* second pass */ {
-                                free_token_buffer(&token_buffer);
+                                free_token_buffer(&token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
                         }
                         return PARSED_OK;
                 } else {
+                        /* Ak prvy prechod zlyhal... */
+                        free_string(&param_data_types);
                         free_token_buffer(&token_buffer);
                         return SYNTACTIC_ANALYSIS_ERROR;
                 }
