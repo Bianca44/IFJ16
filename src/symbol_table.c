@@ -47,6 +47,11 @@ symbol_table_t * get_symbol_table_for_class(char* class_name) {
         return p;
 }
 
+symbol_table_t * get_symbol_table_for_function(char *class_name, char * id_name) {
+        symbol_table_item_t * item = get_symbol_table_class_item(class_name, id_name);
+        return item->function.symbol_table;
+}
+
 bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data) {
         symbol_table_t * symbol_table = get_symbol_table_for_class(class_name);
         ht_insert(symbol_table, id_name, data);
@@ -133,6 +138,9 @@ symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_tab
 
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
         symbol_table_item_t * sym_table_item = get_symbol_table_function_item(symbol_table, id_name);
+        if (sym_table_item == NULL) {
+                return false;
+        }
         return sym_table_item->declared;
 }
 

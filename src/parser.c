@@ -34,6 +34,7 @@ string_t param_data_types;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
+char* current_class;
 
 
 int get_token() {
@@ -87,12 +88,17 @@ int parse_expression(bool ends_semicolon) {
                 //printf("%s, ", t_names[t.type]);
 
                 if (is_second_pass) {
-                        /*if (t.type == SPECIAL_ID) {
-                                printf("SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
+                        if (t.type == SPECIAL_ID) {
+                                printf("EXPR: SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
                         }
-                        if (t.type == ID) {
-                                printf("ID %s is declared globally %d or in function %d\n", t.string_value, is_declared(t.string_value), is_declared_in_function(current_function.function.symbol_table, t.string_value));
-                        }*/
+                        else if (t.type == ID) {
+                            if (!is_declared(t.string_value)) {
+                                    symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                    if(!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                            printf("EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                    }
+                            }
+                        }
                 }
                 get_token();
         }
@@ -241,10 +247,11 @@ int parse_statement() {
                                         printf("SPECIAL ID NOT DECLARED\n");
                                 }
                         } else if (t.type == ID) {
-                                if(!is_declared_in_function(current_function.function.symbol_table, t.string_value)) {
-                                        symbol_table_item_t * sym_table_item = get_symbol_table_function_item(current_function.function.symbol_table, t.string_value);
-                                        printf("%s\n", sym_table_item->id_name);
-                                        printf("FUNCTION LOCAL VAR NOT DECLARED %s\n", t.string_value);
+                                if (!is_declared(t.string_value)) {
+                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                        if(!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                                printf("VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                        }
                                 }
                         }
                 }
@@ -353,7 +360,6 @@ int parse_method_element() {
                         if (is_first_pass) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                 if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
-                                        printf("var %s\n", function_variable.id_name);
                                         insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                         function_variable.variable.offset++;
                                 } else {
@@ -543,8 +549,9 @@ int parse_declaration_element() {
                         current_function.function.return_type = t.type;
                 }
                 if (get_token() == ID) {
+                        current_function.id_name = t.string_value; // need to know
+
                         if (is_first_pass) {
-                                current_function.id_name = t.string_value;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
@@ -558,12 +565,10 @@ int parse_declaration_element() {
                 }
 
                 if (parse_param()) {
+                        current_function.id_name = t.string_value; // need to know
+
                         if (is_first_pass) {
-                                current_function.id_name = t.string_value;
                                 current_function.function.symbol_table = create_function_symbol_table();
-                                /*insert_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
-                                   symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
-                                   printf("%d\n", o->data_type);*/
                         }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
@@ -590,6 +595,7 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
+                        current_class = t.string_value;
                         if (is_first_pass) {
                                 if (!exists_class(t.string_value)) {
                                         insert_class(t.string_value);

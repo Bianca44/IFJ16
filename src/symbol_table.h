@@ -56,6 +56,7 @@ void init_class_list();
 bool insert_class(char* class_name);
 void free_class_list();
 bool exists_class(char* class_name);
+symbol_table_t * get_symbol_table_for_function(char *class_name, char * id_name);
 bool insert_symbol_table_item_class(char * class_name, char * id_name, void * data);
 bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
@@ -76,4 +77,5 @@ extern symbol_table_item_t current_variable;
 extern symbol_table_item_t function_variable;
 extern symbol_table_item_t current_function;
 extern string_t param_data_types;
+extern char* current_class;
 #endif //SYMBOL_TABLE_H

@@ -1,4 +1,6 @@
 class Main { static int run () {
-                  s = 6;
-           }
+                     String str1;
+                     str5 = "Toto je nejaky text";
+                     String str2;
+             }
 }
