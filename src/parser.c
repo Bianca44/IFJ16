@@ -31,8 +31,9 @@ token_buffer_t token_buffer;
 #define CONSTANT -1
 
 string_t param_data_types;
-
-symbol_table_item_t current_symbol_table_item;
+symbol_table_item_t current_variable;
+symbol_table_item_t function_variable;
+symbol_table_item_t current_function;
 
 
 int get_token() {
@@ -86,9 +87,9 @@ int parse_expression(bool ends_semicolon) {
                 //printf("%s, ", t_names[t.type]);
 
                 if (is_second_pass) {
-                        if (t.type == SPECIAL_ID) {
-                                printf("%s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
-                        }
+                    if (t.type == SPECIAL_ID) {
+                            printf("%s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
+                    }
                 }
                 get_token();
         }
@@ -101,7 +102,7 @@ int parse_return_value() {
         if (t.type == RETURN) {
                 get_token();
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                        if (current_symbol_table_item.function.return_type == VOID) {
+                        if (current_function.function.return_type == VOID) {
                                 printf("return E in VOID error\n");
                         }
 
@@ -231,9 +232,9 @@ int parse_statement() {
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
                 if (is_second_pass && t.type == SPECIAL_ID) {
-                        if (!is_special_id_declared(t.string_value)) {
-                                printf("SPECIAL ID NOT DECLARED\n");
-                        }
+                    if (!is_special_id_declared(t.string_value)) {
+                        printf("SPECIAL ID NOT DECLARED\n");
+                    }
                 }
                 if(parse_call_assign()) {
                         get_token();
@@ -321,30 +322,30 @@ int parse_statement_list() {
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 if (is_first_pass) {
-                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_symbol_table_item.id_name, current_symbol_table_item.function.return_type, current_symbol_table_item.function.param_data_types, current_symbol_table_item.function.params_count, current_symbol_table_item.function.local_vars_count);
-                        if (!is_declared(current_symbol_table_item.id_name)) {
-                                insert_function_symbol_table(current_symbol_table_item.id_name, current_symbol_table_item.function.return_type, current_symbol_table_item.function.params_count, current_symbol_table_item.function.local_vars_count, current_symbol_table_item.function.param_data_types, current_symbol_table_item.function.symbol_table);
+                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
+                        if (!is_declared(current_function.id_name)) {
+                                insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
-                        current_symbol_table_item.function.local_vars_count = 0;
-                        current_symbol_table_item.variable.offset = 0;
+                        current_function.function.local_vars_count = 0;
+                        function_variable.variable.offset = 0;
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
-                        current_symbol_table_item.function.local_vars_count++;
-                        current_symbol_table_item.variable.data_type = t.type;
+                        current_function.function.local_vars_count++;
+                        function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
-                                printf("local fun var .. name %s type %d offset %d\n", current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                if (!is_declared_in_function(current_symbol_table_item.function.symbol_table,  current_symbol_table_item.id_name)) {
-                                        insert_function_variable_symbol_table(current_symbol_table_item.function.symbol_table, current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                        current_symbol_table_item.variable.offset++;
-                                } else {
-                                        printf("VAR IN FUNC REDECLARED\n");
-                                }
+                            printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                            if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                    insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                    function_variable.variable.offset++;
+                            } else {
+                                    printf("VAR IN FUNC REDECLARED\n");
+                            }
                         }
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
@@ -375,17 +376,17 @@ int parse_next_param() {
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                         if (is_first_pass) {
                                 append_param_data_types(t.type);
-                                current_symbol_table_item.variable.data_type = t.type;
+                                function_variable.variable.data_type = t.type;
                         }
                         if (parse_param()) {
                                 if (is_first_pass) {
-                                        printf("local fun var .. name %s type %d offset %d\n", current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                        if (!is_declared_in_function(current_symbol_table_item.function.symbol_table,  current_symbol_table_item.id_name)) {
-                                                insert_function_variable_symbol_table(current_symbol_table_item.function.symbol_table, current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                                current_symbol_table_item.variable.offset++;
-                                        } else {
-                                                printf("VAR IN FUNC REDECLARED\n");
-                                        }
+                                    printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                    if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                            insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                            function_variable.variable.offset++;
+                                    } else {
+                                            printf("VAR IN FUNC REDECLARED\n");
+                                    }
                                 }
                                 get_token();
                                 if (t.type== RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
@@ -411,14 +412,14 @@ int parse_param_list() {
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
                         append_param_data_types(t.type);
-                        current_symbol_table_item.variable.data_type = t.type;
+                        function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
-                                printf("local fun var .. name %s type %d offset %d\n", current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                if (!is_declared_in_function(current_symbol_table_item.function.symbol_table,  current_symbol_table_item.id_name)) {
-                                        insert_function_variable_symbol_table(current_symbol_table_item.function.symbol_table, current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, current_symbol_table_item.variable.offset);
-                                        current_symbol_table_item.variable.offset++;
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        function_variable.variable.offset++;
                                 } else {
                                         printf("VAR IN FUNC REDECLARED\n");
                                 }
@@ -433,8 +434,8 @@ int parse_param_list() {
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
                                         if (is_first_pass) {
-                                                current_symbol_table_item.function.param_data_types = param_data_types.data;
-                                                current_symbol_table_item.function.params_count = param_data_types.length;
+                                                current_function.function.param_data_types = param_data_types.data;
+                                                current_function.function.params_count = param_data_types.length;
                                         }
                                         if (get_token() == LEFT_CURVED_BRACKET) {
                                                 get_token();
@@ -487,8 +488,8 @@ int parse_declaration() {
                 }
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 if (is_first_pass) {
-                        if (!is_declared(current_symbol_table_item.id_name)) {
-                                insert_variable_symbol_table(current_symbol_table_item.id_name, current_symbol_table_item.variable.data_type, CONSTANT);
+                        if (!is_declared(current_variable.id_name)) {
+                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
                         } else {
                                 printf("VAR REDECLARED\n");
                         }
@@ -512,7 +513,8 @@ int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                current_symbol_table_item.id_name = t.string_value;
+                                current_variable.id_name = t.string_value;
+                                function_variable.id_name = t.string_value;
                         }
                         return PARSED_OK;
                 }
@@ -525,12 +527,12 @@ int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
                 if (is_first_pass) {
-                        current_symbol_table_item.function.return_type = t.type;
+                        current_function.function.return_type = t.type;
                 }
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                current_symbol_table_item.id_name = t.string_value;
-                                current_symbol_table_item.function.symbol_table = create_function_symbol_table();
+                                current_function.id_name = t.string_value;
+                                current_function.function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
@@ -538,14 +540,14 @@ int parse_declaration_element() {
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
-                        current_symbol_table_item.variable.data_type = t.type;
-                        current_symbol_table_item.function.return_type = t.type;
+                        current_variable.variable.data_type = t.type;
+                        current_function.function.return_type = t.type;
                 }
 
                 if (parse_param()) {
                         if (is_first_pass) {
-                                current_symbol_table_item.id_name = t.string_value;
-                                current_symbol_table_item.function.symbol_table = create_function_symbol_table();
+                                current_function.id_name = t.string_value;
+                                current_function.function.symbol_table = create_function_symbol_table();
                                 /*insert_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
                                    symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
                                    printf("%d\n", o->data_type);*/
