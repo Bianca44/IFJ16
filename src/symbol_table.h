@@ -24,7 +24,7 @@ typedef struct {
     symbol_table_t * symbol_table;
 } function_t;
 
-typedef struct tVar {
+typedef struct {
     int data_type;
     union {
         int i;
