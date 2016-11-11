@@ -28,6 +28,8 @@ token_buffer_t token_buffer;
 #define LEXICAL_ANALYSIS_ERROR 1
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
+#define CONSTANT -1
+
 extern string_t param_data_types;
 extern variable_t current_variable;
 extern variable_t function_variable;
@@ -36,7 +38,7 @@ extern function_t current_function;
 
 int get_token() {
         if (is_first_pass) {
-                t.attr.string_value = NULL;
+                t.string_value = NULL;
                 get_next_token(&t);
                 add_token_to_buffer(&token_buffer, &t);
         } else /* second pass */ {
@@ -86,7 +88,7 @@ int parse_expression(bool ends_semicolon) {
 
                 if (is_second_pass) {
                     if (t.type == SPECIAL_ID) {
-                            printf("%s is declared %d\n", t.attr.string_value, is_special_id_declared(t.attr.string_value));
+                            printf("%s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
                     }
                 }
                 get_token();
@@ -230,7 +232,7 @@ int parse_statement() {
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
                 if (is_second_pass && t.type == SPECIAL_ID) {
-                    if (!is_special_id_declared(t.attr.string_value)) {
+                    if (!is_special_id_declared(t.string_value)) {
                         printf("SPECIAL ID NOT DECLARED\n");
                     }
                 }
@@ -487,7 +489,7 @@ int parse_declaration() {
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 if (is_first_pass) {
                         if (!is_declared(current_variable.id_name)) {
-                                insert_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                insert_variable_symbol_table(current_variable.id_name, current_variable.data_type, CONSTANT);
                         } else {
                                 printf("VAR REDECLARED\n");
                         }
@@ -511,8 +513,8 @@ int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                current_variable.id_name = t.attr.string_value;
-                                function_variable.id_name = t.attr.string_value;
+                                current_variable.id_name = t.string_value;
+                                function_variable.id_name = t.string_value;
                         }
                         return PARSED_OK;
                 }
@@ -529,7 +531,7 @@ int parse_declaration_element() {
                 }
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                current_function.id_name = t.attr.string_value;
+                                current_function.id_name = t.string_value;
                                 current_function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
@@ -544,7 +546,7 @@ int parse_declaration_element() {
 
                 if (parse_param()) {
                         if (is_first_pass) {
-                                current_function.id_name = t.attr.string_value;
+                                current_function.id_name = t.string_value;
                                 current_function.symbol_table = create_function_symbol_table();
                                 /*insert_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
                                    symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
@@ -576,9 +578,9 @@ int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                if (!exists_class(t.attr.string_value)) {
-                                        insert_class(t.attr.string_value);
-                                        set_current_class(t.attr.string_value);
+                                if (!exists_class(t.string_value)) {
+                                        insert_class(t.string_value);
+                                        set_current_class(t.string_value);
                                 } else {
                                         printf("CLASS REDECLARED\n");
                                 }
