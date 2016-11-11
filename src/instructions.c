@@ -5,10 +5,26 @@
 #define UNUSED(x) (void)(x)
 
 tInst * generate(tInst_name instruction, tVar *op1, tVar *op2, tVar *result){
+    tInst * new_inst;
+
+    if((new_inst = malloc(sizeof(tInst))) == NULL){
+        //TODO
+    }
+
+    new_inst->op1_st = op1;           
+    new_inst->op2_st = op2;           
+    new_inst->result_st = result;
+
+    new_inst->op1 = op1;           
+    new_inst->op2 = op2;           
+    new_inst->result = result;
     
-    
-    
-    
+    if(instruction == I_ADD)
+        new_inst->f = i_add;
+    else
+        new_inst->f = i_assign;
+
+    return new_inst;
     
 }
 
