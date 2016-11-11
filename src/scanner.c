@@ -3,18 +3,21 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
+#include "strings.h"
 #include "scanner.h"
+#include "parser.h"
 
-#if LEXICAL_TESTS
+extern int parser_error_flag;
+FILE *file;
+
 char *token_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                     "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
                                     "LEFT_ROUNDED_BRACKET", "RIGHT_ROUNDED_BRACKET", "ASSIGN", "LOGICAL_AND",
-                                    "LOGICAL_OR", "COMMA", "NEG",  "STRING_LITERAL", "COLON",
-                                    "NOT_EQUAL", "LESS_EQUAL", "LESS", "GREATER_EQUAL", "GREATER", "EQUAL",
-                                    "SPECIAL_ID", "BOOLEAN", "BREAK", "CLASS", "CONTINUE", "DO", "DOUBLE", "ELSE",
-                                    "FALSE", "FOR", "IF", "INT", "RETURN", "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
+                                    "LOGICAL_OR", "COMMA", "NEG",  "STRING_LITERAL", "NOT_EQUAL", "LESS_EQUAL",
+                                    "LESS", "GREATER_EQUAL", "GREATER", "EQUAL", "SPECIAL_ID", "BOOLEAN", "BREAK",
+                                    "CLASS", "CONTINUE", "DO", "DOUBLE", "ELSE", "FALSE", "FOR", "IF", "INT", "RETURN",
+                                    "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
 
-#endif // LEXICAL_TESTS
 
 char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do", "double", "else", "false",
                                    "for", "if", "int", "return", "String", "static", "true", "void", "while" };
@@ -59,10 +62,11 @@ int detect_keyword(string_t *str) {
         return ID;
 }
 
-int get_next_token(token_t *t, FILE * file) {
+int get_next_token(token_t *t) {
 
-        int c;
+        int c = 0;
         int state = 0;
+        int octal_number_length = 0;
 
         string_t s;
 
@@ -98,8 +102,6 @@ int get_next_token(token_t *t, FILE * file) {
                                         return save_token(t, ADD, NULL);
                                 } else if (c == '-') {
                                         return save_token(t, SUB, NULL);
-                                } else if (c == ':') {
-                                        return save_token(t, COLON, NULL);
                                 } else if (c == '/') {
                                         state = 5;
                                 } else if (c == '*') {
@@ -247,12 +249,55 @@ int get_next_token(token_t *t, FILE * file) {
                 case LITERAL:
                         if (c == '"') {
                                 return save_token(t, STRING_LITERAL, &s);
-
-                        } else if (c == '\n') {
+                        } else if (c <= 31) {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
+                        } else if (c == '\\') {
+                                append_char(&s, c);
+                                state = LITERAL_SLASH;
                         } else {
                                 append_char(&s, c);
+                        }
+                        break;
+
+                case LITERAL_SLASH:
+                        if (isdigit(c)) {
+                                if (octal_number_length < 3) {
+                                        int digit = c - '0';
+                                        switch (octal_number_length) {
+                                        case 0:
+                                                if (digit > 3) {
+                                                        ungetc(c, file);
+                                                        return save_token(t, LEXICAL_ERROR, NULL);
+                                                }
+                                                break;
+                                        case 1:
+                                                if (digit > 7) {
+                                                        ungetc(c, file);
+                                                        return save_token(t, LEXICAL_ERROR, NULL);
+                                                }
+                                                break;
+                                        case 2:
+                                                if (digit == 0 || digit > 7) {
+                                                        ungetc(c, file);
+                                                        return save_token(t, LEXICAL_ERROR, NULL);
+                                                }
+                                                break;
+                                        }
+
+                                        append_char(&s, c);
+                                        octal_number_length++;
+                                        if (octal_number_length == 3) {
+                                                octal_number_length = 0;
+                                                state = LITERAL;
+                                        }
+                                }
+                        } else if (c == '"' || c == 'n' || c == 't' || c == '\\') {
+                                append_char(&s, c);
+                                state = LITERAL;
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, LEXICAL_ERROR, NULL);
                         }
                         break;
 
@@ -337,8 +382,6 @@ int get_next_token(token_t *t, FILE * file) {
 
 int init_scanner(char *filename) {
 
-        FILE *file;
-
         if (filename == NULL) {
                 file = stdin;
         } else {
@@ -351,10 +394,10 @@ int init_scanner(char *filename) {
                 return -2;
         }
 
+        #if LEXICAL_TESTS
         token_t t;
-        while (get_next_token(&t, file) != EOF) {
+        while (get_next_token(&t) != EOF) {
 
-                #if LEXICAL_TESTS
                 printf("[%s]", token_names[t.type]);
                 switch (t.type) {
                 case ID:
@@ -373,12 +416,25 @@ int init_scanner(char *filename) {
                         printf("\n");
                         break;
                 }
-                #endif
-
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == STRING_LITERAL) {
                         free(t.attr.string_value);
                 }
         }
+        rewind(file);
+        #endif
+
+        if (parse(file) == 1) {
+                printf("SYNTACTIC ANALYSIS\tOK\n");
+                printf("SECOND PASS\n");
+                //rewind(file);
+                parse(file);
+        } else {
+                // chyba 2
+                printf("SYNTACTIC ANALYSIS\tFAILED\n");
+        }
+
+        printf("LEXICAL ANALYSIS\t%s\n", (parser_error_flag == 0) ? "OK" : "FAILED");
+
 
         fclose(file);
 
