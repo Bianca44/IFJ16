@@ -1,16 +1,33 @@
+CFLAGS=-std=c11 -pedantic -Wall -Wextra -O2
+CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -DNDEBUG
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -Werror -pedantic
 
-all:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c token_buffer.c -o main
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c token_buffer.c -o main_lexical_tests -DLEXICAL_TESTS
+.PHONY: all clean r_test
 
-test:
-	$(CC) $(CFLAGS) ial.c -o ial
-	$(CC) $(CFLAGS) token_buffer_test.c token_buffer.c scanner.c strings.c -o token_buffer_test
+all:test
+test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o
+	$(CC) $(CFLAGS) -o $@ $^
+instructions.o:instructions.c instructions.h interpret.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+DLList.o:DLList.c DLList.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+interpret.o:interpret.c interpret.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+strings.o:strings.c strings.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+ial.o:ial.c ial.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+symbol_table.o:symbol_table.c symbol_table.h ial.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+ntest:ntest_debug.o
+	$(CC) $(CFLAGS) -o $@ $<
+ntest_debug.o:test_debug.c	
+	$(CC) $(CFLAGS_N) -c -o $@ $<
+
+r_test:
+	./test
 
 clean:
-	rm -f main main_lexical_tests ial token_buffer_test *.c~ *.h~
-
-zip:
-	zip ifj16.zip *.c *.h Makefile
+	rm *.o 
+	rm test
+	rm ntest
