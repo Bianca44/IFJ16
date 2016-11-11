@@ -78,6 +78,7 @@ bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         p->id_name = id_name;
         p->variable.data_type = data_type;
         p->variable.offset = offset;
+        p->variable.initialized = false;
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
@@ -89,6 +90,7 @@ bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * 
         p->id_name = id_name;
         p->variable.data_type = data_type;
         p->variable.offset = offset;
+        p->variable.initialized = false;
         p->is_function = false;
         p->declared = true;
         ht_insert(symbol_table, id_name, p);
