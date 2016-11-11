@@ -9,11 +9,6 @@
 
 symbol_table_t *class_list;
 char* current_class;
-variable_t current_variable;
-variable_t function_variable;
-function_t current_function;
-
-string_t param_data_types;
 
 void dispose_class_list(tData data) {
         ht_free((symbol_table_t *)(data));
