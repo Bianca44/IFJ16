@@ -73,7 +73,10 @@ int interpret_tac(tDLList *inst_tape){
         DLCopy(inst_tape, (void **)&inst);
         
         inst->f(inst->op1, inst->op2, inst->result);
-        d_print("%d", inst->result->i); //TODO
+        if(inst->result->data_type == INT)
+            d_print("%d", inst->result->i); //TODO
+        else if (inst->result->data_type == DOUBLE)
+            d_print("%f", inst->result->d); //TODO 
         DLSucc(inst_tape);  
     } 
      

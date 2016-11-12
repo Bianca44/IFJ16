@@ -3,9 +3,10 @@
 
 #include "DLList.h"
 #include "symbol_table.h"
-
+#include "scanner.h"
 
 typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
+
 
 typedef struct tInst{
     tInst_fun *f;
@@ -35,7 +36,8 @@ typedef enum instructions {
     I_SUB,
     I_DIV,
     //CONVERSIONS
-
+    I_CONV_I_TO_D,
+    I_TO_STRING,
     //LOGICAL
     I_E,
     I_NE,
@@ -47,7 +49,6 @@ typedef enum instructions {
     //BUILT-IN AND OTHER  
     I_ASSIGN,
     I_CAT,
-    I_TO_STRING,
     I_STRCMP,
     I_SUBSTR,
     I_FIND,
@@ -69,21 +70,27 @@ typedef enum instructions {
     I_JG,
     I_JGE,
     I_LABEL
-}tInst_name;
+}tInstId;
 
-tInst * generate(tInst_name instruction, tVar *op1, tVar *op2, tVar *result);
+tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
+tInst_fun * find_fun(tInstId instruction, void * result);
 
-void i_add(tVar *op1, tVar *op2, tVar *result);
-void i_sub(tVar *op1, tVar *op2, tVar *result);
-void i_mul(tVar *op1, tVar *op2, tVar *result);
-void i_div(tVar *op1, tVar *op2, tVar *result);
-void i_assign(tVar *op1, tVar *op2, tVar *result);
+void i_add_i(tVar *op1, tVar *op2, tVar *result);
+void i_add_d(tVar *op1, tVar *op2, tVar *result);
+void i_sub_i(tVar *op1, tVar *op2, tVar *result);
+void i_sub_d(tVar *op1, tVar *op2, tVar *result);
+void i_mul_i(tVar *op1, tVar *op2, tVar *result);
+void i_mul_d(tVar *op1, tVar *op2, tVar *result);
+void i_div_i(tVar *op1, tVar *op2, tVar *result);
+void i_div_d(tVar *op1, tVar *op2, tVar *result);
+void i_assign_i(tVar *op1, tVar *op2, tVar *result);
+void i_assign_d(tVar *op1, tVar *op2, tVar *result);
+void i_assign_b(tVar *op1, tVar *op2, tVar *result);
+void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 void i_g(tVar *op1, tVar *op2, tVar *result);
 void i_jnc(tVar *op1, tVar *op2, tVar *result);
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_label(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 
-
 #endif //INSTRUCTIONS_H
-

@@ -41,6 +41,9 @@ int main(){
     insert_function_variable_symbol_table(f, "a", INT, 1);
     insert_function_variable_symbol_table(f, "b", INT, 1);
     insert_function_variable_symbol_table(f, "c", INT, 1);
+    insert_function_variable_symbol_table(f, "d", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "e", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "f", DOUBLE, 1);
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
@@ -54,12 +57,25 @@ int main(){
     tDLList L;
     DLInitList(&L, dispose_inst);
 
-    tVar pomocna;
-    pomocna.i = 10; 
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("a",f)));
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("b",f)));
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna, NULL, get_adress("c",f)));
+    tVar pomocna[100];
+    pomocna[0].i = 10;
+    pomocna[1].i = 35; 
+    pomocna[2].d = 2.5;
+    pomocna[3].d = 3;
+
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("a",f)));
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("b",f)));
+    DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+    DLInsertLast(&L, generate(I_SUB, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+    DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+ 
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("d",f)));
+    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("e",f)));
+    DLInsertLast(&L, generate(I_MUL, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_DIV, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
     interpret_tac(&L);  
 
