@@ -218,13 +218,7 @@ bool is_special_id_declared(char * id_name) {
         return item->declared;
 }
 
-<<<<<<< HEAD
-
-
-
-=======
 /* Uvolni zoznam tried */
->>>>>>> interpret
 void free_class_list() {
         ht_free(class_list);
 }

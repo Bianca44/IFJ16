@@ -32,6 +32,7 @@ r_test:
 	./test
 
 clean:
-	rm *.o
-	rm test
-	rm ntest
+	rm -f *.o
+	rm -f test
+	rm -f ntest
+	rm -f main
