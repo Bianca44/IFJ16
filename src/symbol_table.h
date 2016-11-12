@@ -62,14 +62,14 @@ bool insert_symbol_table_item_class(char * class_name, char * id_name, void * da
 bool insert_symbol_table_item(char * id_name, void * data);
 void set_current_class(char *class_name);
 symbol_table_item_t * create_symbol_table_item();
-bool insert_variable_symbol_table(char * id_name, int data_type, int offset);
-bool insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table);
+symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type, int offset);
+symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table);
 bool is_declared(char * id_name);
 void append_param_data_types(int type);
 symbol_table_t * get_symbol_table_for_class(char* class_name);
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name);
 symbol_table_t * create_function_symbol_table();
-bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset);
+symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset);
 symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name);
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 bool is_special_id_declared(char * id_name);

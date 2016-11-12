@@ -86,7 +86,7 @@ symbol_table_item_t * create_symbol_table_item() {
 }
 
 /* Vlozi polozku - globalnu (staticku) premennu - do tabulky symbolov aktualnej triedy */
-bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
+symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->variable.data_type = data_type;
@@ -95,11 +95,11 @@ bool insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
-        return true;
+        return p;
 }
 
 /* Vlozi parametre funkcie/lokalne premenne funkcie do tabulky symbolov pre danu funkciu */
-bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
+symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->variable.data_type = data_type;
@@ -108,11 +108,11 @@ bool insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * 
         p->is_function = false;
         p->declared = true;
         ht_insert(symbol_table, id_name, p);
-        return true;
+        return p;
 }
 
 /* Vlozi polozku - funkciu -  do tabulky symbolov aktualnej triedy */
-bool insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
+symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->function.return_type = data_type;
@@ -123,7 +123,7 @@ bool insert_function_symbol_table(char * id_name, int data_type, int params_coun
         p->is_function = true;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
-        return true;
+        return p;
 }
 
 /* Vrati polozku z tabulky symbolov pre danu triedu */
