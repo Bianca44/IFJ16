@@ -73,6 +73,7 @@ symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symb
 symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name);
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 bool is_special_id_declared(char * id_name);
+symbol_table_item_t * get_symbol_table_special_id_item(char * id_name);
 
 extern symbol_table_item_t current_variable;
 extern symbol_table_item_t function_variable;

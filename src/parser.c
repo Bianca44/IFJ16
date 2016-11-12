@@ -58,8 +58,6 @@ int get_token() {
 int parse_expression(bool ends_semicolon) {
 
 
-        printf("%d sem\n", ends_semicolon);
-
         if (t.type == SEMICOLON || t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
                 return PARSE_ERROR;
         }
@@ -68,9 +66,17 @@ int parse_expression(bool ends_semicolon) {
         // ak funkcia, parsuje takto:
 
         if (is_second_pass) {
-                //symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
-                /*symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
-                if ((t.type == ID && item->is_function) || t.type == SPECIAL_ID) {
+
+                bool is_function = false;
+                if (t.type == ID) {
+                        symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
+                        is_function = item->is_function;
+                } else if (t.type == SPECIAL_ID) {
+                        symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
+                        is_function = item->is_function;
+                }
+
+                if (is_function) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
@@ -81,7 +87,7 @@ int parse_expression(bool ends_semicolon) {
                                         }
                                 }
                         }
-                }*/
+                }
         }
 
         if (is_second_pass) printf("IN EXPR: ");
@@ -96,7 +102,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == COMMA) break;
                 }
 
-                if (is_first_pass) printf("%s, ", t_names[t.type]);
+                if (is_second_pass) printf("%s, ", t_names[t.type]);
 
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {

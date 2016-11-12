@@ -188,11 +188,9 @@ void append_param_data_types(int type) {
         append_char(&param_data_types, data_type_char);
 }
 
-/*
-* Zisti ci existuje dany plne kvalifikovany indentifikator
-* Zisti ci v danej triede existuje dana premenna alebo funkcia
-*/
-bool is_special_id_declared(char * id_name) {
+
+/* Ziska polozku za tabulky symbolov pre plne kvalifikovany identifikator */
+symbol_table_item_t * get_symbol_table_special_id_item(char * id_name) {
         char *special_id = copy_string(id_name);
         char *class;
         char *method;
@@ -202,6 +200,18 @@ bool is_special_id_declared(char * id_name) {
 
         symbol_table_item_t * item = get_symbol_table_class_item(class, method);
         free(special_id);
+        if (item == NULL) {
+                return NULL;
+        }
+        return item;
+}
+
+/*
+ * Zisti ci existuje dany plne kvalifikovany indentifikator
+ * Zisti ci v danej triede existuje dana premenna alebo funkcia
+ */
+bool is_special_id_declared(char * id_name) {
+        symbol_table_item_t * item = get_symbol_table_special_id_item(id_name);
         if (item == NULL) {
                 return false;
         }
