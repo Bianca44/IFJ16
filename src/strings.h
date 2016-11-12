@@ -22,4 +22,6 @@ char * copy_string(char *text);
 
 bool append_char(string_t *str, char c);
 
+void free_string(string_t *str);
+
 #endif // STRINGS_H

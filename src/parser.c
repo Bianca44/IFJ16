@@ -28,15 +28,18 @@ token_buffer_t token_buffer;
 #define LEXICAL_ANALYSIS_ERROR 1
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
-extern string_t param_data_types;
-extern variable_t current_variable;
-extern variable_t function_variable;
-extern function_t current_function;
+#define CONSTANT -1
+
+string_t param_data_types;
+symbol_table_item_t current_variable;
+symbol_table_item_t function_variable;
+symbol_table_item_t current_function;
+char* current_class;
 
 
 int get_token() {
         if (is_first_pass) {
-                t.attr.string_value = NULL;
+                t.string_value = NULL;
                 get_next_token(&t);
                 add_token_to_buffer(&token_buffer, &t);
         } else /* second pass */ {
@@ -62,35 +65,61 @@ int parse_expression(bool ends_semicolon) {
         // ID co je funkcia alebo premenna
         // ak funkcia, parsuje takto:
 
-        /*if (t.type == ID || t.type == SPECIAL_ID) {
-                get_token();
-                if (t.type == LEFT_ROUNDED_BRACKET) {
-                        if (parse_param_value()) {
-                                if (t.type == RIGHT_ROUNDED_BRACKET) {
-                                        if (get_token() == SEMICOLON) {
-                                                return PARSED_OK;
+        if (is_second_pass) {
+
+                bool is_function = false;
+                if (t.type == ID) {
+                        symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
+                        is_function = item->is_function;
+                } else if (t.type == SPECIAL_ID) {
+                        symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
+                        is_function = item->is_function;
+                }
+
+                if (is_function) {
+                        get_token();
+                        if (t.type == LEFT_ROUNDED_BRACKET) {
+                                if (parse_param_value()) {
+                                        if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                                if (get_token() == SEMICOLON) {
+                                                        return PARSED_OK;
+                                                }
                                         }
                                 }
                         }
                 }
-           }*/
+        }
 
         if (is_second_pass) printf("IN EXPR: ");
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                 } else {
-                        if (t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) break;
+                        if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                break;
+                        }
+
+                        if (t.type == COMMA) break;
                 }
-                //printf("%s, ", t_names[t.type]);
+
+                if (is_second_pass) printf("%s, ", t_names[t.type]);
 
                 if (is_second_pass) {
-                    if (t.type == SPECIAL_ID) {
-                            printf("%s is declared %d\n", t.attr.string_value, is_special_id_declared(t.attr.string_value));
-                    }
+                        if (t.type == SPECIAL_ID) {
+                                printf("EXPR: SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
+                        }
+                        else if (t.type == ID) {
+                                if (!is_declared(t.string_value)) {
+                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                        if(!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                                printf("EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                        }
+                                }
+                        }
                 }
                 get_token();
         }
+
         if (is_second_pass) printf("\n");
         return PARSED_OK;
 
@@ -99,8 +128,8 @@ int parse_expression(bool ends_semicolon) {
 int parse_return_value() {
         if (t.type == RETURN) {
                 get_token();
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                        if (current_function.data_type == VOID) {
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                        if (current_function.function.return_type == VOID) {
                                 printf("return E in VOID error\n");
                         }
 
@@ -135,7 +164,7 @@ int parse_next_param_value() {
 int parse_param_value () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_token();
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                         if (parse_expression(false)) { // just for ifj16.print
                                 if (t.type == COMMA) {
                                         return parse_next_param_value();
@@ -156,7 +185,7 @@ int parse_call_assign() {
                 get_token();
                 if (t.type == ASSIGN) {
                         get_token();
-                        if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                                 return parse_expression(true);
                         }
                 }
@@ -203,7 +232,7 @@ int parse_condition_list() {
 }
 
 int parse_else() {
-        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 get_token();
@@ -229,10 +258,20 @@ int parse_statement() {
         }
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
-                if (is_second_pass && t.type == SPECIAL_ID) {
-                    if (!is_special_id_declared(t.attr.string_value)) {
-                        printf("SPECIAL ID NOT DECLARED\n");
-                    }
+                if (is_second_pass) {
+
+                        if (t.type == SPECIAL_ID) {
+                                if (!is_special_id_declared(t.string_value)) {
+                                        printf("SPECIAL ID NOT DECLARED\n");
+                                }
+                        } else if (t.type == ID) {
+                                if (!is_declared(t.string_value)) {
+                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                        if(!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                                printf("VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                        }
+                                }
+                        }
                 }
                 if(parse_call_assign()) {
                         get_token();
@@ -244,7 +283,7 @@ int parse_statement() {
         } else if (t.type == IF) {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -259,7 +298,7 @@ int parse_statement() {
         } else if (t.type == WHILE) {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -320,27 +359,31 @@ int parse_statement_list() {
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 if (is_first_pass) {
-                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.data_type, current_function.param_data_types, current_function.params_count, current_function.local_vars_count);
+                        current_function.function.param_data_types = (param_data_types.length > 0) ? param_data_types.data : NULL; /* for consistency */
+                        current_function.function.params_count = param_data_types.length;
+                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
-                                insert_function_symbol_table(current_function.id_name, current_function.data_type, current_function.params_count, current_function.local_vars_count, current_function.param_data_types, current_function.symbol_table);
+                                insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
                         } else {
                                 printf("FUNCTION REDECLARED\n");
                         }
-                        current_function.local_vars_count = 0;
-                        function_variable.offset = 0;
+
+                        clear_string(&param_data_types); /* vyprazdni string ale neuvolni */
+                        current_function.function.local_vars_count = 0;
+                        function_variable.variable.offset = 0;
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
-                        current_function.local_vars_count++;
-                        function_variable.data_type = t.type;
+                        current_function.function.local_vars_count++;
+                        function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
-                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                        insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                        function_variable.offset++;
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        function_variable.variable.offset++;
                                 } else {
                                         printf("VAR IN FUNC REDECLARED\n");
                                 }
@@ -374,14 +417,14 @@ int parse_next_param() {
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                         if (is_first_pass) {
                                 append_param_data_types(t.type);
-                                function_variable.data_type = t.type;
+                                function_variable.variable.data_type = t.type;
                         }
                         if (parse_param()) {
                                 if (is_first_pass) {
-                                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                        if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                                insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                                function_variable.offset++;
+                                        printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                                insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                                function_variable.variable.offset++;
                                         } else {
                                                 printf("VAR IN FUNC REDECLARED\n");
                                         }
@@ -399,7 +442,6 @@ int parse_next_param() {
 
 int parse_param_list() {
         get_token();
-        init_string(&param_data_types);
         if (t.type == RIGHT_ROUNDED_BRACKET) {
                 if (get_token() == LEFT_CURVED_BRACKET) {
                         get_token();
@@ -410,14 +452,14 @@ int parse_param_list() {
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
                         append_param_data_types(t.type);
-                        function_variable.data_type = t.type;
+                        function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
-                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                if (!is_declared_in_function(current_function.symbol_table, function_variable.id_name)) {
-                                        insert_function_variable_symbol_table(current_function.symbol_table, function_variable.id_name, function_variable.data_type, function_variable.offset);
-                                        function_variable.offset++;
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        function_variable.variable.offset++;
                                 } else {
                                         printf("VAR IN FUNC REDECLARED\n");
                                 }
@@ -431,10 +473,6 @@ int parse_param_list() {
                                 }
                         } else if (t.type == COMMA || t.type == RIGHT_ROUNDED_BRACKET) {
                                 if (parse_next_param()) {
-                                        if (is_first_pass) {
-                                                current_function.param_data_types = param_data_types.data;
-                                                current_function.params_count = param_data_types.length;
-                                        }
                                         if (get_token() == LEFT_CURVED_BRACKET) {
                                                 get_token();
                                                 if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -465,7 +503,7 @@ int parse_method_declaration () {
 int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
-                if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         return parse_expression(true);
                 }
         } if (t.type == SEMICOLON) {
@@ -487,7 +525,7 @@ int parse_declaration() {
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 if (is_first_pass) {
                         if (!is_declared(current_variable.id_name)) {
-                                insert_variable_symbol_table(current_variable.id_name, current_variable.data_type, -1);
+                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
                         } else {
                                 printf("VAR REDECLARED\n");
                         }
@@ -511,8 +549,8 @@ int parse_param() {
         if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (get_token() == ID) {
                         if (is_first_pass) {
-                                current_variable.id_name = t.attr.string_value;
-                                function_variable.id_name = t.attr.string_value;
+                                current_variable.id_name = t.string_value;
+                                function_variable.id_name = t.string_value;
                         }
                         return PARSED_OK;
                 }
@@ -525,12 +563,13 @@ int parse_declaration_element() {
         get_token();
         if (t.type == VOID) {
                 if (is_first_pass) {
-                        current_function.data_type = t.type;
+                        current_function.function.return_type = t.type;
                 }
                 if (get_token() == ID) {
+                        current_function.id_name = t.string_value; /* potrebne pre oba prechody */
+
                         if (is_first_pass) {
-                                current_function.id_name = t.attr.string_value;
-                                current_function.symbol_table = create_function_symbol_table();
+                                current_function.function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
@@ -538,17 +577,15 @@ int parse_declaration_element() {
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
-                        current_variable.data_type = t.type;
-                        current_function.data_type = t.type;
+                        current_variable.variable.data_type = t.type;
+                        current_function.function.return_type = t.type;
                 }
 
                 if (parse_param()) {
+                        current_function.id_name = t.string_value; /* potrebne pre oba prechody */
+
                         if (is_first_pass) {
-                                current_function.id_name = t.attr.string_value;
-                                current_function.symbol_table = create_function_symbol_table();
-                                /*insert_function_variable_symbol_table(current_function.symbol_table, "test", 25, 5);
-                                   symbol_table_item_t * o = ht_read(current_function.symbol_table, "test");
-                                   printf("%d\n", o->data_type);*/
+                                current_function.function.symbol_table = create_function_symbol_table();
                         }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
@@ -575,10 +612,11 @@ int parse_class_element() {
 int parse_class_list() {
         if (t.type == CLASS) {
                 if (get_token() == ID) {
+                        current_class = t.string_value; /* potrebne pre oba prechody */
                         if (is_first_pass) {
-                                if (!exists_class(t.attr.string_value)) {
-                                        insert_class(t.attr.string_value);
-                                        set_current_class(t.attr.string_value);
+                                if (!exists_class(t.string_value)) {
+                                        insert_class(t.string_value);
+                                        set_current_class(t.string_value);
                                 } else {
                                         printf("CLASS REDECLARED\n");
                                 }
@@ -627,6 +665,7 @@ void add_builtin_functions() {
 int parse() {
 
         if (is_first_pass) {
+                init_string(&param_data_types);
                 init_token_buffer(&token_buffer);
         }
         get_token();
@@ -643,22 +682,25 @@ int parse() {
                                 if (run_method == NULL) {
                                         printf("No RUN in Main class or no MAIN class\n");
                                 } else {
-                                        if (!(run_method->data_type == VOID) || !(run_method->content.function.params_count == 0)) {
+                                        if (!(run_method->function.return_type == VOID) || !(run_method->function.params_count == 0)) {
                                                 printf("Weird RUN in Main class\n");
                                         }
                                 }
                         } else /* second pass */ {
-                                free_class_list();
+                                free_class_list(); // uvolni zoznam tried
                         }
 
                         if (is_first_pass) {
                                 is_first_pass = false;
                                 is_second_pass = true;
+                                free_string(&param_data_types); // uvolni string s parametrami pre funkcie
                         } else /* second pass */ {
-                                free_token_buffer(&token_buffer);
+                                free_token_buffer(&token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
                         }
                         return PARSED_OK;
                 } else {
+                        /* Ak prvy prechod zlyhal... */
+                        free_string(&param_data_types);
                         free_token_buffer(&token_buffer);
                         return SYNTACTIC_ANALYSIS_ERROR;
                 }

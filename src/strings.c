@@ -16,7 +16,6 @@ bool init_string(string_t *str) {
 }
 
 void clear_string(string_t *str) {
-        free(str->data);
         str->length = 0;
         str->allocated_size = 0;
 }
@@ -44,4 +43,9 @@ bool append_char(string_t *str, char c) {
         str->length++;
         str->data[str->length] = '\0';
         return true;
+}
+
+void free_string(string_t *str) {
+        free(str->data);
+        clear_string(str);
 }

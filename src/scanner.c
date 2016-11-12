@@ -29,15 +29,15 @@ int save_token(token_t *t, int type, string_t *attr) {
                 case ID:
                 case SPECIAL_ID:
                 case STRING_LITERAL:
-                        t->attr.string_value = attr->data;
+                        t->string_value = attr->data;
                         break;
                 case INT_LITERAL:
-                        t->attr.int_value = atoi(attr->data);
+                        t->int_value = atoi(attr->data);
                         clear_string(attr);
                         break;
 
                 case DOUBLE_LITERAL:
-                        t->attr.double_value = atof(attr->data);
+                        t->double_value = atof(attr->data);
                         clear_string(attr);
                         break;
                 default:
@@ -255,7 +255,7 @@ int get_next_token(token_t *t) {
                         break;
 
                 case LITERAL_SLASH:
-                        if (isdigit(c)) {
+                    if (isdigit(c)) {
                                 if (octal_number_length < 3) {
                                         int digit = c - '0';
                                         switch (octal_number_length) {
@@ -397,21 +397,21 @@ int init_scanner(char *filename) {
                 case ID:
                 case SPECIAL_ID:
                 case STRING_LITERAL:
-                        printf("[%s]\n", t.attr.string_value);
+                        printf("[%s]\n", t.string_value);
                         break;
                 case INT_LITERAL:
-                        printf("[%d]\n", t.attr.int_value);
+                        printf("[%d]\n", t.int_value);
                         break;
 
                 case DOUBLE_LITERAL:
-                        printf("[%g]\n", t.attr.double_value);
+                        printf("[%g]\n", t.double_value);
                         break;
                 default:
                         printf("\n");
                         break;
                 }
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == STRING_LITERAL) {
-                        free(t.attr.string_value);
+                        free(t.string_value);
                 }
         }
         rewind(file);

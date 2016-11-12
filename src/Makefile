@@ -13,21 +13,25 @@ DLList.o:DLList.c DLList.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 interpret.o:interpret.c interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
-strings.o:strings.c strings.h
-	$(CC) $(CFLAGS) -c -o $@ $<
 ial.o:ial.c ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 symbol_table.o:symbol_table.c symbol_table.h ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+strings.o:strings.c strings.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 ntest:ntest_debug.o
 	$(CC) $(CFLAGS) -o $@ $<
-ntest_debug.o:test_debug.c	
+ntest_debug.o:test_debug.c
 	$(CC) $(CFLAGS_N) -c -o $@ $<
+
+parser:
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c token_buffer.c -o main
 
 r_test:
 	./test
 
 clean:
-	rm *.o 
+	rm *.o
 	rm test
 	rm ntest

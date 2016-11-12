@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpret.h"
-#include "datatypes.h"
+#include "instructions.h"
 #include "debug.h"
 
 tFrame * init_frame(unsigned size){
@@ -73,7 +73,10 @@ int interpret_tac(tDLList *inst_tape){
         DLCopy(inst_tape, (void **)&inst);
         
         inst->f(inst->op1, inst->op2, inst->result);
-        d_print("%d \n", inst->result->i); //TODO
+        if(inst->result->data_type == INT)
+            d_print("%d", inst->result->i); //TODO
+        else if (inst->result->data_type == DOUBLE)
+            d_print("%f", inst->result->d); //TODO 
         DLSucc(inst_tape);  
     } 
      

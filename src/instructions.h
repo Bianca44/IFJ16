@@ -1,8 +1,30 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
-#include "datatypes.h"
+
 #include "DLList.h"
-enum instructions {
+#include "symbol_table.h"
+#include "scanner.h"
+
+typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
+
+
+typedef struct tInst{
+    tInst_fun *f;
+    tVar *op1_st;
+    tVar *op1;
+    tVar *op2_st;
+    tVar *op2;
+    tVar *result_st;
+    tVar *result;
+} tInst;
+
+tInst *init_inst();
+tInst *init_inst2();
+void dispose_inst(void *);
+void dispose_inst2(void *);
+
+
+typedef enum instructions {
     //INPUT
     I_RINT,
     I_RDBL,
@@ -14,7 +36,8 @@ enum instructions {
     I_SUB,
     I_DIV,
     //CONVERSIONS
-
+    I_CONV_I_TO_D,
+    I_TO_STRING,
     //LOGICAL
     I_E,
     I_NE,
@@ -26,7 +49,6 @@ enum instructions {
     //BUILT-IN AND OTHER  
     I_ASSIGN,
     I_CAT,
-    I_TO_STRING,
     I_STRCMP,
     I_SUBSTR,
     I_FIND,
@@ -48,21 +70,27 @@ enum instructions {
     I_JG,
     I_JGE,
     I_LABEL
+}tInstId;
 
+tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
+tInst_fun * find_fun(tInstId instruction, void * result);
 
-};
-
-void i_add(tVar *op1, tVar *op2, tVar *result);
-void i_sub(tVar *op1, tVar *op2, tVar *result);
-void i_mul(tVar *op1, tVar *op2, tVar *result);
-void i_div(tVar *op1, tVar *op2, tVar *result);
-void i_assign(tVar *op1, tVar *op2, tVar *result);
+void i_add_i(tVar *op1, tVar *op2, tVar *result);
+void i_add_d(tVar *op1, tVar *op2, tVar *result);
+void i_sub_i(tVar *op1, tVar *op2, tVar *result);
+void i_sub_d(tVar *op1, tVar *op2, tVar *result);
+void i_mul_i(tVar *op1, tVar *op2, tVar *result);
+void i_mul_d(tVar *op1, tVar *op2, tVar *result);
+void i_div_i(tVar *op1, tVar *op2, tVar *result);
+void i_div_d(tVar *op1, tVar *op2, tVar *result);
+void i_assign_i(tVar *op1, tVar *op2, tVar *result);
+void i_assign_d(tVar *op1, tVar *op2, tVar *result);
+void i_assign_b(tVar *op1, tVar *op2, tVar *result);
+void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 void i_g(tVar *op1, tVar *op2, tVar *result);
 void i_jnc(tVar *op1, tVar *op2, tVar *result);
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_label(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 
-
 #endif //INSTRUCTIONS_H
-

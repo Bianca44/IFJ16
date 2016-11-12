@@ -3,6 +3,8 @@
 
 #include "strings.h"
 
+extern int parser_error_flag;
+
 #define LONGEST_KEYWORD 8
 #define KEYWORDS_COUNT 17
 #define TOKENS_COUNT 43
@@ -14,7 +16,7 @@ typedef struct {
                 char * string_value;
                 int int_value;
                 double double_value;
-        } attr;
+        };
 } token_t;
 
 int get_next_token (token_t * t);
