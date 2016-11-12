@@ -65,18 +65,30 @@ int parse_expression(bool ends_semicolon) {
         // ID co je funkcia alebo premenna
         // ak funkcia, parsuje takto:
 
-        /*if (t.type == ID || t.type == SPECIAL_ID) {
-                get_token();
-                if (t.type == LEFT_ROUNDED_BRACKET) {
-                        if (parse_param_value()) {
-                                if (t.type == RIGHT_ROUNDED_BRACKET) {
-                                        if (get_token() == SEMICOLON) {
-                                                return PARSED_OK;
+        if (is_second_pass) {
+
+                bool is_function = false;
+                if (t.type == ID) {
+                        symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
+                        is_function = item->is_function;
+                } else if (t.type == SPECIAL_ID) {
+                        symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
+                        is_function = item->is_function;
+                }
+
+                if (is_function) {
+                        get_token();
+                        if (t.type == LEFT_ROUNDED_BRACKET) {
+                                if (parse_param_value()) {
+                                        if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                                if (get_token() == SEMICOLON) {
+                                                        return PARSED_OK;
+                                                }
                                         }
                                 }
                         }
                 }
-           }*/
+        }
 
         if (is_second_pass) printf("IN EXPR: ");
         while (1) {
@@ -84,14 +96,13 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                 } else {
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
-                                // pocet zatvoriek -1 ak je to ukoncovaci znak
-                                // napr. if (...)
                                 break;
                         }
 
                         if (t.type == COMMA) break;
                 }
-                //printf("%s, ", t_names[t.type]);
+
+                if (is_second_pass) printf("%s, ", t_names[t.type]);
 
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
@@ -108,6 +119,7 @@ int parse_expression(bool ends_semicolon) {
                 }
                 get_token();
         }
+
         if (is_second_pass) printf("\n");
         return PARSED_OK;
 
@@ -116,7 +128,7 @@ int parse_expression(bool ends_semicolon) {
 int parse_return_value() {
         if (t.type == RETURN) {
                 get_token();
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (current_function.function.return_type == VOID) {
                                 printf("return E in VOID error\n");
                         }
@@ -152,7 +164,7 @@ int parse_next_param_value() {
 int parse_param_value () {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_token();
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                         if (parse_expression(false)) { // just for ifj16.print
                                 if (t.type == COMMA) {
                                         return parse_next_param_value();
@@ -173,7 +185,7 @@ int parse_call_assign() {
                 get_token();
                 if (t.type == ASSIGN) {
                         get_token();
-                        if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                                 return parse_expression(true);
                         }
                 }
@@ -220,7 +232,7 @@ int parse_condition_list() {
 }
 
 int parse_else() {
-        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 get_token();
@@ -271,7 +283,7 @@ int parse_statement() {
         } else if (t.type == IF) {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -286,7 +298,7 @@ int parse_statement() {
         } else if (t.type == WHILE) {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -491,7 +503,7 @@ int parse_method_declaration () {
 int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
-                if (t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         return parse_expression(true);
                 }
         } if (t.type == SEMICOLON) {
