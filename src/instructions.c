@@ -184,6 +184,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             return i_jnt;
 			break;
         case I_JT:
+            return i_jt;
 			break;
     }   
 
@@ -311,6 +312,7 @@ void i_goto(tVar *op1, tVar *op2, tVar *result){
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
     if(!op1->b){
         ((tDLList *)op2)->Act = (tDLElemPtr)result;
+        //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p",(void *)result);
         //todo set active
     }
@@ -320,6 +322,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result){
 void i_jt(tVar *op1, tVar *op2, tVar *result){
     if(op1->b){
         ((tDLList *)op2)->Act = (tDLElemPtr)result;
+        //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p", (void *) result);
         //todo set active
     }
@@ -407,10 +410,26 @@ void i_not(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 }
 
-
+//FUNCTIONS
+//initialization of frame
+//op1 size of frame
+void i_init_frame(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    UNUSED(result);
+    frame_stack.prepared = init_frame(*(int *)op1);
+    d_inst_name();
+}
+//push
+void i_push_param(tVar *op1, tVar *op2, tVar *result){
+    frame_stack.prepared->local[push_counter] = *op1;
+    //todo string
+    push_counter++;
+    d_inst_name(); 
+}
+//
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
     
-
+    push_counter = 0;
     UNUSED(op1);
     UNUSED(op2); 
     //interpret_tac((tDLList *)op1->s);
@@ -421,16 +440,3 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 //    pop_frame(&frame_stack);
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

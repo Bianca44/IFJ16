@@ -4,8 +4,8 @@
 #include "symbol_table.h"
 
 typedef struct tFrame{       
-    tVar *result;
-    tVar *local[]; //flexible array member    
+    tVar *ret_val;
+    tVar local[]; //flexible array member    
 }tFrame;
 
 typedef struct tFSElem {
@@ -15,10 +15,11 @@ typedef struct tFSElem {
 
 typedef struct tFrameStack{
     tFSElem *top;
-    tFSElem *prepared;
+    tFrame *prepared;
 } tFrameStack;
     
 extern tFrameStack frame_stack;
+extern int push_counter;
 
 int interpret_tac(tDLList *inst_tape);
 

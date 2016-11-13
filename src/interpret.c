@@ -7,22 +7,22 @@
 tFrame * init_frame(unsigned size){
     
     tFrame * new_frame;
-    if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar *))) == NULL){
+    if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL){
         //TODO calloc ?
     }
 
-    tVar * result;
-    if((result = malloc(sizeof(tVar))) == NULL){
+    tVar * ret_val;
+    if((ret_val = malloc(sizeof(tVar))) == NULL){
         //TODO
     }
 
-    new_frame->result = result;
+    new_frame->ret_val = ret_val;
     
     return new_frame;
 }
 
 void dispose_frame(tFrame *frame){
-    free(frame->result);
+    free(frame->ret_val);
     free(frame);
 }
 
