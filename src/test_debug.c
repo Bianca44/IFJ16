@@ -82,7 +82,6 @@ int main(){
     //if(a > b)
     //{
     //  c = a*b
-    // if
     //}
     //else
     //{
@@ -93,29 +92,23 @@ int main(){
     tDLElemPtr inst;
     
     DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
-    //uloz do tabulky instrukciu
+    //uloz na zosobnik
     DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
-    //insert_function_jump_symbol_table(name, DLGetLas(&L);
+    //Push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
     DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
-    //set_label(name, DLGetLast);
+    //set_label(top, DLGetLast(&L));
+    //pop
+    //push(DLGetLast);
     DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+    //set_label(top, DLGetLast(&L));
+    //pop
+    //
 
-    //set_label(char *s, tDLElemPtr inst)
+    //set_label(tDLElemPtr jump, tDLElemPtr label)
     //{
-    //  search(s)->dl_item->data->result = inst;
-    //
-    //
-    //
-    //
+    //  ((tVar *)(jump->data))->result = label;
     //}
-
-
-
-
-
-
-
 
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
@@ -125,137 +118,5 @@ int main(){
     DLDisposeList(&L);
     free_class_list();
 
-
-
-/*
-    d_print("durko je %s","bilbo shwaggins");
-    d_message("test:");
-
-    tDLList L;
-    DLInitList(&L, dispose_inst2);
- */
-    /**
-     * result = 23 + 10
-     * result = 23 - 10
-     * result = 23 * 10
-     * result = 23 / 10
-     * if(10 > 5)
-     *      x = 15;
-     * else
-     *      x = 42;
-     */
-
-   /*
-    testovanie aritmetickych instrukcii
-    tInst_fun *af[] = {i_add, i_sub, i_mul, i_div};
-
-    for(unsigned j=0; j < 4; j++){
-        tInst *i = init_inst2();
-
-        i->op1->i = 23;
-        i->op2->i = 10;
-        i->f = af[j];
-        DLInsertLast(&L, i);
-    } */
-/*
-    // 10 > 5
-    tInst *i = init_inst2();
-    i->op1->i = 10;
-    i->op2->i = 5;
-    i->f = i_g; //less
-    DLInsertLast(&L, i);
-    //jump
-    tInst *j = init_inst2();
-    j->f = i_jnc;
-    j->op1->b = true;
-    j->op2->s = (char *)&L;
-    DLInsertLast(&L, j);
-
-    //assign1
-    i = init_inst2();
-    i->f = i_assign;
-    i->op1->i = 12;
-    DLInsertLast(&L, i);
-
-    //goto
-    tInst *k = init_inst2();
-    k->f = i_goto;
-    k->op2->s = (char *)&L;
-    DLInsertLast(&L, k);
-
-    //label
-    i = init_inst2();
-    i->f = i_label;
-    DLInsertLast(&L, i);
-    //seting adress to label
-    DLLast(&L);
-    j->result->s = (char *)DLActiveElem(&L);
-
-    //assign2
-    i = init_inst2();
-    i->f = i_assign;
-    i->op1->i = 42;
-    DLInsertLast(&L, i);
-//label pre cyklus nizsie aj podm vyssie
-    //label
-    i = init_inst2();
-    i->f = i_label;
-    DLInsertLast(&L, i);
-    //seting adress to label
-    DLLast(&L);
-    k->result->s = (char *)DLActiveElem(&L);
-
-//cyklus
-    // 10 > 5
-    i = init_inst2();
-    i->op1->i = 1;
-    i->op2->i = 0;
-    i->f = i_g; //less
-    tVar *p = i->result;
-    DLInsertLast(&L, i);
-    //jump
-    j = init_inst2();
-    j->f = i_jnc;
-    j->op1 = p;
-    j->op2->s = &L;
-    DLInsertLast(&L, j);
-
-    //assign1
-    i = init_inst2();
-    i->f = i_assign;
-    i->op1->i = 15;
-    DLInsertLast(&L, i);
-
-    //goto
-    k = init_inst2();
-    k->f = i_goto;
-    k->op2->s = &L;
-    k->result->s = DLActiveElem(&L);
-    DLInsertLast(&L, k);
-
-
-    //label end
-    i = init_inst2();
-    i->f = i_label;
-    DLInsertLast(&L, i);
-    //seting adress to label
-    DLLast(&L);
-    j->result->s = DLActiveElem(&L);
-
-
-
-//koniec cyklu
-
-    //assign2
-    i = init_inst2();
-    i->f = i_assign;
-    i->op1->i = 42;
-    DLInsertLast(&L, i);
-    interpret_tac(&L);
-    //DLDisposeList(&L);
-
-    tFrameStack frame_stack;
-    init_frame_stack(&frame_stack);
-*/
     return 0;
 }

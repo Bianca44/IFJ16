@@ -65,11 +65,7 @@ typedef enum instructions {
     //JUMPS
     I_GOTO,
     I_JNT,
-    I_JE,
-    I_JLE,
-    I_JG,
-    I_JGE,
-    I_LABEL
+    I_JT,
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
@@ -87,10 +83,34 @@ void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
-void i_g(tVar *op1, tVar *op2, tVar *result);
-void i_jnt(tVar *op1, tVar *op2, tVar *result);
-void i_goto(tVar *op1, tVar *op2, tVar *result);
-void i_label(tVar *op1, tVar *op2, tVar *result);
+//function
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
+//logical
+//equal
+void i_e_i(tVar *op1, tVar *op2, tVar *result);
+void i_e_d(tVar *op1, tVar *op2, tVar *result);
+//not equal
+void i_ne_i(tVar *op1, tVar *op2, tVar *result);
+void i_ne_d(tVar *op1, tVar *op2, tVar *result);
+//less
+void i_l_i(tVar *op1, tVar *op2, tVar *result);
+void i_l_d(tVar *op1, tVar *op2, tVar *result);
+//greater
+void i_g_i(tVar *op1, tVar *op2, tVar *result);
+void i_g_d(tVar *op1, tVar *op2, tVar *result);
+//less equal
+void i_le_i(tVar *op1, tVar *op2, tVar *result);
+void i_le_d(tVar *op1, tVar *op2, tVar *result);
+//greater equal
+void i_ge_i(tVar *op1, tVar *op2, tVar *result);
+void i_ge_d(tVar *op1, tVar *op2, tVar *result);
+//not
+void i_not(tVar *op1, tVar *op2, tVar *result);
+//jumps
+void i_goto(tVar *op1, tVar *op2, tVar *result);
+void i_jnt(tVar *op1, tVar *op2, tVar *result);
+void i_jt(tVar *op1, tVar *op2, tVar *result);
+
+
 
 #endif //INSTRUCTIONS_H

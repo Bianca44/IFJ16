@@ -70,19 +70,67 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         //LOGICAL
         case I_E:
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_e_i;
+                    break;
+                case DOUBLE:
+                    return i_e_d;
+                    break;
+            }
 			break;
         case I_NE:
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_ne_i;
+                    break;
+                case DOUBLE:
+                    return i_ne_d;
+                    break;
+            }
 			break;
         case I_L:
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_l_i;
+                    break;
+                case DOUBLE:
+                    return i_l_d;
+                    break;
+            }
 			break;
         case I_G:
-            return i_g;
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_g_i;
+                    break;
+                case DOUBLE:
+                    return i_g_d;
+                    break;
+            }
 			break;
         case I_LE:
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_le_i;
+                    break;
+                case DOUBLE:
+                    return i_le_d;
+                    break;
+            }
 			break;
         case I_GE:
+            switch(((tVar *)result)->data_type){
+                case INT:
+                    return i_ge_i;
+                    break;
+                case DOUBLE:
+                    return i_ge_d;
+                    break;
+            }
 			break;
         case I_NOT:
+                return i_not;
 			break;
         //BUILT-IN AND OTHER  
         case I_ASSIGN:
@@ -135,17 +183,8 @@ tInst_fun * find_fun(tInstId instruction, void * result){
         case I_JNT:
             return i_jnt;
 			break;
-        case I_JE:
+        case I_JT:
 			break;
-        case I_JLE:
-			break;
-        case I_JG:
-			break;
-        case I_JGE:
-			break;
-        case I_LABEL:
-            return i_label;
-            break;
     }   
 
     return NULL;
@@ -259,37 +298,115 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     result->s = op1->s;
     d_inst_name();
 }
-// TODO 
-// TODO
-// TODO
 //first parameter instruction tape
 //op1 - bool
 //op2 - label
+
+void i_goto(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    ((tDLList *)op2)->Act = (tDLElemPtr)result;
+    d_inst_name();
+}
+
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
     if(!op1->b){
         ((tDLList *)op2)->Act = (tDLElemPtr)result;
-        d_print("%p",(tDLElemPtr)result);
+        d_print("%p",(void *)result);
         //todo set active
     }
     d_inst_name();
 }
 
-void i_goto(tVar *op1, tVar *op2, tVar *result){
-    UNUSED(op1);
-    ((tDLList *)op2)->Act = (tDLElemPtr)result;
+void i_jt(tVar *op1, tVar *op2, tVar *result){
+    if(op1->b){
+        ((tDLList *)op2)->Act = (tDLElemPtr)result;
+        d_print("%p", (void *) result);
+        //todo set active
+    }
+    d_inst_name();
 }
 
+
+/*
 void i_label(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
     UNUSED(result);
     d_inst_name();
+}*/
+//LOGICAL
+//equal
+void i_e_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i == op2->i);
+    d_inst_name();
 }
 
-void i_g(tVar *op1, tVar *op2, tVar *result){
+void i_e_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d == op2->d);
+    d_inst_name();
+}
+//not equal
+void i_ne_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i != op2->i);
+    d_inst_name();
+}
+
+void i_ne_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d != op2->d);
+    d_inst_name();
+}
+
+//less
+void i_l_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i < op2->i);
+    d_inst_name();
+}
+
+void i_l_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d < op2->d);
+    d_inst_name();
+}
+
+//greater
+void i_g_i(tVar *op1, tVar *op2, tVar *result){
     result->b = (bool)(op1->i > op2->i);
     d_inst_name();
 }
+
+void i_g_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d > op2->d);
+    d_inst_name();
+}
+
+//less equal
+void i_le_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i <= op2->i);
+    d_inst_name();
+}
+
+void i_le_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d <= op2->d);
+    d_inst_name();
+}
+
+//greater equal
+void i_ge_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i >= op2->i);
+    d_inst_name();
+}
+
+void i_ge_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d >= op2->d);
+    d_inst_name();
+}
+
+//not
+void i_not(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    result->b = !op1->b;
+    d_inst_name();
+}
+
 
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
     
