@@ -44,6 +44,7 @@ int main(){
     insert_function_variable_symbol_table(f, "d", DOUBLE, 1);
     insert_function_variable_symbol_table(f, "e", DOUBLE, 1);
     insert_function_variable_symbol_table(f, "f", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "bool", BOOLEAN, 1);
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
@@ -58,7 +59,7 @@ int main(){
     DLInitList(&L, dispose_inst);
 
     tVar pomocna[100];
-    pomocna[0].i = 10;
+    pomocna[0].i = 100;
     pomocna[1].i = 35; 
     pomocna[2].d = 2.5;
     pomocna[3].d = 3;
@@ -76,6 +77,48 @@ int main(){
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_DIV, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+
+    
+    //if(a > b)
+    //{
+    //  c = a*b
+    // if
+    //}
+    //else
+    //{
+    //  c = a/b
+    //}
+
+
+    tDLElemPtr inst;
+    
+    DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
+    //uloz do tabulky instrukciu
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
+    //insert_function_jump_symbol_table(name, DLGetLas(&L);
+    DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
+    //set_label(name, DLGetLast);
+    DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
+
+    //set_label(char *s, tDLElemPtr inst)
+    //{
+    //  search(s)->dl_item->data->result = inst;
+    //
+    //
+    //
+    //
+    //}
+
+
+
+
+
+
+
+
+    DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
     interpret_tac(&L);  
 

@@ -64,7 +64,7 @@ typedef enum instructions {
     I_RETURN,
     //JUMPS
     I_GOTO,
-    I_JC,
+    I_JNT,
     I_JE,
     I_JLE,
     I_JG,
@@ -88,7 +88,7 @@ void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 void i_g(tVar *op1, tVar *op2, tVar *result);
-void i_jnc(tVar *op1, tVar *op2, tVar *result);
+void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_label(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);

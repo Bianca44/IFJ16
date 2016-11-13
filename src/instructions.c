@@ -76,6 +76,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
         case I_L:
 			break;
         case I_G:
+            return i_g;
 			break;
         case I_LE:
 			break;
@@ -129,8 +130,10 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         //JUMPS
         case I_GOTO:
+            return i_goto;
 			break;
-        case I_JC:
+        case I_JNT:
+            return i_jnt;
 			break;
         case I_JE:
 			break;
@@ -141,6 +144,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
         case I_JGE:
 			break;
         case I_LABEL:
+            return i_label;
             break;
     }   
 
@@ -258,22 +262,28 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
 // TODO 
 // TODO
 // TODO
-void i_jnc(tVar *op1, tVar *op2, tVar *result){
+//first parameter instruction tape
+//op1 - bool
+//op2 - label
+void i_jnt(tVar *op1, tVar *op2, tVar *result){
     if(!op1->b){
-        ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
+        ((tDLList *)op2)->Act = (tDLElemPtr)result;
+        d_print("%p",(tDLElemPtr)result);
         //todo set active
     }
+    d_inst_name();
 }
 
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
-    ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
+    ((tDLList *)op2)->Act = (tDLElemPtr)result;
 }
 
 void i_label(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
     UNUSED(result);
+    d_inst_name();
 }
 
 void i_g(tVar *op1, tVar *op2, tVar *result){
