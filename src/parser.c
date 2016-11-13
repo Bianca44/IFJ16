@@ -90,6 +90,8 @@ int parse_expression(bool ends_semicolon) {
                 }
         }
 
+        int br_cnt = 0;
+
         if (is_second_pass) printf("IN EXPR: ");
         while (1) {
                 if (ends_semicolon) {
@@ -105,9 +107,18 @@ int parse_expression(bool ends_semicolon) {
                         }
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
-                            // odstran zatvorku ifu
-                            // pop asi nutny
+                            br_cnt--;
+                            //printf("Pocet zatvoriek %d\n", br_cnt);
+                            if (br_cnt == 0) {
+                                //printf("nemam breakovat\n");
+                            } else {
+                                //printf("breakovat\n");
                             break;
+                            }
+                        }
+
+                        if (t.type == LEFT_ROUNDED_BRACKET) {
+                            br_cnt++;
                         }
 
                         // pop ???
