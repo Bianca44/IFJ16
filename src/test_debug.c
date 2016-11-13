@@ -17,7 +17,7 @@ symbol_table_item_t current_function;
 string_t param_data_types;
 
 tVar * get_adress(char *id, symbol_table_t *t){
-   
+
     return &((symbol_table_item_t *)ht_read(t, id))->variable;
 }
 
@@ -60,7 +60,7 @@ int main(){
 
     tVar pomocna[100];
     pomocna[0].i = 100;
-    pomocna[1].i = 35; 
+    pomocna[1].i = 35;
     pomocna[2].d = 2.5;
     pomocna[3].d = 3;
 
@@ -70,7 +70,7 @@ int main(){
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
     DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
- 
+
     DLInsertLast(&L, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("d",f)));
     DLInsertLast(&L, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("e",f)));
     DLInsertLast(&L, generate(I_MUL, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
@@ -78,7 +78,7 @@ int main(){
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_DIV, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
-    
+
     //if(a > b)
     //{
     //  c = a*b
@@ -90,7 +90,7 @@ int main(){
 
 
     tDLElemPtr inst;
-    
+
     DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
     //uloz na zosobnik
     DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
@@ -110,10 +110,17 @@ int main(){
     //  ((tVar *)(jump->data))->result = label;
     //}
 
+
+
+    js_init();
+    js_push(DLGetLast(&L));
+    tDLElemPtr a = js_top();
+    printf("MEM: %p\n", a);
+
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
-    interpret_tac(&L);  
+    interpret_tac(&L);
 
     DLDisposeList(&L);
     free_class_list();
