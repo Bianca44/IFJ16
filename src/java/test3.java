@@ -4,7 +4,7 @@ static void run()
 {
         int a;
         ifj16.print("Zadejte cislo pro vypocet faktorialu: ");
-        a = ifj16.readInt();
+        //a = ifj16.readInt();
         int vysl;
         if (a < 0) { // nacitani zaporneho cisla nemusite podporovat
                 ifj16.print("Faktorial nelze spocitat!\n");

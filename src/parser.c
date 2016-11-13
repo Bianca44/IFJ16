@@ -99,26 +99,26 @@ int parse_expression(bool ends_semicolon) {
                         // pop
                 } else {
                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                            // popni token, lebo to bolo prava zatvorka ifu, whilu
+                                // popni token, lebo to bolo prava zatvorka ifu, whilu
 
-                            // if ((())) return
-                            // foo (exp)
-                            //break;
+                                // if ((())) return
+                                // foo (exp)
+                                //break;
                         }
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
-                            br_cnt--;
-                            //printf("Pocet zatvoriek %d\n", br_cnt);
-                            if (br_cnt == 0) {
-                                //printf("nemam breakovat\n");
-                            } else {
-                                //printf("breakovat\n");
-                            break;
-                            }
+                                br_cnt--;
+                                //printf("Pocet zatvoriek %d\n", br_cnt);
+                                if (br_cnt == 0) {
+                                        //printf("nemam breakovat\n");
+                                } else {
+                                        //printf("breakovat\n");
+                                        break;
+                                }
                         }
 
                         if (t.type == LEFT_ROUNDED_BRACKET) {
-                            br_cnt++;
+                                br_cnt++;
                         }
 
                         // pop ???
@@ -195,6 +195,8 @@ int parse_param_value () {
                                         return PARSED_OK;
                                 }
                         }
+                } else if (t.type == RIGHT_ROUNDED_BRACKET) {
+                        return PARSED_OK;
                 }
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
                 return PARSED_OK;
@@ -211,12 +213,12 @@ int parse_call_assign() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                                 return parse_expression(true);
                         }
-                }
-        } if (t.type == LEFT_ROUNDED_BRACKET) {
-                if (parse_param_value()) {
-                        if (t.type == RIGHT_ROUNDED_BRACKET) {
-                                if (get_token() == SEMICOLON) {
-                                        return PARSED_OK;
+                } else if (t.type == LEFT_ROUNDED_BRACKET) {
+                        if (parse_param_value()) {
+                                if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                        if (get_token() == SEMICOLON) {
+                                                return PARSED_OK;
+                                        }
                                 }
                         }
                 }
