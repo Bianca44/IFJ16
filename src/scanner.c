@@ -255,7 +255,7 @@ int get_next_token(token_t *t) {
                         break;
 
                 case LITERAL_SLASH:
-                    if (isdigit(c)) {
+                        if (isdigit(c)) {
                                 if (octal_number_length < 3) {
                                         int digit = c - '0';
                                         switch (octal_number_length) {
@@ -287,8 +287,13 @@ int get_next_token(token_t *t) {
                                         }
                                 }
                         } else if (c == '"' || c == 'n' || c == 't' || c == '\\') {
-                                append_char(&s, c);
-                                state = LITERAL;
+                                if (octal_number_length == 0 ) {
+                                    append_char(&s, c);
+                                    state = LITERAL;
+                                } else {
+                                    ungetc(c, file);
+                                    return save_token(t, LEXICAL_ERROR, NULL);
+                                }
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
@@ -388,7 +393,7 @@ int init_scanner(char *filename) {
                 return -2;
         }
 
-        #if LEXICAL_TESTS
+        //#if LEXICAL_TESTS
         token_t t;
         while (get_next_token(&t) != EOF) {
 
@@ -415,7 +420,7 @@ int init_scanner(char *filename) {
                 }
         }
         rewind(file);
-        #endif
+        //#endif
 
         if (parse(file) == 1) {
                 printf("SYNTACTIC ANALYSIS\tOK\n");
