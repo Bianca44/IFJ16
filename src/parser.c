@@ -21,6 +21,7 @@ int parser_error_flag = 0; // no error
 int function_offset = 0;
 bool is_first_pass = true;
 bool is_second_pass = false;
+// has return, ignore in void function
 token_t t;
 token_buffer_t token_buffer;
 #define PARSE_ERROR 0
@@ -57,7 +58,6 @@ int get_token() {
 
 int parse_expression(bool ends_semicolon) {
 
-
         if (t.type == SEMICOLON || t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
                 return PARSE_ERROR;
         }
@@ -70,10 +70,10 @@ int parse_expression(bool ends_semicolon) {
                 bool is_function = false;
                 if (t.type == ID) {
                         symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
-                        is_function = item->is_function;
+                        is_function = item && item->is_function;
                 } else if (t.type == SPECIAL_ID) {
                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
-                        is_function = item->is_function;
+                        is_function = item && item->is_function;
                 }
 
                 if (is_function) {
@@ -94,12 +94,23 @@ int parse_expression(bool ends_semicolon) {
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
+                        // pop
                 } else {
-                        if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                        if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                             // popni token, lebo to bolo prava zatvorka ifu, whilu
+
+                            // if ((())) return
+                            // foo (exp)
+                            //break;
+                        }
+
+                        if (t.type == RIGHT_ROUNDED_BRACKET) {
+                            // odstran zatvorku ifu
+                            // pop asi nutny
                             break;
                         }
 
+                        // pop ???
                         if (t.type == COMMA) break;
                 }
 
@@ -286,7 +297,7 @@ int parse_statement() {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
-                                        //get_token();
+                                        get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
                                                         return parse_else();
@@ -301,7 +312,7 @@ int parse_statement() {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
-                                        //get_token();
+                                        get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 return parse_condition_list();
                                         }
@@ -323,7 +334,6 @@ int parse_element_list() {
                 get_token();
                 if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                         if(parse_statement_list()) {
-                                get_token();
                                 if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                         return PARSED_OK;
                                 }
