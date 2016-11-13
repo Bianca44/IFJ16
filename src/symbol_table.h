@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include "ial.h"
 #include "strings.h"
-#include "DLList.h"
 // TODO
 #define SYMBOL_TABLE_SIZE 11
 
@@ -51,7 +50,6 @@ typedef struct symbol_table_item {
                         symbol_table_t * symbol_table;
                         // TODO: Pointer na instrukcnu pasku
                 } function;
-                tDLElemPtr dl_item;
         };
 } symbol_table_item_t;
 
