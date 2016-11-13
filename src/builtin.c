@@ -1,13 +1,113 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "builtin.h"
+#include "strings.h"
 
+int read_int() {
+	string_t s;
+	init_string(&s);
+	int c = 0;
+    while (1) {
+		c = getchar();
+		if (c=='\n' || c == EOF) {
+			int num = atoi(s.data);
+			free_string(&s);
+			return num;
+		}
 
-int length (char *string);
-int compare (char *s1, char *s2);
-char * substr (char *s, int i, int n);
+		if (isdigit(c)) {
+			append_char(&s, c);
+		} else {
+			 printf("CHYBA\n");
+			 free_string(&s);
+			 return -1;
+		}
+	}
+}
 
+double read_double() {
+	string_t s;
+	init_string(&s);
+	int c = 0;
+	int state = 0;
+    while (1) {
+		c = getchar();
+		if (c=='\n' || c == EOF) {
+			printf("dd %s\n", s.data);
+			double num = atof(s.data);
+			free_string(&s);
+			return num;
+		}
+		switch (state) {
+			case 0: if (isdigit(c)) {
+						append_char(&s, c);
+						state = 1;
+					} else {
+						printf("ERROR\n");
+						free_string(&s);
+						return -1;
+					}
+					break;
+
+			case 1: if (isdigit(c)) {
+						append_char(&s, c);
+					} else if (c=='.') {
+						append_char(&s, c);
+						state = 2;
+					}
+					else {
+						printf("ERROR\n");
+						free_string(&s);
+						return -1;
+					}
+					break;
+			case 2: if (isdigit(c)) {
+						append_char(&s, c);
+						state = 3;
+					} else {
+						printf("ERROR\n");
+						free_string(&s);
+						return -1;
+					}
+					break;
+
+			case 3: if (isdigit(c)) {
+						append_char(&s, c);
+					} else if (c=='e' || c == 'E') {
+						append_char(&s, c);
+						state = 4;
+					} else {
+						printf("ERROR\n");
+						free_string(&s);
+						return -1;
+					}
+					break;
+
+			case 4: if (isdigit(c)) {
+						append_char(&s, c);
+					} else if (c=='+' || c == '-') {
+						append_char(&s, c);
+						state = 0;
+					}
+					break;
+		}
+}
+}
+
+char * read_string() {
+	string_t s;
+	init_string(&s);
+	int c = 0;
+	while (1) {
+		c = getchar();
+		if (c=='\n' || c == EOF) {
+			return s.data;
+		}
+		append_char(&s, c);
+	}
+}
 
 int main2 () {
 
