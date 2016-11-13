@@ -114,15 +114,15 @@ int main(){
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
     
-    tDLList F;
-    DLInitList(&F, dispose_inst);
-
+    //tDLList F;
+    //DLInitList(&F, dispose_inst);
+    
 
 
     interpret_tac(&L);  
 
     DLDisposeList(&L);
-    DLDisposeList(&F);
+   // DLDisposeList(&F);
     free_class_list();
 
     return 0;

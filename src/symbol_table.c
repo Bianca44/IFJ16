@@ -222,3 +222,31 @@ bool is_special_id_declared(char * id_name) {
 void free_class_list() {
         ht_free(class_list);
 }
+
+typedef struct js_item {
+    tDLElemPtr data;
+    struct js_item *next;
+} js_item;
+
+js_item *head;
+
+void js_init() {
+    head = NULL;
+}
+
+void js_push(tDLElemPtr instr) {
+    js_item * p = malloc(sizeof(js_item));
+    p->data = instr;
+    p->next = head;
+    head = p;
+}
+
+tDLElemPtr js_top() {
+    return head->data;
+}
+
+void js_pop() {
+    js_item * tmp = head;
+    head = head->next;
+    free(tmp);
+}
