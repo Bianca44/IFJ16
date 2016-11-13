@@ -69,7 +69,7 @@ typedef enum instructions {
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
-tInst_fun * find_fun(tInstId instruction, void * result);
+tInst_fun * find_fun(tInstId instruction, void * result, void *op1);
 
 void i_add_i(tVar *op1, tVar *op2, tVar *result);
 void i_add_d(tVar *op1, tVar *op2, tVar *result);

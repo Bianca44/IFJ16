@@ -9,6 +9,7 @@
 #include "strings.h"
 #include "scanner.h"
 
+int push_counter;
 tFrameStack frame_stack;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
@@ -21,6 +22,9 @@ tVar * get_adress(char *id, symbol_table_t *t){
     return &((symbol_table_item_t *)ht_read(t, id))->variable;
 }
 
+void set_label(tDLElemPtr jump, tDLElemPtr where){
+    ((tInst *)(jump->data))->result = (tVar *)where;
+}
 int main(){
 
     //filling symbol table for test purposes
@@ -59,10 +63,11 @@ int main(){
     DLInitList(&L, dispose_inst);
 
     tVar pomocna[100];
-    pomocna[0].i = 100;
+    pomocna[0].i = 35;
     pomocna[1].i = 35; 
     pomocna[2].d = 2.5;
     pomocna[3].d = 3;
+    pomocna[4].i = 1;
 
     DLInsertLast(&L, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("a",f)));
     DLInsertLast(&L, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("b",f)));
@@ -89,31 +94,45 @@ int main(){
     //}
 
 
-    tDLElemPtr inst;
-    
+    //tDLElemPtr inst;
+    js_init();
     DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
     //uloz na zosobnik
     DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
-    //Push(DLGetLast(&L));
+    js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
-    //set_label(top, DLGetLast(&L));
-    //pop
-    //push(DLGetLast);
+    DLInsertLast(&L, generate(I_GOTO, NULL, &L, NULL));
+    set_label(js_top(), DLGetLast(&L));
+    js_pop();
+    js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    //set_label(top, DLGetLast(&L));
-    //pop
+    set_label(js_top(), DLGetLast(&L));
+    js_pop();
     //
 
-    //set_label(tDLElemPtr jump, tDLElemPtr label)
-    //{
-    //  ((tVar *)(jump->data))->result = label;
-    //}
+
 
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
 
+
+    //while(a<b){
+    //  a = a + 1;
+    //  }
     
+    js_push(DLGetLast(&L));
+    DLInsertLast(&L, generate(I_E, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
+    js_push(DLGetLast(&L));
+    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
+    DLInsertLast(&L, generate(I_GOTO, NULL, &L, NULL));
+    set_label(js_top(), DLGetLast(&L));
+    js_pop();
+    set_label(DLGetLast(&L), js_top());
+    js_pop();
+
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
     //tDLList F;
     //DLInitList(&F, dispose_inst);
     

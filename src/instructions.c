@@ -20,13 +20,13 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     new_inst->op2 = op2;           
     new_inst->result = result;
 
-    new_inst->f = find_fun(instruction, result);
+    new_inst->f = find_fun(instruction, result, op1);
   
     return new_inst;
     
 }
 
-tInst_fun * find_fun(tInstId instruction, void * result){
+tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
 
     switch(instruction){
          //INPUT
@@ -70,7 +70,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         //LOGICAL
         case I_E:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_e_i;
                     break;
@@ -80,7 +80,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             }
 			break;
         case I_NE:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_ne_i;
                     break;
@@ -90,7 +90,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             }
 			break;
         case I_L:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_l_i;
                     break;
@@ -100,7 +100,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             }
 			break;
         case I_G:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_g_i;
                     break;
@@ -110,7 +110,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             }
 			break;
         case I_LE:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_le_i;
                     break;
@@ -120,7 +120,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
             }
 			break;
         case I_GE:
-            switch(((tVar *)result)->data_type){
+            switch(((tVar *)op1)->data_type){
                 case INT:
                     return i_ge_i;
                     break;
@@ -310,23 +310,25 @@ void i_goto(tVar *op1, tVar *op2, tVar *result){
 }
 
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
     if(!op1->b){
         ((tDLList *)op2)->Act = (tDLElemPtr)result;
         //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p",(void *)result);
         //todo set active
     }
-    d_inst_name();
+
 }
 
 void i_jt(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
     if(op1->b){
         ((tDLList *)op2)->Act = (tDLElemPtr)result;
         //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p", (void *) result);
         //todo set active
     }
-    d_inst_name();
+
 }
 
 
