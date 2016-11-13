@@ -113,9 +113,10 @@ int main(){
 
 
     js_init();
-    js_push(DLGetLast(&L));
+    inst = DLGetLast(&L);
+    js_push(inst);
     tDLElemPtr a = js_top();
-    printf("MEM: %p\n", a);
+    printf("MEM: %p vs %p\n", a, inst);
 
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
