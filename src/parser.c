@@ -434,9 +434,7 @@ int parse_method_element() {
                 if (parse_param()) {
                         if (is_first_pass) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                if (is_declared(function_variable.id_name)) {
-                                        printf("DEKLAROVANA AKO GLOBALNA\n");
-                                } else if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
                                         insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                         function_variable.variable.offset++;
                                 } else {
@@ -477,9 +475,7 @@ int parse_next_param() {
                         if (parse_param()) {
                                 if (is_first_pass) {
                                         printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                        if (is_declared(function_variable.id_name)) {
-                                                printf("DEKLAROVANA AKO GLOBALNA\n");
-                                        } else if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
                                                 insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                                 function_variable.variable.offset++;
                                         } else {
