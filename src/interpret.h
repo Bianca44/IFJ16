@@ -30,4 +30,6 @@ void push_frame(tFrameStack *stack, tFrame * frame);
 void dispose_frame(tFrame *frame);
 tFrame * init_frame(unsigned size);
 
+void set_effective_adresess(tDLList *inst_tape);
+
 #endif //INTERPRET

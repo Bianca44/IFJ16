@@ -165,12 +165,15 @@ tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
 			break;
         //ASSOCIATED WITH FUNCTIONS
         case I_INIT_FRAME:
+            return i_init_frame;
 			break;
         case I_PUSH_PARAM:
+            return i_push_param;
 			break;
         case I_CALL_F_AND_STORE:
 			break;
-        case I_CALL_F:
+        case I_F_CALL:
+            return i_f_call;
 			break;
         case I_REMOVE_FRAME:
 			break;
@@ -423,7 +426,11 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
 }
 //push
 void i_push_param(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    UNUSED(result);
     frame_stack.prepared->local[push_counter] = *op1;
+    
+    d_print("%f",frame_stack.prepared->local[push_counter].d);
     //todo string
     push_counter++;
     d_inst_name(); 
@@ -432,13 +439,15 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
     
     push_counter = 0;
-    UNUSED(op1);
     UNUSED(op2); 
-    //interpret_tac((tDLList *)op1->s);
+    d_inst_name(); 
+    set_effective_adresess((tDLList *)op1);
+    interpret_tac((tDLList *)op1);
   
     if(result != NULL){
         //uloz vysledok TODO
     }
 //    pop_frame(&frame_stack);
+
 
 }

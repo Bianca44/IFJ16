@@ -62,6 +62,24 @@ void pop_frame(tFrameStack *stack){
     }
 }
 
+void set_effective_adresess(tDLList *inst_tape){
+    
+    DLFirst(inst_tape);
+    tDLElemPtr tmp1;
+    while(DLActive(inst_tape)){
+        //DLCopy(inst_tape, (void **)&tmp);
+        tmp1 = DLActiveElem(inst_tape);
+        tInst *tmp = tmp1->data;
+        tmp->op1 = frame_stack.prepared->local + tmp->op1_st->offset;
+        d_print("%f",tmp->op1->d);
+        tmp->op2 = frame_stack.prepared->local + tmp->op2_st->offset;
+        d_print("%f",tmp->op2->d);
+        tmp->result = frame_stack.prepared->local + tmp->result_st->offset;
+        d_print("%f",tmp->result->d);
+        DLSucc(inst_tape);
+    }
+
+}
 
 
 int interpret_tac(tDLList *inst_tape){

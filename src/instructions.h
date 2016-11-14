@@ -4,6 +4,7 @@
 #include "DLList.h"
 #include "symbol_table.h"
 #include "scanner.h"
+#include "interpret.h"
 
 typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
 
@@ -59,7 +60,7 @@ typedef enum instructions {
     I_INIT_FRAME,
     I_PUSH_PARAM,
     I_CALL_F_AND_STORE,
-    I_CALL_F,
+    I_F_CALL,
     I_REMOVE_FRAME,
     I_RETURN,
     //JUMPS
@@ -84,6 +85,8 @@ void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 //function
+void i_init_frame(tVar *op1, tVar *op2, tVar *result);
+void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 //logical
 //equal

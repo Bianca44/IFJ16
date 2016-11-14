@@ -9,7 +9,7 @@
 #include "strings.h"
 #include "scanner.h"
 
-int push_counter;
+int push_counter = 0;
 tFrameStack frame_stack;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
@@ -45,9 +45,9 @@ int main(){
     insert_function_variable_symbol_table(f, "a", INT, 1);
     insert_function_variable_symbol_table(f, "b", INT, 1);
     insert_function_variable_symbol_table(f, "c", INT, 1);
-    insert_function_variable_symbol_table(f, "d", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "d", DOUBLE, 0);
     insert_function_variable_symbol_table(f, "e", DOUBLE, 1);
-    insert_function_variable_symbol_table(f, "f", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "f", DOUBLE, 2);
     insert_function_variable_symbol_table(f, "bool", BOOLEAN, 1);
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
@@ -65,8 +65,8 @@ int main(){
     tVar pomocna[100];
     pomocna[0].i = 35;
     pomocna[1].i = 35; 
-    pomocna[2].d = 2.5;
-    pomocna[3].d = 3;
+    pomocna[2].d = 10.2;
+    pomocna[3].d = 2.57;
     pomocna[4].i = 1;
 
     DLInsertLast(&L, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("a",f)));
@@ -131,17 +131,42 @@ int main(){
     set_label(DLGetLast(&L), js_top());
     js_pop();
 
-    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
-    //tDLList F;
-    //DLInitList(&F, dispose_inst);
     
 
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
+    
 
-    interpret_tac(&L);  
+    tDLList F;
+    DLInitList(&F, dispose_inst);
+
+
+
+    
+
+    int x = 2;
+    DLInsertLast(&L, generate(I_INIT_FRAME, &x, NULL, NULL));
+    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("d",f), NULL, NULL));
+    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("e",f), NULL, NULL));
+    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("f",f), NULL, NULL));
+    DLInsertLast(&L, generate(I_F_CALL, &F, NULL, NULL));
+     
+
+    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
+
+    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
+    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
+    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
+    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
+
+
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+
+
+    interpret_tac(&L);
 
     DLDisposeList(&L);
-   // DLDisposeList(&F);
+    DLDisposeList(&F);
     free_class_list();
 
     return 0;
