@@ -422,9 +422,10 @@ int init_scanner(char *filename) {
         rewind(file);
         #endif
 
+        printf("\x1b[32mFIRST PASS\n\x1b[0m");
         if (parse(file) == 1) {
                 printf("SYNTACTIC ANALYSIS\tOK\n");
-                printf("SECOND PASS\n");
+                printf("\x1b[32mSECOND PASS\n\x1b[0m");
                 //rewind(file);
                 parse(file);
         } else {

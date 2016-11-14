@@ -92,8 +92,11 @@ int parse_expression(bool ends_semicolon) {
         }
 
         int br_cnt = 0;
-
-        if (is_second_pass) printf("IN EXPR: ");
+        token_buffer_t tb;
+        if (is_second_pass) {
+            init_token_buffer(&tb);
+            printf("IN EXPR: ");
+        }
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
@@ -120,7 +123,10 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == COMMA) break;
                 }
 
-                if (is_second_pass) printf("%s, ", t_names[t.type]);
+                if (is_second_pass) {
+                    printf("%s, ", t_names[t.type]);
+                    add_token_to_buffer(&tb, &t);
+                }
 
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
@@ -138,7 +144,10 @@ int parse_expression(bool ends_semicolon) {
                 get_token();
         }
 
-        if (is_second_pass) printf("\n");
+        if (is_second_pass) {
+            // PSA
+            printf("\n");
+        }
         return PARSED_OK;
 
 }
