@@ -1,5 +1,4 @@
-class Main {    static String l = 5;
-                static boolean c;
+class Main {    static String l = 5+5;
                 static void run () {
                     l = 5;
                     int a;//int a = 5;

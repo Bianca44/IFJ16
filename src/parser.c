@@ -127,10 +127,6 @@ int parse_expression(bool ends_semicolon) {
                 if (is_second_pass) {
                     printf("%s, ", t_names[t.type]);
                     add_token_to_buffer(&tb, &t);
-                    printf("dl %d\n", tb.length);
-                    //printf("type %d\n", tb.list[1]->type);
-                    //printf("cislo %d\n", get_next_token_buffer(&tb)->type);
-            
                 }
 
                 if (is_second_pass) {
