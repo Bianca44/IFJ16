@@ -99,13 +99,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                         // pop
                 } else {
-                        if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                                // popni token, lebo to bolo prava zatvorka ifu, whilu
-
-                                // if ((())) return
-                                // foo (exp)
-                                //break;
-                        }
+                        if (t.type == RIGHT_CURVED_BRACKET) break; // HACK
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 br_cnt--;
