@@ -21,6 +21,7 @@ int parser_error_flag = 0; // no error
 int function_offset = 0;
 bool is_first_pass = true;
 bool is_second_pass = false;
+bool function_has_return = false;
 // has return, ignore in void function
 token_t t;
 token_buffer_t token_buffer;
@@ -150,6 +151,7 @@ int parse_expression(bool ends_semicolon) {
 
 int parse_return_value() {
         if (t.type == RETURN) {
+                function_has_return = true;
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (current_function.function.return_type == VOID) {
@@ -383,6 +385,11 @@ int parse_statement_list() {
 int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 if (is_first_pass) {
+                        if (current_function.function.return_type != VOID) {
+                                if (!function_has_return) {
+                                        printf("FUNKCIA NEMA RETURN\n");
+                                }
+                        }
                         current_function.function.param_data_types = (param_data_types.length > 0) ? param_data_types.data : NULL; /* for consistency */
                         current_function.function.params_count = param_data_types.length;
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
@@ -593,6 +600,7 @@ int parse_declaration_element() {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
 
                         if (is_first_pass) {
+                                function_has_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
@@ -609,6 +617,7 @@ int parse_declaration_element() {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
 
                         if (is_first_pass) {
+                                function_has_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         }
                         get_token();
