@@ -154,13 +154,11 @@ int main(){
 
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
 
-    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
-    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
-    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
-    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
+    DLInsertLast(&F, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&F, generate(I_ADD, get_adress("d",f), get_adress("f",f), get_adress("f",f)));
+    DLInsertLast(&F, generate(I_ASSIGN, get_adress("f",f), NULL, get_adress("d",f)));
 
-
-    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("e",f)));
 
 
     interpret_tac(&L);
