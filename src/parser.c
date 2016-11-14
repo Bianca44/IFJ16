@@ -7,6 +7,7 @@
 #include "symbol_table.h"
 #include "strings.h"
 #include "token_buffer.h"
+#include "expr.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -126,6 +127,10 @@ int parse_expression(bool ends_semicolon) {
                 if (is_second_pass) {
                     printf("%s, ", t_names[t.type]);
                     add_token_to_buffer(&tb, &t);
+                    printf("dl %d\n", tb.length);
+                    //printf("type %d\n", tb.list[1]->type);
+                    //printf("cislo %d\n", get_next_token_buffer(&tb)->type);
+            
                 }
 
                 if (is_second_pass) {
@@ -147,6 +152,7 @@ int parse_expression(bool ends_semicolon) {
         if (is_second_pass) {
             // PSA
             printf("\n");
+            get_psa(&tb);
         }
         return PARSED_OK;
 

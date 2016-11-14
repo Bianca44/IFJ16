@@ -26,7 +26,7 @@ ntest_debug.o:test_debug.c
 	$(CC) $(CFLAGS_N) -c -o $@ $<
 
 parser:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c token_buffer.c -o main
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c token_buffer.c -o main
 
 r_test:
 	./test
