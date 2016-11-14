@@ -99,7 +99,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                         // pop
                 } else {
-                        if (t.type == EOF) break; // HACK
+                        if (t.type == EOF) return PARSE_ERROR; // HACK
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 br_cnt--;
