@@ -99,7 +99,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON) break;
                         // pop
                 } else {
-                        if (t.type == EOF) return PARSE_ERROR; // HACK
+                        if (t.type == EOF) return PARSE_ERROR;  // HACK
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 br_cnt--;
@@ -204,12 +204,7 @@ int parse_param_value () {
 int parse_call_assign() {
         if (t.type == ID || t.type == SPECIAL_ID) {
                 get_token();
-                if (t.type == ASSIGN) {
-                        get_token();
-                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                                return parse_expression(true);
-                        }
-                } else if (t.type == LEFT_ROUNDED_BRACKET) {
+                if (t.type == LEFT_ROUNDED_BRACKET) {
                         if (parse_param_value()) {
                                 if (t.type == RIGHT_ROUNDED_BRACKET) {
                                         if (get_token() == SEMICOLON) {
@@ -217,6 +212,8 @@ int parse_call_assign() {
                                         }
                                 }
                         }
+                } else if (t.type == ASSIGN || t.type == SEMICOLON) {
+                    return parse_value();
                 }
         }
 
@@ -237,7 +234,18 @@ int parse_condition_list() {
                         }
                 }
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                current_function.function.local_vars_count++;
+                function_variable.variable.data_type = t.type;
                 if (parse_param()) {
+                        if (is_first_pass) {
+                                printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        function_variable.variable.offset++;
+                                } else {
+                                        printf("VAR IN FUNC REDECLARED\n");
+                                }
+                        }
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
@@ -280,17 +288,28 @@ int parse_statement() {
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
                 if (is_second_pass) {
-
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         printf("SPECIAL ID NOT DECLARED\n");
+                                } else {
+                                        symbol_table_item_t * p = get_symbol_table_special_id_item(t.string_value);
+                                        function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
+                                        printf("MAM TYP %d\n", function_variable.variable.data_type);
                                 }
                         } else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
                                         symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
                                         if(!is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 printf("VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                        } else {
+                                            symbol_table_item_t * p = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                            function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
+                                            printf("MAM TYP3 %d\n", function_variable.variable.data_type);
                                         }
+                                } else {
+                                    symbol_table_item_t * p = get_symbol_table_class_item(current_class, t.string_value);
+                                    function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
+                                    printf("MAM TYP2 %d\n", function_variable.variable.data_type);
                                 }
                         }
                 }
@@ -406,7 +425,9 @@ int parse_method_element() {
                 if (parse_param()) {
                         if (is_first_pass) {
                                 printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                if (is_declared(function_variable.id_name)) {
+                                        printf("DEKLAROVANA AKO GLOBALNA\n");
+                                } else if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
                                         insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                         function_variable.variable.offset++;
                                 } else {
@@ -447,7 +468,9 @@ int parse_next_param() {
                         if (parse_param()) {
                                 if (is_first_pass) {
                                         printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                        if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
+                                        if (is_declared(function_variable.id_name)) {
+                                                printf("DEKLAROVANA AKO GLOBALNA\n");
+                                        } else if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
                                                 insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                                 function_variable.variable.offset++;
                                         } else {
@@ -528,6 +551,7 @@ int parse_method_declaration () {
 int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
+                if (is_second_pass) printf("premna s typom %s, priradujem expr...\n", t_names[function_variable.variable.data_type]);
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         return parse_expression(true);
                 }
@@ -605,6 +629,8 @@ int parse_declaration_element() {
                 if (is_first_pass) {
                         current_variable.variable.data_type = t.type;
                         current_function.function.return_type = t.type;
+                } else /* second pass */ {
+                    function_variable.variable.data_type = t.type;
                 }
 
                 if (parse_param()) {
