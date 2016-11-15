@@ -20,7 +20,7 @@ int read_int() {
 		if (isdigit(c)) {
 			append_char(&s, c);
 		} else {
-			 printf("CHYBA\n");
+			 printf("ERROR 7\n");
 			 free_string(&s);
 			 return -1;
 		}
@@ -45,7 +45,7 @@ double read_double() {
 						append_char(&s, c);
 						state = 1;
 					} else {
-						printf("ERROR\n");
+						printf("ERROR 7\n");
 						free_string(&s);
 						return -1;
 					}
@@ -58,7 +58,7 @@ double read_double() {
 						state = 2;
 					}
 					else {
-						printf("ERROR\n");
+						printf("ERROR 7\n");
 						free_string(&s);
 						return -1;
 					}
@@ -67,7 +67,7 @@ double read_double() {
 						append_char(&s, c);
 						state = 3;
 					} else {
-						printf("ERROR\n");
+						printf("ERROR 7\n");
 						free_string(&s);
 						return -1;
 					}

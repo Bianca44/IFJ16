@@ -601,6 +601,8 @@ int parse_value() {
                                                 int expr_data_type = psa_result.is_function ? psa_result.function.return_type : psa_result.variable.data_type;
                                                 printf("premna s typom %s, priradujem expr %s...\n", t_names[function_variable.variable.data_type], t_names[expr_data_type]);
                                                 psa_result.id_name = NULL;
+
+                                                // CHYBA 4 v konflikte
                                         }
                                 }
                                 return PARSED_OK;
