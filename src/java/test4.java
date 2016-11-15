@@ -27,5 +27,6 @@ static int factorial(int n) // Definice funkce pro vypocet faktorialu
                 temp_result = n * temp_result;
                 return temp_result;
         }
+        return 1;
 }
 }

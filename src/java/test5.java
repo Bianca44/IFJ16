@@ -1,7 +1,7 @@
 /* Program 3: Prace s retezci a vestavenymi funkcemi */
 class Main
 {
-static int x = 2;
+    static int x = 2;
 static void run()
 {
         String str1;
