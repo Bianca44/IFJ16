@@ -20,6 +20,7 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
 
 int parser_error_flag = 0; // no error
 int function_offset = 0;
+int params_counter = 0;
 bool is_first_pass = true;
 bool is_second_pass = false;
 bool function_has_return = false;
@@ -183,12 +184,16 @@ int parse_expression(bool ends_semicolon) {
 
 int parse_return_value() {
         if (t.type == RETURN) {
-                function_has_return = true;
+                if (is_first_pass) {
+                        function_has_return = true;
+                }
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
-                        if (current_function.function.return_type == VOID) {
-                                fprintf(stderr,"return E in VOID error\n");
-                                exit (8);
+                        if (is_first_pass) {
+                                if (current_function.function.return_type == VOID) {
+                                        fprintf(stderr,"return E in VOID error\n");
+                                        exit (8);
+                                }
                         }
 
                         return parse_expression(true);
@@ -205,6 +210,47 @@ int parse_next_param_value() {
         if (t.type == COMMA) {
                 get_token();
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (is_second_pass) {
+                                params_counter++;
+                                symbol_table_item_t * item;
+                                int data_type = 0;
+                                if (t.type == SPECIAL_ID) {
+                                        if (!is_special_id_declared(t.string_value)) {
+                                                fprintf(stderr, "ARG: Special id %s is not declared\n", t.string_value);
+                                                exit(4);
+                                        } else {
+                                            item = get_symbol_table_special_id_item(t.string_value);
+                                            if (item->is_function) {
+                                                fprintf(stderr, "ARG: Special id %s is function\n", t.string_value);
+                                                exit(4);
+                                            }
+                                            data_type = item->variable.data_type;
+                                        }
+                                }
+                                else if (t.type == ID) {
+                                        if (!is_declared(t.string_value)) {
+                                                symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                                if(function_symbol_table != NULL && !is_declared_in_function(function_symbol_table, t.string_value)) {
+                                                    fprintf(stderr, "EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
+                                                    exit(4);
+                                                }
+
+                                                item = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                                data_type = item->variable.data_type;
+
+                                        } else {
+                                            item = get_symbol_table_class_item(current_class, t.string_value);
+                                            if (item->is_function) {
+                                                fprintf(stderr, "ARG: ID %s is function\n", t.string_value);
+                                                // todo EXIT
+                                                exit(4);
+                                            }
+                                            data_type = item->variable.data_type;
+                                        }
+                                }
+
+                                printf("datovy typ argumentu %s pocet param %d\n", t_names[data_type], params_counter);
+                        }
                         get_token();
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 return PARSED_OK;
@@ -214,16 +260,27 @@ int parse_next_param_value() {
                 }
         }
         if (t.type == RIGHT_ROUNDED_BRACKET) {
+                if (is_second_pass) {
+                    params_counter = 0;
+                }
                 return PARSED_OK;
         }
         return PARSE_ERROR;
 }
 
 int parse_param_value () {
+        if (is_second_pass) {
+            params_counter = 0;
+        }
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                         if (parse_expression(false)) { // just for ifj16.print
+                                if (is_second_pass) {
+                                    params_counter++;
+                                // SEMANTIC CHECK TODO
+
+                                }
                                 if (t.type == COMMA) {
                                         return parse_next_param_value();
                                 } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -445,10 +502,11 @@ int parse_method_element() {
                                         fprintf(stderr, "FUNKCIA NEMA RETURN\n");
                                         exit(8);
                                 }
+                                function_has_return = false;
                         }
                         current_function.function.param_data_types = (param_data_types.length > 0) ? param_data_types.data : NULL; /* for consistency */
                         current_function.function.params_count = param_data_types.length;
-                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
+                        //printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
                         } else {
@@ -617,7 +675,6 @@ int parse_value() {
 
 int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
-                printf("funkcia\n");
                 if (is_first_pass) {
                         static_var_declaration = false;
                 }
@@ -796,10 +853,12 @@ int parse() {
                                 // over ci je main a run v nej
                                 symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
                                 if (run_method == NULL) {
-                                        printf("No RUN in Main class or no MAIN class\n");
+                                        fprintf(stderr, "No RUN in Main class or no MAIN class\n");
+                                        exit(3);
                                 } else {
                                         if (!(run_method->function.return_type == VOID) || !(run_method->function.params_count == 0)) {
-                                                printf("Weird RUN in Main class\n");
+                                                fprintf(stderr, "Weird RUN in Main class\n");
+                                                exit(3);
                                         }
                                 }
                         } else /* second pass */ {
@@ -823,5 +882,4 @@ int parse() {
         } else {
                 return SYNTACTIC_ANALYSIS_ERROR;
         }
-
 }

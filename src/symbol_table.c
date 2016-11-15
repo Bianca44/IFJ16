@@ -6,6 +6,7 @@
 #include "symbol_table.h"
 #include "ial.h"
 #include "scanner.h"
+#include "DLList.h"
 
 symbol_table_t *class_list;
 char* current_class;
@@ -138,8 +139,7 @@ symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_n
 
 /* Zisti ci existuje premenna alebo funkcia v aktualnej triede */
 bool is_declared(char * id_name) {
-        tHTable * sym_table = get_symbol_table_for_class(current_class);
-        symbol_table_item_t * sym_table_item = ht_read(sym_table, id_name);
+        symbol_table_item_t * sym_table_item = get_symbol_table_class_item(current_class, id_name);
         if (sym_table_item == NULL) {
                 return false;
         }
@@ -221,4 +221,32 @@ bool is_special_id_declared(char * id_name) {
 /* Uvolni zoznam tried */
 void free_class_list() {
         ht_free(class_list);
+}
+
+typedef struct js_item {
+    tDLElemPtr data;
+    struct js_item *next;
+} js_item;
+
+js_item *head;
+
+void js_init() {
+    head = NULL;
+}
+
+void js_push(tDLElemPtr instr) {
+    js_item * p = malloc(sizeof(js_item));
+    p->data = instr;
+    p->next = head;
+    head = p;
+}
+
+tDLElemPtr js_top() {
+    return head->data;
+}
+
+void pop() {
+    js_item * tmp = head;
+    head = head->next;
+    free(tmp);
 }
