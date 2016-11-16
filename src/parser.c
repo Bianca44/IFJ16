@@ -471,22 +471,17 @@ int parse_param_value () {
                                 } else if (t.type == RIGHT_ROUNDED_BRACKET) {
                                         return PARSED_OK;
                                 }
-                        }
-
-                        else {
-                                //printf("call name %s\n", function_call_name);
-                                printf("vo IFJ PRINT\n");
-
-
-                                if (parse_expression(false)) { // just for ifj16.print
+                        } else {
+                                /* special case for ifj16.print */
+                                if (parse_expression(false)) {
                                         if (is_second_pass) {
+                                                symbol_table_item_t *function_item = get_symbol_table_special_id_item(function_call_name);
+                                                char expected_param_type = function_item->function.param_data_types[params_counter];
+                                                printf("ifj16.print vyzaduje %c\n", expected_param_type);
                                                 params_counter++;
-                                                // SEMANTIC CHECK TODO
 
                                         }
-                                        if (t.type == COMMA) {
-                                                return parse_next_param_value();
-                                        } else if (t.type == RIGHT_ROUNDED_BRACKET) {
+                                        if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 return PARSED_OK;
                                         }
                                 }
