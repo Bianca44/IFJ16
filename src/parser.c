@@ -69,8 +69,6 @@ int parse_expression(bool ends_semicolon) {
 
         token_buffer_t tb;
 
-        if (is_first_pass) printf("state %d\n", static_var_declaration);
-
         /* Prvy prechod vyhodnot vyraz u globalnej premmenej priamo */
         if (is_first_pass && static_var_declaration) {
                 init_token_buffer(&tb);
@@ -82,11 +80,13 @@ int parse_expression(bool ends_semicolon) {
                         add_token_to_buffer(&tb, &t);
 
                         if (t.type == SPECIAL_ID) {
-                                printf("EXPR: SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
+                                if (!is_special_id_declared(t.string_value)) {
+                                    printf("EXPR: SPECIAL ID %s is not declared\n", t.string_value);
+                                }
                         }
                         else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
-                                        printf("EXPR: VAR IN FUNCTION (global) NOT DECLARED %s\n", t.string_value);
+                                        printf("EXPR: ID (global) NOT DECLARED %s\n", t.string_value);
                                 }
                         }
                         get_token();
@@ -105,19 +105,14 @@ int parse_expression(bool ends_semicolon) {
                 symbol_table_item_t * item;
                 if (t.type == ID) {
                         item = get_symbol_table_class_item(current_class, t.string_value);
-                        if (item != NULL) { /* first pass should check it */
-                                is_function = item->is_function;
-                        } else {
-                                symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                if(function_symbol_table != NULL && !is_declared_in_function(function_symbol_table, t.string_value)) {
-                                        fprintf(stderr, "ID in EXPR %s globally or locally not found\n", t.string_value);
-                                        exit(3);
-                                }
-                                item = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                        if (item == NULL) {
+                                fprintf(stderr, "ID in EXPR not found\n");
+                                exit(3);
                         }
+                        is_function = item->is_function;
                 } else if (t.type == SPECIAL_ID) {
                         item = get_symbol_table_special_id_item(t.string_value);
-                        if (item == NULL) { /* first pass should check it */
+                        if (item == NULL) {
                                 fprintf(stderr, "SPECIAL ID in EXPR not found\n");
                                 exit(3);
                         }
@@ -174,14 +169,17 @@ int parse_expression(bool ends_semicolon) {
 
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
-                                printf("EXPR: SPECIAL ID %s is declared %d\n", t.string_value, is_special_id_declared(t.string_value));
+                            if (!is_special_id_declared(t.string_value)) {
+                                printf("EXPR: SPECIAL ID %s is not declared\n", t.string_value);
+                            }
                         }
                         else if (t.type == ID) {
-                                if (!is_declared(t.string_value)) {
-                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                        if(function_symbol_table != NULL && !is_declared_in_function(function_symbol_table, t.string_value)) {
-                                                printf("EXPR: VAR IN FUNCTION (global or local) NOT DECLARED %s\n", t.string_value);
-                                        }
+                                symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                if (function_symbol_table == NULL || (function_symbol_table != NULL &&  !is_declared_in_function(function_symbol_table, t.string_value))) {
+                                    if (!is_declared(t.string_value)) {
+                                            fprintf(stderr, "EXPR: ID (global or local) NOT DECLARED %s\n", t.string_value);
+                                            exit(4);
+                                    }
                                 }
                         }
                 }
