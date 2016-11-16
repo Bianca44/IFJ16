@@ -49,7 +49,7 @@ typedef struct symbol_table_item {
                         int local_vars_count;
                         char * param_data_types;
                         symbol_table_t * symbol_table;
-                        // TODO: Pointer na instrukcnu pasku
+                        tDLList instruction_tape;
                 } function;
         };
 } symbol_table_item_t;
