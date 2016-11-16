@@ -7,32 +7,9 @@ PStack *PSInit(){
      if(P == NULL){
         return NULL;
      }
-     enum Terminals term = P_ENDMARK; // $ kt potrebujeme vlozit na zaciatok zasobnika
      P->top = NULL;
      P->first = NULL;
-    
-    /*P->top = malloc(sizeof(PStack_item));
-    if(P->top == NULL){
-        return NULL;
-    }
-    P->first = malloc(sizeof(PStack_item));
-    if(P->first == NULL){
-        free(P->top);
-        return NULL;
-    }*/
-    
-    PStack_item *new_item = malloc(sizeof(PStack_item));
-    if(new_item == NULL){
-        //TODO free top a first
-        
-        return NULL;
-    }
-    
-    new_item->LPtr = NULL;
-    new_item->RPtr = NULL;
-    new_item->term = term;
-    P->top = new_item;
-    P->first = new_item;
+ 
     return P;
 }
 
@@ -44,43 +21,86 @@ void PSPush(PStack *P,enum Terminals term){
         return;
     }
 
+    term_item->term = term;
     term_item->LPtr = P->top;
     term_item->RPtr = NULL;
-    term_item->term = term;
-    
 
     if(P->top != NULL){
         P->top->RPtr = term_item;
     }
+    if(P->first == NULL){
+        P->first = term_item;
+    } 
     P->top = term_item;
-}
+ }   
 
-/*void PSPop(PStack *P){
-    //TODO daco aj vratit ? 
-    PStack_item tmp = P->top;
-    P->top = tmp->LPtr;
-    P->top->RPtr = NULL;
-    free(tmp);
+void PSPop(PStack *P){
+    
+    if(P->top != NULL){
+        
+        PStack_item *tmp = P->top;
+        P->top = tmp->LPtr;
+        P->top->RPtr = NULL;
+        free(tmp);
+    }
 }
-*/
 int PSTopTerm(PStack *P){
     
     PStack_item *top_term = P->top;
     if(top_term->term <= P_ENDMARK){
         return top_term->term;
+    }/*
+    else{//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
+        top_term = top_term->LPtr;
+        while(!is_top_terminal(top_term->term)){
+            top_term = top_term->LPtr;
+            if(top_term == P->first)
+                return 42; //TODO ked sa najde az zaciatocny $
+        }
+        return top_term->term;
+    } */
+        //return 42;
+}    
+
+PStack_item *PSTopTermPtr(PStack *P){
+    
+    PStack_item *top_term = P->top;
+    if(top_term->term <= P_ENDMARK){
+        return top_term;
     }
     else{//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
         top_term = top_term->LPtr;
         while(!is_top_terminal(top_term->term)){
             top_term = top_term->LPtr;
             if(top_term == P->first)
-                return 42; //TODO ked sa najde az zaciatocny $*/
+                return NULL; //TODO ked sa najde az zaciatocny $
         }
-        return top_term->term;
+        return top_term;
     }
-        return 42;
+        return NULL;
 }    
+void insert_handle(PStack *P,PStack_item *item){
 
+   PStack_item *tmp;
+   tmp = item->RPtr;
+   PStack_item *handle_item;
+   handle_item = malloc(sizeof(PStack_item));
+   if(handle_item == NULL){
+        return;
+   }
+   handle_item->term = P_HANDLE;
+   handle_item->RPtr = item->RPtr;
+   handle_item->LPtr = item;
+   if(item->RPtr == NULL){
+        item->RPtr = handle_item;
+        P->top = handle_item;
+   }
+   else{   
+     tmp->LPtr = handle_item;
+     item->RPtr = handle_item;
+   }
+
+}
 
 void PSDestroy(PStack *P){
     //TODO rusenie,este nieco pridat 
@@ -90,6 +110,7 @@ void PSDestroy(PStack *P){
         P->top = tmp->LPtr;
         free(tmp);
     }
+    free(P);
 }
 
 bool is_top_terminal(int term){
@@ -100,3 +121,20 @@ bool is_top_terminal(int term){
           return false;
 }
 
+void PSPrint(PStack *P){
+
+    if(P->first == NULL){
+        printf("Je null");
+    }
+    //TODO pomocna premenna na cyklenie, nech si nedoserem top
+    //P->top = P->first;
+    while(P->top != NULL){
+            //if(P->top->RPtr != NULL){
+                printf("Prvok zasobnika je: %d\n",P->top->term);
+                P->top = P->top->LPtr;
+                
+            //}
+        }
+    return;
+        
+}   
