@@ -393,7 +393,7 @@ int init_scanner(char *filename) {
                 return -2;
         }
 
-        #if !LEXICAL_TESTS
+        #if LEXICAL_TESTS
         token_t t;
         while (get_next_token(&t) != EOF) {
 

@@ -14,5 +14,10 @@ class Main {    static int x;
                     a = 5;
                 }
             }
+            play();
+    }
+
+    static void play(String a) {
+
     }
 }
