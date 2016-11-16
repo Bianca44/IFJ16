@@ -157,7 +157,7 @@ int get_next_token(token_t *t) {
                 case NUM_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = SCIENTIC_DOUBLE_EXP;
+                                state = SIMPLE_DOUBLE;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -170,7 +170,7 @@ int get_next_token(token_t *t) {
                                 state = DOUBLE_END;
                         } else if (c == '-' || c == '+') {
                                 append_char(&s, c);
-                                state = SIMPLE_DOUBLE;
+                                state = SCIENTIC_DOUBLE_EXP;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -330,7 +330,7 @@ int get_next_token(token_t *t) {
                         }
                         break;
 
-                case SCIENTIC_DOUBLE_EXP:
+                case SIMPLE_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                         } else if (c == 'e' || c == 'E') {
@@ -343,7 +343,7 @@ int get_next_token(token_t *t) {
 
                         break;
 
-                case SIMPLE_DOUBLE:
+                case SCIENTIC_DOUBLE_EXP:
                         if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = DOUBLE_END;
@@ -393,7 +393,7 @@ int init_scanner(char *filename) {
                 return -2;
         }
 
-        #if LEXICAL_TESTS
+        #if !LEXICAL_TESTS
         token_t t;
         while (get_next_token(&t) != EOF) {
 
