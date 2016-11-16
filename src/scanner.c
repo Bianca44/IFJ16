@@ -33,15 +33,15 @@ int save_token(token_t *t, int type, string_t *attr) {
                         break;
                 case INT_LITERAL:
                         t->int_value = atoi(attr->data);
-                        free_string(attr);
+                        clear_string(attr); // TODO use free_string
                         break;
 
                 case DOUBLE_LITERAL:
                         t->double_value = atof(attr->data);
-                        free_string(attr);
+                        clear_string(attr);
                         break;
                 default:
-                        free_string(attr);
+                        clear_string(attr);
                         break;
                 }
         }
@@ -157,7 +157,7 @@ int get_next_token(token_t *t) {
                 case NUM_DOUBLE:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = SIMPLE_DOUBLE;
+                                state = SCIENTIC_DOUBLE_EXP;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -170,7 +170,7 @@ int get_next_token(token_t *t) {
                                 state = DOUBLE_END;
                         } else if (c == '-' || c == '+') {
                                 append_char(&s, c);
-                                state = SCIENTIC_DOUBLE_EXP;
+                                state = SIMPLE_DOUBLE;
                         } else {
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
@@ -422,10 +422,9 @@ int init_scanner(char *filename) {
         rewind(file);
         #endif
 
-        printf("\x1b[32mFIRST PASS\n\x1b[0m");
         if (parse(file) == 1) {
                 printf("SYNTACTIC ANALYSIS\tOK\n");
-                printf("\x1b[32mSECOND PASS\n\x1b[0m");
+                printf("SECOND PASS\n");
                 //rewind(file);
                 parse(file);
         } else {

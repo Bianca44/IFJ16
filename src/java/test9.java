@@ -1,25 +1,15 @@
-class Main {    static String l = 5+5;
-                static int a;
-                static void run () {
-                        l = 5;
-                        String d = ifj16.sort(l,l);
-                        boolean a; //int a = 5;
-                        /*int l;
-                           a = 5;
-                           c = 9;
-                           if (9+9) int b = 9;*/
-                        boolean p = true;
-                        play(a, a, Test.k);
-                }
+class Main {    static void run () {
+                        int a;
+                        {
+                            {}
+                            a = 5;
+                        }
 
-                static int play(String a, int b, boolean c) {
-                        return 1;
+                        if (9) {
+                            {
+                                {}
+                                a = 5;
+                            }
+                        }
                 }
-}
-
-class Test {
-static boolean k = true;
-static int play(String a, int b, boolean c) {
-        return 1;
-}
 }
