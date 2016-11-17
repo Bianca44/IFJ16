@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "symbol_table.h"
+#include "scanner.h"
 //potrebne preto zasobnik, enum tokenov, treba dopnit
 // $, "<" a E do enumu alebo spravit vlastny enum
 
@@ -14,16 +15,16 @@ enum Terminals{
     P_RB,     // )
     P_LESS,   // <
     P_GRT,    // >
-    P_GRE,    // >=
     P_LESSE,  // <=
+    P_GRE,    // >=
     P_EQL,    // ==
     P_NEQL,   // !=
     P_AND,    // &&
     P_OR,     // ||
     P_ID,     // id
     P_LIT,    // literal
-    P_NOT,    // !
-    P_ENDMARK,// $
+    P_ENDMARK, //$
+    P_NOT,    //
     P_EXPR,   // E
     P_HANDLE // <
 };
@@ -34,7 +35,7 @@ typedef struct PStack_item{
 	struct PStack_item *LPtr;
     struct PStack_item *RPtr;
     enum Terminals term;  //typ terminalu
-    int t_type;
+    tVar value;
 }PStack_item;
 
 typedef struct{

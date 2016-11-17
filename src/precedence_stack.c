@@ -1,4 +1,5 @@
 #include "precedence_stack.h"
+#include "token_buffer.h"
 
 
 PStack *PSInit(){
@@ -20,7 +21,25 @@ void PSPush(PStack *P,enum Terminals term){
     if(term_item == NULL){
         return;
     }
-
+    /*if(term != P_EXPR){
+        if(t!= NULL){
+            if(t->type == INT_LITERAL){
+                term_item->value.data_type = t->type;
+            }
+            if(t->type == STRING_LITERAL){
+                term_item->value.data_type = t->type;
+            }
+            if(t->type == DOUBLE_LITERAL){
+                term_item->value.data_type = t->type;
+            }
+            if(t->type == TRUE){
+                term_item->value.data_type = t->type;
+            }
+            if(t->type == FALSE){
+                term_item->value.data_type = t->type;
+            }
+        }
+    }*/
     term_item->term = term;
     term_item->LPtr = P->top;
     term_item->RPtr = NULL;
@@ -49,17 +68,22 @@ int PSTopTerm(PStack *P){
     PStack_item *top_term = P->top;
     if(top_term->term <= P_ENDMARK){
         return top_term->term;
-    }/*
+    }
     else{//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
         top_term = top_term->LPtr;
+        if(top_term->term <= P_ENDMARK){
+            return top_term->term;
+        }
         while(!is_top_terminal(top_term->term)){
-            top_term = top_term->LPtr;
-            if(top_term == P->first)
-                return 42; //TODO ked sa najde az zaciatocny $
+            if(top_term->LPtr != NULL){
+                 top_term = top_term->LPtr;
+            }
+            //if(top_term == P->first)
+              //  return 42; //TODO ked sa najde az zaciatocny $
         }
         return top_term->term;
-    } */
-        //return 42;
+    } 
+        return 42;
 }    
 
 PStack_item *PSTopTermPtr(PStack *P){
@@ -128,10 +152,11 @@ void PSPrint(PStack *P){
     }
     //TODO pomocna premenna na cyklenie, nech si nedoserem top
     //P->top = P->first;
-    while(P->top != NULL){
+    PStack_item *tmp = P->top;
+    while(tmp != NULL){
             //if(P->top->RPtr != NULL){
-                printf("Prvok zasobnika je: %d\n",P->top->term);
-                P->top = P->top->LPtr;
+               printf("Prvok zasobnika je: %d\n",tmp->term);
+                tmp = tmp->LPtr;
                 
             //}
         }
