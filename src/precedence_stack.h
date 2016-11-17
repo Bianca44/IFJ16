@@ -47,7 +47,7 @@ typedef struct{
 
 
 PStack *PSInit();
-void PSPush(PStack *P,enum Terminals term);
+void PSPush(PStack *P,enum Terminals term,int type);
 void PSPop(PStack *P);
 int  PSTopTerm(PStack *P); // zistenie prveho terminalu
 PStack_item *PSTopTermPtr(PStack *P); // ukazatel na polozku s najvrchnejsim terminalom

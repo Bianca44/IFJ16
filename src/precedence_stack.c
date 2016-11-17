@@ -2,6 +2,11 @@
 #include "token_buffer.h"
 
 
+char *prec_names[20] = { "P_ADD","P_SUB","P_MUL","P_DIV","P_LB", "P_RB",     // )
+                                "P_LESS","P_GRT","P_LESSE", "P_GRE","P_EQL", "P_NEQL",   // !=
+                                "P_AND","P_OR","P_ID","P_LIT","P_ENDMARK", "P_NOT", "P_EXPR", "P_HANDLE"};
+
+
 PStack *PSInit(){
     
      PStack *P = malloc(sizeof(PStack));    
@@ -14,7 +19,7 @@ PStack *PSInit(){
     return P;
 }
 
-void PSPush(PStack *P,enum Terminals term){
+void PSPush(PStack *P,enum Terminals term,int type){
     
     PStack_item *term_item;
     term_item = malloc(sizeof(PStack_item));
@@ -22,24 +27,25 @@ void PSPush(PStack *P,enum Terminals term){
         return;
     }
     /*if(term != P_EXPR){
-        if(t!= NULL){
-            if(t->type == INT_LITERAL){
-                term_item->value.data_type = t->type;
+       
+            if(type == INT_LITERAL){
+                term_item->value.data_type = type;
             }
-            if(t->type == STRING_LITERAL){
-                term_item->value.data_type = t->type;
+            if(type == STRING_LITERAL){
+                term_item->value.data_type = type;
             }
-            if(t->type == DOUBLE_LITERAL){
-                term_item->value.data_type = t->type;
+            if(type == DOUBLE_LITERAL){
+                term_item->value.data_type = type;
             }
-            if(t->type == TRUE){
-                term_item->value.data_type = t->type;
+            if(type == TRUE){
+                term_item->value.data_type = type;
             }
-            if(t->type == FALSE){
-                term_item->value.data_type = t->type;
+            if(type == FALSE){
+                term_item->value.data_type = type;
             }
-        }
+        
     }*/
+    term_item->value.data_type = type;
     term_item->term = term;
     term_item->LPtr = P->top;
     term_item->RPtr = NULL;
@@ -155,7 +161,8 @@ void PSPrint(PStack *P){
     PStack_item *tmp = P->top;
     while(tmp != NULL){
             //if(P->top->RPtr != NULL){
-               printf("Prvok zasobnika je: %d\n",tmp->term);
+               //printf("Prvok zasobnika je: %d\n",tmp->term);
+               printf("Prvok zasobnika je: %s\n",prec_names[tmp->term]);
                 tmp = tmp->LPtr;
                 
             //}

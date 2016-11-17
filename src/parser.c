@@ -103,8 +103,8 @@ int parse_expression(bool ends_semicolon) {
                 }
                 printf("\n");
                 //printf("uvolnujem\n");
-                free_token_buffer(&tb);
-                //get_psa(&tb);
+                //free_token_buffer(&tb);
+                get_psa(&tb);
                 return PARSED_OK;
         }
 
@@ -227,9 +227,9 @@ int parse_expression(bool ends_semicolon) {
 
         if (is_second_pass) {
                 // PSA
-                free_token_buffer(&tb);
+                //free_token_buffer(&tb);
                 printf("\n");
-                //get_psa(&tb);
+               get_psa(&tb);
         }
         return PARSED_OK;
 
@@ -1107,18 +1107,18 @@ int parse() {
                                         }
                                 }
                         } else /* second pass */ {
-                                free_class_list(); // uvolni zoznam tried
+                               // free_class_list(); // uvolni zoznam tried
                         }
 
                         if (is_first_pass) {
                                 is_first_pass = false;
                                 is_second_pass = true;
                         } else /* second pass */ {
-                                free_token_buffer(&token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
+                               // free_token_buffer(&token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
                         }
                         return PARSED_OK;
                 } else {
-                        free_token_buffer(&token_buffer);
+                       // free_token_buffer(&token_buffer);
                         return SYNTACTIC_ANALYSIS_ERROR;
                 }
         } else {
