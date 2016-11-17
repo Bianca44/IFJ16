@@ -223,13 +223,6 @@ void free_class_list() {
         ht_free(class_list);
 }
 
-typedef struct js_item {
-    tDLElemPtr data;
-    struct js_item *next;
-} js_item;
-
-js_item *head;
-
 void js_init() {
     head = NULL;
 }
