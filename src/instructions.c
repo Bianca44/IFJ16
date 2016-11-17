@@ -12,24 +12,53 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         //TODO
     }
 
-    new_inst->op1_st = op1;           
+ /*   new_inst->op1_st = op1;           
     new_inst->op2_st = op2;           
     new_inst->result_st = result;
-
+*/
     new_inst->op1 = op1;           
     new_inst->op2 = op2;           
     new_inst->result = result; 
     new_inst->f = find_fun(instruction, result, op1);
     
-    if(new_inst->f == i_f_call || new_inst->f == i_init_frame){
+/*    if(new_inst->f == i_f_call || new_inst->f == i_init_frame){
         new_inst->op1_st = NULL;           
         new_inst->op2_st = NULL;           
         new_inst->result_st = NULL;    
     }
+*/
+    if(new_inst->f == i_init_frame){
+        tVar * new;
+        if((new = malloc(sizeof(tVar))) == NULL){
+                //TODO
+        }
+        new->offset = -1;
+        new->initialized = true;
+        new->i = *((int *)op1);
+        new_inst->op1 = new;
+        //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
+
+
+    }
+
+    if(new_inst->f == i_f_call){
+        tVar * new;
+        if((new = malloc(sizeof(tVar))) == NULL){
+                //TODO
+        }
+        new->offset = -1;
+        new->initialized = true;
+        new->s = (char *)op1;
+        new_inst->op1 = new;
+        //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
+    }
+
+
 
     return new_inst;
 }
 tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
+    
 
     switch(instruction){
          //INPUT
@@ -181,6 +210,7 @@ tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
         case I_REMOVE_FRAME:
 			break;
         case I_RETURN:
+            return i_return;
 			break;
         //JUMPS
         case I_GOTO:
@@ -311,16 +341,18 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
 
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
+    UNUSED(op2);
     //((tDLList *)op2)->Act = (tDLElemPtr)result;
-    DLSetActive((tDLList *)op2, (tDLElemPtr)result);
+    DLSetActive(processed_tape, (tDLElemPtr)result->s);
     d_inst_name();
 }
 
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
+    UNUSED(op2);
     if(!op1->b){
         //((tDLList *)op2)->Act = (tDLElemPtr)result;
-        DLSetActive((tDLList *)op2, (tDLElemPtr)result);
+        DLSetActive(processed_tape, (tDLElemPtr)result->s);
         d_print("%p",(void *)result);
         //todo set active
     }
@@ -329,9 +361,10 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result){
 
 void i_jt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
+    UNUSED(op2);
     if(op1->b){
         //((tDLList *)op2)->Act = (tDLElemPtr)result;
-        DLSetActive((tDLList *)op2, (tDLElemPtr)result);
+        DLSetActive(processed_tape, (tDLElemPtr)result->s);
         d_print("%p", (void *) result);
         //todo set active
     }
@@ -425,7 +458,8 @@ void i_not(tVar *op1, tVar *op2, tVar *result){
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
-    frame_stack.prepared = init_frame(*(int *)op1);
+    frame_stack.prepared = init_frame(op1->i);
+    //frame_stack.prepared = init_frame(5);
     d_inst_name();
 }
 //push
@@ -434,7 +468,7 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
     frame_stack.prepared->local[push_counter] = *op1;
     
-    d_print("%d",frame_stack.prepared->local[push_counter].i);
+    d_print("PUSH %d",frame_stack.prepared->local[push_counter].i);
     //todo string
     push_counter++;
     d_inst_name(); 
@@ -442,19 +476,41 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
 //
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
    //ulozit nasledujucu instrukciu na vrchol zasobniku 
+    d_message("VSTUP do funkcie");
     push_counter = 0;
     UNUSED(op2); 
     d_inst_name();
+
     push_frame(&frame_stack, frame_stack.prepared);
     //set_effective_adresess((tDLList *)op1);
-    tInst *i = processed_inst;
-    interpret_tac((tDLList *)op1);
-    processed_inst = i;
-    pop_frame(&frame_stack); 
+    tDLElemPtr pi = DLActiveElem(processed_tape);
+    tDLList *parent_tape = processed_tape;
+
+    processed_tape = (tDLList *)(op1->s);
+    interpret_tac(processed_tape);
+
+    processed_tape = parent_tape;
+    DLSetActive(processed_tape, pi);
+
     if(result != NULL){
-        //uloz vysledok TODO
+
+        result->i = frame_stack.top->frame->ret_val->i; 
+        d_print("%d ==VYSL== ", result->i);
+        //TODO
     }
+    pop_frame(&frame_stack); 
+
 //    pop_frame(&frame_stack);
 
+    d_message("VYSTUP z funkcie");
 
+}
+
+void i_return(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2); 
+    UNUSED(result); 
+    //TODO string
+    d_inst_name();
+    frame_stack.top->frame->ret_val = op1;
+    DLLast(processed_tape);
 }

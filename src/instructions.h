@@ -11,11 +11,11 @@ typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
 
 typedef struct tInst{
     tInst_fun *f;
-    tVar *op1_st;
+    //tVar *op1_st;
     tVar *op1;
-    tVar *op2_st;
+    //tVar *op2_st;
     tVar *op2;
-    tVar *result_st;
+    //tVar *result_st;
     tVar *result;
 } tInst;
 
@@ -88,6 +88,7 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 void i_init_frame(tVar *op1, tVar *op2, tVar *result);
 void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
+void i_return(tVar *op1, tVar *op2, tVar *result);
 //logical
 //equal
 void i_e_i(tVar *op1, tVar *op2, tVar *result);
@@ -115,7 +116,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);
 
 
-extern tInst * processed_inst;
+
 extern tVar * global_offset;
 
 #endif //INSTRUCTIONS_H

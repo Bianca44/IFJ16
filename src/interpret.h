@@ -22,6 +22,7 @@ typedef struct tFrameStack{
 
 extern tFrameStack frame_stack;
 extern int push_counter;
+extern tDLList * processed_tape;
 
 int interpret_tac(tDLList *inst_tape);
 

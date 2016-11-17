@@ -10,8 +10,9 @@
 #include "scanner.h"
 
 int push_counter;
+tDLList * processed_tape;
 tVar * global_offset;
-tInst * processed_inst;
+
 tFrameStack frame_stack;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
@@ -25,7 +26,17 @@ tVar * get_adress(char *id, symbol_table_t *t){
 }
 
 void set_label(tDLElemPtr jump, tDLElemPtr where){
-    ((tInst *)(jump->data))->result = where;
+    //malloc a pridat offset v kombinacii s povedomim o vykonavanej paske
+    //linearny zoznam
+    //TODO
+    tVar *new;
+    if((new = malloc(sizeof(tVar))) == NULL){
+        //TODO
+    }
+    new->offset = -1;
+    new->initialized = true;
+    new->s = (char *)where;
+    ((tInst *)(jump->data))->result = new;
 }
 int main(){
 
@@ -107,10 +118,10 @@ int main(){
     js_init();
     DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
     //uloz na zosobnik
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), NULL, NULL));
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
   
     d_message("pred nastavem labelu 1");
     set_label(js_top(), DLGetLast(&L));
@@ -132,13 +143,13 @@ int main(){
     //while(a<b){
     //  a = a + 1;
     //  }
-    
+    // instrukcna paska globalna premenna ? 
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_LE, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), NULL, NULL));
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
     set_label(js_top(), DLGetLast(&L));
     js_pop();
     set_label(DLGetLast(&L), js_top());
@@ -160,11 +171,11 @@ int main(){
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
 
 
-    insert_function_variable_symbol_table(f2, "par1", INT, 1);
-    insert_function_variable_symbol_table(f2, "a", INT, 2);
-    insert_function_variable_symbol_table(f2, "b", INT, 3);
-    insert_function_variable_symbol_table(f2, "c", INT, 4);
-    insert_function_variable_symbol_table(f2, "d", INT, 5);
+    insert_function_variable_symbol_table(f2, "par1", INT, 0);
+    insert_function_variable_symbol_table(f2, "a", INT, 1);
+    insert_function_variable_symbol_table(f2, "b", INT, 2);
+    insert_function_variable_symbol_table(f2, "c", INT, 3);
+    insert_function_variable_symbol_table(f2, "d", INT, 4);
 
     i = get_symbol_table_function_item(f2, "par1");
     d_print("%d", i->variable.data_type == INT);
@@ -178,21 +189,47 @@ int main(){
     int x = 5;//pocet premennych plus parametrov
     DLInsertLast(&L, generate(I_INIT_FRAME, &x, NULL, NULL));
     DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("a",f), NULL, NULL));
-    DLInsertLast(&L, generate(I_F_CALL, &F, NULL, NULL));
+    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("a",f), NULL, NULL));
+
+    pomocna[16].offset = -1;
+    pomocna[16].i = 1;
+    pomocna[16].data_type = INT;
+    DLInsertLast(&L, generate(I_F_CALL, &F, NULL, &pomocna[16]));
 
 
     tDLList I;
     DLInitList(&I, dispose_inst);
     DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
     DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
+    //F
+    pomocna[15].offset = -1;
+    pomocna[15].i = 1;
+    DLInsertLast(&F, generate(I_SUB, get_adress("par1",f2), &pomocna[15], get_adress("a",f2)));
+    
 
 
-    DLInsertLast(&F, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
-    DLInsertLast(&F, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
+    pomocna[13].i = 1;
+    pomocna[13].offset = -1;
+    pomocna[14].offset = -1;
+    //if (par1 > 1000) { volaj f }
+    DLInsertLast(&F, generate(I_G, get_adress("a",f2), &pomocna[13], &pomocna[14]));
+    DLInsertLast(&F, generate(I_JNT, &pomocna[14], NULL, NULL));
+    js_push(DLGetLast(&F));
+
     DLInsertLast(&F, generate(I_INIT_FRAME, &x, NULL, NULL));
-    DLInsertLast(&F, generate(I_PUSH_PARAM, get_adress("par1",f2), NULL, NULL));
-    DLInsertLast(&F, generate(I_F_CALL, &I, NULL, NULL));
-    DLInsertLast(&F, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
+    DLInsertLast(&F, generate(I_PUSH_PARAM, get_adress("a",f2), NULL, NULL));
+    DLInsertLast(&F, generate(I_F_CALL, &F, NULL, get_adress("a",f2)));
+    set_label(js_top(), DLGetLast(&F));
+    js_pop();
+ 
+    DLInsertLast(&F, generate(I_MUL, get_adress("par1",f2), get_adress("a",f2), get_adress("a",f2)));
+    DLInsertLast(&F, generate(I_RETURN, get_adress("a",f2), NULL, NULL));
+
+
+
+
+
+    //DLInsertLast(&F, generate(I_SUB, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
 
 
 
@@ -206,7 +243,7 @@ int main(){
 
 
 
-
+    processed_tape = &L;
     interpret_tac(&L);
 
     DLDisposeList(&L);
