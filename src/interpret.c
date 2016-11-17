@@ -4,6 +4,12 @@
 #include "instructions.h"
 #include "debug.h"
 
+#define get_e_adr(adress) \
+    ((adress != NULL) ? \
+    (adress->offset == -1 ? adress : adress->offset + frame_stack.top->frame->ret_val)\
+    :\
+    NULL)
+
 tFrame * init_frame(unsigned size){
     
     tFrame * new_frame;
@@ -43,6 +49,7 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     }
     
     ptr->frame = frame;
+    //global_offset = (tVar*)(&frame->local);
     //adding new frame to stack top 
     ptr->next = stack->top;
     stack->top = ptr->next;
@@ -72,15 +79,15 @@ void set_effective_adresess(tDLList *inst_tape){
         tInst *tmp = tmp1->data;
         if(tmp->op1_st != NULL){
             tmp->op1 = frame_stack.prepared->local + tmp->op1_st->offset;
-            d_print("%f",tmp->op1->d);
+            d_print("%d",tmp->op1->i);
         }
         if(tmp->op2_st != NULL){
             tmp->op2 = frame_stack.prepared->local + tmp->op2_st->offset;
-            d_print("%f",tmp->op2->d);
+            d_print("%d",tmp->op2->i);
         }
         if(tmp->result != NULL){
             tmp->result = frame_stack.prepared->local + tmp->result_st->offset;
-            d_print("%f",tmp->result->d);
+            d_print("%d",tmp->result->i);
         }
         DLSucc(inst_tape);
     }
@@ -91,17 +98,26 @@ void set_effective_adresess(tDLList *inst_tape){
 int interpret_tac(tDLList *inst_tape){
     
     DLFirst(inst_tape);
-    tInst * inst;
+    tVar *op1, *op2, *result;
+
     while(DLActive(inst_tape)){
         
-        DLCopy(inst_tape, (void **)&inst);
-        
-        inst->f(inst->op1, inst->op2, inst->result);
-        if(inst->result != NULL){
-            if(inst->result->data_type == INT)
-                d_print("%d", inst->result->i); //TODO
-            else if (inst->result->data_type == DOUBLE)
-                d_print("%f", inst->result->d); //TODO 
+        DLCopy(inst_tape, (void **)&processed_inst);
+
+        d_message("spracovanie adries");
+        op1 = get_e_adr(processed_inst->op1);         
+        op2 = get_e_adr(processed_inst->op2);         
+        result = get_e_adr(processed_inst->result);         
+                
+        d_message("vykonanie instrukcie");
+        processed_inst->f(op1, op2, result);
+        d_message("instrukcia bola vykonana");
+
+        if(processed_inst->result != NULL){
+            if(processed_inst->result->data_type == INT)
+                d_print("%d", processed_inst->result->i); //TODO
+            else if (processed_inst->result->data_type == DOUBLE)
+                d_print("%f", processed_inst->result->d); //TODO 
         }
         DLSucc(inst_tape);  
     } 

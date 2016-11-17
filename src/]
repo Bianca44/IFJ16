@@ -9,9 +9,7 @@
 #include "strings.h"
 #include "scanner.h"
 
-int push_counter;
-tVar * global_offset;
-tInst * processed_inst;
+int push_counter = 0;
 tFrameStack frame_stack;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
@@ -25,7 +23,7 @@ tVar * get_adress(char *id, symbol_table_t *t){
 }
 
 void set_label(tDLElemPtr jump, tDLElemPtr where){
-    ((tInst *)(jump->data))->result = where;
+    ((tInst *)(jump->data))->result = (tVar *)where;
 }
 int main(){
 
@@ -42,15 +40,15 @@ int main(){
 
     symbol_table_t * f = create_function_symbol_table();
 
-    insert_function_variable_symbol_table(f, "par1", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "par2", INT, -1);
-    insert_function_variable_symbol_table(f, "a", INT, -1);
-    insert_function_variable_symbol_table(f, "b", INT, -1);
-    insert_function_variable_symbol_table(f, "c", INT, -1);
-    insert_function_variable_symbol_table(f, "d", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "e", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "f", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "bool", BOOLEAN, -1);
+    insert_function_variable_symbol_table(f, "par1", DOUBLE, 0);
+    insert_function_variable_symbol_table(f, "par2", INT, 1);
+    insert_function_variable_symbol_table(f, "a", INT, 1);
+    insert_function_variable_symbol_table(f, "b", INT, 1);
+    insert_function_variable_symbol_table(f, "c", INT, 1);
+    insert_function_variable_symbol_table(f, "d", DOUBLE, 0);
+    insert_function_variable_symbol_table(f, "e", DOUBLE, 1);
+    insert_function_variable_symbol_table(f, "f", DOUBLE, 2);
+    insert_function_variable_symbol_table(f, "bool", BOOLEAN, 1);
 
     insert_function_symbol_table("test", INT, 2, 3, "di", f);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
@@ -65,11 +63,7 @@ int main(){
     DLInitList(&L, dispose_inst);
 
     tVar pomocna[100];
-    for(int i=0 ;i < 100; i++){
-
-        pomocna[i].offset = -1;
-    }
-    pomocna[0].i = 30;
+    pomocna[0].i = 35;
     pomocna[1].i = 35; 
     pomocna[2].d = 10.2;
     pomocna[3].d = 2.57;
@@ -100,30 +94,23 @@ int main(){
     //}
 
 
-    pomocna[5].offset = -1;
-    pomocna[5].s = (char *)&L;
-    d_message("pred prvym skokom");
     //tDLElemPtr inst;
     js_init();
     DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
     //uloz na zosobnik
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, &pomocna[5], NULL));
-  
-    d_message("pred nastavem labelu 1");
+    DLInsertLast(&L, generate(I_GOTO, NULL, &L, NULL));
     set_label(js_top(), DLGetLast(&L));
     js_pop();
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-  
-    d_message("pred nastavem labelu 2");
     set_label(js_top(), DLGetLast(&L));
     js_pop();
     //
 
-    d_message("prve skakanie if");
+
 
     DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
@@ -134,16 +121,17 @@ int main(){
     //  }
     
     js_push(DLGetLast(&L));
-    DLInsertLast(&L, generate(I_LE, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_E, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
+    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), &L, NULL));
     js_push(DLGetLast(&L));
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, &pomocna[5], NULL));
+    DLInsertLast(&L, generate(I_GOTO, NULL, &L, NULL));
     set_label(js_top(), DLGetLast(&L));
     js_pop();
     set_label(DLGetLast(&L), js_top());
     js_pop();
- 
+
+    
 
     DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
@@ -160,11 +148,11 @@ int main(){
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
 
 
-    insert_function_variable_symbol_table(f2, "par1", INT, 1);
-    insert_function_variable_symbol_table(f2, "a", INT, 2);
-    insert_function_variable_symbol_table(f2, "b", INT, 3);
-    insert_function_variable_symbol_table(f2, "c", INT, 4);
-    insert_function_variable_symbol_table(f2, "d", INT, 5);
+    insert_function_variable_symbol_table(f2, "par1", INT, 0);
+    insert_function_variable_symbol_table(f2, "a", INT, 1);
+    insert_function_variable_symbol_table(f2, "b", INT, 2);
+    insert_function_variable_symbol_table(f2, "c", INT, 3);
+    insert_function_variable_symbol_table(f2, "d", INT, 4);
 
     i = get_symbol_table_function_item(f2, "par1");
     d_print("%d", i->variable.data_type == INT);
@@ -183,6 +171,7 @@ int main(){
 
     tDLList I;
     DLInitList(&I, dispose_inst);
+    DLInsertLast(&I, generate(I_PUSH_PARAM, get_adress("par1",f2), NULL, NULL));
     DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
     DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
 

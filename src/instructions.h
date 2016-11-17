@@ -1,7 +1,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-#include "DLList.h"
+
 #include "symbol_table.h"
 #include "scanner.h"
 #include "interpret.h"
@@ -115,5 +115,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);
 
 
+extern tInst * processed_inst;
+extern tVar * global_offset;
 
 #endif //INSTRUCTIONS_H

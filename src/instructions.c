@@ -18,14 +18,17 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
 
     new_inst->op1 = op1;           
     new_inst->op2 = op2;           
-    new_inst->result = result;
-
+    new_inst->result = result; 
     new_inst->f = find_fun(instruction, result, op1);
-  
-    return new_inst;
     
-}
+    if(new_inst->f == i_f_call || new_inst->f == i_init_frame){
+        new_inst->op1_st = NULL;           
+        new_inst->op2_st = NULL;           
+        new_inst->result_st = NULL;    
+    }
 
+    return new_inst;
+}
 tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
 
     switch(instruction){
@@ -308,15 +311,16 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
 
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
-    ((tDLList *)op2)->Act = (tDLElemPtr)result;
+    //((tDLList *)op2)->Act = (tDLElemPtr)result;
+    DLSetActive((tDLList *)op2, (tDLElemPtr)result);
     d_inst_name();
 }
 
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     if(!op1->b){
-        ((tDLList *)op2)->Act = (tDLElemPtr)result;
-        //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
+        //((tDLList *)op2)->Act = (tDLElemPtr)result;
+        DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p",(void *)result);
         //todo set active
     }
@@ -326,8 +330,8 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result){
 void i_jt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     if(op1->b){
-        ((tDLList *)op2)->Act = (tDLElemPtr)result;
-        //DLSetActive((tDLList *)op2, (tDLElemPtr)result);
+        //((tDLList *)op2)->Act = (tDLElemPtr)result;
+        DLSetActive((tDLList *)op2, (tDLElemPtr)result);
         d_print("%p", (void *) result);
         //todo set active
     }
@@ -430,20 +434,23 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
     frame_stack.prepared->local[push_counter] = *op1;
     
-    d_print("%f",frame_stack.prepared->local[push_counter].d);
+    d_print("%d",frame_stack.prepared->local[push_counter].i);
     //todo string
     push_counter++;
     d_inst_name(); 
 }
 //
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
-    
+   //ulozit nasledujucu instrukciu na vrchol zasobniku 
     push_counter = 0;
     UNUSED(op2); 
-    d_inst_name(); 
-    set_effective_adresess((tDLList *)op1);
+    d_inst_name();
+    push_frame(&frame_stack, frame_stack.prepared);
+    //set_effective_adresess((tDLList *)op1);
+    tInst *i = processed_inst;
     interpret_tac((tDLList *)op1);
-  
+    processed_inst = i;
+    pop_frame(&frame_stack); 
     if(result != NULL){
         //uloz vysledok TODO
     }
