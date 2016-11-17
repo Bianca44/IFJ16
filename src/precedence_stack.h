@@ -24,17 +24,17 @@ enum Terminals{
     P_LIT,    // literal
     P_NOT,    // !
     P_ENDMARK,// $
-    P_EXPR,   // E 
+    P_EXPR,   // E
     P_HANDLE // <
 };
 
 //teoreticky uchovavat typ operacie, typ premennej atd, vytvorit este polozku zasobnika
 
-typedef struct{
+typedef struct PStack_item{
 	struct PStack_item *LPtr;
     struct PStack_item *RPtr;
-    enum Terminals term;  //typ terminalu  
-    int t_type;  
+    enum Terminals term;  //typ terminalu
+    int t_type;
 }PStack_item;
 
 typedef struct{
@@ -54,4 +54,3 @@ void PSDestroy(PStack *P);
 bool is_top_terminal(int term);
 void insert_handle(PStack *P,PStack_item *item);
 void PSPrint(PStack *P);
-
