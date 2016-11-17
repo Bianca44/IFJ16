@@ -12,21 +12,53 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         //TODO
     }
 
-    new_inst->op1_st = op1;           
+ /*   new_inst->op1_st = op1;           
     new_inst->op2_st = op2;           
     new_inst->result_st = result;
-
+*/
     new_inst->op1 = op1;           
     new_inst->op2 = op2;           
-    new_inst->result = result;
-
-    new_inst->f = find_fun(instruction, result);
-  
-    return new_inst;
+    new_inst->result = result; 
+    new_inst->f = find_fun(instruction, result, op1);
     
-}
+/*    if(new_inst->f == i_f_call || new_inst->f == i_init_frame){
+        new_inst->op1_st = NULL;           
+        new_inst->op2_st = NULL;           
+        new_inst->result_st = NULL;    
+    }
+*/
+    if(new_inst->f == i_init_frame){
+        tVar * new;
+        if((new = malloc(sizeof(tVar))) == NULL){
+                //TODO
+        }
+        new->offset = -1;
+        new->initialized = true;
+        new->i = *((int *)op1);
+        new_inst->op1 = new;
+        //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
 
-tInst_fun * find_fun(tInstId instruction, void * result){
+
+    }
+
+    if(new_inst->f == i_f_call){
+        tVar * new;
+        if((new = malloc(sizeof(tVar))) == NULL){
+                //TODO
+        }
+        new->offset = -1;
+        new->initialized = true;
+        new->s = (char *)op1;
+        new_inst->op1 = new;
+        //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
+    }
+
+
+
+    return new_inst;
+}
+tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
+    
 
     switch(instruction){
          //INPUT
@@ -70,18 +102,67 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         //LOGICAL
         case I_E:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_e_i;
+                    break;
+                case DOUBLE:
+                    return i_e_d;
+                    break;
+            }
 			break;
         case I_NE:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_ne_i;
+                    break;
+                case DOUBLE:
+                    return i_ne_d;
+                    break;
+            }
 			break;
         case I_L:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_l_i;
+                    break;
+                case DOUBLE:
+                    return i_l_d;
+                    break;
+            }
 			break;
         case I_G:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_g_i;
+                    break;
+                case DOUBLE:
+                    return i_g_d;
+                    break;
+            }
 			break;
         case I_LE:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_le_i;
+                    break;
+                case DOUBLE:
+                    return i_le_d;
+                    break;
+            }
 			break;
         case I_GE:
+            switch(((tVar *)op1)->data_type){
+                case INT:
+                    return i_ge_i;
+                    break;
+                case DOUBLE:
+                    return i_ge_d;
+                    break;
+            }
 			break;
         case I_NOT:
+                return i_not;
 			break;
         //BUILT-IN AND OTHER  
         case I_ASSIGN:
@@ -116,32 +197,31 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         //ASSOCIATED WITH FUNCTIONS
         case I_INIT_FRAME:
+            return i_init_frame;
 			break;
         case I_PUSH_PARAM:
+            return i_push_param;
 			break;
         case I_CALL_F_AND_STORE:
 			break;
-        case I_CALL_F:
+        case I_F_CALL:
+            return i_f_call;
 			break;
         case I_REMOVE_FRAME:
 			break;
         case I_RETURN:
+            return i_return;
 			break;
         //JUMPS
         case I_GOTO:
+            return i_goto;
 			break;
-        case I_JC:
+        case I_JNT:
+            return i_jnt;
 			break;
-        case I_JE:
+        case I_JT:
+            return i_jt;
 			break;
-        case I_JLE:
-			break;
-        case I_JG:
-			break;
-        case I_JGE:
-			break;
-        case I_LABEL:
-            break;
     }   
 
     return NULL;
@@ -255,55 +335,182 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     result->s = op1->s;
     d_inst_name();
 }
-// TODO 
-// TODO
-// TODO
-void i_jnc(tVar *op1, tVar *op2, tVar *result){
-    if(!op1->b){
-        ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
-        //todo set active
-    }
-}
+//first parameter instruction tape
+//op1 - bool
+//op2 - label
 
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
-    ((tDLList *)op2->s)->Act = (tDLElemPtr)(result->s);
+    UNUSED(op2);
+    //((tDLList *)op2)->Act = (tDLElemPtr)result;
+    DLSetActive(processed_tape, (tDLElemPtr)result->s);
+    d_inst_name();
 }
 
+void i_jnt(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
+    UNUSED(op2);
+    if(!op1->b){
+        //((tDLList *)op2)->Act = (tDLElemPtr)result;
+        DLSetActive(processed_tape, (tDLElemPtr)result->s);
+        d_print("%p",(void *)result);
+        //todo set active
+    }
+
+}
+
+void i_jt(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
+    UNUSED(op2);
+    if(op1->b){
+        //((tDLList *)op2)->Act = (tDLElemPtr)result;
+        DLSetActive(processed_tape, (tDLElemPtr)result->s);
+        d_print("%p", (void *) result);
+        //todo set active
+    }
+
+}
+
+
+/*
 void i_label(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
     UNUSED(result);
+    d_inst_name();
+}*/
+//LOGICAL
+//equal
+void i_e_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i == op2->i);
+    d_inst_name();
 }
 
-void i_g(tVar *op1, tVar *op2, tVar *result){
+void i_e_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d == op2->d);
+    d_inst_name();
+}
+//not equal
+void i_ne_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i != op2->i);
+    d_inst_name();
+}
+
+void i_ne_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d != op2->d);
+    d_inst_name();
+}
+
+//less
+void i_l_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i < op2->i);
+    d_inst_name();
+}
+
+void i_l_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d < op2->d);
+    d_inst_name();
+}
+
+//greater
+void i_g_i(tVar *op1, tVar *op2, tVar *result){
     result->b = (bool)(op1->i > op2->i);
     d_inst_name();
 }
 
-void i_f_call(tVar *op1, tVar *op2, tVar *result){
-    
+void i_g_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d > op2->d);
+    d_inst_name();
+}
 
-    UNUSED(op1);
+//less equal
+void i_le_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i <= op2->i);
+    d_inst_name();
+}
+
+void i_le_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d <= op2->d);
+    d_inst_name();
+}
+
+//greater equal
+void i_ge_i(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->i >= op2->i);
+    d_inst_name();
+}
+
+void i_ge_d(tVar *op1, tVar *op2, tVar *result){
+    result->b = (bool)(op1->d >= op2->d);
+    d_inst_name();
+}
+
+//not
+void i_not(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    result->b = !op1->b;
+    d_inst_name();
+}
+
+//FUNCTIONS
+//initialization of frame
+//op1 size of frame
+void i_init_frame(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    UNUSED(result);
+    frame_stack.prepared = init_frame(op1->i);
+    //frame_stack.prepared = init_frame(5);
+    d_inst_name();
+}
+//push
+void i_push_param(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2);
+    UNUSED(result);
+    frame_stack.prepared->local[push_counter] = *op1;
+    
+    d_print("PUSH %d",frame_stack.prepared->local[push_counter].i);
+    //todo string
+    push_counter++;
+    d_inst_name(); 
+}
+//
+void i_f_call(tVar *op1, tVar *op2, tVar *result){
+   //ulozit nasledujucu instrukciu na vrchol zasobniku 
+    d_message("VSTUP do funkcie");
+    push_counter = 0;
     UNUSED(op2); 
-    //interpret_tac((tDLList *)op1->s);
-  
+    d_inst_name();
+
+    push_frame(&frame_stack, frame_stack.prepared);
+    //set_effective_adresess((tDLList *)op1);
+    tDLElemPtr pi = DLActiveElem(processed_tape);
+    tDLList *parent_tape = processed_tape;
+
+    processed_tape = (tDLList *)(op1->s);
+    interpret_tac(processed_tape);
+
+    processed_tape = parent_tape;
+    DLSetActive(processed_tape, pi);
+
     if(result != NULL){
-        //uloz vysledok TODO
+
+        result->i = frame_stack.top->frame->ret_val->i; 
+        d_print("%d ==VYSL== ", result->i);
+        //TODO
     }
+    pop_frame(&frame_stack); 
+
 //    pop_frame(&frame_stack);
+
+    d_message("VYSTUP z funkcie");
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+void i_return(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2); 
+    UNUSED(result); 
+    //TODO string
+    d_inst_name();
+    frame_stack.top->frame->ret_val = op1;
+    DLLast(processed_tape);
+}

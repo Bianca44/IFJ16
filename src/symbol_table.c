@@ -243,23 +243,24 @@ void free_class_list() {
         ht_free(class_list);
 }
 
+
 void js_init() {
-        head = NULL;
+    head = NULL;
 }
 
 void js_push(tDLElemPtr instr) {
-        js_item * p = malloc(sizeof(js_item));
-        p->data = instr;
-        p->next = head;
-        head = p;
+    js_item * p = malloc(sizeof(js_item));
+    p->data = instr;
+    p->next = head;
+    head = p;
 }
 
 tDLElemPtr js_top() {
-        return head->data;
+    return head->data;
 }
 
-void pop() {
-        js_item * tmp = head;
-        head = head->next;
-        free(tmp);
+void js_pop() {
+    js_item * tmp = head;
+    head = head->next;
+    free(tmp);
 }

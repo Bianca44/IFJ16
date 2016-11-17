@@ -1,20 +1,21 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-#include "DLList.h"
+
 #include "symbol_table.h"
 #include "scanner.h"
+#include "interpret.h"
 
 typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
 
 
 typedef struct tInst{
     tInst_fun *f;
-    tVar *op1_st;
+    //tVar *op1_st;
     tVar *op1;
-    tVar *op2_st;
+    //tVar *op2_st;
     tVar *op2;
-    tVar *result_st;
+    //tVar *result_st;
     tVar *result;
 } tInst;
 
@@ -59,21 +60,17 @@ typedef enum instructions {
     I_INIT_FRAME,
     I_PUSH_PARAM,
     I_CALL_F_AND_STORE,
-    I_CALL_F,
+    I_F_CALL,
     I_REMOVE_FRAME,
     I_RETURN,
     //JUMPS
     I_GOTO,
-    I_JC,
-    I_JE,
-    I_JLE,
-    I_JG,
-    I_JGE,
-    I_LABEL
+    I_JNT,
+    I_JT,
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
-tInst_fun * find_fun(tInstId instruction, void * result);
+tInst_fun * find_fun(tInstId instruction, void * result, void *op1);
 
 void i_add_i(tVar *op1, tVar *op2, tVar *result);
 void i_add_d(tVar *op1, tVar *op2, tVar *result);
@@ -87,10 +84,39 @@ void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
-void i_g(tVar *op1, tVar *op2, tVar *result);
-void i_jnc(tVar *op1, tVar *op2, tVar *result);
-void i_goto(tVar *op1, tVar *op2, tVar *result);
-void i_label(tVar *op1, tVar *op2, tVar *result);
+//function
+void i_init_frame(tVar *op1, tVar *op2, tVar *result);
+void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
+void i_return(tVar *op1, tVar *op2, tVar *result);
+//logical
+//equal
+void i_e_i(tVar *op1, tVar *op2, tVar *result);
+void i_e_d(tVar *op1, tVar *op2, tVar *result);
+//not equal
+void i_ne_i(tVar *op1, tVar *op2, tVar *result);
+void i_ne_d(tVar *op1, tVar *op2, tVar *result);
+//less
+void i_l_i(tVar *op1, tVar *op2, tVar *result);
+void i_l_d(tVar *op1, tVar *op2, tVar *result);
+//greater
+void i_g_i(tVar *op1, tVar *op2, tVar *result);
+void i_g_d(tVar *op1, tVar *op2, tVar *result);
+//less equal
+void i_le_i(tVar *op1, tVar *op2, tVar *result);
+void i_le_d(tVar *op1, tVar *op2, tVar *result);
+//greater equal
+void i_ge_i(tVar *op1, tVar *op2, tVar *result);
+void i_ge_d(tVar *op1, tVar *op2, tVar *result);
+//not
+void i_not(tVar *op1, tVar *op2, tVar *result);
+//jumps
+void i_goto(tVar *op1, tVar *op2, tVar *result);
+void i_jnt(tVar *op1, tVar *op2, tVar *result);
+void i_jt(tVar *op1, tVar *op2, tVar *result);
+
+
+
+extern tVar * global_offset;
 
 #endif //INSTRUCTIONS_H

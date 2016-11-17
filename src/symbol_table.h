@@ -75,13 +75,13 @@ bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 bool is_special_id_declared(char * id_name);
 symbol_table_item_t * get_symbol_table_special_id_item(char * id_name);
 
+
 typedef struct js_item {
     tDLElemPtr data;
     struct js_item *next;
 } js_item;
 
 js_item *head;
-
 void js_init();
 void js_push(tDLElemPtr instr) ;
 tDLElemPtr js_top();
