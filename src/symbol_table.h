@@ -10,11 +10,10 @@
 
 typedef tHTable symbol_table_t;
 
-typedef struct {
+typedef struct class {
     char * id_name;
-    int data_type;
-    int offset;
-} variable_t;
+    symbol_table_t * symbol_table;
+} class_t;
 
 typedef struct {
     char * id_name;

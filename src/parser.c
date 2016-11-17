@@ -102,6 +102,8 @@ int parse_expression(bool ends_semicolon) {
                         get_token();
                 }
                 printf("\n");
+                //printf("uvolnujem\n");
+                free_token_buffer(&tb);
                 //get_psa(&tb);
                 return PARSED_OK;
         }
@@ -225,6 +227,7 @@ int parse_expression(bool ends_semicolon) {
 
         if (is_second_pass) {
                 // PSA
+                free_token_buffer(&tb);
                 printf("\n");
                 //get_psa(&tb);
         }
@@ -613,12 +616,9 @@ int parse_statement() {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "SPECIAL ID NOT DECLARED\n");
-                                        //exit(3);
+                                        exit(3);
                                 } else {
                                         symbol_table_item_t * p = get_symbol_table_special_id_item(t.string_value);
-                                        if (p->is_function) {
-                                                //function_call_name = t.string_value;
-                                        }
                                         function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
                                         //printf("MAM TYP %d\n", function_variable.variable.data_type);
                                 }
@@ -937,10 +937,9 @@ int parse_declaration() {
                                 if (is_first_pass) {
                                         static_var_declaration = false;
                                 }
-                                if (get_token() == STATIC) {
+                                get_token();
+                                if (t.type == STATIC || t.type == RIGHT_CURVED_BRACKET) {
                                         return parse_class_element();
-                                } else {
-                                        return PARSED_OK;
                                 }
                         }
                 }
@@ -964,6 +963,7 @@ int parse_param() {
 }
 
 int parse_declaration_element() {
+        current_variable.id_name = NULL;
         get_token();
         if (t.type == VOID) {
                 if (is_first_pass) {
@@ -1020,12 +1020,17 @@ int parse_class_element() {
 
 int parse_class_list() {
         if (t.type == CLASS) {
+                /*if (is_first_pass) {
+                        if (current_class != NULL) {
+                                free(current_class);
+                        }
+                }*/
                 if (get_token() == ID) {
                         current_class = t.string_value; /* potrebne pre oba prechody */
                         if (is_first_pass) {
-                                if (!exists_class(t.string_value)) {
-                                        insert_class(t.string_value);
-                                        set_current_class(t.string_value);
+                                if (!exists_class(current_class)) {
+                                        insert_class(current_class);
+                                        set_current_class(current_class);
                                 } else {
                                         fprintf(stderr, "CLASS REDECLARED\n");
                                         //exit(3);;
@@ -1036,10 +1041,8 @@ int parse_class_list() {
                                 if (parse_class_element()) {
                                         if (t.type == RIGHT_CURVED_BRACKET) {
                                                 get_token();
-                                                if (t.type == CLASS) {
+                                                if (t.type == CLASS || t.type == EOF) {
                                                         return parse_class_list();
-                                                } else if (t.type == EOF) {
-                                                        return PARSED_OK;
                                                 } else {
                                                         return PARSE_ERROR;
                                                 }
@@ -1048,8 +1051,14 @@ int parse_class_list() {
                         }
                 }
         } else if (t.type == EOF) {
+                /*if (is_first_pass) {
+                        if (current_class != NULL) {
+                                free(current_class);
+                        }
+                }*/
                 return PARSED_OK;
-        } return PARSE_ERROR;
+        }
+        return PARSE_ERROR;
 }
 
 

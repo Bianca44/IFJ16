@@ -13,12 +13,33 @@ char* current_class;
 
 /* Zrusi tabulku obsahuju tabulky symbolov tried */
 void dispose_class_list(tData data) {
+    printf("mazem\n");
         ht_free((symbol_table_t *)(data));
 }
 
 /* Zrusi tabulku symbolov pre triedu */
 void dispose_class_symbol_table(tData data) {
-        free((symbol_table_item_t *)(data)); // TODO
+        symbol_table_item_t * item = (symbol_table_item_t *) data;
+        printf("FREE %s\n", item->id_name);
+        //free(item->id_name);
+
+
+        if (item->is_function) {
+                if (item->function.param_data_types != NULL) {
+                        free(item->function.param_data_types);
+                }
+                if (item->function.symbol_table != NULL) {
+                        printf("nenu null %d\n", item->function.symbol_table->n_items);
+                        ht_free((symbol_table_t *)(item->function.symbol_table));
+                }
+                // pasku
+                //ht_free((symbol_table_t *)(item->function.symbol_table));
+        } else {
+                if (item->variable.s != NULL) {
+                        free(item->variable.s);
+                }
+        }
+        free(item);
 }
 
 /* Inicializacia zoznamu tried */
@@ -89,7 +110,6 @@ symbol_table_item_t * create_symbol_table_item() {
 /* Vlozi polozku - globalnu (staticku) premennu - do tabulky symbolov aktualnej triedy */
 symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type, int offset) {
         symbol_table_item_t * p = create_symbol_table_item();
-        p->id_name = id_name;
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = false;
@@ -224,22 +244,22 @@ void free_class_list() {
 }
 
 void js_init() {
-    head = NULL;
+        head = NULL;
 }
 
 void js_push(tDLElemPtr instr) {
-    js_item * p = malloc(sizeof(js_item));
-    p->data = instr;
-    p->next = head;
-    head = p;
+        js_item * p = malloc(sizeof(js_item));
+        p->data = instr;
+        p->next = head;
+        head = p;
 }
 
 tDLElemPtr js_top() {
-    return head->data;
+        return head->data;
 }
 
 void pop() {
-    js_item * tmp = head;
-    head = head->next;
-    free(tmp);
+        js_item * tmp = head;
+        head = head->next;
+        free(tmp);
 }

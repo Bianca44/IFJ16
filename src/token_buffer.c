@@ -41,13 +41,31 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
                 return NULL;
         }
 }
+char *tr_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
+                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
+                                 "LEFT_ROUNDED_BRACKET", "RIGHT_ROUNDED_BRACKET", "ASSIGN", "LOGICAL_AND",
+                                 "LOGICAL_OR", "COMMA", "NEG",  "STRING_LITERAL", "NOT_EQUAL", "LESS_EQUAL",
+                                 "LESS", "GREATER_EQUAL", "GREATER", "EQUAL", "SPECIAL_ID", "BOOLEAN", "BREAK",
+                                 "CLASS", "CONTINUE", "DO", "DOUBLE", "ELSE", "FALSE", "FOR", "IF", "INT", "RETURN",
+                                 "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
 
 void free_token_buffer(token_buffer_t *token_buf) {
         for (int i = 0; i < token_buf->length; i++) {
+
+                int type = token_buf->list[i]->type;
+                if (type == ID || type == SPECIAL_ID || type == STRING_LITERAL) {
+                        if (token_buf->list[i]->string_value != NULL) {
+                                free(token_buf->list[i]->string_value);
+                        }
+                }
+
                 free(token_buf->list[i]);
         }
 
-        free(token_buf->list);
+        if (token_buf->list != NULL) {
+                free(token_buf->list);
+        }
+
         token_buf->length = 0;
         token_buf->allocated_size = 0;
 

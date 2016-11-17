@@ -33,15 +33,15 @@ int save_token(token_t *t, int type, string_t *attr) {
                         break;
                 case INT_LITERAL:
                         t->int_value = atoi(attr->data);
-                        clear_string(attr); // TODO use free_string
+                        free_string(attr);
                         break;
 
                 case DOUBLE_LITERAL:
                         t->double_value = atof(attr->data);
-                        clear_string(attr);
+                        free_string(attr);
                         break;
                 default:
-                        clear_string(attr);
+                        free_string(attr);
                         break;
                 }
         }
