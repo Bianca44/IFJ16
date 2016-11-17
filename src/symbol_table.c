@@ -258,7 +258,7 @@ tDLElemPtr js_top() {
         return head->data;
 }
 
-void pop() {
+void js_pop() {
         js_item * tmp = head;
         head = head->next;
         free(tmp);
