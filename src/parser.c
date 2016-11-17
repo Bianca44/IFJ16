@@ -734,7 +734,8 @@ int parse_method_element() {
                                 }
                                 function_has_return = false;
                         }
-                        current_function.function.param_data_types = (param_data_types.length > 0) ? param_data_types.data : NULL; /* for consistency */
+
+                        current_function.function.param_data_types = param_data_types.data;
                         current_function.function.params_count = param_data_types.length;
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
