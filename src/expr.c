@@ -13,6 +13,7 @@
 
 extern char* current_class;
 extern symbol_table_item_t current_function;
+extern tDLList * global_inst_tape;
 
 char precedence_table[SIZE][SIZE] = {
 //input token
@@ -68,9 +69,9 @@ int decode_token_array[ENUM_SIZE] = {
 
 int expr_check(PStack *P){
     if(P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_EXPR){
-                return 0;           
+                return 0;
     }
- return 1;       
+ return 1;
 }
 
 char decode_table(int top_term,int input_token){
@@ -93,13 +94,13 @@ int choose_rule(PStack *P,token_t *t){
 
     PStack_item *top_item = PSTopTermPtr(P);
     //PStack_item *result_item;
- 
+
     switch(top_item->term){
 
         //pravidlo E -> int_literal,double_literal,...
         case P_LIT:
             //result_item->value.data_type = top_item->value.data_type;
-            
+
             /*switch(t->type){
 
             case INT_LITERAL:
@@ -131,8 +132,8 @@ int choose_rule(PStack *P,token_t *t){
             break;
         // E->id,special_id
         case P_ID:
-            
-           
+
+
             break;
         //E-> E + E
         case P_ADD:
@@ -140,40 +141,40 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-        
+
              break;
-            
-        //E -> E - E     
+
+        //E -> E - E
         case P_SUB:
             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-           
+
             break;
-        // E -> E * E    
+        // E -> E * E
         case P_MUL:
             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-           
+
             break;
-        //E -> E / E    
+        //E -> E / E
         case P_DIV:
             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
              break;
-        //E -> (E)     
+        //E -> (E)
         case P_RB:
             if(PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB){
                 printf("Chyba pravidla pre zatvorku");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-         
+
             break;
         case P_LESS:
             if(!expr_check(P)){
@@ -212,14 +213,14 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            break;    
+            break;
         case P_AND:
             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             break;
-        
+
         case P_OR:
             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
@@ -240,9 +241,9 @@ return 1;
 int init_item(PStack *P,token_t *t){
 
     PStack_item *push_item = P->top;
-        
+
         switch(t->type){
-            
+
             case ID:
                  printf("Value of literal is:%s\n",t->string_value);
                 if (current_function.id_name != NULL) {
@@ -251,7 +252,7 @@ int init_item(PStack *P,token_t *t){
                     symbol_table_item_t * item = get_symbol_table_class_item(current_class, t->string_value);
                     printf("data_type id %d\n", item->variable.data_type);
                 }
-                                        
+
 
                 break;
             case SPECIAL_ID:
@@ -261,7 +262,7 @@ int init_item(PStack *P,token_t *t){
                  symbol_table_item_t * item = get_symbol_table_special_id_item(t->string_value);
                  //t->variable.i
                  printf("data_type special id %d\n", item->variable.data_type);
-                 break;    
+                 break;
             case INT_LITERAL:
                 printf("Value of literal is:%d\n",t->int_value);
                 push_item->value.i = t->int_value;
@@ -281,7 +282,7 @@ int init_item(PStack *P,token_t *t){
             case FALSE:
                 printf("Value of literal is:%d\n",false);
                 push_item->value.b = false;
-                break;         
+                break;
 
         }
 return 1;
@@ -351,7 +352,7 @@ int get_psa(token_buffer_t *buffer){
                     fprintf(stderr,"Unexpected expression.\n");
                     cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
                     break;
-                
+
 
 
             }
