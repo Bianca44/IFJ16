@@ -7,7 +7,6 @@
 #include "scanner.h"
 #include "parser.h"
 
-extern int parser_error_flag;
 FILE *file;
 
 char *token_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",

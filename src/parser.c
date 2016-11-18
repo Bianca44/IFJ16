@@ -19,7 +19,6 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
                                 "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
 
 
-int parser_error_flag = 0; // no error
 int function_offset = 0;
 int params_counter = 0;
 bool is_first_pass = true;
@@ -43,9 +42,9 @@ char* current_class;
 char* function_call_name;
 
 
-void cleanup_exit(int code) {
-        //TODO
-        exit(code);
+void cleanup_exit(int exit_code) {
+        //TODO free memory
+        exit(exit_code);
 }
 
 int get_token() {
@@ -57,7 +56,8 @@ int get_token() {
                 t = *get_next_token_buffer(&token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
-                parser_error_flag = LEXICAL_ANALYSIS_ERROR;
+                fprintf(stderr, "Lexical error: unknown token\n");
+                cleanup_exit(LEXICAL_ANALYSIS_ERROR);
         }
         return t.type;
 }
