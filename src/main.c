@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 
         file = init_scanner(argv[1]);
         if (file == NULL) {
-            fprintf(stderr, "Wront path to file.\n");
+            fprintf(stderr, "Wrong path to file.\n");
             return INTERNAL_INTERPRET_ERROR;
         }
 
