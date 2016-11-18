@@ -134,7 +134,7 @@ symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symb
 }
 
 /* Vlozi polozku - funkciu -  do tabulky symbolov aktualnej triedy */
-symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
+symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, char * local_vars_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->function.return_type = data_type;
@@ -142,6 +142,7 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         p->function.local_vars_count = local_vars_count;
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
+        p->function.local_vars_data_types = local_vars_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
@@ -268,6 +269,31 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         symbol_table_t * function_table = function_item->function.symbol_table;
 
         int offset = function_item->function.params_local_vars_count;
+        char * local_vars_data_types = function_item->function.local_vars_data_types;
+        int new_len = strlen(local_vars_data_types) + 1;
+        local_vars_data_types = (char *) realloc(local_vars_data_types, new_len);
+
+        int c = 0;
+        switch (data_type) {
+            case STRING:
+                        c = 's';
+                        break;
+            case INT:
+                        c = 'i';
+                        break;
+            case DOUBLE:
+                        c = 's';
+                        break;
+            case BOOLEAN:
+                        c = 'b';
+                        break;
+        }
+
+        local_vars_data_types[new_len-1] = c;
+        local_vars_data_types[new_len] = '\0';
+        function_item->function.local_vars_data_types = local_vars_data_types;
+        //printf("new local_vars_data_types %s\n", local_vars_data_types);
+
         char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
         static int tmp_id = 0;
         sprintf(id_name, "#%d", tmp_id);

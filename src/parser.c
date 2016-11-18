@@ -755,17 +755,17 @@ int parse_method_element() {
                         current_function.function.params_count = param_data_types.length;
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
-                                insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
+                                insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
 
-                                /* TODO
-                                   symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, 42);
-                                   symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, 43);
+                                // TODO
+                                   symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
+                                   symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, STRING);
                                    if (p==NULL) {
                                     printf("nenajdene\n");
                                    }
                                    printf("nenajdene %d\n", x->variable.offset);
                                    //printf("test %d\n", p->variable.data_type);
-                                 */
+
                                 current_function.id_name = NULL;
                         } else {
                                 fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
@@ -1096,16 +1096,16 @@ void add_builtin_functions() {
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
-        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL);
-        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL);
-        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL);
-        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL);
-        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL);
-        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL);
+        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL , NULL);
+        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL , NULL);
+        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL , NULL);
+        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL , NULL);
+        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL , NULL);
+        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL , NULL);
 
-        insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL);
-        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL);
-        insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL);
+        insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL, NULL);
+        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL , NULL);
+        insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL, NULL);
 }
 
 int parse(tDLList * inst_tape) {
