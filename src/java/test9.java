@@ -1,4 +1,4 @@
-class Main {
+class [ Main {
 
     static void run () {
             int a;
@@ -15,10 +15,12 @@ class Main {
                     a = 5+3;
                 }
             }
+
+            //s = 9;
            // ifj16.print("Pozice retezce \"text\" v retezci str2: " + a + "\n");
     }
     static void play(String b, String a) {
-
+        int k;
     }
     //static int x = 1+ Main.play;
 

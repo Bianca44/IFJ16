@@ -20,7 +20,7 @@ typedef struct {
 } token_t;
 
 int get_next_token (token_t * t);
-int init_scanner(char *filename);
+FILE* init_scanner(char *filename);
 int save_token(token_t *t, int type, string_t *attr);
 int detect_keyword(string_t *str);
 

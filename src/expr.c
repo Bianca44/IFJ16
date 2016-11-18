@@ -30,6 +30,9 @@ char precedence_table[SIZE][SIZE] = {
         {'>','>','>','>','<','>','>','>','>','>','>','>','>','>','<', '<','>','<'}, // !
 };
 
+
+
+
 int decode_token_array[ENUM_SIZE] = {
 [ADD] = P_ADD,
 [SUB] = P_SUB,
@@ -58,9 +61,9 @@ int decode_token_array[ENUM_SIZE] = {
 
 
 
-char decode_table(PStack *P,int input_token){
+char decode_table(int top_term,int input_token){
 
-    int top_term = PSTopTerm(P); 
+
     return precedence_table[top_term][input_token];
 
    }
@@ -77,25 +80,43 @@ token_t* get_next_token_psa(token_buffer_t *token_buf) {
 void choose_rule(PStack *P,token_t *t){
 
     PStack_item *top_item = PSTopTermPtr(P);
-    //PStack_item *expr_item = malloc(sizeof(PStack_item));
+    int type;
+
     switch(top_item->term){
 
         //pravidlo E -> int_literal,double_literal,...
         case P_LIT:
+            type = top_item->value.data_type;
             //odstranim <lit
             //printf("TOP je: %d\n",P->top->term);
             PSPop(P);
             PSPop(P);
 
             //TODO neprepisat si s t data_type !!!!!
-            PSPush(P,P_EXPR);
-
-            break;  
-
-         
-                
-
-    }
+            PSPush(P,P_EXPR,type);
+            PSPrint(P);
+            break;
+        case P_ID:
+            type = top_item->value.data_type;
+            PSPop(P);
+            PSPop(P);
+            PSPush(P,P_EXPR,type);
+            PSPrint(P);
+            break;
+        case P_ADD:
+            if(top_item->RPtr->term != P_EXPR || top_item->LPtr->term != P_EXPR){
+                printf("Neocakavany vyraz\n");
+                exit(2);
+            }
+            //TODO zatial nikde nedavam vysledok scitania
+            PSPop(P);
+            PSPop(P);
+            PSPop(P);
+            PSPop(P);
+            PSPush(P,P_EXPR,-1);
+             PSPrint(P);
+             break;
+        }
 
 }
 
@@ -108,67 +129,78 @@ int get_psa(token_buffer_t *buffer){
       token_t end;
       end.type = ENDMARK;
       add_token_to_buffer(buffer,&end);
-       
+      char result;
       PStack *P = PSInit();
-      PSPush(P,P_ENDMARK);
+      PSPush(P,P_ENDMARK,-1);
      // printf("term %d\n",P->top->term);
-      
+
 
         buffer_position = 0;
         printf("in PSO %d:\n", buffer->length);
         //token_t *t;
-        t = get_next_token_psa(buffer);
+        //t = get_next_token_psa(buffer);
         //printf("TOKEN type: %d\n",t->type);
-        
+        t = get_next_token_psa(buffer);
         do{
+
            // printf("TOKEN type: %d\n",t->type);
             /*if((t = get_next_token_psa(buffer)) == NULL){
                 printf("KOncim\n");
                 break;
             }*/
              //printf("Pouzit pravidlo: %c\n",decode_table(P,decode_token_array[t->type]));
-            switch(decode_table(P,decode_token_array[t->type])){
+                int r = PSTopTerm(P);
+            switch(decode_table(r,decode_token_array[t->type])){
 
                 case '=':
-                    PSPush(P,decode_token_array[t->type]);
+                    PSPush(P,decode_token_array[t->type],0);
                     t = get_next_token_psa(buffer);
                     break;
                 case '<':
                     insert_handle(P,PSTopTermPtr(P));
-                    PSPush(P,decode_token_array[t->type]);
+                    PSPush(P,decode_token_array[t->type],t->type);
                     printf("term %d\n",P->top->term);
-                   // PSPrint(P); 
+                   // PSPrint(P);
                     //printf("TOKEN type: %d\n",t->type);
                      t = get_next_token_psa(buffer);
                     //printf("TOKEN type: %d\n",t->type);
                     break;
+
                 case '>':
-                    //PSPrint(P); 
+                    //PSPrint(P);
                     choose_rule(P,t);
                     //PSPush(P,P_ADD);
-                    //PSPrint(P); 
+                    //PSPrint(P);
                     //t = get_next_token_psa(buffer);
                     break;
-                case ' ':
+                /*case ' ':
                     printf("Chyba\n");
                     return -1;
                     break;
-
+                */
 
 
             }
-            
-            printf("top je term %d\n",P->top->term);
+
+            /*printf("top je term %d\n",P->top->term);
             printf("top term na zasobniku: %d\n",PSTopTerm(P));
             printf("TOKEN type: %d\n",t->type);
             printf("Toto je %d\n",decode_token_array[t->type]);
             if(t->type == ENDMARK){
 
-            }
+            }*///PSPrint(P);
+                if(PSTopTerm(P)== P_ENDMARK && t->type == ENDMARK)
+                    return 2;
+           //PSPrint(P);
 
-       }while( t->type != ENDMARK);
-       PSPrint(P); 
+       }while(1);
+
+       // duri aj takto to ide, asi lepsie
+       // while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
+
+
+       //PSPrint(P);
         return 1;
 
-         
+
 }

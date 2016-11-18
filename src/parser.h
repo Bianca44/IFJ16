@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+void cleanup_exit(int exit_code);
+
 int parse_expression(bool ends_semicolon);
 int parse_return_value();
 int parse_next_param_value();
