@@ -138,7 +138,7 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         p->id_name = id_name;
         p->function.return_type = data_type;
         p->function.params_count = params_count;
-        p->function.local_vars_count = local_vars_count;
+        p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;
