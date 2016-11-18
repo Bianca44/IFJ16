@@ -29,6 +29,9 @@ enum Terminals{
     P_HANDLE // <
 };
 
+
+
+
 //teoreticky uchovavat typ operacie, typ premennej atd, vytvorit este polozku zasobnika
 
 typedef struct PStack_item{
@@ -47,7 +50,7 @@ typedef struct{
 
 
 PStack *PSInit();
-void PSPush(PStack *P,enum Terminals term,int type);
+void PSPush(PStack *P,enum Terminals terms);
 void PSPop(PStack *P);
 int  PSTopTerm(PStack *P); // zistenie prveho terminalu
 PStack_item *PSTopTermPtr(PStack *P); // ukazatel na polozku s najvrchnejsim terminalom

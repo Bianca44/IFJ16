@@ -1,16 +1,17 @@
 class Main {
-
+    static int u = 4;
+    static int h = 0 + u;
     static void run () {
             int a;
-		int c = 3;
-            {
-				a = (a &&a)&&a;
+		        int c = f+u;
+            //{
+				//a = (a &&a)&&a;
 				//a = 5>2;
 			//	a = 69 >= 2;
 			//	a = 7 <= 3;
-                a = ((5<5) + (4));
-              // a = 5+5+5-36;*/
-            }
+                //a = ((5<5) + (Main.h));
+              // a = 5+5+5-36;
+           // }
 
 
             int b =2;

@@ -8,7 +8,7 @@
 #include "error_codes.h"
 #include "ial.h"
 #include "scanner.h"
-#include "symbol_table.h"
+
 
 void sort(char *str) {
         quick_sort(str, 0, (strlen(str)-1));

@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
         parse(&inst_tape);
 
         printf("INTERPRET:\n");
-        interpret_tac(&inst_tape);
+        //interpret_tac(&inst_tape);
 
-        DLDisposeList(&inst_tape);
+        //DLDisposeList(&inst_tape);
 
         return INTERPRET_OK;
 }

@@ -113,7 +113,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
-                //get_psa(&tb);
+                get_psa(&tb);
                 return PARSED_OK;
         }
 
@@ -246,7 +246,7 @@ int parse_expression(bool ends_semicolon) {
                 // PSA
                 //free_token_buffer(&tb);
                 printf("\n");
-                //get_psa(&tb);
+                get_psa(&tb);
         }
         return PARSED_OK;
 
@@ -940,6 +940,7 @@ int parse_declaration() {
                         return PARSED_OK;
                 }
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
+                current_function.id_name = NULL; /*  TODO DAVID ERROR */
                 if (is_first_pass) {
                         if (!is_declared(current_variable.id_name)) {
                                 insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);

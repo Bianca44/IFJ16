@@ -1,5 +1,6 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
+#include "symbol_table.h"
 
 void sort(char *str);
 int find(char *p, char *t);
