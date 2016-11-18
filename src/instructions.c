@@ -5,6 +5,7 @@
 
 #define UNUSED(x) (void)(x)
 
+constant_t * tape_ref;
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     tInst * new_inst;
 
@@ -28,29 +29,14 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     }
 */
     if(new_inst->f == i_init_frame){
-        tVar * new;
-        if((new = malloc(sizeof(tVar))) == NULL){
-                //TODO
-        }
-        new->offset = -1;
-        new->initialized = true;
-        new->i = *((int *)op1);
-        new_inst->op1 = new;
+        new_inst->op1 = insert_special_const(&tape_ref, (void *)op1);
         //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
 
 
     }
 
     if(new_inst->f == i_f_call){
-        tVar * new;
-        if((new = malloc(sizeof(tVar))) == NULL){
-                //TODO
-        }
-        new->offset = -1;
-        new->initialized = true;
-        new->s = (char *)op1;
-        new_inst->op1 = new;
-        //TODO asi lepsie uchpvat pointer nie skopcit hodnotu
+        new_inst->op1 = insert_special_const(&tape_ref, (void *)op1);
     }
 
 
@@ -458,7 +444,7 @@ void i_not(tVar *op1, tVar *op2, tVar *result){
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
-    frame_stack.prepared = init_frame(op1->i);
+    frame_stack.prepared = init_frame(*op1->s);
     //frame_stack.prepared = init_frame(5);
     d_inst_name();
 }

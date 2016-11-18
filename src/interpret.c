@@ -117,15 +117,15 @@ int interpret_tac(tDLList *inst_tape){
         if(result != NULL && op1 != NULL && op2 != NULL){
             if(inst->result->data_type == INT){
 
-                d_print("%d", op1->i); //TODO
-                d_print("%d", op2->i); //TODO
-                d_print("%d", result->i); //TODO
+                d_print("%50d", op1->i); //TODO
+                d_print("%50d", op2->i); //TODO
+                d_print("%50d", result->i); //TODO
             }
             else if (inst->result->data_type == DOUBLE){
 
-                d_print("%f", op1->d); //TODO
-                d_print("%f", op2->d); //TODO
-                d_print("%f", result->d); //TODO 
+                d_print("%50f", op1->d); //TODO
+                d_print("%50f", op2->d); //TODO
+                d_print("%50f", result->d); //TODO 
             }
         }
         DLSucc(inst_tape);  

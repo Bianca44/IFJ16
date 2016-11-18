@@ -5,7 +5,7 @@ CC=gcc
 .PHONY: all clean r_test
 
 all:test
-test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o
+test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o memory_constants.o
 	$(CC) $(CFLAGS) -o $@ $^
 instructions.o:instructions.c instructions.h interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -19,6 +19,9 @@ symbol_table.o:symbol_table.c symbol_table.h ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 strings.o:strings.c strings.h
 	$(CC) $(CFLAGS) -c -o $@ $<
+memory_constants.o:memory_constants.c memory_constants.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 
 ntest:ntest_debug.o
 	$(CC) $(CFLAGS) -o $@ $<

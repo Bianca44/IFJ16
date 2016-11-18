@@ -8,6 +8,7 @@
 #include "ial.h"
 #include "strings.h"
 #include "scanner.h"
+#include "memory_constants.h"
 
 int push_counter;
 tDLList * processed_tape;
@@ -19,6 +20,8 @@ symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 string_t param_data_types;
+constant_t *labels;
+
 
 tVar * get_adress(char *id, symbol_table_t *t){
    
@@ -29,77 +32,112 @@ void set_label(tDLElemPtr jump, tDLElemPtr where){
     //malloc a pridat offset v kombinacii s povedomim o vykonavanej paske
     //linearny zoznam
     //TODO
-    tVar *new;
-    if((new = malloc(sizeof(tVar))) == NULL){
-        //TODO
-    }
-    new->offset = -1;
-    new->initialized = true;
-    new->s = (char *)where;
-    ((tInst *)(jump->data))->result = new;
+
+    ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
+
 }
+
 int main(){
-
-    //filling symbol table for test purposes
-    init_class_list();
-
-    char * name = "Main";
-    //set_current_class(name);
-    insert_class(name);
-    set_current_class(name);
-
-    symbol_table_t * t = get_symbol_table_for_class(name);
-    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-
-    symbol_table_t * f = create_function_symbol_table();
-
-    insert_function_variable_symbol_table(f, "par1", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "par2", INT, -1);
-    insert_function_variable_symbol_table(f, "a", INT, -1);
-    insert_function_variable_symbol_table(f, "b", INT, -1);
-    insert_function_variable_symbol_table(f, "c", INT, -1);
-    insert_function_variable_symbol_table(f, "d", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "e", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "f", DOUBLE, -1);
-    insert_function_variable_symbol_table(f, "bool", BOOLEAN, -1);
-
-    insert_function_symbol_table("test", INT, 2, 3, "di", f);
-    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-
-    symbol_table_item_t *i = get_symbol_table_function_item(f, "par1");
-    d_print("%d", i->variable.data_type == DOUBLE);
-
-
-    //insert(f->instrukcn, generate(ADD, adresu1, adresu2, adresu2));
-
-    tDLList L;
-    DLInitList(&L, dispose_inst);
-
+    
+    
+    
+    //pomocne premenna na simulovanie konstant
     tVar pomocna[100];
     for(int i=0 ;i < 100; i++){
 
         pomocna[i].offset = -1;
+        
     }
-    pomocna[0].i = 30;
-    pomocna[1].i = 35; 
-    pomocna[2].d = 10.2;
-    pomocna[3].d = 2.57;
-    pomocna[4].i = 1;
 
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("a",f)));
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("b",f)));
-    DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_SUB, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
- 
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("d",f)));
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("e",f)));
-    DLInsertLast(&L, generate(I_MUL, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_DIV, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
+    //filling symbol table for test purposes
+    init_class_list();
 
+    //class Main
+    //{
+    //  static void run()
+    //  {
+    //      //INT
+    //      a = b + c;
+    //      a = b - c;
+    //      a = b * c;
+    //      a = b / c;
+    //      //FLOAT
+    //      d = e + f;
+    //      d = e - f;
+    //      d = e * f;
+    //      d = e / f;
+    //  }
+    //}
+
+    char * name = "Main";
+    //pridanie triedy
+    insert_class(name);
+    //nastavime ako aktulanu triedu
+    set_current_class(name);
+
+    //pristup k tabulke
+    symbol_table_t * t = get_symbol_table_for_class(name);
+    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
+
+    //vytvorenie tabulka symbolov pre funkciu
+    symbol_table_t * run = create_function_symbol_table();
+
+    //pridanie lokalnych premennych
+    insert_function_variable_symbol_table(run, "a", INT, 0);
+    insert_function_variable_symbol_table(run, "b", INT, 1);
+    insert_function_variable_symbol_table(run, "c", INT, 2);
+    insert_function_variable_symbol_table(run, "d", DOUBLE, 3);
+    insert_function_variable_symbol_table(run, "e", DOUBLE, 4);
+    insert_function_variable_symbol_table(run, "f", DOUBLE, 5);
+    insert_function_variable_symbol_table(run, "bool", BOOLEAN, 6);
+
+    //pridanie ts funkcie do aktualnej triedy
+    insert_function_symbol_table("run", VOID, 0, 7, "", run);
+    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
+
+    //global instruction tape
+    tDLList gl_tape;
+    DLInitList(&gl_tape, dispose_inst);
+      
+    pomocna[0].i = 30; //a
+    pomocna[1].i = 35; //b
+    pomocna[2].d = 10.2; //e
+    pomocna[3].d = 2.57; //f
+
+    int x = 10;  
+    //paska pre run  
+    tDLList run_tape;
+    DLInitList(&run_tape, dispose_inst);
+
+    DLInsertLast(&gl_tape, generate(I_INIT_FRAME, &x, NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_F_CALL, &run_tape, NULL, NULL));
+
+    //b = 30
+    DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("b",run)));
+    //c = 35
+    DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("c",run)));
+    //      a = b + c;
+    //      a = b - c;
+    //      a = b * c;
+    //      a = b / c;
+    DLInsertLast(&run_tape, generate(I_ADD, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    DLInsertLast(&run_tape, generate(I_SUB, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    DLInsertLast(&run_tape, generate(I_MUL, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    DLInsertLast(&run_tape, generate(I_DIV, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    //d = 10.2
+    DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("e",run)));
+    //e = 2.57
+    DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("f",run)));
+    //      d = e + f;
+    //      d = e - f;
+    //      d = e * f;
+    //      d = e / f;
+    DLInsertLast(&run_tape, generate(I_ADD, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
+    DLInsertLast(&run_tape, generate(I_SUB, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
+    DLInsertLast(&run_tape, generate(I_MUL, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
+    DLInsertLast(&run_tape, generate(I_DIV, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
+    DLInsertLast(&run_tape, generate(I_RETURN, NULL, NULL, NULL));
+/*
     
     //if(a > b)
     //{
@@ -244,18 +282,19 @@ int main(){
 
 
     processed_tape = &L;
-    interpret_tac(&L);
 
-    DLDisposeList(&L);
+
+
     DLDisposeList(&F);
     DLDisposeList(&I);
 
-
-
-
-
-
+    */
+    //interpret_tac(&gl_tape);
+    DLDisposeList(&gl_tape);
+    DLDisposeList(&run_tape);
     free_class_list();
+    free_constants(&labels);
+    free_constants(&tape_ref);
 
     return 0;
 }

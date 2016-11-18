@@ -4,10 +4,13 @@
 
 #include "symbol_table.h"
 #include "scanner.h"
+#include "memory_constants.h"
 #include "interpret.h"
 
 typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
 
+extern constant_t * labels;
+extern constant_t * tape_ref;
 
 typedef struct tInst{
     tInst_fun *f;
@@ -117,6 +120,5 @@ void i_jt(tVar *op1, tVar *op2, tVar *result);
 
 
 
-extern tVar * global_offset;
 
 #endif //INSTRUCTIONS_H

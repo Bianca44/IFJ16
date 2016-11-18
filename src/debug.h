@@ -10,7 +10,7 @@
 #else
 #define d_print(str, ...) fprintf(stderr, __FILE__":%u: "str"\n", __LINE__, __VA_ARGS__)
 #define d_message(str) fprintf(stderr, __FILE__":%u: "str"\n", __LINE__)
-#define d_inst_name() fprintf(stderr, __FILE__":%u: instruction: %s\n",__LINE__,__func__)
+#define d_inst_name() fprintf(stderr, __FILE__":%u: %50s\n",__LINE__,__func__)
 #endif
 
 #endif //DEBUG_H
