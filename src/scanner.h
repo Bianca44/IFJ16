@@ -1,8 +1,8 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
+#include <stdio.h>
 #include "strings.h"
-#include "stdio.h"
 
 #define LONGEST_KEYWORD 8
 #define KEYWORDS_COUNT 17

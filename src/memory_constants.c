@@ -5,10 +5,10 @@
 #include "scanner.h"
 
 
-void insert_int_const(constant_t **const_arr, int num) {
+tVar * insert_int_const(constant_t **const_arr, int num) {
         tVar * new = (tVar *)malloc (sizeof(tVar));
         if (new == NULL) {
-                return;
+                return new;
         }
         new->data_type = INT;
         new->i = num;
@@ -17,17 +17,18 @@ void insert_int_const(constant_t **const_arr, int num) {
 
         constant_t * item = (constant_t *) malloc (sizeof(constant_t));
         if (item == NULL) {
-                return;
+                return NULL;
         }
         item->data = new;
         item->next = *const_arr;
         *const_arr = item;
+        return new;
 }
 
-void insert_double_const(constant_t **const_arr, double num) {
+tVar * insert_double_const(constant_t **const_arr, double num) {
         tVar * new = (tVar *)malloc (sizeof(tVar));
         if (new == NULL) {
-                return;
+                return new;
         }
         new->data_type = DOUBLE;
         new->d = num;
@@ -36,17 +37,18 @@ void insert_double_const(constant_t **const_arr, double num) {
 
         constant_t * item = (constant_t *) malloc (sizeof(constant_t));
         if (item == NULL) {
-                return;
+                return NULL;
         }
         item->data = new;
         item->next = *const_arr;
         *const_arr = item;
+        return new;
 }
 
-void insert_string_const(constant_t **const_arr, char * string) {
+tVar * insert_string_const(constant_t **const_arr, char * string) {
         tVar * new = (tVar *)malloc (sizeof(tVar));
         if (new == NULL) {
-                return;
+                return new;
         }
         new->data_type = STRING;
         new->s = string;
@@ -55,17 +57,18 @@ void insert_string_const(constant_t **const_arr, char * string) {
 
         constant_t * item = (constant_t *) malloc (sizeof(constant_t));
         if (item == NULL) {
-                return;
+                return NULL;
         }
         item->data = new;
         item->next = *const_arr;
         *const_arr = item;
+        return new;
 }
 
-void insert_boolean_const(constant_t **const_arr, bool state) {
+tVar * insert_boolean_const(constant_t **const_arr, bool state) {
         tVar * new = (tVar *)malloc (sizeof(tVar));
         if (new == NULL) {
-                return;
+                return new;
         }
         new->data_type = BOOLEAN;
         new->b = state;
@@ -74,12 +77,35 @@ void insert_boolean_const(constant_t **const_arr, bool state) {
 
         constant_t * item = (constant_t *) malloc (sizeof(constant_t));
         if (item == NULL) {
-                return;
+                return NULL;
         }
         item->data = new;
         item->next = *const_arr;
         *const_arr = item;
+        return new;
 }
+
+tVar * insert_special_const(constant_t **const_arr, void * special) {
+        tVar * new = (tVar *)malloc (sizeof(tVar));
+        if (new == NULL) {
+                return new;
+        }
+        new->data_type = RETURN;
+        new->s = special;
+        new->initialized = true;
+        new->offset = CONSTANT;
+
+        constant_t * item = (constant_t *) malloc (sizeof(constant_t));
+        if (item == NULL) {
+                return NULL;
+        }
+        item->data = new;
+        item->next = *const_arr;
+        *const_arr = item;
+
+        return new;
+}
+
 
 void free_constants(constant_t **const_arr) {
     if (const_arr == NULL) {
@@ -100,6 +126,8 @@ void free_constants(constant_t **const_arr) {
     *const_arr = NULL;
 }
 
+
+/*
 int main () {
         constant_t *head = NULL;
         insert_int_const(&head, 5000);
@@ -129,4 +157,4 @@ int main () {
 
         free_constants(&head);
         return 0;
-}
+}*/

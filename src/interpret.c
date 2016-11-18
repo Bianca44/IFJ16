@@ -5,7 +5,7 @@
 #include "debug.h"
 
 tFrame * init_frame(unsigned size){
-    
+
     tFrame * new_frame;
     if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar *))) == NULL){
         //TODO calloc ?
@@ -17,7 +17,7 @@ tFrame * init_frame(unsigned size){
     }
 
     new_frame->result = result;
-    
+
     return new_frame;
 }
 
@@ -36,20 +36,20 @@ tFrame * top_frame(tFrameStack *stack){
 }
 
 void push_frame(tFrameStack *stack, tFrame * frame){
-    
+
     tFSElem *ptr;
     if((ptr = malloc(sizeof(tFSElem))) == NULL){
         //TODO
     }
-    
+
     ptr->frame = frame;
-    //adding new frame to stack top 
+    //adding new frame to stack top
     ptr->next = stack->top;
     stack->top = ptr->next;
 }
-   
+
 void pop_frame(tFrameStack *stack){
-    
+
     tFSElem *tmp;
 
     if(stack->top != NULL){
@@ -65,20 +65,20 @@ void pop_frame(tFrameStack *stack){
 
 
 int interpret_tac(tDLList *inst_tape){
-    
+
     DLFirst(inst_tape);
     tInst * inst;
     while(DLActive(inst_tape)){
-        
+
         DLCopy(inst_tape, (void **)&inst);
-        
+
         inst->f(inst->op1, inst->op2, inst->result);
         if(inst->result->data_type == INT)
             d_print("%d", inst->result->i); //TODO
         else if (inst->result->data_type == DOUBLE)
-            d_print("%f", inst->result->d); //TODO 
-        DLSucc(inst_tape);  
-    } 
-     
+            d_print("%f", inst->result->d); //TODO
+        DLSucc(inst_tape);
+    }
+
    return 0; //TODO
 }

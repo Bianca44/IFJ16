@@ -12,18 +12,18 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         //TODO
     }
 
-    new_inst->op1_st = op1;           
-    new_inst->op2_st = op2;           
+    new_inst->op1_st = op1;
+    new_inst->op2_st = op2;
     new_inst->result_st = result;
 
-    new_inst->op1 = op1;           
-    new_inst->op2 = op2;           
+    new_inst->op1 = op1;
+    new_inst->op2 = op2;
     new_inst->result = result;
 
     new_inst->f = find_fun(instruction, result);
-  
+
     return new_inst;
-    
+
 }
 
 tInst_fun * find_fun(tInstId instruction, void * result){
@@ -83,7 +83,7 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         case I_NOT:
 			break;
-        //BUILT-IN AND OTHER  
+        //BUILT-IN AND OTHER
         case I_ASSIGN:
             switch(((tVar *)result)->data_type){
                 case INT:
@@ -142,10 +142,10 @@ tInst_fun * find_fun(tInstId instruction, void * result){
 			break;
         case I_LABEL:
             break;
-    }   
+    }
 
     return NULL;
-    
+
 }
 
 
@@ -255,7 +255,7 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     result->s = op1->s;
     d_inst_name();
 }
-// TODO 
+// TODO
 // TODO
 // TODO
 void i_jnc(tVar *op1, tVar *op2, tVar *result){
@@ -282,28 +282,15 @@ void i_g(tVar *op1, tVar *op2, tVar *result){
 }
 
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
-    
+
 
     UNUSED(op1);
-    UNUSED(op2); 
+    UNUSED(op2);
     //interpret_tac((tDLList *)op1->s);
-  
+
     if(result != NULL){
         //uloz vysledok TODO
     }
 //    pop_frame(&frame_stack);
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

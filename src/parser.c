@@ -25,7 +25,7 @@ bool is_first_pass = true;
 bool is_second_pass = false;
 bool function_has_return = false;
 bool static_var_declaration = false;
-// has return, ignore in void function
+tDLList * global_inst_tape;
 token_t t;
 token_buffer_t token_buffer;
 #define PARSE_ERROR 0
@@ -37,7 +37,7 @@ string_t param_data_types;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
-symbol_table_item_t psa_result;
+symbol_table_item_t * expr_result;
 char* current_class;
 char* function_call_name;
 
@@ -87,19 +87,19 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        cleanup_exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR); // TODO check forum
                                         }
                                 }
                         }
                         else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        cleanup_exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
                                         if (item->is_function) {
@@ -150,7 +150,7 @@ int parse_expression(bool ends_semicolon) {
                 if (is_function) {
                         //printf("data type %d\n", item->function.return_type);
                         function_call_name = t.string_value;
-                        psa_result = *item;
+                        expr_result = item;
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
@@ -377,7 +377,7 @@ int parse_next_param_value() {
 
                                 //symbol_table_item_t *function_item = get_symbol_table_class_item(current_class, function_call_name);
                                 //printf("fun %s %d datapyes %s\n", function_item->id_name, function_item->function.return_type, function_item->function.param_data_types);
-                                printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_call_name, t_names[data_type], params_counter);
+                                //printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_call_name, t_names[data_type], params_counter);
                         }
                         get_token();
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -495,7 +495,7 @@ int parse_param_value () {
 
                                         params_counter++;
 
-                                        printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_call_name, t_names[data_type], params_counter);
+                                        //printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_call_name, t_names[data_type], params_counter);
                                 }
                                 get_token();
                                 if (t.type == COMMA) {
@@ -511,7 +511,6 @@ int parse_param_value () {
                                                 char expected_param_type = function_item->function.param_data_types[params_counter];
                                                 printf("ifj16.print vyzaduje %c\n", expected_param_type); // TODO
                                                 params_counter++;
-
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 return PARSED_OK;
@@ -664,15 +663,12 @@ int parse_statement() {
                                         } else {
                                                 symbol_table_item_t * p = get_symbol_table_function_item(function_symbol_table, t.string_value);
                                                 function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
-                                                //printf("MAM TYP3 %d\n", function_variable.variable.data_type);
+                                                //printf("MAM TYP3 %s\n", t_names[function_variable.variable.data_type]);
                                         }
                                 } else {
                                         symbol_table_item_t * p = get_symbol_table_class_item(current_class, t.string_value);
-                                        if (p->is_function) {
-                                                //function_call_name = t.string_value;
-                                        }
                                         function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
-                                        //printf("MAM TYP2 %d\n", function_variable.variable.data_type);
+                                        //printf("MAM TYP3 %s\n", t_names[function_variable.variable.data_type]);
                                 }
                         }
                 }
@@ -785,9 +781,9 @@ int parse_method_element() {
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                function_variable.variable.data_type = t.type;
                 if (is_first_pass) {
                         current_function.function.local_vars_count++;
-                        function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
@@ -801,6 +797,7 @@ int parse_method_element() {
                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
+
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
@@ -924,12 +921,13 @@ int parse_value() {
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (parse_expression(true)) {
                                 if (is_second_pass) {
-                                        if (psa_result.id_name != NULL) {
-                                                int expr_data_type = psa_result.is_function ? psa_result.function.return_type : psa_result.variable.data_type;
-                                                printf("premna s typom %s, priradujem expr %s...\n", t_names[function_variable.variable.data_type], t_names[expr_data_type]);
-                                                psa_result.id_name = NULL;
-
-                                                // CHYBA 4 v konflikte
+                                        if (expr_result != NULL) {
+                                                int expr_data_type = expr_result->is_function ? expr_result->function.return_type : expr_result->variable.data_type;
+                                                if (function_variable.variable.data_type != expr_data_type) {
+                                                    fprintf(stderr, "Incompatible types to assign value.\n");
+                                                    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                }
+                                                expr_result = NULL;
                                         }
                                 }
                                 return PARSED_OK;
@@ -938,7 +936,6 @@ int parse_value() {
         } if (t.type == SEMICOLON) {
                 return PARSED_OK;
         }
-
         return PARSE_ERROR;
 }
 
@@ -1101,7 +1098,9 @@ void add_builtin_functions() {
         insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL);
         insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL);
 }
-int parse() {
+
+int parse(tDLList * inst_tape) {
+        global_inst_tape = inst_tape;
 
         if (is_first_pass) {
                 init_token_buffer(&token_buffer);
@@ -1126,7 +1125,7 @@ int parse() {
                                         }
                                 }
                         } else /* second pass */ {
-                                free_class_list(); // uvolni zoznam tried
+                                // free_class_list(); // uvolni zoznam tried
                         }
 
                         if (is_first_pass) {

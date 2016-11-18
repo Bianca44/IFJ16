@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "DLList.h"
+
 void cleanup_exit(int exit_code);
 
 int parse_expression(bool ends_semicolon);
@@ -23,7 +25,7 @@ int parse_param();
 int parse_declaration_element();
 int parse_class_element();
 int parse_class_list();
-int parse();
+int parse(tDLList *inst_tape);
 
 void add_builtin_functions();
 

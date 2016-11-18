@@ -1,4 +1,4 @@
-class [ Main {
+class Main {
 
     static void run () {
             int a;
@@ -7,8 +7,8 @@ class [ Main {
                 a = 5;
             }
 
-
-            int b = play("h", "h");
+            int l = ifj16.sort("hello");
+            //int b = play("h", "h");
             if (9) {
                 {
                     {}
