@@ -2,8 +2,7 @@
 #define SCANNER_H
 
 #include "strings.h"
-
-extern int parser_error_flag;
+#include "stdio.h"
 
 #define LONGEST_KEYWORD 8
 #define KEYWORDS_COUNT 17
