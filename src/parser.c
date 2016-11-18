@@ -25,13 +25,13 @@ bool is_first_pass = true;
 bool is_second_pass = false;
 bool function_has_return = false;
 bool static_var_declaration = false;
+
 tDLList * global_inst_tape;
 token_t t;
 token_buffer_t token_buffer;
+
 #define PARSE_ERROR 0
 #define PARSED_OK 1
-
-#define CONSTANT -1
 
 string_t param_data_types;
 symbol_table_item_t current_variable;
@@ -769,6 +769,16 @@ int parse_method_element() {
                         printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
+
+                                /* TODO
+                                symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, 42);
+                                symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, 43);
+                                if (p==NULL) {
+                                    printf("nenajdene\n");
+                                }
+                                printf("nenajdene %d\n", x->variable.offset);
+                                //printf("test %d\n", p->variable.data_type);
+                                */
                                 current_function.id_name = NULL;
                         } else {
                                 fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
@@ -1056,6 +1066,13 @@ int parse_class_list() {
                                 if (!exists_class(current_class)) {
                                         insert_class(current_class);
                                         set_current_class(current_class);
+
+                                        /* TODO
+                                        insert_tmp_variable_symbol_table_class(42);
+                                        symbol_table_item_t * p = get_symbol_table_class_item(current_class, "#0");
+                                        printf("test %d\n", p->variable.data_type);
+
+                                        */
                                 } else {
                                         fprintf(stderr, "Class \'%s\' was redeclared.\n", current_class);
                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
@@ -1116,7 +1133,7 @@ int parse(tDLList * inst_tape) {
                         if (is_first_pass) {
                                 symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
                                 if (run_method == NULL) {
-                                        fprintf(stderr, "Missing \'Main.run\' method.\n");
+                                        fprintf(stderr, "Missing function\'Main.run\'.\n");
                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         if (!(run_method->function.return_type == VOID) || !(run_method->function.params_count == 0)) {

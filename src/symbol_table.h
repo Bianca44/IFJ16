@@ -7,6 +7,9 @@
 #include "DLList.h"
 // TODO
 #define SYMBOL_TABLE_SIZE 11
+#define TMP_VAR_NAME_SIZE 8
+
+#define CONSTANT -1
 
 typedef tHTable symbol_table_t;
 
@@ -75,6 +78,8 @@ symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_tab
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name);
 bool is_special_id_declared(char * id_name);
 symbol_table_item_t * get_symbol_table_special_id_item(char * id_name);
+symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type);
+symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_name, int data_type);
 
 typedef struct js_item {
     tDLElemPtr data;

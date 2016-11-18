@@ -208,7 +208,7 @@ void append_param_data_types(int type) {
 }
 
 
-/* Ziska polozku za tabulky symbolov pre plne kvalifikovany identifikator */
+/* Ziska polozku z tabulky symbolov pre plne kvalifikovany identifikator */
 symbol_table_item_t * get_symbol_table_special_id_item(char * id_name) {
         char *special_id = copy_string(id_name);
         char *class;
@@ -235,6 +235,48 @@ bool is_special_id_declared(char * id_name) {
                 return false;
         }
         return item->declared;
+}
+
+/* Vytvori pomocnu premennu v tabulke pre aktualnu triedu */
+symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
+        symbol_table_item_t * p = create_symbol_table_item();
+        char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
+        static int tmp_id = 0;
+        sprintf(id_name , "#%d", tmp_id);
+
+        p->variable.data_type = data_type;
+        p->variable.initialized = false;
+        p->is_function = false;
+        p->declared = true;
+        p->id_name = id_name;
+        p->variable.offset = CONSTANT;
+        insert_symbol_table_item(id_name, p);
+        tmp_id++;
+        return p;
+}
+
+/* Vytvori pomocnu premennu v tabulke pre funkciu */
+symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_name, int data_type) {
+        symbol_table_item_t * p = create_symbol_table_item();
+        symbol_table_item_t * function_item = get_symbol_table_class_item(current_class, function_name);
+        symbol_table_t * function_table = function_item->function.symbol_table;
+
+        int offset = function_item->function.params_local_vars_count;
+        char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
+        static int tmp_id = 0;
+        sprintf(id_name , "#%d", tmp_id);
+
+        p->id_name = id_name;
+        p->variable.data_type = data_type;
+        p->variable.offset = offset;
+        p->variable.initialized = false;
+        p->is_function = false;
+        p->declared = true;
+
+        function_item->function.params_local_vars_count++;
+        function_item->function.local_vars_count++;
+        ht_insert(function_table, id_name, p);
+        return p;
 }
 
 /* Uvolni zoznam tried */

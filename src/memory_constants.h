@@ -3,8 +3,6 @@
 
 #include "symbol_table.h"
 
-#define CONSTANT -1
-
 typedef struct constant {
         tVar * data;
         struct constant * next;
