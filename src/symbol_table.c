@@ -25,7 +25,7 @@ void dispose_class_symbol_table(tData data) {
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-                        free(item->function.param_data_types);
+                        //free(item->function.param_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
                         ht_free((symbol_table_t *)(item->function.symbol_table));
@@ -191,7 +191,7 @@ bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
 }
 
 /* Prevod datoveho typu na jeho specificky znak */
-void append_param_data_types(int type) {
+void append_type(string_t *str, int type) {
         char data_type_char = 0;
         switch (type) {
         case INT:
@@ -210,7 +210,7 @@ void append_param_data_types(int type) {
                 break;
         }
 
-        append_char(&param_data_types, data_type_char);
+        append_char(str, data_type_char);
 }
 
 

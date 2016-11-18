@@ -51,6 +51,7 @@ typedef struct symbol_table_item {
                         int local_vars_count;
                         int params_local_vars_count;
                         char * param_data_types;
+                        char * local_vars_data_types;
                         symbol_table_t * symbol_table;
                         tDLList *instruction_tape;
                 } function;
@@ -69,7 +70,7 @@ symbol_table_item_t * create_symbol_table_item();
 symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type, int offset);
 symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table);
 bool is_declared(char * id_name);
-void append_param_data_types(int type);
+void append_type(string_t *str, int type);
 symbol_table_t * get_symbol_table_for_class(char* class_name);
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name);
 symbol_table_t * create_function_symbol_table();
@@ -96,7 +97,6 @@ void js_pop() ;
 extern symbol_table_item_t current_variable;
 extern symbol_table_item_t function_variable;
 extern symbol_table_item_t current_function;
-extern string_t param_data_types;
 extern char* current_class;
 
 #endif //SYMBOL_TABLE_H

@@ -8,6 +8,7 @@
 #include "strings.h"
 #include "token_buffer.h"
 #include "expr.h"
+#include "memory_constants.h"
 #include "error_codes.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
@@ -27,6 +28,7 @@ bool function_has_return = false;
 bool static_var_declaration = false;
 bool skip_psa = false;
 
+constant_t * mem_constants = NULL;
 tDLList * global_inst_tape;
 token_t t;
 token_buffer_t token_buffer;
@@ -35,6 +37,7 @@ token_buffer_t token_buffer;
 #define PARSED_OK 1
 
 string_t param_data_types;
+string_t local_vars_data_types;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
@@ -748,8 +751,9 @@ int parse_method_element() {
                         }
 
                         current_function.function.param_data_types = param_data_types.data;
+                        current_function.function.local_vars_data_types = local_vars_data_types.data;
                         current_function.function.params_count = param_data_types.length;
-                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count);
+                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
 
@@ -768,13 +772,16 @@ int parse_method_element() {
                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
 
-                        clear_string(&param_data_types); /* vyprazdni string ale neuvolni */
+                        clear_string(&param_data_types);
+                        clear_string(&local_vars_data_types); /* vyprazdni string ale neuvolni */
                         current_function.function.local_vars_count = 0;
                         function_variable.variable.offset = 0;
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 function_variable.variable.data_type = t.type;
+                append_type(&local_vars_data_types, t.type);
+
                 if (is_first_pass) {
                         current_function.function.local_vars_count++;
                 }
@@ -802,7 +809,7 @@ int parse_method_element() {
                         }
                 }
         } else if (t.type == LEFT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                if(parse_element_list()) {
+                if (parse_element_list()) {
                         if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF || t.type == WHILE) {
                                 return parse_method_element();
                         }
@@ -819,7 +826,7 @@ int parse_next_param() {
                 get_token();
                 if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                         if (is_first_pass) {
-                                append_param_data_types(t.type);
+                                append_type(&param_data_types, t.type);
                                 function_variable.variable.data_type = t.type;
                         }
                         if (parse_param()) {
@@ -857,7 +864,7 @@ int parse_param_list() {
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 if (is_first_pass) {
                         init_string(&param_data_types);
-                        append_param_data_types(t.type);
+                        append_type(&param_data_types, t.type);
                         function_variable.variable.data_type = t.type;
                 }
                 if (parse_param()) {
