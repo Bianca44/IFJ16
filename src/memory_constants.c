@@ -104,6 +104,9 @@ tVar * insert_special_const(constant_t **const_arr, void * special) {
 
 
 void free_constants(constant_t **const_arr) {
+    if (const_arr == NULL) {
+            return;
+    }
     constant_t * tmp = *const_arr;
     constant_t * next = NULL;
     while (tmp != NULL) {
