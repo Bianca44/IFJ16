@@ -3,13 +3,12 @@
 #include "interpret.h"
 #include "instructions.h"
 #include "debug.h"
-//TODO error
-#define initialize(var) (var->initialized = true, var)
-#define check_init(var) (var->initialized) ? (var) : (exit(42), NULL)
-#define evaluate_res(adress) ((adress != NULL) ? (initialize(get_e_adr(adress))) : (NULL))
-#define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
+
+#define initialize(var) (var->initialized = true)
+#define check_init(var) (var->initialized) ? (var) : (NULL, return 42)
+#define evaluate(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
 #define get_e_adr(adress) \
-    ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
+    (adress->offset == CONSTANT ? adress : adress->offset + frame_stack.top->frame->local)
 
 //todo inicializovane ? assign, call_f
 
@@ -84,9 +83,9 @@ int interpret_tac(tDLList *inst_tape){
         DLCopy(inst_tape, (void **)&inst);
 
         d_message("spracovanie adries");
-        op1 = evaluate_op(inst->op1);         
-        op2 = evaluate_op(inst->op2);         
-        result = evaluate_res(inst->result);         
+        op1 = evaluate(inst->op1);         
+        op2 = evaluate(inst->op2);         
+        result = evaluate(inst->result);         
         d_message("vykonanie instrukcie");
         d_tVarPtr(op1);
         d_tVarPtr(op2);               

@@ -62,9 +62,7 @@ typedef enum instructions {
     //ASSOCIATED WITH FUNCTIONS
     I_INIT_FRAME,
     I_PUSH_PARAM,
-    I_CALL_F_AND_STORE,
     I_F_CALL,
-    I_REMOVE_FRAME,
     I_RETURN,
     //JUMPS
     I_GOTO,

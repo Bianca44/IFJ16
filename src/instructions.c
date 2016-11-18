@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "instructions.h"
 #include "interpret.h"
 #include "debug.h"
@@ -20,11 +21,11 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     
     //treba pretypovat odkazy na label a na pocet lok. premmentch na tVar koli prepoctu adries
     if(new_inst->f == i_init_frame){
-        new_inst->op1 = insert_special_const(&tape_ref, (void *)op1);
+        new_inst->op1 = insert_special_const(&tape_ref, op1);
     }
 
     if(new_inst->f == i_f_call){
-        new_inst->op1 = insert_special_const(&tape_ref, (void *)op1);
+        new_inst->op1 = insert_special_const(&tape_ref, op1);
     }
 
     return new_inst;
@@ -251,11 +252,36 @@ void i_not(tVar *op1, tVar *op2, tVar *result){
 //FUNCTIONS
 //initialization of frame
 //op1 size of frame
+
+int decode_type(char type){
+    switch (type) {
+    case 'i':
+        return INT;
+    case 'd':
+        return DOUBLE;
+    case 'b':
+        return BOOLEAN;
+    case 's':
+        return STRING;
+    default:
+       d_message("CHYBA V DECODE_TYPE"); 
+       return -42;
+    }
+}
+
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
-    frame_stack.prepared = init_frame(*((int *)op1->s));
-    //frame_stack.prepared = init_frame(5);
+    symbol_table_item_t *fun = (symbol_table_item_t *)(op1->s);
+    frame_stack.prepared = init_frame(fun->function.params_local_vars_count);
+    int i = fun->function.params_count; 
+
+    for(char *s = fun->function.local_vars_data_types; *s != '\0'; s++){
+        frame_stack.prepared->local[i].data_type = decode_type(*s);
+        frame_stack.prepared->local[i].initialized = false;
+        i++;
+    }
+
     d_inst_name();
 }
 //push
@@ -263,9 +289,10 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
     frame_stack.prepared->local[push_counter] = *op1;
-    
-    d_print("PUSH %d",frame_stack.prepared->local[push_counter].i);
-    //todo string
+    if(op1->data_type == STRING){        
+        strcpy(frame_stack.prepared->local[push_counter].s, op1->s);
+    }
+    d_tVarPtr(op1);
     push_counter++;
     d_inst_name(); 
 }
@@ -279,7 +306,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 
     push_frame(&frame_stack, frame_stack.prepared);
     d_message("ramec pridany na vrchol");
-    //set_effective_adresess((tDLList *)op1);
+
     tDLElemPtr pi = DLActiveElem(processed_tape);
     tDLList *parent_tape = processed_tape;
 
@@ -293,8 +320,8 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 
     if(result != NULL){
 
-        result->i = frame_stack.top->frame->ret_val->i; 
-        d_print("%d ==VYSL== ", result->i);
+    //    result->i = frame_stack.top->frame->ret_val->i; 
+  //      d_print("%d ==VYSL== ", result->i);
         //TODO
     }
 
@@ -305,8 +332,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 
 void i_return(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2); 
-    UNUSED(result); 
-    //TODO string
+    UNUSED(result);
     d_inst_name();
     frame_stack.top->frame->ret_val = op1;
     DLLast(processed_tape);
@@ -457,12 +483,8 @@ tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
         case I_PUSH_PARAM:
             return i_push_param;
 			break;
-        case I_CALL_F_AND_STORE:
-			break;
         case I_F_CALL:
             return i_f_call;
-			break;
-        case I_REMOVE_FRAME:
 			break;
         case I_RETURN:
             return i_return;

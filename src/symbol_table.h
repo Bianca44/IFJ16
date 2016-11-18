@@ -48,6 +48,7 @@ typedef struct symbol_table_item {
                         int local_vars_count;
                         int params_local_vars_count;
                         char * param_data_types;
+                        char * local_vars_data_types;
                         symbol_table_t * symbol_table;
                         tDLList *instruction_tape;
                 } function;

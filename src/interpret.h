@@ -5,6 +5,7 @@
 
 typedef struct tFrame{       
     tVar *ret_val;
+    int size;
     tVar local[]; //flexible array member    
 }tFrame;
 
