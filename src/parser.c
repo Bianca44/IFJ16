@@ -591,41 +591,16 @@ int parse_condition_list() {
                                 return PARSED_OK;
                         }
                 }
-        } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                current_function.function.local_vars_count++;
-                function_variable.variable.data_type = t.type;
-                if (parse_param()) {
-                        if (is_first_pass) {
-                                //printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
-                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                        function_variable.variable.offset++;
-                                        function_variable.id_name = NULL;
-                                } else {
-                                        fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                }
-                        }
-                        get_token();
-                        if (t.type == ASSIGN || t.type == SEMICOLON) {
-                                if (parse_value()) {
-                                        get_token();
-                                        if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                                                return PARSED_OK;
-                                        }
-                                }
-                        }
-                }
         }
         return PARSE_ERROR;
 }
 
 int parse_else() {
-        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 get_token();
-                if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
+                if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET) {
                         if(parse_condition_list()) {
                                 if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                         return PARSED_OK;
