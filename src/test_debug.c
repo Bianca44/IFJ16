@@ -54,6 +54,7 @@ int main(){
 
     //class Main
     //{
+    //  static int x;
     //  static void run()
     //  {
     //      //INT
@@ -61,12 +62,43 @@ int main(){
     //      a = b - c;
     //      a = b * c;
     //      a = b / c;
+    //      x = x + b;
     //      //FLOAT
     //      d = e + f;
     //      d = e - f;
     //      d = e * f;
     //      d = e / f;
+    //      
+    //      if(b < c)
+    //      {
+    //          a = b*c
+    //      }
+    //      else
+    //      {
+    //          a = b/c
+    //      }
+    //      
+    //      while(b <= c){
+    //          b = b + 1;
+    //      }
     //  }
+    //  x = x + x; // **
+    //
+    //  static int factorial(int n) // Definice funkce pro vypocet faktorialu
+    //  {
+    //      int temp_result;
+    //      int decremented_n = n - 1;
+    //          if (n < 2) {
+    //              return 1;
+    //          }
+    //          else {
+    //              temp_result = factorial(decremented_n);
+    //              temp_result = n * temp_result;
+    //              return temp_result;
+    //      }
+    //  }
+    //
+    //  x = factorial(11);
     //}
 
     char * name = "Main";
@@ -76,8 +108,10 @@ int main(){
     set_current_class(name);
 
     //pristup k tabulke
-    symbol_table_t * t = get_symbol_table_for_class(name);
-    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
+    symbol_table_t * main_f = get_symbol_table_for_class(name);
+    d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
+    //x
+    insert_variable_symbol_table("x", INT, CONSTANT);
 
     //vytvorenie tabulka symbolov pre funkciu
     symbol_table_t * run = create_function_symbol_table();
@@ -93,25 +127,28 @@ int main(){
 
     //pridanie ts funkcie do aktualnej triedy
     insert_function_symbol_table("run", VOID, 0, 7, "", run);
-    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-/*
+    d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
+
     //global instruction tape
     tDLList gl_tape;
     DLInitList(&gl_tape, dispose_inst);
       
-    pomocna[0].i = 30; //a
-    pomocna[1].i = 35; //b
+    pomocna[0].i = 32; //b
+    pomocna[1].i = 35; //c
     pomocna[2].d = 10.2; //e
     pomocna[3].d = 2.57; //f
-
-    int x = 10;  
+    pomocna[4].i = 2;
+    int x = 10; 
     //paska pre run  
-    tDLList run_tape;
+    tDLList  run_tape;
     DLInitList(&run_tape, dispose_inst);
-
+    // x = 2
+    DLInsertLast(&gl_tape, generate(I_ASSIGN, &pomocna[4], NULL, get_adress("x",main_f)));
+    // run()
     DLInsertLast(&gl_tape, generate(I_INIT_FRAME, &x, NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_F_CALL, &run_tape, NULL, NULL));
 
+    //ZACIATOK FUNKCIE ========================
     //b = 30
     DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("b",run)));
     //c = 35
@@ -120,10 +157,12 @@ int main(){
     //      a = b - c;
     //      a = b * c;
     //      a = b / c;
+    //      x = x + b;
     DLInsertLast(&run_tape, generate(I_ADD, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
     DLInsertLast(&run_tape, generate(I_SUB, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
     DLInsertLast(&run_tape, generate(I_MUL, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
     DLInsertLast(&run_tape, generate(I_DIV, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    DLInsertLast(&run_tape, generate(I_ADD, get_adress("x",main_f), get_adress("b",run), get_adress("x",main_f)));
     //d = 10.2
     DLInsertLast(&run_tape, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("e",run)));
     //e = 2.57
@@ -136,153 +175,145 @@ int main(){
     DLInsertLast(&run_tape, generate(I_SUB, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
     DLInsertLast(&run_tape, generate(I_MUL, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
     DLInsertLast(&run_tape, generate(I_DIV, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
-    DLInsertLast(&run_tape, generate(I_RETURN, NULL, NULL, NULL));
 
+
+
+    //x = x + x
+    DLInsertLast(&gl_tape, generate(I_ADD, get_adress("x",main_f), get_adress("x",main_f), get_adress("x",main_f)));
     
-    //if(a > b)
+    //if(b < c)
     //{
-    //  c = a*b
+    //  a = b*c
     //}
     //else
     //{
-    //  c = a/b
+    //  a = b/c
     //}
 
+    //ZACIATOK PODM ===================
+    js_init(); // zasobnik na to odkial sa skace alebo kde skocit
+    
+    // if a > b
+    DLInsertLast(&run_tape, generate(I_L, get_adress("b",run), get_adress("c",run), get_adress("bool",run)));
+    DLInsertLast(&run_tape, generate(I_JNT, get_adress("bool",run), NULL, NULL));
+    js_push(DLGetLast(&run_tape)); //uloz na zosobnik, odkial sa skace
+    //c = a * b
+    DLInsertLast(&run_tape, generate(I_MUL, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
 
-    pomocna[5].offset = -1;
-    pomocna[5].s = (char *)&L;
-    d_message("pred prvym skokom");
-    //tDLElemPtr inst;
-    js_init();
-    DLInsertLast(&L, generate(I_G, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
-    //uloz na zosobnik
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), NULL, NULL));
-    js_push(DLGetLast(&L));
-    DLInsertLast(&L, generate(I_MUL, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
+    DLInsertLast(&run_tape, generate(I_GOTO, NULL, NULL, NULL));
   
-    d_message("pred nastavem labelu 1");
-    set_label(js_top(), DLGetLast(&L));
+    set_label(js_top(), DLGetLast(&run_tape));//na if nastavime ze ma skocit za goto
+
+    js_pop();//uvolnime polozku odkial sa skakalo (z ifu)
+    js_push(DLGetLast(&run_tape)); // pridame odkial sa skace (z goto)
+    //c = a/b    
+    DLInsertLast(&run_tape, generate(I_DIV, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    set_label(js_top(), DLGetLast(&run_tape)); //do goto priradime adresu de ma skocit (za DIV)
     js_pop();
-    js_push(DLGetLast(&L));
-    DLInsertLast(&L, generate(I_DIV, get_adress("a",f), get_adress("b",f), get_adress("c",f)));
-  
-    d_message("pred nastavem labelu 2");
-    set_label(js_top(), DLGetLast(&L));
-    js_pop();
-    //
 
-    d_message("prve skakanie if");
+   //KONIEC PODM =======================
 
-    DLInsertLast(&L, generate(I_ADD, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-
-
-    //while(a<b){
-    //  a = a + 1;
+    //while(b <= c){
+    //  b = b + 1;
     //  }
-    // instrukcna paska globalna premenna ? 
-    js_push(DLGetLast(&L));
-    DLInsertLast(&L, generate(I_LE, get_adress("a",f), get_adress("b",f), get_adress("bool",f)));
-    DLInsertLast(&L, generate(I_JNT, get_adress("bool",f), NULL, NULL));
-    js_push(DLGetLast(&L));
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
-    DLInsertLast(&L, generate(I_GOTO, NULL, NULL, NULL));
-    set_label(js_top(), DLGetLast(&L));
-    js_pop();
-    set_label(DLGetLast(&L), js_top());
-    js_pop();
- 
-
-    DLInsertLast(&L, generate(I_SUB, get_adress("d",f), get_adress("e",f), get_adress("f",f)));
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
+    pomocna[5].i = 1;
+    //  ZACIATOK CYKLU
+    js_push(DLGetLast(&run_tape)); //pridanie de sa ma skocit, - bude sa pokraocvat na overeni podm
+    // b <= c
+    DLInsertLast(&run_tape, generate(I_LE, get_adress("b",run), get_adress("c",run), get_adress("bool",run)));
+    DLInsertLast(&run_tape, generate(I_JNT, get_adress("bool",run), NULL, NULL));
+    js_push(DLGetLast(&run_tape)); //odkial sa skace
+    //b = b + 1
+    DLInsertLast(&run_tape, generate(I_ADD, get_adress("b",run), &pomocna[5], get_adress("b",run)));
     
-
-    tDLList F;
-    DLInitList(&F, dispose_inst);
-
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), &pomocna[4], get_adress("a",f)));
-
-
-    symbol_table_t * f2 = create_function_symbol_table();
-    insert_function_symbol_table("f2", INT, 2, 3, "di", f2);
-    d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-
-
-    insert_function_variable_symbol_table(f2, "par1", INT, 0);
-    insert_function_variable_symbol_table(f2, "a", INT, 1);
-    insert_function_variable_symbol_table(f2, "b", INT, 2);
-    insert_function_variable_symbol_table(f2, "c", INT, 3);
-    insert_function_variable_symbol_table(f2, "d", INT, 4);
-
-    i = get_symbol_table_function_item(f2, "par1");
-    d_print("%d", i->variable.data_type == INT);
-
-    pomocna[10].i=4;
-    pomocna[11].i=7;
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[10], NULL, get_adress("a",f)));
-    DLInsertLast(&L, generate(I_ASSIGN, &pomocna[11], NULL, get_adress("b",f)));
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("a",f)));
-
-    int x = 5;//pocet premennych plus parametrov
-    DLInsertLast(&L, generate(I_INIT_FRAME, &x, NULL, NULL));
-    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("a",f), NULL, NULL));
-    DLInsertLast(&L, generate(I_PUSH_PARAM, get_adress("a",f), NULL, NULL));
-
-    pomocna[16].offset = -1;
-    pomocna[16].i = 1;
-    pomocna[16].data_type = INT;
-    DLInsertLast(&L, generate(I_F_CALL, &F, NULL, &pomocna[16]));
-
-
-    tDLList I;
-    DLInitList(&I, dispose_inst);
-    DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
-    DLInsertLast(&I, generate(I_ADD, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
-    //F
-    pomocna[15].offset = -1;
-    pomocna[15].i = 1;
-    DLInsertLast(&F, generate(I_SUB, get_adress("par1",f2), &pomocna[15], get_adress("a",f2)));
-    
-
-
-    pomocna[13].i = 1;
-    pomocna[13].offset = -1;
-    pomocna[14].offset = -1;
-    //if (par1 > 1000) { volaj f }
-    DLInsertLast(&F, generate(I_G, get_adress("a",f2), &pomocna[13], &pomocna[14]));
-    DLInsertLast(&F, generate(I_JNT, &pomocna[14], NULL, NULL));
-    js_push(DLGetLast(&F));
-
-    DLInsertLast(&F, generate(I_INIT_FRAME, &x, NULL, NULL));
-    DLInsertLast(&F, generate(I_PUSH_PARAM, get_adress("a",f2), NULL, NULL));
-    DLInsertLast(&F, generate(I_F_CALL, &F, NULL, get_adress("a",f2)));
-    set_label(js_top(), DLGetLast(&F));
+    DLInsertLast(&run_tape, generate(I_GOTO, NULL, NULL, NULL));
+    set_label(js_top(), DLGetLast(&run_tape));//do ifu nastavime ze sa ma skocit za goto
     js_pop();
- 
-    DLInsertLast(&F, generate(I_MUL, get_adress("par1",f2), get_adress("a",f2), get_adress("a",f2)));
-    DLInsertLast(&F, generate(I_RETURN, get_adress("a",f2), NULL, NULL));
+    set_label(DLGetLast(&run_tape), js_top()); // do goto priradime ze sa ma skocit pred while na overenie podm
+    js_pop();
+    //KONIEC CYKLU ==============
+
+    DLInsertLast(&run_tape, generate(I_RETURN, NULL, NULL, NULL));
+
+    //KONIEC FUNKCIE ============================================
 
 
 
+    //ZACIATOK FAKTORIALU  ========================================
+    //static int factorial(int n) // Definice funkce pro vypocet faktorialu
+    //{
+    //  int temp_result;
+    //  int decremented_n = n - 1;
+    //      if (n < 2) {
+    //          return 1;
+    //      }
+    //      else {
+    //          temp_result = factorial(decremented_n);
+    //          temp_result = n * temp_result;
+    //          return temp_result;
+    //      }
+    //}
+
+    //vytvorenie tabulka symbolov pre funkciu
+    symbol_table_t * fact = create_function_symbol_table();
+
+    //pridanie lokalnych premennych
+    insert_function_variable_symbol_table(fact, "n", INT, 0);
+    insert_function_variable_symbol_table(fact, "temp_result", INT, 1);
+    insert_function_variable_symbol_table(fact, "decremented_n", INT, 2);
+    insert_function_variable_symbol_table(fact, "bool", BOOLEAN, 3);
+
+    //pridanie ts funkcie do aktualnej triedy
+    insert_function_symbol_table("fact", INT, 0, 4, "i", fact);
+    d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
+
+    //paska pre fact 
+    tDLList  fact_tape;
+    DLInitList(&fact_tape, dispose_inst);
+    int y = 4; //pocet premennych 
+    pomocna[6].i = 11;
+    // x = factorial(11)
+    DLInsertLast(&gl_tape, generate(I_INIT_FRAME, &y, NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[6], NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("x",main_f)));
 
 
-    //DLInsertLast(&F, generate(I_SUB, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
-
-    DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("a",f)));
-
-    processed_tape = &L;
-
-    DLDisposeList(&F);
-    DLDisposeList(&I);
-
+    pomocna[7].i = 1;
+    DLInsertLast(&fact_tape, generate(I_SUB, get_adress("n", fact), &pomocna[7], get_adress("decremented_n",fact)));
     
-    //interpret_tac(&gl_tape);
+    pomocna[8].i = 2;
+
+    // if n < 2
+    DLInsertLast(&fact_tape, generate(I_L, get_adress("n",fact), &pomocna[8], get_adress("bool",fact)));
+    DLInsertLast(&fact_tape, generate(I_JNT, get_adress("bool",fact), NULL, NULL));
+    js_push(DLGetLast(&fact_tape)); //uloz na zosobnik, odkial sa skace
+    //return 1
+    DLInsertLast(&fact_tape, generate(I_RETURN, &pomocna[7], NULL, NULL));
+    DLInsertLast(&fact_tape, generate(I_GOTO, NULL, NULL, NULL));  
+    set_label(js_top(), DLGetLast(&fact_tape));//na if nastavime ze ma skocit za goto
+    js_pop();//uvolnime polozku odkial sa skakalo (z ifu)
+    js_push(DLGetLast(&fact_tape)); // pridame odkial sa skace (z goto)
+    //temp_result = factorial(decremented_n)
+    DLInsertLast(&fact_tape, generate(I_INIT_FRAME, &y, NULL, NULL));
+    DLInsertLast(&fact_tape, generate(I_PUSH_PARAM, get_adress("decremented_n",fact), NULL, NULL));
+    DLInsertLast(&fact_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("temp_result",fact)));
+    //temp_result = n * temp_result
+    DLInsertLast(&fact_tape, generate(I_MUL, get_adress("n", fact), get_adress("temp_result",fact), get_adress("temp_result",fact)));
+    //return temp_result
+    DLInsertLast(&fact_tape, generate(I_RETURN, get_adress("temp_result", fact), NULL, NULL));
+
+    set_label(js_top(), DLGetLast(&fact_tape)); //do goto priradime adresu de ma skocit (za DIV)
+    js_pop(); 
+    //KONIEC FAKTORIALU  ========================================
+    
+    processed_tape = &gl_tape;
+    interpret_tac(&gl_tape);
     DLDisposeList(&gl_tape);
-    DLDisposeList(&run_tape);*/
+    DLDisposeList(&run_tape);
+    DLDisposeList(&fact_tape);
     free_class_list();
-//    free_constants(&labels);
-  //  free_constants(&tape_ref);
+    free_constants(&labels);
+    free_constants(&tape_ref);
 
     return 0;
 }

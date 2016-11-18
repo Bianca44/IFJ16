@@ -32,7 +32,7 @@ parser:
 	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c token_buffer.c -o main
 
 r_test:
-	./test
+	valgrind ./test
 
 clean:
 	rm -f *.o

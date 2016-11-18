@@ -25,7 +25,7 @@ void dispose_class_symbol_table(tData data) {
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-                        free(item->function.param_data_types);
+     //                   free(item->function.param_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
                         printf("nenu null %d\n", item->function.symbol_table->n_items);
@@ -35,7 +35,7 @@ void dispose_class_symbol_table(tData data) {
                 //ht_free((symbol_table_t *)(item->function.symbol_table));
         } else {
                 if (item->variable.s != NULL) {
-                        free(item->variable.s);
+        //                free(item->variable.s);
                 }
         }
         free(item);

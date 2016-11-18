@@ -14,13 +14,8 @@ tFrame * init_frame(unsigned size){
     
     tFrame * new_frame;
     if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL){
-        //TODO calloc ?
-    }
-
-//    tVar * ret_val;
-//    if((ret_val = malloc(sizeof(tVar))) == NULL){
         //TODO
- //   }
+    }
 
     new_frame->ret_val = NULL;
     
@@ -28,7 +23,6 @@ tFrame * init_frame(unsigned size){
 }
 
 void dispose_frame(tFrame *frame){
- //   free(frame->ret_val);
     free(frame);
 }
 
@@ -47,10 +41,8 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     if((ptr = malloc(sizeof(tFSElem))) == NULL){
         //TODO
     }
-    
+
     ptr->frame = frame;
-    //global_offset = (tVar*)(&frame->local);
-    //adding new frame to stack top 
     ptr->next = stack->top;
     stack->top = ptr;
 }
@@ -69,36 +61,10 @@ void pop_frame(tFrameStack *stack){
     }
 }
 
-/*
-void set_effective_adresess(tDLList *inst_tape){
-    
-    DLFirst(inst_tape);
-    tDLElemPtr tmp1;
-    while(DLActive(inst_tape)){
-        //DLCopy(inst_tape, (void **)&tmp);
-        tmp1 = DLActiveElem(inst_tape);
-        tInst *tmp = tmp1->data;
-        if(tmp->op1_st != NULL){
-            tmp->op1 = frame_stack.prepared->local + tmp->op1_st->offset;
-            d_print("%d",tmp->op1->i);
-        }
-        if(tmp->op2_st != NULL){
-            tmp->op2 = frame_stack.prepared->local + tmp->op2_st->offset;
-            d_print("%d",tmp->op2->i);
-        }
-        if(tmp->result != NULL){
-            tmp->result = frame_stack.prepared->local + tmp->result_st->offset;
-            d_print("%d",tmp->result->i);
-        }
-        DLSucc(inst_tape);
-    }
-
-}
-*/
-
 int interpret_tac(tDLList *inst_tape){
-    
+    d_message("vykonenie novej pasky");    
     DLFirst(inst_tape);
+    d_message("skok na zaciatok pasky");
     tVar *op1, *op2, *result;
     tInst * inst;
     while(DLActive(inst_tape)){
