@@ -1,22 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
-#include "builtin.h"
+#include "parser.h"
+#include "DLList.h"
+#include "error_codes.h"
 
 int main(int argc, char *argv[]) {
         if (argc != 2) {
-                //fprintf(stderr, "bad arguments\n");
-                //return ERROR_INTERPRET;
+                fprintf(stderr, "Wrong arguments for interpret.\n");
+                return INTERNAL_INTERPRET_ERROR;
         }
 
-        int internal_error = 0;
+        // atexit dma
 
-        //printf("int %d\n", read_int());
-        //printf("double %g\n", read_double());
-        //printf("string %s\n", read_string());
+        FILE *file;
 
-        internal_error = init_scanner(argv[1]);
-        //printf("internal_scanner_error= %d\n", internal_error);
+        file = init_scanner(argv[1]);
+        if (file == NULL) {
+            fprintf(stderr, "Wront path to file.\n");
+            return INTERNAL_INTERPRET_ERROR;
+        }
 
-        return internal_error;
+        tDLList inst_tape;
+
+        printf("\x1b[32mFIRST PASS\x1b[0m\n");
+        if (parse(file) == SYNTACTIC_ANALYSIS_ERROR) {
+                fprintf(stderr, "Syntactic analysis failed.\n");
+                return SYNTACTIC_ANALYSIS_ERROR;
+        }
+
+        printf("SYNTACTIC ANALYSIS\tOK\n");
+        printf("\x1b[32mSECOND PASS\x1b[0m\n");
+        parse(file);
+
+        return INTERPRET_OK;
 }

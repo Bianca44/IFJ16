@@ -28,7 +28,6 @@ void dispose_class_symbol_table(tData data) {
                         free(item->function.param_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
-                        printf("nenu null %d\n", item->function.symbol_table->n_items);
                         ht_free((symbol_table_t *)(item->function.symbol_table));
                 }
                 // pasku

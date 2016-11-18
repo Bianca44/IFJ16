@@ -288,11 +288,11 @@ int get_next_token(token_t *t) {
                                 }
                         } else if (c == '"' || c == 'n' || c == 't' || c == '\\') {
                                 if (octal_number_length == 0 ) {
-                                    append_char(&s, c);
-                                    state = LITERAL;
+                                        append_char(&s, c);
+                                        state = LITERAL;
                                 } else {
-                                    ungetc(c, file);
-                                    return save_token(t, LEXICAL_ERROR, NULL);
+                                        ungetc(c, file);
+                                        return save_token(t, LEXICAL_ERROR, NULL);
                                 }
                         } else {
                                 ungetc(c, file);
@@ -379,64 +379,19 @@ int get_next_token(token_t *t) {
 
 }
 
-int init_scanner(char *filename) {
 
-        if (filename == NULL) {
-                file = stdin;
-        } else {
+void close_file() {
+        fclose(file);
+}
 
-                file = fopen(filename, "r");
-        }
+FILE* init_scanner(char *filename) {
+        file = fopen(filename, "r");
 
         if (file == NULL) {
-                printf("File not found\n");
-                return -2;
-        }
-
-        #if LEXICAL_TESTS
-        token_t t;
-        while (get_next_token(&t) != EOF) {
-
-                printf("[%s]", token_names[t.type]);
-                switch (t.type) {
-                case ID:
-                case SPECIAL_ID:
-                case STRING_LITERAL:
-                        printf("[%s]\n", t.string_value);
-                        break;
-                case INT_LITERAL:
-                        printf("[%d]\n", t.int_value);
-                        break;
-
-                case DOUBLE_LITERAL:
-                        printf("[%g]\n", t.double_value);
-                        break;
-                default:
-                        printf("\n");
-                        break;
-                }
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == STRING_LITERAL) {
-                        free(t.string_value);
-                }
-        }
-        rewind(file);
-        #endif
-
-        printf("\x1b[32mFIRST PASS\x1b[0m\n");
-        if (parse(file) == 1) {
-                printf("SYNTACTIC ANALYSIS\tOK\n");
-                printf("\x1b[32mSECOND PASS\x1b[0m\n");
-                //rewind(file);
-                parse(file);
+                return NULL;
         } else {
-                // chyba 2
-                printf("SYNTACTIC ANALYSIS\tFAILED\n");
+                atexit(close_file);
         }
 
-        printf("LEXICAL ANALYSIS\t%s\n", (parser_error_flag == 0) ? "OK" : "FAILED");
-
-
-        fclose(file);
-
-        return 0;
+        return file;
 }
