@@ -94,7 +94,7 @@ int main(){
     //pridanie ts funkcie do aktualnej triedy
     insert_function_symbol_table("run", VOID, 0, 7, "", run);
     d_print("pocet funkcii: %d existuje Main: %d", t->n_items, exists_class("Main"));
-
+/*
     //global instruction tape
     tDLList gl_tape;
     DLInitList(&gl_tape, dispose_inst);
@@ -137,7 +137,7 @@ int main(){
     DLInsertLast(&run_tape, generate(I_MUL, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
     DLInsertLast(&run_tape, generate(I_DIV, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
     DLInsertLast(&run_tape, generate(I_RETURN, NULL, NULL, NULL));
-/*
+
     
     //if(a > b)
     //{
@@ -269,32 +269,20 @@ int main(){
 
     //DLInsertLast(&F, generate(I_SUB, get_adress("par1",f2), get_adress("par1",f2), get_adress("par1",f2)));
 
-
-
-
-
     DLInsertLast(&L, generate(I_ADD, get_adress("a",f), get_adress("b",f), get_adress("a",f)));
 
-
-
-
-
-
-
     processed_tape = &L;
-
-
 
     DLDisposeList(&F);
     DLDisposeList(&I);
 
-    */
+    
     //interpret_tac(&gl_tape);
     DLDisposeList(&gl_tape);
-    DLDisposeList(&run_tape);
+    DLDisposeList(&run_tape);*/
     free_class_list();
-    free_constants(&labels);
-    free_constants(&tape_ref);
+//    free_constants(&labels);
+  //  free_constants(&tape_ref);
 
     return 0;
 }
