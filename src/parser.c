@@ -113,7 +113,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
-                get_psa(&tb);
+                //get_psa(&tb);
                 return PARSED_OK;
         }
 
@@ -246,7 +246,7 @@ int parse_expression(bool ends_semicolon) {
                 // PSA
                 //free_token_buffer(&tb);
                 printf("\n");
-                get_psa(&tb);
+                //get_psa(&tb);
         }
         return PARSED_OK;
 
@@ -509,7 +509,7 @@ int parse_param_value () {
                                         if (is_second_pass) {
                                                 symbol_table_item_t *function_item = get_symbol_table_special_id_item(function_call_name);
                                                 char expected_param_type = function_item->function.param_data_types[params_counter];
-                                                printf("ifj16.print vyzaduje %c\n", expected_param_type);
+                                                printf("ifj16.print vyzaduje %c\n", expected_param_type); // TODO
                                                 params_counter++;
 
                                         }
@@ -556,7 +556,11 @@ int parse_call_assign() {
                                                         } else {
                                                                 function_item = get_symbol_table_class_item(current_class, function_call_name);
                                                         }
-                                                        printf("ARGS: ocakava %d mame %d\n", function_item->function.params_count, params_counter);
+                                                        if (params_counter > function_item->function.params_count) {
+                                                                fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_call_name);
+                                                                fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_call_name, function_item->function.params_count, params_counter);
+                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        }
                                                         params_counter = 0;
                                                 }
                                                 function_call_name = NULL;
