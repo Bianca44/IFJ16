@@ -320,8 +320,8 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 
     if(result != NULL){
 
-    //    result->i = frame_stack.top->frame->ret_val->i; 
-  //      d_print("%d ==VYSL== ", result->i);
+        result->i = frame_stack.top->frame->ret_val->i; 
+        d_print("%d ==VYSL== ", result->i);
         //TODO
     }
 
