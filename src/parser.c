@@ -25,6 +25,7 @@ bool is_first_pass = true;
 bool is_second_pass = false;
 bool function_has_return = false;
 bool static_var_declaration = false;
+bool skip_psa = false;
 
 tDLList * global_inst_tape;
 token_t t;
@@ -136,8 +137,9 @@ int parse_expression(bool ends_semicolon) {
                         } else {
                                 item = get_symbol_table_function_item(function_symbol_table, t.string_value);
                         }
-
-                        is_function = item->is_function;
+                        if (item != NULL) {
+                                is_function = item->is_function;
+                        }
                 } else if (t.type == SPECIAL_ID) {
                         item = get_symbol_table_special_id_item(t.string_value);
                         if (item == NULL) {
@@ -185,6 +187,7 @@ int parse_expression(bool ends_semicolon) {
                 init_token_buffer(&tb);
                 printf("IN EXPR: ");
         }
+
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON) break;
@@ -245,8 +248,10 @@ int parse_expression(bool ends_semicolon) {
         if (is_second_pass) {
                 // PSA
                 //free_token_buffer(&tb);
+                printf("LUL %s\n", current_function.id_name);
+
                 printf("\n");
-                get_psa(&tb);
+                if (!skip_psa) get_psa(&tb);
         }
         return PARSED_OK;
 
@@ -749,14 +754,14 @@ int parse_method_element() {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.symbol_table);
 
                                 /* TODO
-                                symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, 42);
-                                symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, 43);
-                                if (p==NULL) {
+                                   symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, 42);
+                                   symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, 43);
+                                   if (p==NULL) {
                                     printf("nenajdene\n");
-                                }
-                                printf("nenajdene %d\n", x->variable.offset);
-                                //printf("test %d\n", p->variable.data_type);
-                                */
+                                   }
+                                   printf("nenajdene %d\n", x->variable.offset);
+                                   //printf("test %d\n", p->variable.data_type);
+                                 */
                                 current_function.id_name = NULL;
                         } else {
                                 fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
@@ -912,8 +917,8 @@ int parse_value() {
                                         if (expr_result != NULL) {
                                                 int expr_data_type = expr_result->is_function ? expr_result->function.return_type : expr_result->variable.data_type;
                                                 if (function_variable.variable.data_type != expr_data_type) {
-                                                    fprintf(stderr, "Incompatible types to assign value.\n");
-                                                    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        fprintf(stderr, "Incompatible types to assign value.\n");
+                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 expr_result = NULL;
                                         }
@@ -940,7 +945,7 @@ int parse_declaration() {
                         return PARSED_OK;
                 }
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
-                current_function.id_name = NULL; /*  TODO DAVID ERROR */
+                current_function.id_name = NULL;
                 if (is_first_pass) {
                         if (!is_declared(current_variable.id_name)) {
                                 insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
@@ -955,6 +960,8 @@ int parse_declaration() {
                         if (t.type == SEMICOLON) {
                                 if (is_first_pass) {
                                         static_var_declaration = false;
+                                } else {
+                                        skip_psa = false;
                                 }
                                 get_token();
                                 if (t.type == STATIC || t.type == RIGHT_CURVED_BRACKET) {
@@ -990,7 +997,6 @@ int parse_declaration_element() {
                 }
                 if (get_token() == ID) {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
-
                         if (is_first_pass) {
                                 function_has_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
@@ -1006,11 +1012,11 @@ int parse_declaration_element() {
                         static_var_declaration = true;
                 } else /* second pass */ {
                         function_variable.variable.data_type = t.type;
+                        skip_psa = true;
                 }
 
                 if (parse_param()) {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
-
                         if (is_first_pass) {
                                 function_has_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
@@ -1047,11 +1053,11 @@ int parse_class_list() {
                                         set_current_class(current_class);
 
                                         /* TODO
-                                        insert_tmp_variable_symbol_table_class(42);
-                                        symbol_table_item_t * p = get_symbol_table_class_item(current_class, "#0");
-                                        printf("test %d\n", p->variable.data_type);
+                                           insert_tmp_variable_symbol_table_class(42);
+                                           symbol_table_item_t * p = get_symbol_table_class_item(current_class, "#0");
+                                           printf("test %d\n", p->variable.data_type);
 
-                                        */
+                                         */
                                 } else {
                                         fprintf(stderr, "Class \'%s\' was redeclared.\n", current_class);
                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);

@@ -3,7 +3,7 @@ class Main {
     static int h = 0 + u;
     static void run () {
             int a;
-		        int c = f+u;
+		        int c = a+u;
             //{
 				//a = (a &&a)&&a;
 				//a = 5>2;
@@ -16,12 +16,12 @@ class Main {
 
             int b =2;
             if (9) {
-                
-                    
+
+
                   //  a = 5+3;
-                
+
             }
            // ifj16.print("Pozice retezce \"text\" v retezci str2: " + a + "\n");
     }
-    
+
 }

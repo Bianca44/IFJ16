@@ -77,6 +77,9 @@ symbol_table_t * get_symbol_table_for_class(char* class_name) {
 /* Najde funkciu v triede a vrati tabulku symbolov pre danu funkciu */
 symbol_table_t * get_symbol_table_for_function(char *class_name, char * id_name) {
         symbol_table_item_t * item = get_symbol_table_class_item(class_name, id_name);
+        if (item == NULL) {
+                return NULL;
+        }
         return item->function.symbol_table;
 }
 
@@ -148,6 +151,9 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
 
 /* Vrati polozku z tabulky symbolov pre danu triedu */
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name) {
+        if (id_name == NULL) {
+                return NULL;
+        }
         symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
         if (sym_table == NULL) {
                 return NULL;
@@ -242,7 +248,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
         symbol_table_item_t * p = create_symbol_table_item();
         char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
         static int tmp_id = 0;
-        sprintf(id_name , "#%d", tmp_id);
+        sprintf(id_name, "#%d", tmp_id);
 
         p->variable.data_type = data_type;
         p->variable.initialized = false;
@@ -264,7 +270,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         int offset = function_item->function.params_local_vars_count;
         char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
         static int tmp_id = 0;
-        sprintf(id_name , "#%d", tmp_id);
+        sprintf(id_name, "#%d", tmp_id);
 
         p->id_name = id_name;
         p->variable.data_type = data_type;
