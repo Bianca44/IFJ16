@@ -8,7 +8,7 @@ class Main {
             }
 
 
-            int b = play("h", "h", a);
+            int b = play("h", "h");
             if (9) {
                 {
                     {}
@@ -16,11 +16,11 @@ class Main {
                 }
             }
 
-            s = 9;
+            //s = 9;
            // ifj16.print("Pozice retezce \"text\" v retezci str2: " + a + "\n");
     }
     static void play(String b, String a) {
-
+        int k;
     }
     //static int x = 1+ Main.play;
 
