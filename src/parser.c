@@ -461,6 +461,9 @@ int parse_param_value () {
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
+                                        bool is_var = (t.type == ID || t.type == SPECIAL_ID);
+                                        printf("pushujem var %d\n", is_var);
+
 
                                         char expected_param_type = function_item->function.param_data_types[params_counter];
 

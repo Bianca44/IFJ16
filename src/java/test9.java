@@ -6,8 +6,8 @@ class Main {
                 {}
                 a = 5;
             }
-
-            int l = ifj16.sort("hello");
+String p = 0;
+            int l = ifj16.sort(p);
             //int b = play("h", "h");
             if (9) {
                 {
