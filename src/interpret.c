@@ -4,8 +4,13 @@
 #include "instructions.h"
 #include "debug.h"
 //TODO error
+#define pr_er \
+                    fprintf(stderr, "PRACA S NEDEFINOVANOU PREMENNOU\n")\
+
+                    
+        
 #define initialize(var) (var->initialized = true, var)
-#define check_init(var) (var->initialized) ? (var) : (exit(42), NULL)
+#define check_init(var) (var->initialized) ? (var) : (pr_er,exit(0), NULL)
 #define evaluate_res(adress) ((adress != NULL) ? (initialize(get_e_adr(adress))) : (NULL))
 #define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
 #define get_e_adr(adress) \
