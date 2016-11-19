@@ -386,7 +386,7 @@ return 1;
 symbol_table_item_t * expr_res;
 
 
-int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
+int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result) {
     printf("class %s\n", current_class);
     if (current_function.id_name != NULL) {
         printf("vo funkcii %s\n", current_function.id_name);
@@ -488,13 +488,9 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
 
        }while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
 
-       expr_result->id_name = "expr_result";
-       if (result_var == NULL) {
-           printf("faul\n");
-       }
-
-       printf("priradujem %p\n", result_var);
-       expr_result->variable = *result_var;
+       st_item->id_name = "expr_result";
+       st_item->variable = *result_var;
+       *expr_result = result_var;
 
 
 

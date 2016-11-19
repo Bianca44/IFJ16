@@ -40,6 +40,9 @@ symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 symbol_table_item_t expr_result;
+
+
+tVar * expr_var_result;
 char* current_class;
 char* function_call_name;
 
@@ -119,7 +122,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
-                get_psa(&tb, &expr_result);
+                get_psa(&tb, &expr_result,  &expr_var_result);
                 return PARSED_OK;
         }
 
@@ -254,7 +257,9 @@ int parse_expression(bool ends_semicolon) {
                 // PSA
                 //free_token_buffer(&tb);
                 printf("\n");
-                if (!skip_precedence_analysis) get_psa(&tb, &expr_result);
+                if (!skip_precedence_analysis) {
+                    get_psa(&tb, &expr_result, &expr_var_result);
+                }
         }
         return PARSED_OK;
 
@@ -994,12 +999,10 @@ int parse_declaration() {
                                             printf("VAR %s %p\n", current_variable.id_name, &expr_result.variable);
                                         tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
                                         to->initialized = true;
-                                        tVar * from = &expr_result.variable;
+                                        tVar * from = expr_var_result;
                                         //printf("hodnota vysledku %s\n", from->s);
 
-                                        
-                                        DLInsertLast(global_inst_tape, generate(I_PRINT, from, NULL, NULL));
-                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
+
                                         DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                         DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
 
