@@ -5,7 +5,7 @@ CC=gcc
 .PHONY: all clean r_test
 
 all:test
-test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o
+test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o memory_constants.o builtin.o parser.o expr.o token_buffer.o precedence_stack.o scanner.o
 	$(CC) $(CFLAGS) -o $@ $^
 instructions.o:instructions.c instructions.h interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -19,14 +19,23 @@ symbol_table.o:symbol_table.c symbol_table.h ial.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 strings.o:strings.c strings.h
 	$(CC) $(CFLAGS) -c -o $@ $<
-
-ntest:ntest_debug.o
-	$(CC) $(CFLAGS) -o $@ $<
-ntest_debug.o:test_debug.c
-	$(CC) $(CFLAGS_N) -c -o $@ $<
+memory_constants.o:memory_constants.c memory_constants.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+builtin.o:builtin.c builtin.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+parser.o:parser.c parser.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+expr.o:expr.c expr.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+token_buffer.o:token_buffer.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+precedence_stack.o:precedence_stack.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+scanner.o:scanner.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 parser:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c interpret.c memory_constants.c token_buffer.c -o main
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c interpret.c instructions.c memory_constants.c token_buffer.c -o main
 
 r_test:
 	./test

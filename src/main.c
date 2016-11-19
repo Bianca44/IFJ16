@@ -5,6 +5,11 @@
 #include "DLList.h"
 #include "error_codes.h"
 #include "interpret.h"
+#include "memory_constants.h"
+#include "instructions.h"
+#include "interpret.h"
+
+extern constant_t * mem_constants;
 
 int main(int argc, char *argv[]) {
         if (argc != 2) {
@@ -23,6 +28,10 @@ int main(int argc, char *argv[]) {
         }
 
         tDLList inst_tape;
+        DLInitList(&inst_tape, NULL /*todo */);
+        // x = 2
+        void * x = insert_string_const(&mem_constants, "Hello World");
+        DLInsertLast(&inst_tape, generate(I_PRINT, x, NULL, NULL));
 
         printf("\x1b[32mFIRST PASS\x1b[0m\n");
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
@@ -35,7 +44,7 @@ int main(int argc, char *argv[]) {
         parse(&inst_tape);
 
         printf("INTERPRET:\n");
-        //interpret_tac(&inst_tape);
+        interpret_tac(&inst_tape);
 
         //DLDisposeList(&inst_tape);
 

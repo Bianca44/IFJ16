@@ -119,7 +119,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
-                get_psa(&tb);
+                get_psa(&tb, expr_result);
                 return PARSED_OK;
         }
 
@@ -256,7 +256,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("LUL %s\n", current_function.id_name);
 
                 printf("\n");
-                if (!skip_precedence_analysis) get_psa(&tb);
+                if (!skip_precedence_analysis) get_psa(&tb, expr_result);
         }
         return PARSED_OK;
 
@@ -761,11 +761,8 @@ int parse_method_element() {
 
                                 // TODO
                                    symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
-                                   symbol_table_item_t * x = insert_tmp_variable_symbol_table_function(current_function.id_name, STRING);
-                                   if (p==NULL) {
-                                    printf("nenajdene\n");
-                                   }
-                                   printf("nenajdene %d\n", x->variable.offset);
+
+                                   //printf("nenajdene %d\n", p->variable.offset);
                                    //printf("test %d\n", p->variable.data_type);
 
                                 current_function.id_name = NULL;

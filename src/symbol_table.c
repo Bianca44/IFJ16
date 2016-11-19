@@ -6,7 +6,6 @@
 #include "symbol_table.h"
 #include "ial.h"
 #include "scanner.h"
-#include "DLList.h"
 
 symbol_table_t *class_list;
 char* current_class;
@@ -34,10 +33,10 @@ void dispose_class_symbol_table(tData data) {
                 //ht_free((symbol_table_t *)(item->function.symbol_table));
         } else {
                 if (item->variable.s != NULL) {
-                        free(item->variable.s);
+                       // free(item->variable.s);
                 }
         }
-        free(item);
+        //free(item);
 }
 
 /* Inicializacia zoznamu tried */
@@ -270,8 +269,12 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
 
         int offset = function_item->function.params_local_vars_count;
         char * local_vars_data_types = function_item->function.local_vars_data_types;
-        int new_len = strlen(local_vars_data_types) + 1;
-        local_vars_data_types = (char *) realloc(local_vars_data_types, new_len);
+        int new_len = (local_vars_data_types == NULL) ? 1 : strlen(local_vars_data_types) + 1;
+        if (local_vars_data_types == NULL) {
+            local_vars_data_types = (char *) malloc(new_len * sizeof(char));
+        } else {
+            local_vars_data_types = (char *) realloc(local_vars_data_types, new_len * sizeof(char));
+        }
 
         int c = 0;
         switch (data_type) {
@@ -292,7 +295,6 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         local_vars_data_types[new_len-1] = c;
         local_vars_data_types[new_len] = '\0';
         function_item->function.local_vars_data_types = local_vars_data_types;
-        //printf("new local_vars_data_types %s\n", local_vars_data_types);
 
         char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
         static int tmp_id = 0;

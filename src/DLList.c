@@ -277,3 +277,7 @@ tDLElemPtr DLActiveElem (tDLList *L) {
 void DLSetActive (tDLList *L, tDLElemPtr e){
     L->Act = e;
 }
+//returns last elemt of list
+tDLElemPtr DLGetLast(tDLList *L){
+    return L->Last;
+}

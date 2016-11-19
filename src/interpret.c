@@ -3,26 +3,39 @@
 #include "interpret.h"
 #include "instructions.h"
 #include "debug.h"
+//TODO error
+#define pr_er \
+                    fprintf(stderr, "PRACA S NEDEFINOVANOU PREMENNOU\n")\
+
+
+
+#define initialize(var) (var->initialized = true, var)
+#define check_init(var) (var->initialized) ? (var) : (pr_er,exit(0), NULL)
+#define evaluate_res(adress) ((adress != NULL) ? (initialize(get_e_adr(adress))) : (NULL))
+#define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
+#define get_e_adr(adress) \
+    ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
+
+//todo inicializovane ? assign, call_f
+
+int push_counter;
+tDLList * processed_tape;
+tFrameStack frame_stack;
 
 tFrame * init_frame(unsigned size){
 
     tFrame * new_frame;
-    if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar *))) == NULL){
-        //TODO calloc ?
-    }
-
-    tVar * result;
-    if((result = malloc(sizeof(tVar))) == NULL){
+    if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL){
         //TODO
     }
 
-    new_frame->result = result;
+    new_frame->ret_val = NULL;
+    new_frame->size = size;
 
     return new_frame;
 }
 
 void dispose_frame(tFrame *frame){
-    free(frame->result);
     free(frame);
 }
 
@@ -43,9 +56,8 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     }
 
     ptr->frame = frame;
-    //adding new frame to stack top
     ptr->next = stack->top;
-    stack->top = ptr->next;
+    stack->top = ptr;
 }
 
 void pop_frame(tFrameStack *stack){
@@ -57,26 +69,37 @@ void pop_frame(tFrameStack *stack){
         //change stack top
         stack->top = stack->top->next;
         //free frame
+        //TODO dalo by sa optimalizovat
+        for(int i = 0; i < tmp->frame->size; i++){
+            if(tmp->frame->local[i].data_type == STRING){
+                free(tmp->frame->local[i].s);
+            }
+        }
         dispose_frame(tmp->frame);
         free(tmp);
     }
 }
 
-
-
 int interpret_tac(tDLList *inst_tape){
-
+    d_message("vykonanie novej pasky");
     DLFirst(inst_tape);
+    d_message("skok na zaciatok pasky");
+    tVar *op1, *op2, *result;
     tInst * inst;
     while(DLActive(inst_tape)){
 
         DLCopy(inst_tape, (void **)&inst);
 
-        inst->f(inst->op1, inst->op2, inst->result);
-        if(inst->result->data_type == INT)
-            d_print("%d", inst->result->i); //TODO
-        else if (inst->result->data_type == DOUBLE)
-            d_print("%f", inst->result->d); //TODO
+        d_message("spracovanie adries");
+        op1 = evaluate_op(inst->op1);
+        op2 = evaluate_op(inst->op2);
+        result = evaluate_res(inst->result);
+        d_message("vykonanie instrukcie");
+        d_tVarPtr(op1);
+        d_tVarPtr(op2);
+        inst->f(op1, op2, result);
+        d_tVarPtr(result);
+        d_message("instrukcia bola vykonana");
         DLSucc(inst_tape);
     }
 
