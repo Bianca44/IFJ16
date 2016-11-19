@@ -20,12 +20,6 @@ int main(int argc, char *argv[]) {
 
         // atexit dma
 
-        char dd[20] = "torkamsfasfsafaw";
-        sort(dd);
-        printf("%s\n", dd);
-
-        exit(0);
-
         FILE *file;
 
         file = init_scanner(argv[1]);
