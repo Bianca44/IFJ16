@@ -760,7 +760,9 @@ int parse_method_element() {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
 
                                 // TODO
-                                   symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
+                                   //symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
+                                  //symbol_table_item_t * sp = insert_tmp_variable_symbol_table_function(current_function.id_name, STRING);
+                                   //symbol_table_item_t * g = insert_tmp_variable_symbol_table_function(current_function.id_name, INT);
 
                                    //printf("nenajdene %d\n", p->variable.offset);
                                    //printf("test %d\n", p->variable.data_type);

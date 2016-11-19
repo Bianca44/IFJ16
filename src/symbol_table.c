@@ -154,40 +154,40 @@ symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_n
         if (id_name == NULL) {
                 return NULL;
         }
-        symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
-        if (sym_table == NULL) {
+        symbol_table_t * symbol_table = get_symbol_table_for_class(class_name);
+        if (symbol_table == NULL) {
                 return NULL;
         }
-        symbol_table_item_t * sym_table_item = ht_read(sym_table, id_name);
-        return sym_table_item;
+        symbol_table_item_t * symbol_table_item = ht_read(symbol_table, id_name);
+        return symbol_table_item;
 }
 
 /* Zisti ci existuje premenna alebo funkcia v aktualnej triede */
 bool is_declared(char * id_name) {
-        symbol_table_item_t * sym_table_item = get_symbol_table_class_item(current_class, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = get_symbol_table_class_item(current_class, id_name);
+        if (symbol_table_item == NULL) {
                 return false;
         }
-        return sym_table_item->declared;
+        return symbol_table_item->declared;
 }
 
 /* Vrati polozku z tabulky symbolov funkcie */
 symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name) {
-        symbol_table_item_t * sym_table_item = ht_read(symbol_table, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = ht_read(symbol_table, id_name);
+        if (symbol_table_item == NULL) {
                 return NULL;
         }
 
-        return sym_table_item;
+        return symbol_table_item;
 }
 
 /* Zisti ci je parameter/premenna deklarovana vo funkcii */
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
-        symbol_table_item_t * sym_table_item = get_symbol_table_function_item(symbol_table, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = get_symbol_table_function_item(symbol_table, id_name);
+        if (symbol_table_item == NULL) {
                 return false;
         }
-        return sym_table_item->declared;
+        return symbol_table_item->declared;
 }
 
 /* Prevod datoveho typu na jeho specificky znak */
@@ -271,9 +271,9 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         char * local_vars_data_types = function_item->function.local_vars_data_types;
         int new_len = (local_vars_data_types == NULL) ? 1 : strlen(local_vars_data_types) + 1;
         if (local_vars_data_types == NULL) {
-            local_vars_data_types = (char *) malloc(new_len * sizeof(char));
+            local_vars_data_types = (char *) malloc((new_len + 1)* sizeof(char));
         } else {
-            local_vars_data_types = (char *) realloc(local_vars_data_types, new_len * sizeof(char));
+            local_vars_data_types = (char *) realloc(local_vars_data_types, (new_len + 1)* sizeof(char));
         }
 
         int c = 0;
