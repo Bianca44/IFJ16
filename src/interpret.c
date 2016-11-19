@@ -18,7 +18,8 @@
 
 //todo inicializovane ? assign, call_f
 
-
+int push_counter;
+tDLList * processed_tape;
 
 tFrame * init_frame(unsigned size){
     

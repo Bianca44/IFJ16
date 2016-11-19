@@ -3,10 +3,20 @@
 #include "instructions.h"
 #include "interpret.h"
 #include "debug.h"
+#include "builtin.h"
 
 #define UNUSED(x) (void)(x)
 
 constant_t * tape_ref;
+constant_t * labels;
+tFrameStack frame_stack;
+
+void set_label(tDLElemPtr jump, tDLElemPtr where){
+    ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
+}
+
+
+
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     tInst * new_inst;
 
@@ -300,31 +310,52 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
    //ulozit nasledujucu instrukciu na vrchol zasobniku 
     d_message("VSTUP do funkcie");
+    //setting push counter to zero
     push_counter = 0;
     UNUSED(op2); 
     d_inst_name();
-
+    //setting frame to stack top
     push_frame(&frame_stack, frame_stack.prepared);
     d_message("ramec pridany na vrchol");
-
+    
+    //remembering state of tape in the time of function call
     tDLElemPtr pi = DLActiveElem(processed_tape);
     tDLList *parent_tape = processed_tape;
-
+    //change of awareness of instruction tape (jumps)
     processed_tape = (tDLList *)(op1->s);
     d_message("zapocatie tac");
+    //executing function
     interpret_tac(processed_tape);
     d_message("opustenie tac");
-
+    //realoading previous state
     processed_tape = parent_tape;
     DLSetActive(processed_tape, pi);
-
+    //saving result
     if(result != NULL){
+        switch(result->data_type){
+            case INT:
+                result->i = frame_stack.top->frame->ret_val->i; 
+                d_print("%d ==VYSL== ", result->i);
+                break;
+            case DOUBLE:
+                result->d = frame_stack.top->frame->ret_val->d; 
+                d_print("%g ==VYSL== ", result->d);
+                break;
+            case STRING:
+                free(result->s); //uvolnovat ? //TODO
+                strcpy(result->s, frame_stack.top->frame->ret_val->s);
+                d_print("%s ==VYSL== ", result->s);
+                break;
+            case BOOLEAN:
+                result->b = frame_stack.top->frame->ret_val->b; 
+                d_print("%d ==VYSL== ", result->b);
+                break;
+            default:
+                fprintf(stderr, " CHYBA V NAVRATOVEJ HODNOTE");
+        }
 
-        result->i = frame_stack.top->frame->ret_val->i; 
-        d_print("%d ==VYSL== ", result->i);
-        //TODO
     }
-
+    //removing frame
     pop_frame(&frame_stack); 
     d_message("VYSTUP z funkcie");
 
@@ -336,6 +367,14 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     frame_stack.top->frame->ret_val = op1;
     DLLast(processed_tape);
+}
+
+//BUILT-IN
+
+void i_print(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op2); 
+    UNUSED(result);
+    print(op1); // priamo sem alebo makro TODO
 }
 
 tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
@@ -473,6 +512,7 @@ tInst_fun * find_fun(tInstId instruction, void * result, void *op1){
         case I_SORT:
 			break;
         case I_PRINT:
+            return i_print;
 			break;
         case I_LEN:
 			break;

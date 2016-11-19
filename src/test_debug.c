@@ -10,32 +10,19 @@
 #include "scanner.h"
 #include "memory_constants.h"
 
-int push_counter;
-tDLList * processed_tape;
-tVar * global_offset;
 
-tFrameStack frame_stack;
 symbol_table_t *class_list;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 string_t param_data_types;
-constant_t *labels;
-
 
 tVar * get_adress(char *id, symbol_table_t *t){
    
     return &((symbol_table_item_t *)ht_read(t, id))->variable;
 }
 
-void set_label(tDLElemPtr jump, tDLElemPtr where){
-    //malloc a pridat offset v kombinacii s povedomim o vykonavanej paske
-    //linearny zoznam
-    //TODO
 
-    ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
-
-}
 
 int main(){
     

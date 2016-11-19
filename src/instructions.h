@@ -90,6 +90,9 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result);
 void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 void i_return(tVar *op1, tVar *op2, tVar *result);
+//built-in
+void i_print(tVar *op1, tVar *op2, tVar *result);
+
 //logical
 //equal
 void i_e_i(tVar *op1, tVar *op2, tVar *result);
@@ -117,6 +120,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);
 
 
+void set_label(tDLElemPtr jump, tDLElemPtr where);
 
 
 #endif //INSTRUCTIONS_H

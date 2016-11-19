@@ -166,10 +166,6 @@ void ht_free(tHTable *ptrht){
     free(ptrht);
 }
 
-void sort(char *str) {
-        quick_sort(str, 0, (strlen(str)-1));
-}
-
 void quick_sort(char *str, int left, int right) {
         int indexes[2];
         partition (str, left, right, indexes);
@@ -269,7 +265,7 @@ void compute_match_jump(char* p, int match_jump[]) {
         }
 }
 
-int find(char *p, char *t) {
+int find_bma(char *p, char *t) {
         // BMA
         int m = strlen(p);
         int n = strlen(t);
