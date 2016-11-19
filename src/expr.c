@@ -489,6 +489,9 @@ int init_item(PStack *P,token_t *t){
                             push_item->value.data_type = BOOLEAN;
                             break;
                     }
+
+                 result_var = &item->variable;
+                 
                  break;
 
 
