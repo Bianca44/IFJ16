@@ -991,11 +991,14 @@ int parse_declaration() {
                                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
 
+                                            printf("VAR %s %p\n", current_variable.id_name, &expr_result.variable);
                                         tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
                                         to->initialized = true;
                                         tVar * from = &expr_result.variable;
                                         //printf("hodnota vysledku %s\n", from->s);
-                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, from, NULL, NULL));
+
+                                        
+                                        DLInsertLast(global_inst_tape, generate(I_PRINT, from, NULL, NULL));
                                         //DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
                                         DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                         DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));

@@ -387,7 +387,6 @@ symbol_table_item_t * expr_res;
 
 
 int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
-
     printf("class %s\n", current_class);
     if (current_function.id_name != NULL) {
         printf("vo funkcii %s\n", current_function.id_name);
