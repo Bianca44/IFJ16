@@ -6,7 +6,7 @@ class Main {
     static int o = 5;
     static String r = "yolo";
     static void run () {
-            ifj16.print(s);
+            ifj16.print(o);
 
     }
 

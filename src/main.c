@@ -8,6 +8,7 @@
 #include "memory_constants.h"
 #include "instructions.h"
 #include "interpret.h"
+#include "builtin.h"
 
 extern constant_t * mem_constants;
 
@@ -18,6 +19,12 @@ int main(int argc, char *argv[]) {
         }
 
         // atexit dma
+
+        char dd[20] = "torkamsfasfsafaw";
+        sort(dd);
+        printf("%s\n", dd);
+
+        exit(0);
 
         FILE *file;
 
