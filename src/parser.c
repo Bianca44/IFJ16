@@ -540,7 +540,7 @@ int parse_param_value () {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 printf("DATA print %s\n", expr_result.variable.s);
-                                                DLInsertLast(global_inst_tape, generate(I_PRINT, &expr_result.variable, NULL, NULL));
+                                                DLInsertLast(global_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
