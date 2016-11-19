@@ -39,7 +39,7 @@ string_t local_vars_data_types;
 symbol_table_item_t current_variable;
 symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
-symbol_table_item_t * expr_result;
+symbol_table_item_t expr_result;
 char* current_class;
 char* function_call_name;
 
@@ -119,7 +119,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
-                get_psa(&tb, expr_result);
+                get_psa(&tb, &expr_result);
                 return PARSED_OK;
         }
 
@@ -157,7 +157,7 @@ int parse_expression(bool ends_semicolon) {
                 if (is_function) {
                         //printf("data type %d\n", item->function.return_type);
                         function_call_name = t.string_value;
-                        expr_result = item;
+                        expr_result = *item;
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
@@ -253,10 +253,8 @@ int parse_expression(bool ends_semicolon) {
         if (is_second_pass) {
                 // PSA
                 //free_token_buffer(&tb);
-                printf("LUL %s\n", current_function.id_name);
-
                 printf("\n");
-                if (!skip_precedence_analysis) get_psa(&tb, expr_result);
+                if (!skip_precedence_analysis) get_psa(&tb, &expr_result);
         }
         return PARSED_OK;
 
@@ -276,7 +274,23 @@ int parse_return_value() {
                                 }
                         }
 
-                        return parse_expression(true);
+                        if (parse_expression(true)) {
+                                if (is_second_pass) {
+                                        if (expr_result.id_name != NULL) {
+                                                int expr_data_type =  expr_result.variable.data_type;
+
+                                                if (current_variable.variable.data_type != expr_data_type) {
+                                                        fprintf(stderr, "Bad return expression.\n");
+                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                }
+                                        }
+                                }
+                                expr_result.id_name = NULL;
+
+                                if (t.type == SEMICOLON) {
+                                        return PARSED_OK;
+                                }
+                        }
                 } else if (t.type == SEMICOLON) {
                         return PARSED_OK;
                 }
@@ -520,9 +534,8 @@ int parse_param_value () {
                                 /* special case for ifj16.print */
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                symbol_table_item_t *function_item = get_symbol_table_special_id_item(function_call_name);
-                                                char expected_param_type = function_item->function.param_data_types[params_counter];
-                                                printf("ifj16.print vyzaduje %c\n", expected_param_type); // TODO
+                                                printf("DATA print %s\n", expr_result.variable.s);
+                                                DLInsertLast(global_inst_tape, generate(I_PRINT, &expr_result.variable, NULL, NULL));
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -760,12 +773,12 @@ int parse_method_element() {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
 
                                 // TODO
-                                   //symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
-                                  //symbol_table_item_t * sp = insert_tmp_variable_symbol_table_function(current_function.id_name, STRING);
-                                   //symbol_table_item_t * g = insert_tmp_variable_symbol_table_function(current_function.id_name, INT);
+                                //symbol_table_item_t * p = insert_tmp_variable_symbol_table_function(current_function.id_name, BOOLEAN);
+                                //symbol_table_item_t * sp = insert_tmp_variable_symbol_table_function(current_function.id_name, STRING);
+                                //symbol_table_item_t * g = insert_tmp_variable_symbol_table_function(current_function.id_name, INT);
 
-                                   //printf("nenajdene %d\n", p->variable.offset);
-                                   //printf("test %d\n", p->variable.data_type);
+                                //printf("nenajdene %d\n", p->variable.offset);
+                                //printf("test %d\n", p->variable.data_type);
 
                                 current_function.id_name = NULL;
                         } else {
@@ -922,17 +935,23 @@ int parse_value() {
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (parse_expression(true)) {
                                 if (is_first_pass) {
-                                    if (expr_result != NULL) {
-                                            // vysledok exp pre globalnu
-                                    }
+                                        if (expr_result.id_name != NULL) {
+                                                int expr_data_type =  expr_result.variable.data_type;
+
+                                                if (current_variable.variable.data_type != expr_data_type) {
+                                                        fprintf(stderr, "Incompatible s types to assign value.\n");
+                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                }
+                                                expr_result.id_name = NULL;
+                                        }
                                 } else {
-                                        if (expr_result != NULL) {
-                                                int expr_data_type = expr_result->is_function ? expr_result->function.return_type : expr_result->variable.data_type;
+                                        if (expr_result.id_name != NULL) {
+                                                int expr_data_type = expr_result.is_function ? expr_result.function.return_type : expr_result.variable.data_type;
                                                 if (function_variable.variable.data_type != expr_data_type) {
                                                         fprintf(stderr, "Incompatible types to assign value.\n");
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
-                                                expr_result = NULL;
+                                                expr_result.id_name = NULL;
                                         }
                                 }
                                 return PARSED_OK;
@@ -948,6 +967,8 @@ int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 if (is_first_pass) {
                         is_static_variable_declaration = false;
+                } else {
+                        skip_precedence_analysis = false;
                 }
                 return parse_method_declaration ();
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -958,23 +979,33 @@ int parse_declaration() {
                 }
         }  else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 current_function.id_name = NULL;
-                if (is_first_pass) {
-                        if (!is_declared(current_variable.id_name)) {
-                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
-                                current_variable.id_name = NULL;
-                        } else {
-                                fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name, current_class);
-                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                        }
-                }
 
                 if (parse_value()) {
                         if (t.type == SEMICOLON) {
                                 if (is_first_pass) {
                                         is_static_variable_declaration = false;
+                                        if (!is_declared(current_variable.id_name)) {
+                                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
+                                        } else {
+                                                fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name, current_class);
+                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
+
+                                        tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
+                                        to->initialized = true;
+                                        tVar * from = &expr_result.variable;
+                                        //printf("hodnota vysledku %s\n", from->s);
+                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, from, NULL, NULL));
+                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
+                                        DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                        DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
+
+                                        //printf("init %d\n", to->initialized);
+                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
                                 } else {
                                         skip_precedence_analysis = false;
                                 }
+                                current_variable.id_name = NULL;
                                 get_token();
                                 if (t.type == STATIC || t.type == RIGHT_CURVED_BRACKET) {
                                         return parse_class_element();
@@ -1001,7 +1032,6 @@ int parse_param() {
 }
 
 int parse_declaration_element() {
-        current_variable.id_name = NULL;
         get_token();
         if (t.type == VOID) {
                 if (is_first_pass) {
@@ -1101,15 +1131,15 @@ void add_builtin_functions() {
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
-        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL , NULL);
-        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL , NULL);
-        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL , NULL);
-        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL , NULL);
-        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL , NULL);
-        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL , NULL);
+        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL, NULL);
+        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL, NULL);
+        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL, NULL);
+        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL, NULL);
+        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL, NULL);
+        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL, NULL);
 
         insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL, NULL);
-        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL , NULL);
+        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL, NULL);
         insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL, NULL);
 }
 

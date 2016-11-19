@@ -127,14 +127,15 @@ void free_constants(constant_t **const_arr) {
 }
 
 
-/*
-int main () {
+
+int main3() {
         constant_t *head = NULL;
         insert_int_const(&head, 5000);
         insert_int_const(&head, 5000);
         insert_int_const(&head, 5000);
         insert_double_const(&head, 26.5);
         insert_string_const(&head, "test");
+        insert_string_const(&head, "test2");
         insert_boolean_const(&head, false);
 
         constant_t * tmp = head;
@@ -157,4 +158,4 @@ int main () {
 
         free_constants(&head);
         return 0;
-}*/
+}

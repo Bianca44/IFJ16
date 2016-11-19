@@ -16,6 +16,9 @@ extern symbol_table_item_t current_function;
 extern tDLList * global_inst_tape;
 extern constant_t * mem_constants;
 
+
+tVar * result_var;
+
 tDLList * work_tape;
 
 char precedence_table[SIZE][SIZE] = {
@@ -122,7 +125,7 @@ int choose_rule(PStack *P,token_t *t){
                 case BOOLEAN:
                     result_item->value.data_type = BOOLEAN;
                     result_item->value.b = top_item->value.b;
-                    break;           
+                    break;
 
            }
 
@@ -235,7 +238,7 @@ int choose_rule(PStack *P,token_t *t){
         PSPush(P,P_EXPR);
         //P->top->value.data_type = INT;
         printf("Term: %d\n",P->top->term);
-        
+
         //top->value.data_type = result_item->value.data_type;
         //top->value = result_item->value;
 
@@ -257,11 +260,17 @@ int init_item(PStack *P,token_t *t){
                 //printf("Value of literal is:%s\n",t->string_value);
                 //symbol_table_item_t *item;
                 if (current_function.id_name != NULL) {
-                    
+
                     symbol_table_t *function = get_symbol_table_for_function(current_class,current_function.id_name);
                     printf("Current function is:%s\n",current_function.id_name);
+                    printf("premenna %s \n", t->string_value);
                     item = get_symbol_table_function_item(function,t->string_value);
-                    item->variable.i = 42;
+                    if (item == NULL) {
+                        item = get_symbol_table_class_item(current_class, t->string_value);
+                    }
+                    printf("hodnota %d \n", item->variable.i);
+                    printf("data type %d\n", item->variable.data_type);
+                    //item->variable.i = 42;
                     switch(item->variable.data_type){
                         case INT:
                              push_item->value.i = 50;
@@ -272,7 +281,7 @@ int init_item(PStack *P,token_t *t){
                              push_item->value.d = item->variable.d;
                              push_item->value.data_type = DOUBLE;
                             break;
-                        case STRING:    
+                        case STRING:
                              push_item->value.s = item->variable.s;
                              push_item->value.data_type = STRING;
                             break;
@@ -282,13 +291,15 @@ int init_item(PStack *P,token_t *t){
                             break;
                     }
 
-                } 
+                }
                 else {
                     item = get_symbol_table_class_item(current_class, t->string_value);
                     printf("data_type id %d\n", item->variable.data_type);
                 }
 
-                                        
+                result_var = &item->variable;
+
+
                 //printf("Hodnota premennej: %d\n",item->variable.i);
 
                 //P->top->value.i = 42;
@@ -312,7 +323,7 @@ int init_item(PStack *P,token_t *t){
                             push_item->value.d = item->variable.d;
                             push_item->value.data_type = DOUBLE;
                             break;
-                        case STRING:    
+                        case STRING:
                             push_item->value.s = item->variable.s;
                             push_item->value.data_type = STRING;
                             break;
@@ -321,33 +332,43 @@ int init_item(PStack *P,token_t *t){
                             push_item->value.data_type = BOOLEAN;
                             break;
                     }
-                 break;    
+                 break;
 
-               
+
             case INT_LITERAL:
                 //printf("Value of literal is:%d\n",t->int_value);
                 push_item->value.i = t->int_value;
                 push_item->value.data_type = INT;
+                tVar *i = insert_int_const(&mem_constants, t->int_value);
+                result_var = i;
                 break;
             case DOUBLE_LITERAL:
                 //printf("Value of literal is:%f\n",t->double_value);
                 push_item->value.d = t->double_value;
                 push_item->value.data_type = DOUBLE;
+                tVar *d = insert_double_const(&mem_constants, t->double_value);
+                result_var = d;
                 break;
             case STRING_LITERAL:
                // printf("Value of literal is:%s\n",t->string_value);
                 push_item->value.s = t->string_value;
                 push_item->value.data_type = STRING;
+                tVar *s = insert_string_const(&mem_constants, t->string_value);
+                result_var = s;
                 break;
             case TRUE:
                // printf("Value of literal is:%d\n",true);
                 push_item->value.b = true;
                 push_item->value.data_type = BOOLEAN;
+                tVar *bt = insert_boolean_const(&mem_constants, true);
+                result_var = bt;
                 break;
             case FALSE:
                // printf("Value of literal is:%d\n",false);
                 push_item->value.b = false;
                 push_item->value.data_type = BOOLEAN;
+                tVar *bf = insert_boolean_const(&mem_constants, false);
+                result_var = bf;
                 break;
             case ADD:
                 printf("Scitanie\n");
@@ -377,8 +398,8 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
     }
     else {
                work_tape = global_inst_tape;
-                void * x = insert_string_const(&mem_constants, "Hello World Global");
-                DLInsertLast(work_tape, generate(I_PRINT, x, NULL, NULL));
+                /*void * x = insert_string_const(&mem_constants, "Hello World Global");
+                DLInsertLast(work_tape, generate(I_PRINT, x, NULL, NULL));*/
     }
       token_t *t = NULL;
       token_t end;
@@ -420,16 +441,16 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
                             printf("Value of literal is:%d\n",P->top->value.i);
                             break;
                         case DOUBLE:
-                            printf("Value of literal is:%f\n",P->top->value.d); 
+                            printf("Value of literal is:%f\n",P->top->value.d);
                             break;
                         case STRING:
                             printf("Value of literal is:%s\n",P->top->value.s);
                             break;
                         case BOOLEAN:
                             printf("Value of literal is:%d\n",P->top->value.b);
-                            break;   
+                            break;
                     }
-                    
+
                    // PSPrint(P);
                     //printf("TOKEN type: %d\n",t->type);
                      t = get_next_token_psa(buffer);
@@ -467,6 +488,16 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * expr_result){
            //PSPrint(P);
 
        }while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
+
+       expr_result->id_name = "expr_result";
+       if (result_var == NULL) {
+           printf("faul\n");
+       }
+
+       printf("priradujem %p\n", result_var);
+       expr_result->variable = *result_var;
+
+
 
        // duri aj takto to ide, asi lepsie
        // while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);

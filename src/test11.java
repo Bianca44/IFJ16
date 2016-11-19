@@ -1,30 +1,15 @@
 class Main {
+    //static String s = "ahoj";
+    //static String f = "ss";
+    //static String r = "yolo";
+    //static int o = 5;
+    //static boolean i = true;
+    //static double g = 2.56;
+    static int o = 5;
+    static int r = 6;
     static void run () {
-    	
-            int a = 42;
-		        a =6;
-				a = true;
+            //ifj16.print(s);
 
-
-
-            //{
-				//a = (a &&a)&&a;
-				//a = 5>2;
-			//	a = 69 >= 2;
-			//	a = 7 <= 3;
-                //a = ((5<5) + (Main.h));
-              // a = 5+5+5-36;
-           // }
-
-
-            int b =2;
-            if (9) {
-
-
-                  //  a = 5+3;
-
-            }
-           // ifj16.print("Pozice retezce \"text\" v retezci str2: " + a + "\n");
     }
 
 }
