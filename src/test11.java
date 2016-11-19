@@ -4,7 +4,7 @@ class Main {
     static void run () {
 
             int a = 42;
-		        a = a+1;
+		        a = d+1;
 
 
 

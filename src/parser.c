@@ -19,14 +19,12 @@ char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LI
                                 "CLASS", "CONTINUE", "DO", "DOUBLE", "ELSE", "FALSE", "FOR", "IF", "INT", "RETURN",
                                 "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
 
-
-int function_offset = 0;
 int params_counter = 0;
 bool is_first_pass = true;
 bool is_second_pass = false;
-bool function_has_return = false;
-bool static_var_declaration = false;
-bool skip_psa = false;
+bool has_function_return = false;
+bool is_static_variable_declaration = false;
+bool skip_precedence_analysis = false;
 
 constant_t * mem_constants = NULL;
 tDLList * global_inst_tape;
@@ -48,6 +46,10 @@ char* function_call_name;
 
 void cleanup_exit(int exit_code) {
         //TODO free memory
+
+        free_constants(&mem_constants);
+        free_token_buffer(&token_buffer);
+        free_class_list();
         exit(exit_code);
 }
 
@@ -79,7 +81,7 @@ int parse_expression(bool ends_semicolon) {
         token_buffer_t tb;
 
         /* Prvy prechod vyhodnot vyraz u globalnej premmenej priamo */
-        if (is_first_pass && static_var_declaration) {
+        if (is_first_pass && is_static_variable_declaration) {
                 init_token_buffer(&tb);
                 while (1) {
                         if (t.type == SEMICOLON) break;
@@ -254,7 +256,7 @@ int parse_expression(bool ends_semicolon) {
                 printf("LUL %s\n", current_function.id_name);
 
                 printf("\n");
-                if (!skip_psa) get_psa(&tb);
+                if (!skip_precedence_analysis) get_psa(&tb);
         }
         return PARSED_OK;
 
@@ -263,7 +265,7 @@ int parse_expression(bool ends_semicolon) {
 int parse_return_value() {
         if (t.type == RETURN) {
                 if (is_first_pass) {
-                        function_has_return = true;
+                        has_function_return = true;
                 }
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
@@ -743,11 +745,11 @@ int parse_method_element() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 if (is_first_pass) {
                         if (current_function.function.return_type != VOID) {
-                                if (!function_has_return) {
+                                if (!has_function_return) {
                                         fprintf(stderr, "Return in function \'%s\' was not found\n", current_function.id_name);
                                         cleanup_exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                 }
-                                function_has_return = false;
+                                has_function_return = false;
                         }
 
                         current_function.function.param_data_types = param_data_types.data;
@@ -920,7 +922,11 @@ int parse_value() {
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (parse_expression(true)) {
-                                if (is_second_pass) {
+                                if (is_first_pass) {
+                                    if (expr_result != NULL) {
+                                            // vysledok exp pre globalnu
+                                    }
+                                } else {
                                         if (expr_result != NULL) {
                                                 int expr_data_type = expr_result->is_function ? expr_result->function.return_type : expr_result->variable.data_type;
                                                 if (function_variable.variable.data_type != expr_data_type) {
@@ -942,7 +948,7 @@ int parse_value() {
 int parse_declaration() {
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 if (is_first_pass) {
-                        static_var_declaration = false;
+                        is_static_variable_declaration = false;
                 }
                 return parse_method_declaration ();
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -966,9 +972,9 @@ int parse_declaration() {
                 if (parse_value()) {
                         if (t.type == SEMICOLON) {
                                 if (is_first_pass) {
-                                        static_var_declaration = false;
+                                        is_static_variable_declaration = false;
                                 } else {
-                                        skip_psa = false;
+                                        skip_precedence_analysis = false;
                                 }
                                 get_token();
                                 if (t.type == STATIC || t.type == RIGHT_CURVED_BRACKET) {
@@ -1005,7 +1011,7 @@ int parse_declaration_element() {
                 if (get_token() == ID) {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
                         if (is_first_pass) {
-                                function_has_return = false;
+                                has_function_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
@@ -1016,16 +1022,16 @@ int parse_declaration_element() {
                 if (is_first_pass) {
                         current_variable.variable.data_type = t.type;
                         current_function.function.return_type = t.type;
-                        static_var_declaration = true;
+                        is_static_variable_declaration = true;
                 } else /* second pass */ {
                         function_variable.variable.data_type = t.type;
-                        skip_psa = true;
+                        skip_precedence_analysis = true;
                 }
 
                 if (parse_param()) {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
                         if (is_first_pass) {
-                                function_has_return = false;
+                                has_function_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         }
                         get_token();
