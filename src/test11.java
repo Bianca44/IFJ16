@@ -1,9 +1,13 @@
 class Main {
     static int u = 4;
-    static int h = 0 + u;
+   // static int h = 0 + u;
     static void run () {
-            int a;
-		        int c = a+u;
+
+            int a = 42;
+		        a = a+1;
+
+
+
             //{
 				//a = (a &&a)&&a;
 				//a = 5>2;

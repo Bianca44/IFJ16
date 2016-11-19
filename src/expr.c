@@ -14,6 +14,7 @@
 extern char* current_class;
 extern symbol_table_item_t current_function;
 extern tDLList * global_inst_tape;
+extern constant_t * mem_constants;
 
 char precedence_table[SIZE][SIZE] = {
 //input token
@@ -241,17 +242,44 @@ return 1;
 int init_item(PStack *P,token_t *t){
 
     PStack_item *push_item = P->top;
-
+    symbol_table_item_t *item;
         switch(t->type){
 
             case ID:
-                 printf("Value of literal is:%s\n",t->string_value);
+                //printf("Value of literal is:%s\n",t->string_value);
+                //symbol_table_item_t *item;
                 if (current_function.id_name != NULL) {
+                    
+                    symbol_table_t *function = get_symbol_table_for_function(current_class,current_function.id_name);
+                    printf("Current function is:%s\n",current_function.id_name);
+                    item = get_symbol_table_function_item(function,t->string_value);
+                    item->variable.i = 42;
+                    switch(item->variable.data_type){
+                        case INT:
+                           P->top->value.i = 50;
+                            printf("Hodnota premennej: %d\n",item->variable.i);
+                            break;
+                        case DOUBLE:
+                            push_item->value.d = item->variable.d;
+                            break;
+                        case STRING:    
+                            push_item->value.s = item->variable.s;
+                            break;
+                        case BOOLEAN:
+                            push_item->value.b = item->variable.b;
+                            break;
+                    }
 
-                } else {
-                    symbol_table_item_t * item = get_symbol_table_class_item(current_class, t->string_value);
+                } 
+                else {
+                    item = get_symbol_table_class_item(current_class, t->string_value);
                     printf("data_type id %d\n", item->variable.data_type);
                 }
+
+                                        
+                //printf("Hodnota premennej: %d\n",item->variable.i);
+
+                //P->top->value.i = 42;
 
 
                 break;
@@ -259,12 +287,29 @@ int init_item(PStack *P,token_t *t){
                  printf("Value of literal is:%s\n",t->string_value);
                  //TODO pozriet sa do TS  a zistit hodnotu
 
-                 symbol_table_item_t * item = get_symbol_table_special_id_item(t->string_value);
+                item = get_symbol_table_special_id_item(t->string_value);
                  //t->variable.i
                  printf("data_type special id %d\n", item->variable.data_type);
-                 break;
+
+                    switch(item->variable.data_type){
+                        case INT:
+                            push_item->value.i = item->variable.i;
+                            break;
+                        case DOUBLE:
+                            push_item->value.d = item->variable.d;
+                            break;
+                        case STRING:    
+                            push_item->value.s = item->variable.s;
+                            break;
+                        case BOOLEAN:
+                            push_item->value.b = item->variable.b;
+                            break;
+                    }
+                 break;    
+
+               
             case INT_LITERAL:
-                printf("Value of literal is:%d\n",t->int_value);
+                //printf("Value of literal is:%d\n",t->int_value);
                 push_item->value.i = t->int_value;
                 break;
             case DOUBLE_LITERAL:
@@ -283,8 +328,13 @@ int init_item(PStack *P,token_t *t){
                 printf("Value of literal is:%d\n",false);
                 push_item->value.b = false;
                 break;
-
+            case ADD:
+                printf("Scitanie");
+                push_item->value.i = 99;
+                break;
         }
+        //P->top = push_item;
+
 return 1;
 }
 
@@ -334,7 +384,7 @@ int get_psa(token_buffer_t *buffer){
                     insert_handle(P,PSTopTermPtr(P));
                     PSPush(P,decode_token_array[t->type]);
                     init_item(P,t);
-                    //printf("Value of literal is:%d\n",P->top->value.i);
+                    printf("Value of literal is:%d\n",P->top->value.i);
                    // PSPrint(P);
                     //printf("TOKEN type: %d\n",t->type);
                      t = get_next_token_psa(buffer);
