@@ -101,6 +101,9 @@ int choose_rule(PStack *P,token_t *t){
     PStack_item *top_item = PSTopTermPtr(P);
     PStack_item *result_item = malloc(sizeof(PStack_item));
     PStack_item *top;
+    int first_operand;
+    int second_operand;
+    PStack_item *op2;
 
     switch(top_item->term){
 
@@ -144,6 +147,32 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+             first_operand = P->top->LPtr->LPtr->value.data_type;
+             second_operand = P->top->value.data_type;
+            // int + int 
+            if(first_operand == INT && second_operand == INT){
+                printf("HOdnota druheho operandu: %d\n",P->top->value.i);
+                printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
+                result_item->value.data_type = INT;
+                //just for test
+                result_item->value.i = P->top->value.i + P->top->LPtr->LPtr->value.i;
+            } //int + double or double + int
+            else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
+                
+                result_item->value.data_type = DOUBLE;
+
+            }else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                result_item->value.data_type = DOUBLE;
+
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                result_item->value.data_type = STRING;
+
+
+            }else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
 
              break;
 
@@ -153,31 +182,125 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if(first_operand == INT && second_operand == INT){
+                printf("HOdnota druheho operandu: %d\n",P->top->value.i);
+                printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
+                result_item->value.data_type = INT;
+                //just for test
+                result_item->value.i = P->top->value.i - P->top->LPtr->LPtr->value.i;
+            }
+            else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
+                result_item->value.data_type = DOUBLE;
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE ){
+                result_item->value.data_type = DOUBLE;
+                
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+
+            }else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
 
             break;
         // E -> E * E
         case P_MUL:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if(first_operand == INT && second_operand == INT){
+                printf("HOdnota druheho operandu: %d\n",P->top->value.i);
+                printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
+                result_item->value.data_type = INT;
+                //just for test
+                result_item->value.i = P->top->value.i * P->top->LPtr->LPtr->value.i;
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
+                result_item->value.data_type = DOUBLE;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
             break;
         //E -> E / E
         case P_DIV:
-            if(!expr_check(P)){
+              if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            op2 = P->top;
+            if(first_operand == INT && second_operand == INT){
+                if(op2->value.i == 0){
+                    printf("Delenie 0.\n");
+                    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                }
+                //TODO mozeme delit 2 INT a mat INT vysledok ?
+                result_item->value.data_type = INT;
+                result_item->value.i = P->top->LPtr->LPtr->value.i / P->top->value.i;
+            }
+            else if(first_operand == DOUBLE && second_operand == INT){
+                if(op2->value.i == 0){
+                    printf("Delenie 0.\n");
+                    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                }
+                result_item->value.data_type = DOUBLE;
+            }
+            else if (first_operand == INT && second_operand == DOUBLE){
+                if(op2->value.d == 0.0){
+                    printf("Delenie 0.\n");
+                    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                }
+                result_item->value.data_type = DOUBLE;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
+                printf("Incompatible data types.\n");
+                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
              break;
         //E -> (E)
         case P_RB:
-            if(PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB){
+             if(PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB){
                 printf("Chyba pravidla pre zatvorku");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-
+            switch(P->top->LPtr->value.data_type){
+                case INT:
+                    result_item->value.data_type = INT;
+                    result_item->value.i = P->top->LPtr->value.i;
+                    break;
+                case DOUBLE:
+                    result_item->value.data_type = DOUBLE;
+                    result_item->value.d = P->top->LPtr->value.d;
+                    break;
+                case STRING:
+                    result_item->value.data_type = STRING;
+                    result_item->value.s = P->top->LPtr->value.s;
+                    break;
+                case BOOLEAN:
+                    result_item->value.data_type = BOOLEAN;
+                    result_item->value.b = P->top->LPtr->value.b;
+                    break;
+            }
             break;
         case P_LESS:
             if(!expr_check(P)){
