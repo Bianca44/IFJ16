@@ -7,8 +7,7 @@
 
 int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result);
 tVar * generate_tmp_var(int data_type);
-tVar* op_1;
-tVar* op_2;
+void reset_ops();
 
 
 #endif // EXPR_H

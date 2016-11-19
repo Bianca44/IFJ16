@@ -539,8 +539,7 @@ int parse_param_value () {
                                 /* special case for ifj16.print */
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                printf("DATA print %s\n", expr_result.variable.s);
-                                                DLInsertLast(global_inst_tape, generate(I_PRINT, &expr_result.variable, NULL, NULL));
+                                                DLInsertLast(global_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -944,8 +943,8 @@ int parse_value() {
                                                 int expr_data_type =  expr_result.variable.data_type;
 
                                                 if (current_variable.variable.data_type != expr_data_type) {
-                                                        //fprintf(stderr, "Incompatible s types to assign value.\n");
-                                                        //cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        fprintf(stderr, "Incompatible types to assign value.\n");
+                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 expr_result.id_name = NULL;
                                         }
@@ -996,7 +995,6 @@ int parse_declaration() {
                                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
 
-                                            printf("VAR %s %p\n", current_variable.id_name, &expr_result.variable);
                                         tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
                                         to->initialized = true;
                                         tVar * from = expr_var_result;

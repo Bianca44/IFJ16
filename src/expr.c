@@ -17,9 +17,11 @@ extern tDLList * global_inst_tape;
 extern constant_t * mem_constants;
 
 
-tVar * result_var;
+tVar * top_expr_variable;
 
 tDLList * work_tape;
+tVar* op_1;
+tVar* op_2;
 
 char precedence_table[SIZE][SIZE] = {
 //input token
@@ -196,8 +198,6 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            printf("CISLA %d %d\n", op_1->i, op_2->i);
-            printf("adresy %p %p\n",  op_1, op_2);
             DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
             op_1 = op_2 = NULL;
 
@@ -406,6 +406,11 @@ void set_ops(tVar *op) {
         op_2 = op;
     }
 }
+
+void reset_ops() {
+    op_1 = op_2 = NULL;
+}
+
 int init_item(PStack *P,token_t *t){
 
     PStack_item *push_item = P->top;
@@ -454,7 +459,7 @@ int init_item(PStack *P,token_t *t){
                     printf("data_type id %d\n", item->variable.data_type);
                 }
 
-                result_var = &item->variable;
+                top_expr_variable = &item->variable;
 
 
                 //printf("Hodnota premennej: %d\n",item->variable.i);
@@ -490,8 +495,8 @@ int init_item(PStack *P,token_t *t){
                             break;
                     }
 
-                 result_var = &item->variable;
-                 
+                 top_expr_variable = &item->variable;
+
                  break;
 
 
@@ -500,35 +505,35 @@ int init_item(PStack *P,token_t *t){
                 push_item->value.i = t->int_value;
                 push_item->value.data_type = INT;
                 tVar *i = insert_int_const(&mem_constants, t->int_value);
-                result_var = i;
+                top_expr_variable = i;
                 break;
             case DOUBLE_LITERAL:
                 //printf("Value of literal is:%f\n",t->double_value);
                 push_item->value.d = t->double_value;
                 push_item->value.data_type = DOUBLE;
                 tVar *d = insert_double_const(&mem_constants, t->double_value);
-                result_var = d;
+                top_expr_variable = d;
                 break;
             case STRING_LITERAL:
                // printf("Value of literal is:%s\n",t->string_value);
                 push_item->value.s = t->string_value;
                 push_item->value.data_type = STRING;
                 tVar *s = insert_string_const(&mem_constants, t->string_value);
-                result_var = s;
+                top_expr_variable = s;
                 break;
             case TRUE:
                // printf("Value of literal is:%d\n",true);
                 push_item->value.b = true;
                 push_item->value.data_type = BOOLEAN;
                 tVar *bt = insert_boolean_const(&mem_constants, true);
-                result_var = bt;
+                top_expr_variable = bt;
                 break;
             case FALSE:
                // printf("Value of literal is:%d\n",false);
                 push_item->value.b = false;
                 push_item->value.data_type = BOOLEAN;
                 tVar *bf = insert_boolean_const(&mem_constants, false);
-                result_var = bf;
+                top_expr_variable = bf;
                 break;
             case ADD:
                 printf("Scitanie\n");
@@ -537,7 +542,7 @@ int init_item(PStack *P,token_t *t){
                 break;
         }
 
-        set_ops(result_var);
+        set_ops(top_expr_variable);
         //P->top = push_item;
 
 return 1;
@@ -549,12 +554,12 @@ symbol_table_item_t * expr_res;
 
 tVar * generate_tmp_var(int data_type) {
     if (current_function.id_name != NULL) {
-        result_var = &insert_tmp_variable_symbol_table_function(current_function.id_name, data_type)->variable;
+        top_expr_variable = &insert_tmp_variable_symbol_table_function(current_function.id_name, data_type)->variable;
     } else {
-        result_var = &insert_tmp_variable_symbol_table_class(data_type)->variable;
+        top_expr_variable = &insert_tmp_variable_symbol_table_class(data_type)->variable;
     }
 
-    return result_var;
+    return top_expr_variable;
 }
 
 
@@ -661,9 +666,9 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        }while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
 
        st_item->id_name = "expr_result";
-       st_item->variable = *result_var;
-       *expr_result = result_var;
-       op_1 = op_2 = NULL;
+       st_item->variable = *top_expr_variable;
+       *expr_result = top_expr_variable;
+       reset_ops();
 
 
 
