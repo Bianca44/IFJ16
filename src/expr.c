@@ -199,8 +199,7 @@ int choose_rule(PStack *P,token_t *t){
             }
 
             DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
-            op_1 = op_2 = NULL;
-
+            reset_ops();
              break;
 
         //E -> E - E
@@ -234,6 +233,9 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
+            DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
+            reset_ops();
+
             break;
         // E -> E * E
         case P_MUL:
@@ -261,6 +263,10 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
+            printf("OP1 %d OP2 %d\n",op_1->i,op_2->i);
+            DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
+            reset_ops();
+
             break;
         //E -> E / E
         case P_DIV:
@@ -303,6 +309,9 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
+            DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
+            reset_ops();
+
              break;
         //E -> (E)
         case P_RB:
@@ -330,55 +339,164 @@ int choose_rule(PStack *P,token_t *t){
             }
             break;
         case P_LESS:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
 
             break;
         case P_LESSE:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
 
             break;
         case P_GRT:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
 
             break;
         case P_GRE:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
+
         case P_EQL:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
+
             break;
         case P_NEQL:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
+
             break;
         case P_AND:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
+
             break;
 
         case P_OR:
-            if(!expr_check(P)){
+             if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Chybny vyraz.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                result_item->value.data_type = BOOLEAN;
+            }
+            //TODO boolean < int/double resp int/double < boolean
+
             break;
         }
         while(P->top->term != P_HANDLE){
@@ -683,6 +801,20 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        PSPrint(P);
        printf("Data type of result is:%d\n",P->top->value.data_type);
        //printf("Result value is:%d\n",P->top->value.i);
+       switch(P->top->value.data_type){
+            case INT:
+            printf("Result value is:%d\n",P->top->value.i);
+            break;
+            case DOUBLE:
+            printf("Result value is:%f\n",P->top->value.d);
+            break;
+            case STRING:
+            printf("Result value is:%s\n",P->top->value.s);
+            break;
+            case BOOLEAN:
+            printf("Result value is:%d\n",P->top->value.b);
+            break;
+        }
         return P->top->value.data_type;
 
 

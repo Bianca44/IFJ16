@@ -14,7 +14,7 @@ class Main {
     static boolean i = true;
     static double g = 2.56;*/
     static int p = 6;
-    static int o = 1+2+Main2.p+2;
+    static int o = 2*2-1*3;
     //static String r = "yolo";
     static void run () {
             ifj16.print(o);
