@@ -38,6 +38,12 @@ void dispose_class_symbol_table(tData data) {
         //                free(item->variable.s);
                 }
         }
+        if(!item->is_function){
+            if(item->variable.initialized && item->variable.data_type == STRING){
+                free(item->variable.s);
+            }
+
+        }
         free(item);
 }
 

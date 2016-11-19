@@ -33,7 +33,6 @@ typedef enum instructions {
     I_RINT,
     I_RDBL,
     I_RSTR,
-    I_RBOOL,
     //ARITHMETIC
     I_ADD,
     I_MUL,
@@ -71,8 +70,12 @@ typedef enum instructions {
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
-tInst_fun * find_fun(tInstId instruction, void * result, void *op1);
-
+tInst_fun * find_fun(tInstId instruction, tVar * result, tVar *op1);
+//INPUT
+void i_rint(tVar *op1, tVar *op2, tVar *result);
+void i_rdbl(tVar *op1, tVar *op2, tVar *result);
+void i_rstr(tVar *op1, tVar *op2, tVar *result);
+//ARITHMETIC
 void i_add_i(tVar *op1, tVar *op2, tVar *result);
 void i_add_d(tVar *op1, tVar *op2, tVar *result);
 void i_sub_i(tVar *op1, tVar *op2, tVar *result);
@@ -81,6 +84,10 @@ void i_mul_i(tVar *op1, tVar *op2, tVar *result);
 void i_mul_d(tVar *op1, tVar *op2, tVar *result);
 void i_div_i(tVar *op1, tVar *op2, tVar *result);
 void i_div_d(tVar *op1, tVar *op2, tVar *result);
+//Conversions
+void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result);
+void i_to_str(tVar *op1, tVar *op2, tVar *result); //TODO
+//assigns
 void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
@@ -91,15 +98,23 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 void i_return(tVar *op1, tVar *op2, tVar *result);
 //built-in
+void i_cat(tVar *op1, tVar *op2, tVar *result); //TODO
+void i_strcmp(tVar *op1, tVar *op2, tVar *result);
+void i_substr(tVar *op1, tVar *op2, tVar *result); //TODO
+void i_find(tVar *op1, tVar *op2, tVar *result);
+void i_sort(tVar *op1, tVar *op2, tVar *result);
 void i_print(tVar *op1, tVar *op2, tVar *result);
+void i_len(tVar *op1, tVar *op2, tVar *result);
 
 //logical
 //equal
 void i_e_i(tVar *op1, tVar *op2, tVar *result);
 void i_e_d(tVar *op1, tVar *op2, tVar *result);
+void i_e_b(tVar *op1, tVar *op2, tVar *result);
 //not equal
 void i_ne_i(tVar *op1, tVar *op2, tVar *result);
 void i_ne_d(tVar *op1, tVar *op2, tVar *result);
+void i_ne_b(tVar *op1, tVar *op2, tVar *result);
 //less
 void i_l_i(tVar *op1, tVar *op2, tVar *result);
 void i_l_d(tVar *op1, tVar *op2, tVar *result);

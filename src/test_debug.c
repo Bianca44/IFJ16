@@ -85,8 +85,8 @@ int main(){
     //              return temp_result;
     //      }
     //  }
-    //
-    //  x = factorial(11);
+    //  y = readInt();
+    //  x = factorial(y);
     //}
 
     char * name = "Main";
@@ -100,6 +100,8 @@ int main(){
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
     //x
     insert_variable_symbol_table("x", INT, CONSTANT);
+    insert_variable_symbol_table("y", INT, CONSTANT);
+    insert_variable_symbol_table("str", STRING, CONSTANT);
 
     //vytvorenie tabulka symbolov pre funkciu
     symbol_table_t * run = create_function_symbol_table();
@@ -175,7 +177,8 @@ int main(){
 
     //x = x + x
     DLInsertLast(&gl_tape, generate(I_ADD, get_adress("x",main_f), get_adress("x",main_f), get_adress("x",main_f)));
-    
+    //print(x) 
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("x",main_f), NULL, NULL));
     //if(b < c)
     //{
     //  a = b*c
@@ -266,15 +269,22 @@ int main(){
     //paska pre fact 
     tDLList  fact_tape;
     DLInitList(&fact_tape, dispose_inst);
-    symbol_table_item_t *y = get_symbol_table_class_item("Main", "fact");
-    y->function.local_vars_data_types = "iib";
-    y->function.params_local_vars_count = 4;
-    d_int(y->function.params_local_vars_count);
+    symbol_table_item_t *z = get_symbol_table_class_item("Main", "fact");
+    z->function.local_vars_data_types = "iib";
+    z->function.params_local_vars_count = 4;
+    d_int(z->function.params_local_vars_count);
     pomocna[6].i = 11;
     pomocna[6].data_type = INT;
-    // x = factorial(11)
-    DLInsertLast(&gl_tape, generate(I_INIT_FRAME, y, NULL, NULL));
-    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[6], NULL, NULL));
+    pomocna[9].s = "Zadajte cislo faktorial n:\n";
+    pomocna[9].data_type = STRING;
+    //y = readInt();
+
+    DLInsertLast(&gl_tape, generate(I_PRINT, &pomocna[9], NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
+
+    // x = factorial(y)
+    DLInsertLast(&gl_tape, generate(I_INIT_FRAME, z, NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("y",main_f), NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("x",main_f)));
 
 
@@ -296,7 +306,7 @@ int main(){
     js_pop();//uvolnime polozku odkial sa skakalo (z ifu)
     js_push(DLGetLast(&fact_tape)); // pridame odkial sa skace (z goto)
     //temp_result = factorial(decremented_n)
-    DLInsertLast(&fact_tape, generate(I_INIT_FRAME, y, NULL, NULL));
+    DLInsertLast(&fact_tape, generate(I_INIT_FRAME, z, NULL, NULL));
     DLInsertLast(&fact_tape, generate(I_PUSH_PARAM, get_adress("decremented_n",fact), NULL, NULL));
     DLInsertLast(&fact_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("temp_result",fact)));
     //temp_result = n * temp_result
@@ -307,7 +317,23 @@ int main(){
     set_label(js_top(), DLGetLast(&fact_tape)); //do goto priradime adresu de ma skocit (za DIV)
     js_pop(); 
     //KONIEC FAKTORIALU  ========================================
-    
+    //y = readInt();
+    //str = readString();
+    DLInsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
+    DLInsertLast(&gl_tape, generate(I_RSTR, NULL, NULL, get_adress("str",main_f)));
+    //print(y)
+    //print str
+    //sort(str)
+    //len(str)
+    //print(len)
+    pomocna[10].data_type = INT;
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("y",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_SORT, get_adress("str",main_f), NULL, get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_LEN, get_adress("str",main_f), NULL, &pomocna[10]));
+    DLInsertLast(&gl_tape, generate(I_PRINT, &pomocna[10], NULL, NULL));
+
     processed_tape = &gl_tape;
     interpret_tac(&gl_tape);
     DLDisposeList(&gl_tape);
@@ -316,6 +342,8 @@ int main(){
     free_class_list();
     free_constants(&labels);
     free_constants(&tape_ref);
+
+
 
     return 0;
 }
