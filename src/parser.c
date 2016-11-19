@@ -540,7 +540,7 @@ int parse_param_value () {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 printf("DATA print %s\n", expr_result.variable.s);
-                                                DLInsertLast(global_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                                DLInsertLast(global_inst_tape, generate(I_PRINT, &expr_result.variable, NULL, NULL));
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -944,8 +944,8 @@ int parse_value() {
                                                 int expr_data_type =  expr_result.variable.data_type;
 
                                                 if (current_variable.variable.data_type != expr_data_type) {
-                                                        fprintf(stderr, "Incompatible s types to assign value.\n");
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        //fprintf(stderr, "Incompatible s types to assign value.\n");
+                                                        //cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 expr_result.id_name = NULL;
                                         }

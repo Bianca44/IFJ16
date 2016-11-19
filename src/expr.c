@@ -138,6 +138,28 @@ int choose_rule(PStack *P,token_t *t){
             break;
         // E->id,special_id
         case P_ID:
+        printf("Hodnota jeeee: %d\n",top_item->value.i);
+        printf("Data type jeeee: %d\n",top_item->value.data_type);
+        switch(top_item->value.data_type){
+
+             case INT:
+                 result_item->value.data_type = INT;
+                 result_item->value.i = top_item->value.i;
+                 break;
+             case DOUBLE:
+                 result_item->value.data_type = DOUBLE;
+                 result_item->value.d = top_item->value.d;
+                 break;
+             case STRING:
+                 result_item->value.data_type = STRING;
+                 result_item->value.s = top_item->value.s;
+                 break;
+             case BOOLEAN:
+                 result_item->value.data_type = BOOLEAN;
+                 result_item->value.b = top_item->value.b;
+                 break;
+
+        }
 
 
             break;
@@ -149,7 +171,7 @@ int choose_rule(PStack *P,token_t *t){
             }
              first_operand = P->top->LPtr->LPtr->value.data_type;
              second_operand = P->top->value.data_type;
-            // int + int 
+            // int + int
             if(first_operand == INT && second_operand == INT){
                 printf("HOdnota druheho operandu: %d\n",P->top->value.i);
                 printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
@@ -158,7 +180,7 @@ int choose_rule(PStack *P,token_t *t){
                 result_item->value.i = P->top->value.i + P->top->LPtr->LPtr->value.i;
             } //int + double or double + int
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
-                
+
                 result_item->value.data_type = DOUBLE;
 
             }else if(first_operand == DOUBLE && second_operand == DOUBLE){
@@ -173,6 +195,11 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
+
+            printf("CISLA %d %d\n", op_1->i, op_2->i);
+            printf("adresy %p %p\n",  op_1, op_2);
+            DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
+            op_1 = op_2 = NULL;
 
              break;
 
@@ -196,7 +223,7 @@ int choose_rule(PStack *P,token_t *t){
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE ){
                 result_item->value.data_type = DOUBLE;
-                
+
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
@@ -372,6 +399,13 @@ int choose_rule(PStack *P,token_t *t){
 return 1;
 }
 
+void set_ops(tVar *op) {
+    if (op_1 == NULL) {
+        op_1 = op;
+    } else {
+        op_2 = op;
+    }
+}
 int init_item(PStack *P,token_t *t){
 
     PStack_item *push_item = P->top;
@@ -499,6 +533,8 @@ int init_item(PStack *P,token_t *t){
                 P->top->value.data_type = 22;
                 break;
         }
+
+        set_ops(result_var);
         //P->top = push_item;
 
 return 1;
@@ -507,6 +543,16 @@ return 1;
 
 
 symbol_table_item_t * expr_res;
+
+tVar * generate_tmp_var(int data_type) {
+    if (current_function.id_name != NULL) {
+        result_var = &insert_tmp_variable_symbol_table_function(current_function.id_name, data_type)->variable;
+    } else {
+        result_var = &insert_tmp_variable_symbol_table_class(data_type)->variable;
+    }
+
+    return result_var;
+}
 
 
 int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result) {
@@ -614,6 +660,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        st_item->id_name = "expr_result";
        st_item->variable = *result_var;
        *expr_result = result_var;
+       op_1 = op_2 = NULL;
 
 
 
