@@ -333,6 +333,13 @@ int main(){
     DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_LEN, get_adress("str",main_f), NULL, &pomocna[10]));
     DLInsertLast(&gl_tape, generate(I_PRINT, &pomocna[10], NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_TO_STRING, &pomocna[10], NULL, get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
 
     processed_tape = &gl_tape;
     interpret_tac(&gl_tape);

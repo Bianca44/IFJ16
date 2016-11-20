@@ -85,18 +85,43 @@ void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result){
 
 void i_to_str(tVar *op1, tVar *op2, tVar *result){
     d_inst_name(); //TODO
+
+    char load[256];
+    char *new;
+    int n;
+
     switch(op1->data_type){
         case INT: //_sprintf
+            n = snprintf(load, 255,"%d",op1->i);
+            n = n + 1;
+            if((new = malloc(sizeof(char)*n)) == NULL){
+                //TODO
+            }
+            memcpy(new, load, n);
             break;
         case DOUBLE:
+            n = snprintf(load, 255,"%g",op1->d);
+            n = n + 1;
+            if((new = malloc(sizeof(char)*n)) == NULL){
+                //TODO
+            }
+            memcpy(new, load, n);
             break;
         case BOOLEAN:
-            break;
-        case STRING:
+            if(op1->b)
+                new = copy_string("true"); 
+            else
+                new = copy_string("false");             
             break;
         default:
             fprintf(stderr, "CHYBA PRI KONVERZII STRINGU");
     }
+
+    if(result->initialized){
+        free(result->s);
+    }
+
+    result->s = new;
 }
 
 //ASSIGNS
@@ -360,6 +385,25 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
 //BUILT-IN
 
 void i_cat(tVar *op1, tVar *op2, tVar *result){    
+    
+    int n = strlen(op1->s);
+    int m = strlen(op2->s);
+
+    char *new;
+
+    if((new = malloc(sizeof(char)*(n+m+1))) == NULL){
+        //TODO
+    }
+    
+    memcpy(new, op1->s, n);
+    memcpy(new + n, op2->s, m+1);
+    
+    if(result->initialized)
+        free(result->s);
+
+   
+    result->s = new;
+    
     d_inst_name();
 }
 
@@ -551,6 +595,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
             }
 			break;
         case I_CAT:
+            new_inst->f = i_cat;
 			break;
         case I_STRCMP:
             new_inst->f = i_strcmp;
