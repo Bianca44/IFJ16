@@ -1093,8 +1093,11 @@ int parse_declaration_element() {
                         if (is_first_pass) {
                                 has_function_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
+                                init_string(&local_vars_data_types);
+                                current_function.function.local_vars_count = 0;
                         } else /* second pass */ {
                                 DLInitList(&function_inst_tape, NULL /* todo*/);
+                                insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
@@ -1115,6 +1118,8 @@ int parse_declaration_element() {
                         if (is_first_pass) {
                                 has_function_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
+                                init_string(&local_vars_data_types);
+                                current_function.function.local_vars_count = 0;
                         }
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {

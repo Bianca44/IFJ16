@@ -113,6 +113,9 @@ symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = false;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
@@ -126,6 +129,9 @@ symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symb
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = false;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
         ht_insert(symbol_table, id_name, p);
@@ -262,6 +268,9 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
 
         p->variable.data_type = data_type;
         p->variable.initialized = true;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
         p->id_name = id_name;
@@ -310,6 +319,9 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = true;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
 

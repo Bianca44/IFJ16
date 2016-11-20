@@ -20,12 +20,10 @@ static String r = "yolo";
 static void run () {
         //int a = 4+4;
         int a;
-        o =  5;
+        o = 5+5;
         ifj16.print(o);
         Main.o =  53;
         ifj16.print(o);
-        a = 5;
-        ifj16.print(a);
         //Main.o = 42;
         //ifj16.print(o);
         //Main.r = "s";
