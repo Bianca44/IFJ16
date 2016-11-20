@@ -260,7 +260,7 @@ int parse_expression(bool ends_semicolon) {
                 //free_token_buffer(&tb);
                 printf("\n");
                 if (!skip_precedence_analysis) {
-                    get_psa(&tb, &expr_result, &expr_var_result);
+                        get_psa(&tb, &expr_result, &expr_var_result);
                 }
         }
         return PARSED_OK;
@@ -543,7 +543,6 @@ int parse_param_value () {
                                         if (is_second_pass) {
                                                 //void * x = insert_string_const(&mem_constants, "ahoj");
                                                 DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
-                                                interpret_tac(&function_inst_tape);
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -682,6 +681,20 @@ int parse_statement() {
                         }
                 }
                 if(parse_call_assign()) {
+                        if (is_second_pass) {
+                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
+
+                                if (item == NULL) {
+                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                }
+                                tVar * to = &item->variable;
+
+                                to->initialized = true;
+                                tVar * from = expr_var_result;
+                                //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                //DLInsertLast(&function_inst_tape, generate(I_PRINT, to, NULL, NULL));
+                        }
                         get_token();
                         if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                 return PARSED_OK;
@@ -799,8 +812,8 @@ int parse_method_element() {
                         current_function.function.local_vars_count = 0;
                         function_variable.variable.offset = 0;
                 } else {
-                    insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
-                    printf("INSERTED\n");
+                        insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
+                        printf("INSERTED\n");
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -964,18 +977,6 @@ int parse_value() {
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
 
-                                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                                symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
-
-                                                if (item == NULL) {
-                                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
-                                                }
-                                                tVar * to = &item->variable;
-                                                to->initialized = true;
-                                                tVar * from = expr_var_result;
-                                                //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
-                                                //DLInsertLast(&function_inst_tape, generate(I_PRINT, to, NULL, NULL));
-
                                                 expr_result.id_name = NULL;
                                         }
                                 }
@@ -1025,9 +1026,6 @@ int parse_declaration() {
 
 
                                         DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
-
-                                        //printf("init %d\n", to->initialized);
-                                        //DLInsertLast(global_inst_tape, generate(I_PRINT, to, NULL, NULL));
                                 } else {
                                         skip_precedence_analysis = false;
                                 }
@@ -1067,7 +1065,7 @@ int parse_declaration_element() {
                                 has_function_return = false;
                                 current_function.function.symbol_table = create_function_symbol_table();
                         } else /* second pass */ {
-                            DLInitList(&function_inst_tape, NULL /* todo*/);
+                                DLInitList(&function_inst_tape, NULL /* todo*/);
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();
