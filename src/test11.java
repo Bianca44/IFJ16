@@ -17,7 +17,8 @@ class Main {
     //static int o = 2*2;
     static String r = "yolo";
     static void run () {
-            ifj16.print("daco");
+            ifj16.print(r);
+            //Main.r = 5;
 
     }
 
