@@ -33,4 +33,8 @@ static void run () {
 
 }
 
+static int aa() {
+    return 5;
+}
+
 }

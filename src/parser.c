@@ -285,12 +285,13 @@ int parse_return_value() {
                                 if (is_second_pass) {
                                         if (expr_result.id_name != NULL) {
                                                 int expr_data_type =  expr_result.variable.data_type;
-
-                                                if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
-                                                        // pretypuj
-                                                } else {
-                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                if (current_variable.variable.data_type != expr_data_type) {
+                                                        if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
+                                                                // pretypuj
+                                                        } else {
+                                                                fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
+                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        }
                                                 }
                                         }
                                 }
@@ -1010,12 +1011,12 @@ int parse_value() {
                                         if (expr_result.id_name != NULL) {
                                                 int expr_data_type = expr_result.is_function ? expr_result.function.return_type : expr_result.variable.data_type;
                                                 if (function_variable.variable.data_type != expr_data_type) {
-                                                    if (function_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
-                                                            // pretypuj
-                                                    } else {
-                                                            fprintf(stderr, "Incompatible types to assign value.\n");
-                                                            cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                                                    }
+                                                        if (function_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
+                                                                // pretypuj
+                                                        } else {
+                                                                fprintf(stderr, "Incompatible types to assign value.\n");
+                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        }
                                                 }
 
                                                 expr_result.id_name = NULL;
