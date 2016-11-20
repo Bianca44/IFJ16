@@ -541,8 +541,6 @@ int parse_param_value () {
                                 /* special case for ifj16.print */
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                //void * x = insert_string_const(&mem_constants, "ahoj");
-                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -684,7 +682,12 @@ int parse_statement() {
                 function_variable.id_name = t.string_value;
                 if(parse_call_assign()) {
                         if (is_second_pass) {
-                                if (!p->is_function && function_variable.id_name != NULL) {
+
+                                if (p->is_function) {
+                                    if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
+                                        DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                    }
+                                } else if (function_variable.id_name != NULL) {
                                         symbol_table_item_t * item = NULL;
 
                                         if (strchr(function_variable.id_name, '.') != NULL) {
