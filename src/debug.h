@@ -29,12 +29,12 @@
 #define d_dob(d) fprintf(stderr, __FILE__":%u: %50f\n", __LINE__, d)
 #define d_bol(b) fprintf(stderr, __FILE__":%u: %50d\n", __LINE__, b)
 #define d_str(s) fprintf(stderr, __FILE__":%u: %50s\n", __LINE__,s)
-#define d_ptr(p) fprintf(stderr, __FILE__":%u: %50p\n", __LINE__,p)
+#define d_ptr(p) fprintf(stderr, __FILE__":%u: %50p\n", __LINE__,(void *)p)
 
-#define d_intp(i, ptr) fprintf(stderr, __FILE__":%u: %50d\t|%p|\n", __LINE__, i, ptr)
-#define d_dobp(d, ptr) fprintf(stderr, __FILE__":%u: %50f\t|%p|\n", __LINE__, d, ptr)
-#define d_bolp(b, ptr) fprintf(stderr, __FILE__":%u: %50d\t|%p|\n", __LINE__, b, ptr)
-#define d_strp(s, ptr) fprintf(stderr, __FILE__":%u: %50s\t|%p|\n", __LINE__,s, ptr)
+#define d_intp(i, ptr) fprintf(stderr, __FILE__":%u: %50d\t|%p|\n", __LINE__, i, (void *)ptr)
+#define d_dobp(d, ptr) fprintf(stderr, __FILE__":%u: %50f\t|%p|\n", __LINE__, d, (void *)ptr)
+#define d_bolp(b, ptr) fprintf(stderr, __FILE__":%u: %50d\t|%p|\n", __LINE__, b, (void *)ptr)
+#define d_strp(s, ptr) fprintf(stderr, __FILE__":%u: %50s\t|%p|\n", __LINE__,s, (void *)ptr)
 
 
 #define d_tVarPtr(var) (var != NULL ? \

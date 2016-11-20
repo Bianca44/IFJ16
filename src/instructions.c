@@ -85,9 +85,9 @@ void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result){
 
 void i_to_str(tVar *op1, tVar *op2, tVar *result){
     d_inst_name(); //TODO
-
+    UNUSED(op2);
     char load[256];
-    char *new;
+    char *new = NULL;
     int n;
 
     switch(op1->data_type){
@@ -297,6 +297,11 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     symbol_table_item_t *fun = (symbol_table_item_t *)(op1->s);
     frame_stack.prepared = init_frame(fun->function.params_local_vars_count);
     int i = fun->function.params_count; 
+
+    d_int(i);
+    d_int(fun->function.params_local_vars_count);
+    d_str(fun->function.local_vars_data_types);
+    
 
     for(char *s = fun->function.local_vars_data_types; *s != '\0'; s++){
         frame_stack.prepared->local[i].data_type = decode_type(*s);

@@ -69,6 +69,10 @@ void pop_frame(tFrameStack *stack){
         stack->top = stack->top->next;
         //free frame
         //TODO dalo by sa optimalizovat
+        if(tmp->frame == NULL){
+            d_message("PIL SI");
+            exit(42);
+        }
         for(int i = 0; i < tmp->frame->size; i++){
             if(tmp->frame->local[i].data_type == STRING){
                 free(tmp->frame->local[i].s);
