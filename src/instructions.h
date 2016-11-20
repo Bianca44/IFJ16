@@ -49,7 +49,7 @@ typedef enum instructions {
     I_LE,
     I_GE,
     I_NOT,
-    //BUILT-IN AND OTHER
+    //BUILT-IN AND OTHER  
     I_ASSIGN,
     I_CAT,
     I_STRCMP,

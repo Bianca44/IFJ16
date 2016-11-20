@@ -141,6 +141,10 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         p->function.local_vars_count = local_vars_count;
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
+        if (local_vars_data_types == NULL) {
+            /* compatibility */
+            local_vars_data_types = copy_string("");
+        }
         p->function.local_vars_data_types = local_vars_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;
@@ -274,12 +278,8 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
 
         int offset = function_item->function.params_local_vars_count;
         char * local_vars_data_types = function_item->function.local_vars_data_types;
-        int new_len = (local_vars_data_types == NULL) ? 1 : strlen(local_vars_data_types) + 1;
-        if (local_vars_data_types == NULL) {
-            local_vars_data_types = (char *) malloc((new_len + 1)* sizeof(char));
-        } else {
-            local_vars_data_types = (char *) realloc(local_vars_data_types, (new_len + 1)* sizeof(char));
-        }
+        int new_len = strlen(local_vars_data_types) + 1;
+        local_vars_data_types = (char *) realloc(local_vars_data_types, (new_len + 1)* sizeof(char));
 
         int c = 0;
         switch (data_type) {

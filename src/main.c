@@ -45,8 +45,10 @@ int main(int argc, char *argv[]) {
         parse(&inst_tape);
 
         symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
-        tDLList *run_tape = run_method->function.instruction_tape;
+        /* parser handles no run method, no need to check it here **/
 
+        tDLList *run_tape = run_method->function.instruction_tape;
+        DLInsertLast(&inst_tape, generate(I_INIT_FRAME, run_method, NULL, NULL));
         DLInsertLast(&inst_tape, generate(I_F_CALL, run_tape, NULL, NULL));
 
         printf("INTERPRET:\n");

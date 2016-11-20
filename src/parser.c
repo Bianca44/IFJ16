@@ -683,7 +683,6 @@ int parse_statement() {
                 if(parse_call_assign()) {
                         if (is_second_pass) {
                                 if (function_variable.id_name != NULL) {
-                                        printf("KOKOT %s\n", function_variable.id_name);
                                         symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
                                         symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
 
@@ -814,10 +813,11 @@ int parse_method_element() {
                         clear_string(&param_data_types);
                         clear_string(&local_vars_data_types); /* vyprazdni string ale neuvolni */
                         current_function.function.local_vars_count = 0;
+                        current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
+                        current_function.function.params_count = 0;
                 } else {
                         insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
-                        printf("INSERTED\n");
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -843,7 +843,6 @@ int parse_method_element() {
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
                                         if (is_second_pass) {
-                                                printf("FUN VAR %s\n", function_variable.id_name);
                                                 symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
                                                 symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
 
@@ -855,12 +854,7 @@ int parse_method_element() {
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
 
-                                                printf("%d %s %d\n", item->variable.data_type, item->id_name, expr_var_result->i);
-                                                // DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
-                                                // INSANE!
                                                 DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
-                                                //to->i = from->i;
-                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                         }
                                         function_variable.id_name = NULL;
                                         get_token();
@@ -1046,8 +1040,6 @@ int parse_declaration() {
                                         tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
                                         to->initialized = true;
                                         tVar * from = expr_var_result;
-                                        //printf("hodnota vysledku %s\n", from->s);
-
 
                                         DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                 } else {
