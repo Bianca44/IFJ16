@@ -682,19 +682,23 @@ int parse_statement() {
                 }
                 if(parse_call_assign()) {
                         if (is_second_pass) {
-                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
+                                if (function_variable.id_name != NULL) {
+                                        printf("KOKOT %s\n", function_variable.id_name);
+                                        symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                        symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
 
-                                if (item == NULL) {
-                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                        if (item == NULL) {
+                                                item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                        } /*
+                                             tVar * to = &item->variable;
+
+                                             to->initialized = true;
+                                             tVar * from = expr_var_result;*/
+                                          //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                          //DLInsertLast(&function_inst_tape, generate(I_PRINT, to, NULL, NULL));
                                 }
-                                tVar * to = &item->variable;
-
-                                to->initialized = true;
-                                tVar * from = expr_var_result;
-                                //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
-                                //DLInsertLast(&function_inst_tape, generate(I_PRINT, to, NULL, NULL));
                         }
+                        function_variable.id_name = NULL;
                         get_token();
                         if (t.type == ELSE || t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                 return PARSED_OK;
@@ -838,6 +842,24 @@ int parse_method_element() {
                         get_token();
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
+                                        if (is_second_pass) {
+                                                printf("FUN VAR %s\n", function_variable.id_name);
+                                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                                symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
+
+                                                if (item == NULL) {
+                                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                                }
+                                                tVar * to = &item->variable;
+
+                                                to->initialized = true;
+                                                tVar * from = expr_var_result;
+
+                                                printf("%s %d\n", item->id_name, expr_var_result->i);
+                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                                //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                        }
                                         function_variable.id_name = NULL;
                                         get_token();
                                         if (t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == LEFT_CURVED_BRACKET || t.type == IF || t.type == WHILE) {
