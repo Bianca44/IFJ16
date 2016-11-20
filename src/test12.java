@@ -6,13 +6,14 @@ class Main {
     static int o = 5;
     static String r = "yolo";
     static void run () {
-            
-    		int a;
-    		a = 5+5;
 
-            ifj16.print(s);
+    		ifj16.print("Hello world");
 
 
+    }
+
+    static void pp() {
+        ifj16.print("Kokotina");
     }
 
 }

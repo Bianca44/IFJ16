@@ -331,6 +331,12 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         return p;
 }
 
+/* Naalokuje instrukcnu pasku pre funkciu */
+tDLList * create_function_instr_tape() {
+    tDLList * tape = (tDLList *) malloc(sizeof(tDLList));
+    return tape;
+}
+
 /* Uvolni zoznam tried */
 void free_class_list() {
         ht_free(class_list);

@@ -29,7 +29,7 @@ bool skip_precedence_analysis = false;
 constant_t * mem_constants = NULL;
 tDLList * global_inst_tape;
 
-tDLList function_inst_tape;
+tDLList * function_inst_tape;
 token_t t;
 token_buffer_t token_buffer;
 
@@ -688,7 +688,7 @@ int parse_statement() {
 
                                 if (p->is_function) {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
-                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                                DLInsertLast(function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                         }
                                 } else if (function_variable.id_name != NULL) {
                                         symbol_table_item_t * item = NULL;
@@ -710,7 +710,7 @@ int parse_statement() {
                                         to->initialized = true;
                                         tVar * from = expr_var_result;
 
-                                        DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                        DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                 }
                         }
                         function_variable.id_name = NULL;
@@ -833,7 +833,7 @@ int parse_method_element() {
                         function_variable.variable.offset = 0;
                         current_function.function.params_count = 0;
                 } else {
-                        insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
+                        insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -870,7 +870,7 @@ int parse_method_element() {
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
 
-                                                DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                         }
                                         function_variable.id_name = NULL;
                                         get_token();
@@ -1037,8 +1037,9 @@ int parse_declaration() {
                         is_static_variable_declaration = false;
                 } else {
                         skip_precedence_analysis = false;
-                        DLInitList(&function_inst_tape, NULL /* todo */);
-                        insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
+                        function_inst_tape = create_function_instr_tape();
+                        DLInitList(function_inst_tape, NULL /* todo */);
+                        insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
                 return parse_method_declaration ();
         } else if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -1107,8 +1108,9 @@ int parse_declaration_element() {
                                 init_string(&local_vars_data_types);
                                 current_function.function.local_vars_count = 0;
                         } else /* second pass */ {
-                                DLInitList(&function_inst_tape, NULL /* todo*/);
-                                insert_instr_tape_for_function(current_class, current_function.id_name, &function_inst_tape);
+                                function_inst_tape = create_function_instr_tape();
+                                DLInitList(function_inst_tape, NULL /* todo*/);
+                                insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                         }
                         if (get_token() == LEFT_ROUNDED_BRACKET) {
                                 return parse_method_declaration();

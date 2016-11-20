@@ -82,6 +82,7 @@ bool is_special_id_declared(char * id_name);
 symbol_table_item_t * get_symbol_table_special_id_item(char * id_name);
 symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type);
 symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_name, int data_type);
+tDLList * create_function_instr_tape();
 
 typedef struct js_item {
     tDLElemPtr data;
