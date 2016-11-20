@@ -7,8 +7,8 @@
 #define pr_er \
                     fprintf(stderr, "PRACA S NEDEFINOVANOU PREMENNOU\n")\
 
-
-
+                    
+        
 #define initialize(var) (var->initialized = true, var)
 #define check_init(var) (var->initialized) ? (var) : (pr_er,exit(0), NULL)
 #define evaluate_res(adress) ((adress != NULL) ? (initialize(get_e_adr(adress))) : (NULL))
@@ -20,10 +20,9 @@
 
 int push_counter;
 tDLList * processed_tape;
-tFrameStack frame_stack;
 
 tFrame * init_frame(unsigned size){
-
+    
     tFrame * new_frame;
     if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL){
         //TODO
@@ -31,7 +30,7 @@ tFrame * init_frame(unsigned size){
 
     new_frame->ret_val = NULL;
     new_frame->size = size;
-
+ 
     return new_frame;
 }
 
@@ -49,7 +48,7 @@ tFrame * top_frame(tFrameStack *stack){
 }
 
 void push_frame(tFrameStack *stack, tFrame * frame){
-
+    
     tFSElem *ptr;
     if((ptr = malloc(sizeof(tFSElem))) == NULL){
         //TODO
@@ -59,9 +58,9 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     ptr->next = stack->top;
     stack->top = ptr;
 }
-
+   
 void pop_frame(tFrameStack *stack){
-
+    
     tFSElem *tmp;
 
     if(stack->top != NULL){
@@ -81,27 +80,27 @@ void pop_frame(tFrameStack *stack){
 }
 
 int interpret_tac(tDLList *inst_tape){
-    d_message("vykonanie novej pasky");
+    d_message("vykonanie novej pasky");    
     DLFirst(inst_tape);
     d_message("skok na zaciatok pasky");
     tVar *op1, *op2, *result;
     tInst * inst;
     while(DLActive(inst_tape)){
-
+        
         DLCopy(inst_tape, (void **)&inst);
 
         d_message("spracovanie adries");
-        op1 = evaluate_op(inst->op1);
-        op2 = evaluate_op(inst->op2);
-        result = evaluate_res(inst->result);
+        op1 = evaluate_op(inst->op1);         
+        op2 = evaluate_op(inst->op2);         
+        result = evaluate_res(inst->result);         
         d_message("vykonanie instrukcie");
         d_tVarPtr(op1);
-        d_tVarPtr(op2);
+        d_tVarPtr(op2);               
         inst->f(op1, op2, result);
         d_tVarPtr(result);
         d_message("instrukcia bola vykonana");
-        DLSucc(inst_tape);
-    }
-
+        DLSucc(inst_tape);  
+    } 
+     
    return 0; //TODO
 }

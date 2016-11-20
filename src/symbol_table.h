@@ -73,6 +73,7 @@ bool is_declared(char * id_name);
 void append_type(string_t *str, int type);
 symbol_table_t * get_symbol_table_for_class(char* class_name);
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name);
+void insert_instr_tape_for_function(char * class_name, char * function_name, tDLList * tape);
 symbol_table_t * create_function_symbol_table();
 symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symbol_table, char * id_name, int data_type, int offset);
 symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name);

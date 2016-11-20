@@ -149,6 +149,11 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         return p;
 }
 
+void insert_instr_tape_for_function(char * class_name, char * function_name, tDLList * tape) {
+    symbol_table_item_t * function_item = get_symbol_table_class_item(class_name, function_name);
+    function_item->function.instruction_tape = tape;
+}
+
 /* Vrati polozku z tabulky symbolov pre danu triedu */
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name) {
         if (id_name == NULL) {
@@ -251,7 +256,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
         sprintf(id_name, "#%d", tmp_id);
 
         p->variable.data_type = data_type;
-        p->variable.initialized = false;
+        p->variable.initialized = true;
         p->is_function = false;
         p->declared = true;
         p->id_name = id_name;
@@ -303,7 +308,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         p->id_name = id_name;
         p->variable.data_type = data_type;
         p->variable.offset = offset;
-        p->variable.initialized = false;
+        p->variable.initialized = true;
         p->is_function = false;
         p->declared = true;
 

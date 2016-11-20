@@ -44,7 +44,13 @@ int main(int argc, char *argv[]) {
         printf("\x1b[32mSECOND PASS\x1b[0m\n");
         parse(&inst_tape);
 
+        symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
+        tDLList *run_tape = run_method->function.instruction_tape;
+
+        DLInsertLast(&inst_tape, generate(I_F_CALL, &run_tape, NULL, NULL));
+
         printf("INTERPRET:\n");
+        processed_tape = &inst_tape;
         interpret_tac(&inst_tape);
 
         //DLDisposeList(&inst_tape);

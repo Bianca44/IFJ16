@@ -264,7 +264,11 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             printf("OP1 %d OP2 %d\n",op_1->i,op_2->i);
+            generate_tmp_var(result_item->value.data_type);
+            printf("OP1 %d OP2 %d\n",op_1->i,op_2->i);
+            printf("adress %p\n", work_tape);
             DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, generate_tmp_var(result_item->value.data_type)));
+            printf("OP1 %d OP2 %d\n",op_1->i,op_2->i);
             reset_ops();
 
             break;
@@ -786,6 +790,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        st_item->id_name = "expr_result";
        st_item->variable = *top_expr_variable;
        *expr_result = top_expr_variable;
+
        reset_ops();
 
 
