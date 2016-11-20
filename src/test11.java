@@ -18,8 +18,8 @@ class Main {
     static String r = "yolo";
     static void run () {
             int a = 4;
-            ifj16.print(5);
-            ifj16.print(r);
+        //    ifj16.print(5);
+        //    ifj16.print(r);
             //Main.r = 5;
 
     }

@@ -855,9 +855,11 @@ int parse_method_element() {
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
 
-                                                printf("%s %d\n", item->id_name, expr_var_result->i);
-                                                DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
-                                                //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                printf("%d %s %d\n", item->variable.data_type, item->id_name, expr_var_result->i);
+                                                // DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                                // INSANE!
+                                                DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                //to->i = from->i;
                                                 DLInsertLast(&function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
                                         }
                                         function_variable.id_name = NULL;
