@@ -23,6 +23,8 @@ tDLList * work_tape;
 tVar* op_1;
 tVar* op_2;
 
+tVar* op_2;
+
 char precedence_table[SIZE][SIZE] = {
 //input token
       /*  +   -   *   /   (   )   <   >  <=  >=  ==   !=  &&  ||  id  lit  $   ! */ //stack top
@@ -45,6 +47,7 @@ char precedence_table[SIZE][SIZE] = {
         {'<','<','<','<','<',' ','<','<','<','<','<','<','<','<','<', '<',' ','<'}, // $
         {'>','>','>','>','<','>','>','>','>','>','>','>','>','>','<', '<','>','<'}, // !
 };
+
 
 
 
