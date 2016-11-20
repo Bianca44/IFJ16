@@ -684,21 +684,21 @@ int parse_statement() {
                 function_variable.id_name = t.string_value;
                 if(parse_call_assign()) {
                         if (is_second_pass) {
-                                 if(p->is_function) {
-                                        /*printf("DAAAAAAAAAAA\n");
-                                        tVar * to = &p->variable;
+                                if (!p->is_function && function_variable.id_name != NULL) {
+                                        symbol_table_item_t * item = NULL;
 
-                                        to->initialized = true;
-                                        tVar * from = expr_var_result;
-                                        printf("DAAAAAAAAAAA %d\n", from->i);
-                                        //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));*/
-                                } else if (function_variable.id_name != NULL) {
-                                        symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                        symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
+                                        if (strchr(function_variable.id_name, '.') != NULL) {
+                                                item = get_symbol_table_special_id_item(function_call_name);
+                                        } else {
+                                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                                item = get_symbol_table_function_item(table, function_variable.id_name);
 
-                                        if (item == NULL) {
-                                                item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                                if (item == NULL) {
+                                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                                }
+                                                printf("%s\n", function_variable.id_name);
                                         }
+
                                         tVar * to = &item->variable;
 
                                         to->initialized = true;

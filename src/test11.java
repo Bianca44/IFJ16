@@ -21,6 +21,10 @@ static void run () {
         //int a = 4+4;
         o =  5;
         ifj16.print(o);
+        Main.o =  53;
+        ifj16.print(o);
+        //Main.o = 42;
+        //ifj16.print(o);
         //Main.r = "s";
         //ifj16.print(r);
         //ifj16.print(d);
