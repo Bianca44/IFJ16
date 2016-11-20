@@ -234,6 +234,7 @@ symbol_table_item_t * get_symbol_table_special_id_item(char * id_name) {
 
         symbol_table_item_t * item = get_symbol_table_class_item(class, method);
         free(special_id);
+        item->id_name = id_name;
         if (item == NULL) {
                 return NULL;
         }

@@ -14,14 +14,16 @@ class Main {
    static boolean i = true;
    static double g = 2.56;*/
 //static int p = 6;
-static int o = 2*2+3+5-6;
+static int o = 2;
 static String r = "yolo";
-static String d = "yolo"+"ji";
+//static String d = "yolo"+"ji";
 static void run () {
         //int a = 4+4;
+        o =  5;
         ifj16.print(o);
-        ifj16.print(r);
-        ifj16.print(d);
+        //Main.r = "s";
+        //ifj16.print(r);
+        //ifj16.print(d);
         //Main.r = 5;
 
 }

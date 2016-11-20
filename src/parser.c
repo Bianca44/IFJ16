@@ -652,13 +652,14 @@ int parse_statement() {
         }
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
+                symbol_table_item_t * p = NULL;
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
-                                        symbol_table_item_t * p = get_symbol_table_special_id_item(t.string_value);
+                                        p = get_symbol_table_special_id_item(t.string_value);
                                         function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
                                         //printf("MAM TYP %d\n", function_variable.variable.data_type);
                                 }
@@ -669,32 +670,41 @@ int parse_statement() {
                                                 fprintf(stderr, "Neither ID \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n", t.string_value, current_class, current_function.id_name, current_class);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
-                                                symbol_table_item_t * p = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                                p = get_symbol_table_function_item(function_symbol_table, t.string_value);
                                                 function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
                                                 //printf("MAM TYP3 %s\n", t_names[function_variable.variable.data_type]);
                                         }
                                 } else {
-                                        symbol_table_item_t * p = get_symbol_table_class_item(current_class, t.string_value);
+                                        p = get_symbol_table_class_item(current_class, t.string_value);
                                         function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
                                         //printf("MAM TYP3 %s\n", t_names[function_variable.variable.data_type]);
                                 }
                         }
                 }
+                function_variable.id_name = t.string_value;
                 if(parse_call_assign()) {
                         if (is_second_pass) {
-                                if (function_variable.id_name != NULL) {
+                                 if(p->is_function) {
+                                        /*printf("DAAAAAAAAAAA\n");
+                                        tVar * to = &p->variable;
+
+                                        to->initialized = true;
+                                        tVar * from = expr_var_result;
+                                        printf("DAAAAAAAAAAA %d\n", from->i);
+                                        //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));*/
+                                } else if (function_variable.id_name != NULL) {
                                         symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
                                         symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
 
                                         if (item == NULL) {
                                                 item = get_symbol_table_class_item(current_class, function_variable.id_name);
-                                        } /*
-                                             tVar * to = &item->variable;
+                                        }
+                                        tVar * to = &item->variable;
 
-                                             to->initialized = true;
-                                             tVar * from = expr_var_result;*/
-                                          //DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
-                                          //DLInsertLast(&function_inst_tape, generate(I_PRINT, to, NULL, NULL));
+                                        to->initialized = true;
+                                        tVar * from = expr_var_result;
+
+                                        DLInsertLast(&function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                 }
                         }
                         function_variable.id_name = NULL;
