@@ -9,9 +9,9 @@
 
                     
         
-#define initialize(var) (var->initialized = true, var)
+#define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
 #define check_init(var) (var->initialized) ? (var) : (pr_er,exit(0), NULL)
-#define evaluate_res(adress) ((adress != NULL) ? (initialize(get_e_adr(adress))) : (NULL))
+#define evaluate_res(adress) ((adress != NULL) ? (get_e_adr(adress)) : (NULL))
 #define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
 #define get_e_adr(adress) \
     ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
@@ -101,6 +101,7 @@ int interpret_tac(tDLList *inst_tape){
         d_tVarPtr(op1);
         d_tVarPtr(op2);               
         inst->f(op1, op2, result);
+        initialize(result);
         d_tVarPtr(result);
         d_message("instrukcia bola vykonana");
         DLSucc(inst_tape);  

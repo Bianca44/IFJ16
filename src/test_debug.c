@@ -329,6 +329,24 @@ int main(){
     pomocna[10].data_type = INT;
     DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("y",main_f), NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
+   
+
+    //sort 
+    symbol_table_t * substr = create_function_symbol_table();
+    insert_function_symbol_table("substr", STRING, 3, 0, "sii", substr);
+    symbol_table_item_t *y = get_symbol_table_class_item("Main", "substr");
+    y->function.local_vars_data_types = "";
+    y->function.params_local_vars_count = 3; 
+    pomocna[11].data_type = INT;
+    pomocna[11].i = 1;
+    pomocna[12].data_type = INT;
+    pomocna[12].i = 3;
+    DLInsertLast(&gl_tape, generate(I_INIT_FRAME, y, NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("str",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[11], NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[12], NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_SUBSTR, NULL, NULL, get_adress("str",main_f)));
+
     DLInsertLast(&gl_tape, generate(I_SORT, get_adress("str",main_f), NULL, get_adress("str",main_f)));
     DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_LEN, get_adress("str",main_f), NULL, &pomocna[10]));

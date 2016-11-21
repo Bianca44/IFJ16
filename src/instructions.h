@@ -1,7 +1,6 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-
 #include "symbol_table.h"
 #include "scanner.h"
 #include "memory_constants.h"
@@ -14,11 +13,8 @@ extern constant_t * tape_ref;
 
 typedef struct tInst{
     tInst_fun *f;
-    //tVar *op1_st;
     tVar *op1;
-    //tVar *op2_st;
     tVar *op2;
-    //tVar *result_st;
     tVar *result;
 } tInst;
 
@@ -49,6 +45,8 @@ typedef enum instructions {
     I_LE,
     I_GE,
     I_NOT,
+    I_AND,
+    I_OR,
     //BUILT-IN AND OTHER  
     I_ASSIGN,
     I_CAT,
@@ -70,7 +68,7 @@ typedef enum instructions {
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
-tInst_fun * find_fun(tInstId instruction, tVar * result, tVar *op1);
+
 //INPUT
 void i_rint(tVar *op1, tVar *op2, tVar *result);
 void i_rdbl(tVar *op1, tVar *op2, tVar *result);
@@ -86,7 +84,7 @@ void i_div_i(tVar *op1, tVar *op2, tVar *result);
 void i_div_d(tVar *op1, tVar *op2, tVar *result);
 //Conversions
 void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result);
-void i_to_str(tVar *op1, tVar *op2, tVar *result); //TODO
+void i_to_str(tVar *op1, tVar *op2, tVar *result); 
 //assigns
 void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
@@ -98,9 +96,9 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 void i_return(tVar *op1, tVar *op2, tVar *result);
 //built-in
-void i_cat(tVar *op1, tVar *op2, tVar *result); //TODO
+void i_cat(tVar *op1, tVar *op2, tVar *result); 
 void i_strcmp(tVar *op1, tVar *op2, tVar *result);
-void i_substr(tVar *op1, tVar *op2, tVar *result); //TODO
+void i_substr(tVar *op1, tVar *op2, tVar *result);
 void i_find(tVar *op1, tVar *op2, tVar *result);
 void i_sort(tVar *op1, tVar *op2, tVar *result);
 void i_print(tVar *op1, tVar *op2, tVar *result);
@@ -127,8 +125,10 @@ void i_le_d(tVar *op1, tVar *op2, tVar *result);
 //greater equal
 void i_ge_i(tVar *op1, tVar *op2, tVar *result);
 void i_ge_d(tVar *op1, tVar *op2, tVar *result);
-//not
+//not, and, or
 void i_not(tVar *op1, tVar *op2, tVar *result);
+void i_and(tVar *op1, tVar *op2, tVar *result);
+void i_or(tVar *op1, tVar *op2, tVar *result);
 //jumps
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_jnt(tVar *op1, tVar *op2, tVar *result);
