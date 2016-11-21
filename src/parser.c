@@ -189,6 +189,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
+                                                        expr_var_result = NULL;
                                                         return PARSED_OK;
                                                 }
                                         }
@@ -742,26 +743,14 @@ int parse_statement() {
                                         }
 
                                 } else if (function_variable.id_name != NULL) {
-                                        /*symbol_table_item_t * item = NULL;
+                                        if (expr_var_result != NULL) { /* neni priradenie cez funkciu */
+                                                tVar * to = &p->variable;
 
-                                           if (strchr(function_variable.id_name, '.') != NULL) {
-                                                item = get_symbol_table_special_id_item(function_name_call);
-                                           } else {
-                                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                                item = get_symbol_table_function_item(table, function_variable.id_name);
+                                                to->initialized = true;
+                                                tVar * from = expr_var_result;
 
-                                                if (item == NULL) {
-                                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
-                                                }
-                                                printf("%s\n", function_variable.id_name);
-                                           }*/
-
-                                        tVar * to = &p->variable;
-
-                                        to->initialized = true;
-                                        tVar * from = expr_var_result;
-
-                                        DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                        }
                                 }
                         }
                         function_variable.id_name = NULL;

@@ -19,7 +19,7 @@ STRING_LITERAL,
 class Main
 in PSO 2:
 Value of literal is:yolo
-Hodnota jeeee: 15949904
+Hodnota jeeee: 38830160
 Data type jeeee: 38
 Term: 18
 term ------38
@@ -31,8 +31,8 @@ Prvok zasobnika je: P_EXPR
 Prvok zasobnika je: P_ENDMARK
 Data type of result is:38
 Result value is:yolo
-name=run, ret_type=41, data_types=(null), params_count=0, local_vars_count=1, all=1, local_vars_data_types=i
-name=aa, ret_type=36, data_types=(null), params_count=0, local_vars_count=0, all=0, local_vars_data_types=
+name=run, ret_type=41, data_types=(null), params_count=0, local_vars_count=2, all=2, local_vars_data_types=ib
+name=aa, ret_type=36, data_types=bs, params_count=2, local_vars_count=0, all=2, local_vars_data_types=
 SYNTACTIC ANALYSIS	OK
 [32mSECOND PASS[0m
 IN EXPR: INT_LITERAL, 
@@ -64,6 +64,7 @@ Prvok zasobnika je: P_EXPR
 Prvok zasobnika je: P_ENDMARK
 Data type of result is:36
 Result value is:10
+CALL ifj16.print
 IN EXPR: ID, 
 class Main
 vo funkcii run
@@ -103,6 +104,7 @@ Prvok zasobnika je: P_EXPR
 Prvok zasobnika je: P_ENDMARK
 Data type of result is:36
 Result value is:53
+CALL ifj16.print
 IN EXPR: ID, 
 class Main
 vo funkcii run
@@ -125,6 +127,89 @@ Prvok zasobnika je: P_EXPR
 Prvok zasobnika je: P_ENDMARK
 Data type of result is:36
 Result value is:50
+IN EXPR: FALSE, 
+class Main
+vo funkcii run
+in PSO 2:
+Value of literal is:0
+Hodnota jeeee: 0
+Data type jeeee: 26
+Term: 18
+term ------26
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:26
+Result value is:0
+CALL aa
+DO FRAME 
+pushujem var 0
+priradenie: funkcia
+CALL ifj16.print
+IN EXPR: STRING_LITERAL, 
+class Main
+vo funkcii aa
+in PSO 2:
+Value of literal is:druha funkcia
+Hodnota jeeee: 38835984
+Data type jeeee: 38
+Term: 18
+term ------38
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:38
+Result value is:druha funkcia
+CALL ifj16.print
+IN EXPR: ID, 
+class Main
+vo funkcii aa
+in PSO 2:
+Current function is:aa
+premenna e 
+hodnota 0 
+data type 26
+Value of literal is:0
+Hodnota jeeee: 0
+Data type jeeee: 26
+Term: 18
+term ------26
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:26
+Result value is:0
+CALL ifj16.print
+IN EXPR: ID, 
+class Main
+vo funkcii aa
+in PSO 2:
+Current function is:aa
+premenna msg 
+hodnota 0 
+data type 38
+Value of literal is:(null)
+Hodnota jeeee: 0
+Data type jeeee: 38
+Term: 18
+term ------38
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:38
+Result value is:(null)
 IN EXPR: INT_LITERAL, 
 class Main
 vo funkcii aa
