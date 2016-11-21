@@ -6,6 +6,7 @@ static void run()
         ifj16.print("Zadejte cislo pro vypocet faktorialu: ");
         a = ifj16.readInt();
         int vysl;
+        int vysl = 1; // takto ide
         while (a > 0) {
                 vysl = vysl * a;
                 a = a - 1;

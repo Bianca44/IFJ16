@@ -795,7 +795,7 @@ int parse_statement() {
 
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
-
+                                                printf("VKLADAM ASSIGN\n");
                                                 DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                         }
                                 }
