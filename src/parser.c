@@ -219,6 +219,8 @@ int parse_expression(bool ends_semicolon) {
                                                                         DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
                                                                 } else {
                                                                         printf("PRIDAVAM %s\n", function_name_call);
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
