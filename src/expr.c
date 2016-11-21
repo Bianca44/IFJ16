@@ -619,7 +619,6 @@ int init_item(PStack *P,token_t *t){
                         item = get_symbol_table_class_item(current_class, t->string_value);
                     }
 
-
                     //item->variable.i = 42;
                     switch(item->variable.data_type){
                         case INT:
