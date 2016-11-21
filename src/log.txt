@@ -1,0 +1,147 @@
+[32mFIRST PASS[0m
+INT_LITERAL, 
+class Main
+in PSO 2:
+Value of literal is:2
+Hodnota jeeee: 2
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:2
+STRING_LITERAL, 
+class Main
+in PSO 2:
+Value of literal is:yolo
+Hodnota jeeee: 15949904
+Data type jeeee: 38
+Term: 18
+term ------38
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:38
+Result value is:yolo
+name=run, ret_type=41, data_types=(null), params_count=0, local_vars_count=1, all=1, local_vars_data_types=i
+name=aa, ret_type=36, data_types=(null), params_count=0, local_vars_count=0, all=0, local_vars_data_types=
+SYNTACTIC ANALYSIS	OK
+[32mSECOND PASS[0m
+IN EXPR: INT_LITERAL, 
+IN EXPR: STRING_LITERAL, 
+IN EXPR: INT_LITERAL, ADD, INT_LITERAL, 
+class Main
+vo funkcii run
+in PSO 4:
+Value of literal is:5
+Hodnota jeeee: 5
+Data type jeeee: 36
+Term: 18
+term ------36
+Scitanie
+Value of literal is:5
+Hodnota jeeee: 5
+Data type jeeee: 36
+Term: 18
+term ------36
+HOdnota druheho operandu: 5
+HOdnota prveho operandu: 5
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:10
+IN EXPR: ID, 
+class Main
+vo funkcii run
+in PSO 2:
+Current function is:run
+premenna o 
+hodnota 0 
+data type 36
+Hodnota premennej: 0
+Value of literal is:50
+Hodnota jeeee: 50
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:50
+IN EXPR: INT_LITERAL, 
+class Main
+vo funkcii run
+in PSO 2:
+Value of literal is:53
+Hodnota jeeee: 53
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:53
+IN EXPR: ID, 
+class Main
+vo funkcii run
+in PSO 2:
+Current function is:run
+premenna o 
+hodnota 0 
+data type 36
+Hodnota premennej: 0
+Value of literal is:50
+Hodnota jeeee: 50
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:50
+IN EXPR: INT_LITERAL, 
+class Main
+vo funkcii aa
+in PSO 2:
+Value of literal is:5
+Hodnota jeeee: 5
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:5
+INTERPRET:
+10
+53

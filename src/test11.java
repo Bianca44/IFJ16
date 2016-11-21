@@ -30,10 +30,12 @@ static void run () {
         //ifj16.print(r);
         //ifj16.print(d);
         //Main.r = 5;
+        aa();
 
 }
 
 static int aa() {
+    ifj16.print("druha funkcia");
     return 5;
 }
 
