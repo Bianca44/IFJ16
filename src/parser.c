@@ -323,7 +323,7 @@ int parse_next_param_value() {
                 get_token();
                 if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                         if (is_second_pass) {
-                                symbol_table_item_t * item;
+                                symbol_table_item_t * item = NULL;
                                 int data_type = 0;
                                 if (t.type == SPECIAL_ID) {
                                         if (!is_special_id_declared(t.string_value)) {
@@ -337,6 +337,7 @@ int parse_next_param_value() {
                                                 }
                                                 data_type = item->variable.data_type;
                                         }
+                                        second_param = &item->variable;
                                 }
                                 else if (t.type == ID) {
                                         symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
@@ -356,6 +357,7 @@ int parse_next_param_value() {
                                                         data_type = item->variable.data_type;
                                                 }
                                         }
+                                        second_param = &item->variable;
                                 } else {
                                         switch (t.type) {
                                         case INT_LITERAL: data_type = INT;
@@ -387,39 +389,52 @@ int parse_next_param_value() {
                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
+                                bool is_var = (t.type != ID && t.type != SPECIAL_ID);
+
                                 switch (expected_param_type) {
                                 case 's':
                                         if (data_type != STRING) {
                                                 printf("Parameter \'%s\' when calling function \'%s\' must be string.\n", t.string_value, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
+                                        second_param = &item->variable;
+                                        if (is_var) second_param = insert_string_const(&mem_constants, t.string_value);
                                         break;
                                 case 'b':
                                         if (data_type != BOOLEAN) {
                                                 printf("Parameter \'%s\' when calling function \'%s\' must be boolean.\n", t.string_value, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
+
+                                        bool val = (t.type == TRUE);
+                                        if (is_var) second_param = insert_boolean_const(&mem_constants, val);
                                         break;
                                 case 'i':
                                         if (data_type != INT) {
                                                 printf("Parameter \'%s\' when calling function \'%s\' must be int.\n", t.string_value, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
+                                        if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
                                 case 'd':
                                         if (data_type == INT) {
-                                                printf("konvertuj\n");
+                                                double val = (double) t.int_value;
+                                                if (is_var) {
+                                                        second_param = insert_double_const(&mem_constants, val);
+                                                } else {
+                                                        // INSTRUKCIA
+                                                }
 
                                         } else if (data_type != DOUBLE) {
                                                 printf("Parameter \'%s\' when calling function \'%s\' must be double.\n", t.string_value, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                        } else {
+                                                if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
                                         }
                                 }
 
 
-                                //symbol_table_item_t *function_item = get_symbol_table_class_item(current_class, function_name_call);
-                                //printf("fun %s %d datapyes %s\n", function_item->id_name, function_item->function.return_type, function_item->function.param_data_types);
-                                //printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_name_call, t_names[data_type], params_counter);
+                                DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
                         }
                         get_token();
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -548,9 +563,9 @@ int parse_param_value () {
                                                 if (data_type == INT) {
                                                         double val = (double) t.int_value;
                                                         if (is_var) {
-                                                            first_param = insert_double_const(&mem_constants, val);
+                                                                first_param = insert_double_const(&mem_constants, val);
                                                         } else {
-                                                            // INSTRUKCIA
+                                                                // INSTRUKCIA
                                                         }
 
                                                 } else if (data_type != DOUBLE) {

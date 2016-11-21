@@ -31,13 +31,14 @@ static void run () {
         //ifj16.print(d);
         //Main.r = 5;
         boolean f = false;
-        aa(f);
+        aa(f, "odkaz z main runu");
 
 }
 
-static int aa(boolean e) {
+static int aa(boolean e, String msg) {
     ifj16.print("druha funkcia");
     ifj16.print(e);
+    ifj16.print(msg);
     return 5;
 }
 
