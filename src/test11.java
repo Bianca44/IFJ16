@@ -1,40 +1,14 @@
-class Main2 {
-/*static String s = "ahoj";
-   static String f = "ss";
-   static boolean i = true;
-   static double g = 2.56;*/
-//static int p = 6;
-//static String f = "ss";
-
-}
-
 class Main {
-/*static String s = "ahoj";
-   static String f = "ss";
-   static boolean i = true;
-   static double g = 2.56;*/
-//static int p = 6;
+static int p = 6;
 static void run () {
-        //int a = 4+4;
-        int a;
-        //ifj16.print(a);
-        //Main.o = 42;
-        //ifj16.print(o);
-        //Main.r = "s";
-        //ifj16.print(r);
-        //ifj16.print(d);
-        //Main.r = 5;
-        //boolean f = false;
-        a = aa(true, "odkaz z main runu");
-        ifj16.print(a);
+        //ifj16.print(p);
+        String l = ifj16.substr("Ahooooj", 2, 3);
+        /*int  a = ifj16.readInt();
+        String p = ifj16.readString();
+        int c = ifj16.length(p);*/
+        //String l = ifj16.substr("Ahooooj", 2, 3);
+        ifj16.print(p);
 
-}
-
-static int aa(boolean e, String msg) {
-    ifj16.print("druha funkcia");
-    ifj16.print(e);
-    ifj16.print(msg);
-    return 5;
 }
 
 }

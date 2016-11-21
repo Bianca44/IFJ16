@@ -171,9 +171,11 @@ int parse_expression(bool ends_semicolon) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
+                                        printf("YOLO OK\n");
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 if (get_token() == SEMICOLON) {
                                                         if (is_second_pass) {
+                                                                printf("YOLO\n");
                                                                 symbol_table_item_t *call_function = NULL;
                                                                 if (strchr(function_name_call, '.') != NULL) {
                                                                         call_function = get_symbol_table_special_id_item(function_name_call);
@@ -188,17 +190,40 @@ int parse_expression(bool ends_semicolon) {
                                                                 }
 
                                                                 symbol_table_item_t *var;
-                                                                if (strchr(function_name_call, '.') != NULL) {
-                                                                        var = get_symbol_table_special_id_item(function_name_call);
+
+                                                                if (strchr(function_variable.id_name, '.') != NULL) {
+                                                                        var = get_symbol_table_special_id_item(function_variable.id_name);
                                                                 } else {
+
                                                                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
                                                                         var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
                                                                         if (var == NULL) {
                                                                                 var = get_symbol_table_class_item(current_class, function_variable.id_name);
                                                                         }
-                                                                        tVar * res = &var->variable;
-                                                                        res->initialized = true;
+                                                                }
 
+                                                                tVar * res = &var->variable;
+                                                                res->initialized = true;
+
+                                                                printf("YOLO\n");
+
+                                                                if (strcmp(function_name_call, "ifj16.print") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
+                                                                } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_RINT, NULL, NULL, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.readString") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_RSTR, NULL, NULL, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.readDouble") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_RDBL, NULL, NULL, res));
+                                                                }  else if (strcmp(function_name_call, "ifj16.length") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_LEN, first_param, NULL, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.sort") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_SORT, first_param, NULL, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.find") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
+                                                                } else {
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
                                                                 params_counter = 0;
@@ -395,9 +420,10 @@ int parse_next_param_value() {
                                         function_item = get_symbol_table_class_item(current_class, function_name_call);
                                 }
 
-                                char expected_param_type = function_item->function.param_data_types[params_counter];
+                                int expected_param_type = function_item->function.param_data_types[params_counter];
 
                                 params_counter++;
+
 
                                 if (params_counter > function_item->function.params_count) {
                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
@@ -405,20 +431,21 @@ int parse_next_param_value() {
                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
+                                //printf("YOLO OssO %s %d\n", function_item->function.param_data_types, params_counter);
+
                                 bool is_var = (t.type != ID && t.type != SPECIAL_ID);
 
                                 switch (expected_param_type) {
                                 case 's':
                                         if (data_type != STRING) {
-                                                printf("Parameter \'%s\' when calling function \'%s\' must be string.\n", t.string_value, function_name_call);
+                                                printf("%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
-                                        second_param = &item->variable;
                                         if (is_var) second_param = insert_string_const(&mem_constants, t.string_value);
                                         break;
                                 case 'b':
                                         if (data_type != BOOLEAN) {
-                                                printf("Parameter \'%s\' when calling function \'%s\' must be boolean.\n", t.string_value, function_name_call);
+                                                printf("%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
@@ -427,13 +454,15 @@ int parse_next_param_value() {
                                         break;
                                 case 'i':
                                         if (data_type != INT) {
-                                                printf("Parameter \'%s\' when calling function \'%s\' must be int.\n", t.string_value, function_name_call);
+                                                printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
+                                        printf("YOLO OFF 1 \n");
                                         if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
                                 case 'd':
                                         if (data_type == INT) {
+                                                second_param = &item->variable;
                                                 double val = (double) t.int_value;
                                                 if (is_var) {
                                                         second_param = insert_double_const(&mem_constants, val);
@@ -442,13 +471,13 @@ int parse_next_param_value() {
                                                 }
 
                                         } else if (data_type != DOUBLE) {
-                                                printf("Parameter \'%s\' when calling function \'%s\' must be double.\n", t.string_value, function_name_call);
+                                                printf("%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         } else {
-                                                if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
+                                                if (is_var) second_param = insert_double_const(&mem_constants, params_counter);
                                         }
+                                        break;
                                 }
-
 
                                 DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
                         }
@@ -547,19 +576,20 @@ int parse_param_value () {
 
                                         bool is_var = (t.type != ID && t.type != SPECIAL_ID);
 
-                                        char expected_param_type = function_item->function.param_data_types[params_counter];
+                                        int expected_param_type = function_item->function.param_data_types[params_counter];
+                                        params_counter++;
 
                                         switch (expected_param_type) {
                                         case 's':
                                                 if (data_type != STRING) {
-                                                        printf("Parameter \'%s\' when calling function \'%s\' must be string.\n", t.string_value, function_name_call);
+                                                        printf("%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_string_const(&mem_constants, t.string_value);
                                                 break;
                                         case 'b':
                                                 if (data_type != BOOLEAN) {
-                                                        printf("Parameter \'%s\' when calling function \'%s\' must be boolean.\n", t.string_value, function_name_call);
+                                                        printf("%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
 
@@ -568,7 +598,7 @@ int parse_param_value () {
                                                 break;
                                         case 'i':
                                                 if (data_type != INT) {
-                                                        printf("Parameter \'%s\' when calling function \'%s\' must be int.\n", t.string_value, function_name_call);
+                                                        printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_int_const(&mem_constants, t.int_value);
@@ -583,7 +613,7 @@ int parse_param_value () {
                                                         }
 
                                                 } else if (data_type != DOUBLE) {
-                                                        printf("Parameter \'%s\' when calling function \'%s\' must be double.\n", t.string_value, function_name_call);
+                                                        printf("%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 } else {
                                                         if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
@@ -592,8 +622,6 @@ int parse_param_value () {
                                         }
 
                                         DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
-
-                                        params_counter++;
                                 }
                                 get_token();
                                 if (t.type == COMMA) {
@@ -717,6 +745,7 @@ int parse_statement() {
         else if (t.type == ID || t.type == SPECIAL_ID) {
                 symbol_table_item_t * p = NULL;
                 if (is_second_pass) {
+                        printf("TROLOLO\n");
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
@@ -1254,12 +1283,12 @@ void add_builtin_functions() {
         insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL, NULL);
         insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL, NULL);
         insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL, NULL);
-        insert_function_symbol_table(copy_string("substr"), INT, 3, 0, copy_string("ssi"), NULL, NULL);
+        insert_function_symbol_table(copy_string("substr"), STRING, 3, 0, copy_string("sii"), NULL, NULL);
         insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL, NULL);
 
         insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL, NULL);
         insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL, NULL);
-        insert_function_symbol_table(copy_string("readString"), INT, 0, 0, NULL, NULL, NULL);
+        insert_function_symbol_table(copy_string("readString"), STRING, 0, 0, NULL, NULL, NULL);
 }
 
 int parse(tDLList * inst_tape) {
