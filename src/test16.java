@@ -10,7 +10,7 @@ class Main
             i = i + 1;
         }
         ifj16.print(x);
-        a(2.5);
+        a(x);
     }
 
     static void a(double s) {
