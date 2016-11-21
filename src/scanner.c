@@ -66,6 +66,7 @@ int get_next_token(token_t *t) {
         int c = 0;
         int state = 0;
         int octal_number_length = 0;
+        char octal_escape[4] = {'\0'};
 
         string_t s;
 
@@ -246,7 +247,6 @@ int get_next_token(token_t *t) {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         } else if (c == '\\') {
-                                append_char(&s, c);
                                 state = LITERAL_SLASH;
                         } else {
                                 append_char(&s, c);
@@ -278,15 +278,28 @@ int get_next_token(token_t *t) {
                                                 break;
                                         }
 
-                                        append_char(&s, c);
+                                        octal_escape[octal_number_length] = c;
                                         octal_number_length++;
                                         if (octal_number_length == 3) {
+                                                octal_escape[octal_number_length] = '\0';
+                                                int octal_char = strtol(octal_escape, NULL, 8);
+                                                append_char(&s, octal_char);
                                                 octal_number_length = 0;
+                                                octal_escape[octal_number_length] = '\0';
                                                 state = LITERAL;
                                         }
                                 }
                         } else if (c == '"' || c == 'n' || c == 't' || c == '\\') {
                                 if (octal_number_length == 0 ) {
+                                        if (c == 'n') {
+                                                c = '\n';
+                                        } else if (c == 't') {
+                                                c = '\t';
+                                        } else if (c == '\\') {
+                                                c = '\\';
+                                        } else if (c == '"') {
+                                                c = '\"';
+                                        }
                                         append_char(&s, c);
                                         state = LITERAL;
                                 } else {
