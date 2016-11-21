@@ -236,7 +236,7 @@ int choose_rule(PStack *P,token_t *t){
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
@@ -253,22 +253,33 @@ int choose_rule(PStack *P,token_t *t){
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-             //d_int(P->top->expr->i);
             op_2 = P->top->expr;
 
             if(first_operand == INT && second_operand == INT){
-                printf("HOdnota druheho operandu: %d\n",P->top->value.i);
-                printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
+               
                 result_item->value.data_type = INT;
-                //just for test
-                result_item->value.i = P->top->value.i - P->top->LPtr->LPtr->value.i;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+
             }
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
                 result_item->value.data_type = DOUBLE;
+
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(result_item->value.data_type);
+                if(first_operand == INT){
+                    i_conv_i_to_d(op_1,NULL,var);
+                    DLInsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
+                }
+                else{
+                    i_conv_i_to_d(op_2,NULL,var);
+                    DLInsertLast(work_tape, generate(I_SUB, op_1, var, tmp));
+                }
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE ){
                 result_item->value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -279,8 +290,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+           
             result_item->expr = tmp;
 
             break;
