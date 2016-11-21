@@ -732,11 +732,7 @@ int parse_else() {
         } if (t.type == ELSE) {
                 get_token();
                 if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET) {
-                        if(parse_condition_list()) {
-                                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                                        return PARSED_OK;
-                                }
-                        }
+                        return PARSED_OK;
                 }
         }
         return PARSE_ERROR;
@@ -819,7 +815,13 @@ int parse_statement() {
                                         get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
-                                                        return parse_else();
+                                                        if (parse_else()) {
+                                                            if(parse_condition_list()) {
+                                                                    if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+                                                                            return PARSED_OK;
+                                                                    }
+                                                            }
+                                                        }
                                                 }
                                         }
 
