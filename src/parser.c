@@ -45,6 +45,11 @@ symbol_table_item_t expr_result;
 
 
 tVar * expr_var_result;
+
+tVar * first_param;
+tVar * second_param;
+
+tVar * expr_var_result;
 char* current_class;
 char* function_name_call;
 
@@ -437,9 +442,9 @@ int parse_param_value () {
                 printf("CALL %s\n", function_name_call );
 
                 if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
-                    printf("DO FRAME \n");
-                    symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
-                    DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
+                        printf("DO FRAME \n");
+                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
+                        DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
                 }
         }
         if (t.type == LEFT_ROUNDED_BRACKET) {
@@ -461,6 +466,8 @@ int parse_param_value () {
                                                         }
                                                         data_type = item->variable.data_type;
                                                 }
+
+                                                first_param = &item->variable;
                                         }
                                         else if (t.type == ID) {
                                                 symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
@@ -480,6 +487,7 @@ int parse_param_value () {
                                                                 data_type = item->variable.data_type;
                                                         }
                                                 }
+                                                first_param = &item->variable;
                                         } else {
                                                 switch (t.type) {
                                                 case INT_LITERAL: data_type = INT;
@@ -506,7 +514,7 @@ int parse_param_value () {
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
-                                        bool is_var = (t.type == ID || t.type == SPECIAL_ID);
+                                        bool is_var = (t.type != ID && t.type != SPECIAL_ID);
                                         printf("pushujem var %d\n", is_var);
 
 
@@ -518,32 +526,45 @@ int parse_param_value () {
                                                         printf("Parameter \'%s\' when calling function \'%s\' must be string.\n", t.string_value, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
+                                                if (is_var) first_param = insert_string_const(&mem_constants, t.string_value);
                                                 break;
                                         case 'b':
                                                 if (data_type != BOOLEAN) {
                                                         printf("Parameter \'%s\' when calling function \'%s\' must be boolean.\n", t.string_value, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
+
+                                                bool val = (t.type == TRUE);
+                                                if (is_var) first_param = insert_boolean_const(&mem_constants, val);
                                                 break;
                                         case 'i':
                                                 if (data_type != INT) {
                                                         printf("Parameter \'%s\' when calling function \'%s\' must be int.\n", t.string_value, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
+                                                if (is_var) first_param = insert_int_const(&mem_constants, t.int_value);
                                                 break;
                                         case 'd':
                                                 if (data_type == INT) {
-                                                        printf("konvertuj\n");
+                                                        double val = (double) t.int_value;
+                                                        if (is_var) {
+                                                            first_param = insert_double_const(&mem_constants, val);
+                                                        } else {
+                                                            // INSTRUKCIA
+                                                        }
 
                                                 } else if (data_type != DOUBLE) {
                                                         printf("Parameter \'%s\' when calling function \'%s\' must be double.\n", t.string_value, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                } else {
+                                                        if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
                                                 }
+                                                break;
                                         }
 
-                                        params_counter++;
+                                        DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
 
-                                        //printf("funkcia %s datovy typ argumentu %s pocet param %d\n", function_name_call, t_names[data_type], params_counter);
+                                        params_counter++;
                                 }
                                 get_token();
                                 if (t.type == COMMA) {
@@ -555,7 +576,7 @@ int parse_param_value () {
                                 /* special case for ifj16.print */
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                // firstparam = expr val result
+                                                first_param = expr_var_result;
                                                 params_counter++;
                                         }
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -700,7 +721,7 @@ int parse_statement() {
 
                                 if (p->is_function) {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
-                                                DLInsertLast(function_inst_tape, generate(I_PRINT, expr_var_result, NULL, NULL));
+                                                DLInsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                         } else {
                                                 DLInsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, NULL, NULL));
                                         }
