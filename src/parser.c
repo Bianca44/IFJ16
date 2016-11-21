@@ -477,13 +477,13 @@ int parse_next_param_value() {
                                                 printf("%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         } else {
-                                                if (is_var) second_param = insert_double_const(&mem_constants, params_counter);
+                                                if (is_var) second_param = insert_double_const(&mem_constants, t.double_value);
                                         }
                                         break;
                                 }
 
                                 if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
-                                DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
+                                        DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
                                 }
                         }
                         get_token();
@@ -626,7 +626,7 @@ int parse_param_value () {
                                                 break;
                                         }
                                         if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
-                                        DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
+                                                DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
                                         }
                                 }
                                 get_token();
