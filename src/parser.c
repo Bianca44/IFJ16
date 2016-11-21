@@ -171,11 +171,9 @@ int parse_expression(bool ends_semicolon) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
-                                        printf("YOLO OK\n");
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 if (get_token() == SEMICOLON) {
                                                         if (is_second_pass) {
-                                                                printf("YOLO\n");
                                                                 symbol_table_item_t *call_function = NULL;
                                                                 if (strchr(function_name_call, '.') != NULL) {
                                                                         call_function = get_symbol_table_special_id_item(function_name_call);
@@ -205,8 +203,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 tVar * res = &var->variable;
                                                                 res->initialized = true;
 
-                                                                printf("YOLO\n");
-
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
@@ -224,6 +220,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else {
+                                                                        printf("PRIDAVAM %s\n", function_name_call);
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
 
@@ -434,8 +431,6 @@ int parse_next_param_value() {
                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
-                                //printf("YOLO OssO %s %d\n", function_item->function.param_data_types, params_counter);
-
                                 bool is_var = (t.type != ID && t.type != SPECIAL_ID);
 
                                 switch (expected_param_type) {
@@ -460,7 +455,6 @@ int parse_next_param_value() {
                                                 printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
-                                        printf("YOLO OFF 1 \n");
                                         if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
                                 case 'd':
