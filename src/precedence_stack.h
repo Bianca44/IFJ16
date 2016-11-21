@@ -39,6 +39,7 @@ typedef struct PStack_item{
     struct PStack_item *RPtr;
     enum Terminals term;  //typ terminalu
     tVar value;
+    tVar *expr;
 }PStack_item;
 
 typedef struct{
