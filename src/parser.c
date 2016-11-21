@@ -171,11 +171,9 @@ int parse_expression(bool ends_semicolon) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
-                                        printf("YOLO OK\n");
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 if (get_token() == SEMICOLON) {
                                                         if (is_second_pass) {
-                                                                printf("YOLO\n");
                                                                 symbol_table_item_t *call_function = NULL;
                                                                 if (strchr(function_name_call, '.') != NULL) {
                                                                         call_function = get_symbol_table_special_id_item(function_name_call);
@@ -205,8 +203,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 tVar * res = &var->variable;
                                                                 res->initialized = true;
 
-                                                                printf("YOLO\n");
-
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
@@ -223,7 +219,11 @@ int parse_expression(bool ends_semicolon) {
                                                                         DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
+                                                                } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
+                                                                        DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
+                                                                        // test
                                                                 } else {
+                                                                        printf("PRIDAVAM %s\n", function_name_call);
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
 
@@ -434,8 +434,6 @@ int parse_next_param_value() {
                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
-                                //printf("YOLO OssO %s %d\n", function_item->function.param_data_types, params_counter);
-
                                 bool is_var = (t.type != ID && t.type != SPECIAL_ID);
 
                                 switch (expected_param_type) {
@@ -460,7 +458,6 @@ int parse_next_param_value() {
                                                 printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
-                                        printf("YOLO OFF 1 \n");
                                         if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
                                 case 'd':
@@ -506,9 +503,14 @@ int parse_param_value () {
 
                 printf("CALL %s\n", function_name_call );
 
-                if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
+                if (strstr(function_name_call, "ifj16.") == NULL) {
                         printf("DO FRAME \n");
-                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
+                        symbol_table_item_t * function = NULL;
+                        if (strcmp(function_name_call, "ifj16.substr") == 0) {
+                            function = get_symbol_table_special_id_item(function_name_call);
+                        } else {
+                            function = get_symbol_table_class_item(current_class, function_name_call);
+                        }
                         DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
                 }
         }
@@ -823,10 +825,17 @@ int parse_statement() {
                         }
                 }
         } else if (t.type == WHILE) {
+                if (is_second_pass) {
+                        js_push(DLGetLast(function_inst_tape));
+                }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
+                                        if (is_second_pass) {
+                                             DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                             js_push(DLGetLast(function_inst_tape));
+                                        }
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 return parse_condition_list();
