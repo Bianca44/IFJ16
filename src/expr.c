@@ -199,11 +199,11 @@ int choose_rule(PStack *P,token_t *t){
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
                 if(first_operand == INT){
-                    i_conv_i_to_d(op_1,NULL,var);
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     DLInsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
                 }
                 else{
-                    i_conv_i_to_d(op_2,NULL,var);
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
                     DLInsertLast(work_tape, generate(I_ADD, op_1, var, tmp));
                 }
 
@@ -218,7 +218,7 @@ int choose_rule(PStack *P,token_t *t){
                 result_item->value.data_type = STRING;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                i_to_str(op_2,op_1,var);
+                DLInsertLast(work_tape, generate(I_TO_STRING,op_2,NULL,var));
                 DLInsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
                 
                 
@@ -228,7 +228,7 @@ int choose_rule(PStack *P,token_t *t){
                 result_item->value.data_type = STRING;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                i_to_str(op_1,NULL,var);
+                DLInsertLast(work_tape, generate(I_TO_STRING,op_1,NULL,var));
                 DLInsertLast(work_tape, generate(I_CAT, var, op_2, tmp));
             }
             else if(first_operand == STRING && second_operand == STRING){
@@ -268,11 +268,11 @@ int choose_rule(PStack *P,token_t *t){
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
                 if(first_operand == INT){
-                    i_conv_i_to_d(op_1,NULL,var);
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     DLInsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
                 }
                 else{
-                    i_conv_i_to_d(op_2,NULL,var);
+                     DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_2,NULL,var));
                     DLInsertLast(work_tape, generate(I_SUB, op_1, var, tmp));
                 }
             }
@@ -302,19 +302,36 @@ int choose_rule(PStack *P,token_t *t){
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
-            op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-             //d_int(P->top->expr->i);
+            op_1 = P->top->LPtr->LPtr->expr;           
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                printf("HOdnota druheho operandu: %d\n",P->top->value.i);
-                printf("HOdnota prveho operandu: %d\n",P->top->LPtr->LPtr->value.i);
+               
                 result_item->value.data_type = INT;
-                //just for test
-                result_item->value.i = P->top->value.i * P->top->LPtr->LPtr->value.i;
+                 tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
+
+
+                
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
                 result_item->value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(result_item->value.data_type);
+                
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_MUL, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_MUL, op_1, var, tmp));
+                }
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = DOUBLE;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
@@ -324,8 +341,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
+            
             result_item->expr = tmp;
 
             break;
@@ -339,31 +355,35 @@ int choose_rule(PStack *P,token_t *t){
             second_operand = P->top->value.data_type;
            
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-             //d_int(P->top->expr->i);
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                //if(op2->value.i == 0){
-                 //   printf("Delenie 0.\n");
-                 //   cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-              
+                
                 //TODO mozeme delit 2 INT a mat INT vysledok ?
+                //zatial sa nekontroluje delenie 0
                 result_item->value.data_type = INT;
-                //result_item->value.i = P->top->LPtr->LPtr->value.i / P->top->value.i;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
+                
             }
-            else if(first_operand == DOUBLE && second_operand == INT){
-                //if(op2->value.i == 0){
-                //    printf("Delenie 0.\n");
-                 //   cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                //}
+            else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
                 result_item->value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(result_item->value.data_type);
+                
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_DIV, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_DIV, op_1, var, tmp));
+                }
+
             }
-            else if (first_operand == INT && second_operand == DOUBLE){
-               // if(op2->value.d == 0.0){
-                //    printf("Delenie 0.\n");
-                //    cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-               // }
-                result_item->value.data_type = DOUBLE;
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = DOUBLE;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
@@ -374,8 +394,7 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
+            
             result_item->expr = tmp;
 
              break;
