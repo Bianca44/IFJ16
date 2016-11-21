@@ -8,6 +8,7 @@ static void run () {
         int c = ifj16.length(p);*/
         //String l = ifj16.substr("Ahooooj", 2, 3);
         ifj16.print(p);
+        ifj16.print(l);
 
 }
 
