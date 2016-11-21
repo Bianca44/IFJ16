@@ -191,13 +191,14 @@ int parse_expression(bool ends_semicolon) {
                                                                 if (strchr(function_name_call, '.') != NULL) {
                                                                         var = get_symbol_table_special_id_item(function_name_call);
                                                                 } else {
-                                                                        printf("CURENT FUN %s\n", current_function.id_name);
                                                                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
-                                                                        var = get_symbol_table_function_item(function->function.symbol_table, current_function.id_name);
+                                                                        var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
                                                                         if (var == NULL) {
-                                                                            var = get_symbol_table_class_item(current_class, function_name_call);
+                                                                                var = get_symbol_table_class_item(current_class, function_variable.id_name);
                                                                         }
                                                                         tVar * res = &var->variable;
+                                                                        res->initialized = true;
+
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
                                                                 params_counter = 0;
@@ -908,18 +909,21 @@ int parse_method_element() {
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
                                         if (is_second_pass) {
-                                                symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
-                                                symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
 
-                                                if (item == NULL) {
-                                                        item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                                if (expr_var_result != NULL) {
+                                                        symbol_table_t * table = get_symbol_table_for_function(current_class, current_function.id_name);
+                                                        symbol_table_item_t * item = get_symbol_table_function_item(table, function_variable.id_name);
+
+                                                        if (item == NULL) {
+                                                                item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                                        }
+                                                        tVar * to = &item->variable;
+
+                                                        to->initialized = true;
+                                                        tVar * from = expr_var_result;
+
+                                                        DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                                 }
-                                                tVar * to = &item->variable;
-
-                                                to->initialized = true;
-                                                tVar * from = expr_var_result;
-
-                                                DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
                                         }
                                         function_variable.id_name = NULL;
                                         get_token();

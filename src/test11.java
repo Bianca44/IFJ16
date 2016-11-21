@@ -17,15 +17,15 @@ class Main {
 static void run () {
         //int a = 4+4;
         int a;
-
+        //ifj16.print(a);
         //Main.o = 42;
         //ifj16.print(o);
         //Main.r = "s";
         //ifj16.print(r);
         //ifj16.print(d);
         //Main.r = 5;
-        boolean f = false;
-        a = aa(f, "odkaz z main runu");
+        //boolean f = false;
+        a = aa(true, "odkaz z main runu");
         ifj16.print(a);
 
 }
