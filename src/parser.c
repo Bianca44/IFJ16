@@ -509,10 +509,10 @@ int parse_param_value () {
                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
                         DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
                 } else {
-                    if (strcmp(function_name_call, "ifj16.substr") == 0) {
-                        symbol_table_item_t *  function = get_symbol_table_special_id_item(function_name_call);
-                        DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
-                    }
+                        if (strcmp(function_name_call, "ifj16.substr") == 0) {
+                                symbol_table_item_t *  function = get_symbol_table_special_id_item(function_name_call);
+                                DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
+                        }
                 }
         }
         if (t.type == LEFT_ROUNDED_BRACKET) {
@@ -816,11 +816,11 @@ int parse_statement() {
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
                                                         if (parse_else()) {
-                                                            if(parse_condition_list()) {
-                                                                    if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                                                                            return PARSED_OK;
-                                                                    }
-                                                            }
+                                                                if(parse_condition_list()) {
+                                                                        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+                                                                                return PARSED_OK;
+                                                                        }
+                                                                }
                                                         }
                                                 }
                                         }
@@ -837,12 +837,21 @@ int parse_statement() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                             DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
-                                             js_push(DLGetLast(function_inst_tape));
+                                            DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                            js_push(DLGetLast(function_inst_tape));
                                         }
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
-                                                return parse_condition_list();
+                                                if (parse_condition_list()) {
+                                                    if (is_second_pass) {
+                                                        DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
+                                                        set_label(js_top(), DLGetLast(function_inst_tape));
+                                                        js_pop();
+                                                        set_label(DLGetLast(function_inst_tape), js_top());
+                                                        js_pop();
+                                                    }
+                                                    return PARSED_OK;
+                                                }
                                         }
                                 }
                         }
