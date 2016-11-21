@@ -13,20 +13,6 @@
 
 typedef tHTable symbol_table_t;
 
-typedef struct class {
-    char * id_name;
-    symbol_table_t * symbol_table;
-} class_t;
-
-typedef struct {
-    char * id_name;
-    int data_type;
-    int params_count;
-    int local_vars_count;
-    char * param_data_types;
-    symbol_table_t * symbol_table;
-} function_t;
-
 typedef struct {
     int data_type;
     union {
@@ -39,22 +25,24 @@ typedef struct {
     int offset;
 } tVar;
 
+typedef struct {
+        int return_type;
+        int params_count;
+        int local_vars_count;
+        int params_local_vars_count;
+        char * param_data_types;
+        char * local_vars_data_types;
+        symbol_table_t * symbol_table;
+        tDLList *instruction_tape;
+} tFunction;
+
 typedef struct symbol_table_item {
         char * id_name;
         bool is_function;
         bool declared;
         union {
                 tVar variable;
-                struct {
-                        int return_type;
-                        int params_count;
-                        int local_vars_count;
-                        int params_local_vars_count;
-                        char * param_data_types;
-                        char * local_vars_data_types;
-                        symbol_table_t * symbol_table;
-                        tDLList *instruction_tape;
-                } function;
+                tFunction function;
         };
 } symbol_table_item_t;
 
