@@ -226,6 +226,8 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else {
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
+
+                                                                first_param = second_param = NULL;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
@@ -340,6 +342,7 @@ int parse_return_value() {
                                         }
 
                                         DLInsertLast(function_inst_tape, generate(I_RETURN, expr_var_result, NULL, NULL));
+                                        expr_var_result = NULL;
                                 }
                                 expr_result.id_name = NULL;
 
@@ -479,7 +482,9 @@ int parse_next_param_value() {
                                         break;
                                 }
 
+                                if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
                                 DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
+                                }
                         }
                         get_token();
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -620,8 +625,9 @@ int parse_param_value () {
                                                 }
                                                 break;
                                         }
-
+                                        if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
                                         DLInsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
+                                        }
                                 }
                                 get_token();
                                 if (t.type == COMMA) {
@@ -745,7 +751,6 @@ int parse_statement() {
         else if (t.type == ID || t.type == SPECIAL_ID) {
                 symbol_table_item_t * p = NULL;
                 if (is_second_pass) {
-                        printf("TROLOLO\n");
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
@@ -1144,11 +1149,14 @@ int parse_declaration() {
                                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
 
-                                        tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
-                                        to->initialized = true;
-                                        tVar * from = expr_var_result;
+                                        if (expr_var_result != NULL) {
+                                                tVar * to = &get_symbol_table_class_item(current_class, current_variable.id_name)->variable;
+                                                to->initialized = true;
+                                                tVar * from = expr_var_result;
 
-                                        DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                DLInsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                expr_var_result = NULL;
+                                        }
                                 } else {
                                         skip_precedence_analysis = false;
                                 }

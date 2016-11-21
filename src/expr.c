@@ -818,6 +818,8 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
             printf("Result value is:%d\n",P->top->value.b);
             break;
         }
+
+        printf("ENF OF PSA\n");
         return P->top->value.data_type;
 
 
