@@ -615,7 +615,9 @@ int init_item(PStack *P,token_t *t){
                     printf("Current function is:%s\n",current_function.id_name);
                     printf("premenna %s \n", t->string_value);
                     item = get_symbol_table_function_item(function,t->string_value);
-                    
+                    if(item == NULL){
+                    item = get_symbol_table_class_item(current_class, t->string_value);
+                    }
                     
                     //item->variable.i = 42;
                     switch(item->variable.data_type){
