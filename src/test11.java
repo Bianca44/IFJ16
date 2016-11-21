@@ -1,5 +1,4 @@
 class Main {
-static int p = 6;
 static void run () {
         //ifj16.print(p);
         String l = ifj16.substr("Ahooooj", 2, 3);

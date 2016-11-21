@@ -8,6 +8,7 @@
 #define KEYWORDS_COUNT 17
 #define TOKENS_COUNT 43
 #define KEYWORD_TOKENS_OFFSET (TOKENS_COUNT - KEYWORDS_COUNT)
+#define OCTAL_STRING_SIZE 4
 
 typedef struct {
         int type;

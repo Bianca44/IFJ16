@@ -66,7 +66,7 @@ int get_next_token(token_t *t) {
         int c = 0;
         int state = 0;
         int octal_number_length = 0;
-        char octal_escape[4] = {'\0'};
+        char octal_escape[OCTAL_STRING_SIZE] = {'\0'};
 
         string_t s;
 
