@@ -10,6 +10,11 @@ class Main
             i = i + 1;
         }
         ifj16.print(x);
+        a(2.5);
+    }
+
+    static void a(double s) {
+        ifj16.print(s);
     }
 
 }

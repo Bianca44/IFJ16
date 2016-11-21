@@ -333,7 +333,7 @@ int parse_return_value() {
                                                 int expr_data_type =  expr_result.variable.data_type;
                                                 if (current_variable.variable.data_type != expr_data_type) {
                                                         if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
-                                                                // pretypuj
+                                                                DLInsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
                                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -467,7 +467,7 @@ int parse_next_param_value() {
                                                 if (is_var) {
                                                         second_param = insert_double_const(&mem_constants, val);
                                                 } else {
-                                                        // INSTRUKCIA
+                                                        DLInsertLast(function_inst_tape, generate(I_CONV_I_TO_D, first_param, NULL, first_param));
                                                 }
 
                                         } else if (data_type != DOUBLE) {
@@ -615,7 +615,7 @@ int parse_param_value () {
                                                         if (is_var) {
                                                                 first_param = insert_double_const(&mem_constants, val);
                                                         } else {
-                                                                // INSTRUKCIA
+                                                                DLInsertLast(function_inst_tape, generate(I_CONV_I_TO_D, first_param, NULL, first_param));
                                                         }
 
                                                 } else if (data_type != DOUBLE) {
@@ -1093,7 +1093,7 @@ int parse_value() {
 
                                                 if (current_variable.variable.data_type != expr_data_type) {
                                                         if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
-                                                                // pretypuj
+                                                                DLInsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -1107,7 +1107,7 @@ int parse_value() {
                                                 int expr_data_type = expr_result.is_function ? expr_result.function.return_type : expr_result.variable.data_type;
                                                 if (function_variable.variable.data_type != expr_data_type) {
                                                         if (function_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
-                                                                // pretypuj
+                                                                DLInsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
