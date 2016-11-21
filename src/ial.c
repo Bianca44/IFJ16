@@ -229,65 +229,71 @@ void compute_jumps(char *p, int char_jump[]) {
 
 void compute_match_jump(char* p, int match_jump[]) {
 
-        int length_p = strlen(p);
-        int k = 0;
-        int q = 0;
-        int qq = 0;
-        int backup[MAXCHAR];
+        int k, q, qq, m;
+        int backup[256];
 
-        for(k = 0; k < length_p + 1; k++) {
-                match_jump[k] = 2 * length_p - k;
+        k = q = qq = m = 0;
+
+        m = strlen(p) - 1;
+
+        for (int k = 0; k <= m; k++) {
+                match_jump[k] = 2 * m - k;
         }
 
-        k = length_p;
-        q = length_p + 1;
+        k = m;
+        q = m + 1;
 
-        while(k > 0) {
+        while (k > 0) {
                 backup[k] = q;
-                while(q <= length_p && p[k-1] != p[q-1]) {
-                        match_jump[q] = MIN(match_jump[q], length_p - k);
+                while ((q <= m) && (p[k] != p[q])) {
+                        match_jump[q] = MIN(match_jump[k], m - k);
                         q = backup[q];
                 }
                 k--;
                 q--;
         }
 
-        for(k = 0; k < q + 1; k++) {
-                match_jump[k] = MIN(match_jump[k], length_p + q - k);
+        for (k = 0; k <= q; k++) {
+                match_jump[k] = MIN(match_jump[k], m + q - k);
         }
 
         qq = backup[q];
 
-        while(q <= length_p ) {
-                while(q <= qq ) {
-                        match_jump[q] = MIN(match_jump[q], qq - q + length_p);
+        while (q < m) {
+                while (q <= qq) {
+                        match_jump[q] = MIN(match_jump[q], qq - q + m);
                         q++;
                 }
                 qq = backup[qq];
         }
+
 }
 
 int find_bma(char *p, char *t) {
-        // BMA
-        int j = 0;
-        int k = 0;
+        int j, k;
+        j = k = 0;
+
         int char_jump[MAXCHAR];
         int match_jump[MAXCHAR];
 
+
+        compute_jumps(t, char_jump);
+
+        compute_match_jump(t, match_jump);
+
         j = k = strlen(t) - 1;
 
-        compute_jumps(p, char_jump);
-        compute_match_jump(p, match_jump);
+        int len = strlen(p);
 
-        while(j <= k && k > 0) {
-                if( t[j] == p[k]) {
+        while ((j <= len) && (k > 0)) {
+                if (p[j] == t[k]) {
                         j--;
                         k--;
+                } else {
+                        j = j + MAX(char_jump[(int) p[j]], match_jump[k]);
+                        k = strlen(t) - 1;
                 }
-                else {
-                        j = j + MAX(char_jump[(int)t[j]], match_jump[k]);
-                        k = strlen(p) - 1;
-                }
+
         }
 
         if (k == 0) {
