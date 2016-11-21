@@ -269,26 +269,28 @@ void compute_match_jump(char* p, int match_jump[]) {
 
 int find_bma(char *p, char *t) {
         // BMA
-        int m = strlen(p);
-        int n = strlen(t);
-        int j = m;
+        int j = 0;
+        int k = 0;
         int char_jump[MAXCHAR];
-        int match_jump[m];
+        int match_jump[MAXCHAR];
+
+        j = k = strlen(t) - 1;
 
         compute_jumps(p, char_jump);
         compute_match_jump(p, match_jump);
 
-        while(j <= n && m > 0) {
-                if( t[j-1] == p[m-1]) {
+        while(j <= k && k > 0) {
+                if( t[j] == p[k]) {
                         j--;
-                        m--;
+                        k--;
                 }
                 else {
-                        j = j + MAX(char_jump[(int)t[j]], match_jump[m]);
-                        m = strlen(p);
+                        j = j + MAX(char_jump[(int)t[j]], match_jump[k]);
+                        k = strlen(p) - 1;
                 }
         }
-        if (m == 0) {
+
+        if (k == 0) {
                 return j + 1;
         } else {
                 return -1;

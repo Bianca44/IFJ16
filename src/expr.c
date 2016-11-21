@@ -179,7 +179,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
             op_1 = P->top->LPtr->LPtr->expr;
             //d_int(P->top->LPtr->LPtr->expr->i);
              //d_int(P->top->expr->i);
@@ -299,7 +299,7 @@ int choose_rule(PStack *P,token_t *t){
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
-           
+
             op_1 = P->top->LPtr->LPtr->expr;
             //d_int(P->top->LPtr->LPtr->expr->i);
              //d_int(P->top->expr->i);
@@ -308,7 +308,7 @@ int choose_rule(PStack *P,token_t *t){
                 //if(op2->value.i == 0){
                  //   printf("Delenie 0.\n");
                  //   cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-              
+
                 //TODO mozeme delit 2 INT a mat INT vysledok ?
                 result_item->value.data_type = INT;
                 //result_item->value.i = P->top->LPtr->LPtr->value.i / P->top->value.i;
@@ -594,7 +594,7 @@ int choose_rule(PStack *P,token_t *t){
 
         P->top->value.data_type = result_item->value.data_type;
         P->top->expr = result_item->expr;
-        
+
 return 1;
 }
 
@@ -615,28 +615,31 @@ int init_item(PStack *P,token_t *t){
                     printf("Current function is:%s\n",current_function.id_name);
                     printf("premenna %s \n", t->string_value);
                     item = get_symbol_table_function_item(function,t->string_value);
-                    
-                    
+                    if (item == NULL) {
+                        item = get_symbol_table_class_item(current_class, t->string_value);
+                    }
+
+
                     //item->variable.i = 42;
                     switch(item->variable.data_type){
                         case INT:
-                             
+
                              push_item->value.data_type = INT;
                              push_item->expr = &item->variable;
                               d_int(push_item->expr->i);
                             break;
                         case DOUBLE:
-                            
+
                              push_item->value.data_type = DOUBLE;
                              push_item->expr = &item->variable;
                             break;
                         case STRING:
-                        
+
                              push_item->value.data_type = STRING;
                              push_item->expr = &item->variable;
                             break;
                         case BOOLEAN:
-                     
+
                              push_item->value.data_type = BOOLEAN;
                              push_item->expr = &item->variable;
                             break;
@@ -651,7 +654,7 @@ int init_item(PStack *P,token_t *t){
                              push_item->value.data_type = INT;
                              push_item->expr = &item->variable;
                              d_int(push_item->expr->i);
-                            //printf("Hodnota premennej: %d\n",item->variable.i);+                            
+                            //printf("Hodnota premennej: %d\n",item->variable.i);+
                              break;
                         case DOUBLE:
                              //push_item->value.d = item->variable.d;
@@ -671,7 +674,7 @@ int init_item(PStack *P,token_t *t){
                     }
                 }
 
-               
+
 
 
                 //printf("Hodnota premennej: %d\n",item->variable.i);
@@ -711,7 +714,7 @@ int init_item(PStack *P,token_t *t){
                             break;
                     }
 
-                 
+
                  break;
 
 
@@ -750,10 +753,10 @@ int init_item(PStack *P,token_t *t){
                 tVar *bf = insert_boolean_const(&mem_constants, false);
                 push_item->expr = bf;
                 break;
-            
+
         }
 
-        
+
 
 return 1;
 }
@@ -822,7 +825,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                     insert_handle(P,PSTopTermPtr(P));
                     PSPush(P,decode_token_array[t->type]);
                     init_item(P,t);
-                    
+
 
                    // PSPrint(P);
                     //printf("TOKEN type: %d\n",t->type);
@@ -846,7 +849,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
 
             }
 
-            
+
        }while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
 
        st_item->id_name = "expr_result";
@@ -854,7 +857,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        *expr_result = P->top->expr;
 
 
-       
+
 
 
        // duri aj takto to ide, asi lepsie
@@ -868,8 +871,8 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        PSPrint(P);
        printf("Data type of result is:%d\n",P->top->value.data_type);
        //printf("Result value is:%d\n",P->top->value.i);
-      
-      
+
+
         return P->top->value.data_type;
 
 
