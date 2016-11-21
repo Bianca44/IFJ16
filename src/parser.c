@@ -36,6 +36,8 @@ token_buffer_t token_buffer;
 #define PARSE_ERROR 0
 #define PARSED_OK 1
 
+#define DEBUG_PRINT 1
+
 string_t param_data_types;
 string_t local_vars_data_types;
 symbol_table_item_t current_variable;
@@ -95,7 +97,7 @@ int parse_expression(bool ends_semicolon) {
                 while (1) {
                         if (t.type == SEMICOLON) break;
 
-                        printf("%s, ", t_names[t.type]);
+                        if (DEBUG_PRINT) printf("%s, ", t_names[t.type]);
 
                         add_token_to_buffer(&tb, &t);
 
@@ -125,7 +127,7 @@ int parse_expression(bool ends_semicolon) {
                         }
                         get_token();
                 }
-                printf("\n");
+                if (DEBUG_PRINT) printf("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
                 get_psa(&tb, &expr_result,  &expr_var_result);
@@ -220,9 +222,7 @@ int parse_expression(bool ends_semicolon) {
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
-                                                                        // test
                                                                 } else {
-                                                                        printf("PRIDAVAM %s\n", function_name_call);
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
 
@@ -242,7 +242,7 @@ int parse_expression(bool ends_semicolon) {
         int brackets_counter = 0;
         if (is_second_pass) {
                 init_token_buffer(&tb);
-                printf("IN EXPR: ");
+                if (DEBUG_PRINT) printf("IN EXPR: ");
         }
 
         while (1) {
@@ -266,7 +266,7 @@ int parse_expression(bool ends_semicolon) {
                 }
 
                 if (is_second_pass) {
-                        printf("%s, ", t_names[t.type]);
+                        if (DEBUG_PRINT) printf("%s, ", t_names[t.type]);
                         add_token_to_buffer(&tb, &t);
                 }
 
@@ -305,7 +305,7 @@ int parse_expression(bool ends_semicolon) {
         if (is_second_pass) {
                 // PSA
                 //free_token_buffer(&tb);
-                printf("\n");
+                if (DEBUG_PRINT) printf("\n");
                 if (!skip_precedence_analysis) {
                         get_psa(&tb, &expr_result, &expr_var_result);
                 }
@@ -321,7 +321,7 @@ int parse_return_value() {
                 if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (is_first_pass) {
                                 if (current_function.function.return_type == VOID) {
-                                        fprintf(stderr, "Return in function '\'%s'\' with void return type.\n", current_function.id_name);
+                                        fprintf(stderr, "Return in function \'%s\' with void return type.\n", current_function.id_name);
                                         cleanup_exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                 }
                         }
@@ -439,14 +439,14 @@ int parse_next_param_value() {
                                 switch (expected_param_type) {
                                 case 's':
                                         if (data_type != STRING) {
-                                                printf("%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
+                                                fprintf(stderr, "%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                         if (is_var) second_param = insert_string_const(&mem_constants, t.string_value);
                                         break;
                                 case 'b':
                                         if (data_type != BOOLEAN) {
-                                                printf("%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
+                                                fprintf(stderr, "%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
@@ -455,7 +455,7 @@ int parse_next_param_value() {
                                         break;
                                 case 'i':
                                         if (data_type != INT) {
-                                                printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
+                                                fprintf(stderr, "%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                         if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
@@ -472,7 +472,7 @@ int parse_next_param_value() {
                                                 }
 
                                         } else if (data_type != DOUBLE) {
-                                                printf("%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
+                                                fprintf(stderr, "%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         } else {
                                                 if (is_var) second_param = insert_double_const(&mem_constants, t.double_value);
@@ -502,7 +502,7 @@ int parse_param_value () {
         if (is_second_pass) {
                 params_counter = 0;
 
-                printf("CALL %s\n", function_name_call );
+                if (DEBUG_PRINT) printf("CALL %s\n", function_name_call );
 
                 if (strstr(function_name_call, "ifj16.") == NULL) {
                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
@@ -589,14 +589,14 @@ int parse_param_value () {
                                         switch (expected_param_type) {
                                         case 's':
                                                 if (data_type != STRING) {
-                                                        printf("%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
+                                                        fprintf(stderr, "%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_string_const(&mem_constants, t.string_value);
                                                 break;
                                         case 'b':
                                                 if (data_type != BOOLEAN) {
-                                                        printf("%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
+                                                        fprintf(stderr, "%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
 
@@ -605,7 +605,7 @@ int parse_param_value () {
                                                 break;
                                         case 'i':
                                                 if (data_type != INT) {
-                                                        printf("%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
+                                                        fprintf(stderr, "%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_int_const(&mem_constants, t.int_value);
@@ -621,7 +621,7 @@ int parse_param_value () {
                                                         }
 
                                                 } else if (data_type != DOUBLE) {
-                                                        printf("%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
+                                                        fprintf(stderr, "%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 } else {
                                                         if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
@@ -731,7 +731,11 @@ int parse_else() {
         } if (t.type == ELSE) {
                 get_token();
                 if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET) {
-                        return PARSED_OK;
+                        if(parse_condition_list()) {
+                                if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+                                        return PARSED_OK;
+                                }
+                        }
                 }
         }
         return PARSE_ERROR;
@@ -815,13 +819,7 @@ int parse_statement() {
                                         get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
-                                                        if (parse_else()) {
-                                                                if(parse_condition_list()) {
-                                                                        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                                                                                return PARSED_OK;
-                                                                        }
-                                                                }
-                                                        }
+                                                        return parse_else();
                                                 }
                                         }
 
@@ -837,20 +835,20 @@ int parse_statement() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                            DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
-                                            js_push(DLGetLast(function_inst_tape));
+                                                DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                                js_push(DLGetLast(function_inst_tape));
                                         }
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
-                                                    if (is_second_pass) {
-                                                        DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
-                                                        set_label(js_top(), DLGetLast(function_inst_tape));
-                                                        js_pop();
-                                                        set_label(DLGetLast(function_inst_tape), js_top());
-                                                        js_pop();
-                                                    }
-                                                    return PARSED_OK;
+                                                        if (is_second_pass) {
+                                                                DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
+                                                                set_label(js_top(), DLGetLast(function_inst_tape));
+                                                                js_pop();
+                                                                set_label(DLGetLast(function_inst_tape), js_top());
+                                                                js_pop();
+                                                        }
+                                                        return PARSED_OK;
                                                 }
                                         }
                                 }
@@ -917,7 +915,7 @@ int parse_method_element() {
                         current_function.function.param_data_types = param_data_types.data;
                         current_function.function.local_vars_data_types = local_vars_data_types.data;
                         current_function.function.params_count = param_data_types.length;
-                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
+                        if (DEBUG_PRINT) printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
