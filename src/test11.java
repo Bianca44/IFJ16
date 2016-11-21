@@ -31,7 +31,8 @@ static void run () {
         //ifj16.print(d);
         //Main.r = 5;
         boolean f = false;
-        aa(f, "odkaz z main runu");
+        a = aa(f, "odkaz z main runu");
+        ifj16.print(a);
 
 }
 

@@ -174,17 +174,31 @@ int parse_expression(bool ends_semicolon) {
                                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                                 if (get_token() == SEMICOLON) {
                                                         if (is_second_pass) {
-                                                                symbol_table_item_t *function_item;
+                                                                symbol_table_item_t *call_function = NULL;
                                                                 if (strchr(function_name_call, '.') != NULL) {
-                                                                        function_item = get_symbol_table_special_id_item(function_name_call);
+                                                                        call_function = get_symbol_table_special_id_item(function_name_call);
                                                                 } else {
-                                                                        function_item = get_symbol_table_class_item(current_class, function_name_call);
+                                                                        call_function = get_symbol_table_class_item(current_class, function_name_call);
                                                                 }
 
-                                                                if (function_item->function.params_count != params_counter) {
+                                                                if (call_function->function.params_count != params_counter) {
                                                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
-                                                                        fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, function_item->function.params_count, params_counter);
+                                                                        fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, call_function->function.params_count, params_counter);
                                                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                }
+
+                                                                symbol_table_item_t *var;
+                                                                if (strchr(function_name_call, '.') != NULL) {
+                                                                        var = get_symbol_table_special_id_item(function_name_call);
+                                                                } else {
+                                                                        printf("CURENT FUN %s\n", current_function.id_name);
+                                                                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                                                                        var = get_symbol_table_function_item(function->function.symbol_table, current_function.id_name);
+                                                                        if (var == NULL) {
+                                                                            var = get_symbol_table_class_item(current_class, function_name_call);
+                                                                        }
+                                                                        tVar * res = &var->variable;
+                                                                        DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
                                                                 params_counter = 0;
                                                         }
@@ -531,8 +545,6 @@ int parse_param_value () {
                                         }
 
                                         bool is_var = (t.type != ID && t.type != SPECIAL_ID);
-                                        printf("pushujem var %d\n", is_var);
-
 
                                         char expected_param_type = function_item->function.param_data_types[params_counter];
 

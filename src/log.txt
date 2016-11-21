@@ -19,7 +19,7 @@ STRING_LITERAL,
 class Main
 in PSO 2:
 Value of literal is:yolo
-Hodnota jeeee: 38830160
+Hodnota jeeee: 25792592
 Data type jeeee: 38
 Term: 18
 term ------38
@@ -147,14 +147,37 @@ Result value is:0
 CALL aa
 DO FRAME 
 pushujem var 0
-priradenie: funkcia
+CURENT FUN run
+CALL ifj16.print
+IN EXPR: ID, 
+class Main
+vo funkcii run
+in PSO 2:
+Current function is:run
+premenna o 
+hodnota 0 
+data type 36
+Hodnota premennej: 0
+Value of literal is:50
+Hodnota jeeee: 50
+Data type jeeee: 36
+Term: 18
+term ------36
+TOP term je : 16
+TOP term je : 18
+Uspech
+Na konci:
+Prvok zasobnika je: P_EXPR
+Prvok zasobnika je: P_ENDMARK
+Data type of result is:36
+Result value is:50
 CALL ifj16.print
 IN EXPR: STRING_LITERAL, 
 class Main
 vo funkcii aa
 in PSO 2:
 Value of literal is:druha funkcia
-Hodnota jeeee: 38835984
+Hodnota jeeee: 25798640
 Data type jeeee: 38
 Term: 18
 term ------38
@@ -229,4 +252,5 @@ Data type of result is:36
 Result value is:5
 INTERPRET:
 10
+53
 53
