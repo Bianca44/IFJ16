@@ -4,9 +4,13 @@ class Main
     static int x = 2;
 static void run()
 {
-        String a;
-        //int a;
-        Game.play("h");
+        String str1;
+        str1 = "Toto je nejaky text";
+        String str2;
+        str2 = str1 + ", ktery jeste trochu obohatime";
+        Main.x = ifj16.find(str2, "text");
+        ifj16.print("Pozice retezce \"text\" v retezci str2: " + x + "\n");
+        Game.play(str1);
 }
 // end of static void run()
 }
@@ -20,8 +24,17 @@ static void play(String str)
         str = ifj16.readString();
         str = ifj16.sort(str);
         int cmp = ifj16.compare(str, "abcdefgh");
-        cmp = 10;
-        ifj16.print(cmp);
+        if (cmp != 0) {
+                while (cmp != 0) {
+                        ifj16.print("Spatne zadana posloupnost, zkuste znovu:");
+                        str = ifj16.readString();
+                        str = ifj16.sort(str);
+                        cmp = ifj16.compare(str, "abcdefgh");
+                }
+        }
+        else {
+        }
+        return;
 }
 // end of static void play(String)
 }

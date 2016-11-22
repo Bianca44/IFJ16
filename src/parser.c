@@ -939,10 +939,10 @@ int parse_method_element() {
                                 has_function_return = false;
                         }
 
-                        current_function.function.param_data_types = param_data_types.data;
-                        current_function.function.local_vars_data_types = local_vars_data_types.data;
+                        current_function.function.param_data_types = copy_string(param_data_types.data);
+                        current_function.function.local_vars_data_types = copy_string(local_vars_data_types.data);
                         current_function.function.params_count = param_data_types.length;
-                        if (DEBUG_PRINT) printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
+                        printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
