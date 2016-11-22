@@ -8,6 +8,7 @@
 #define d_print(str, ...)
 #define d_message(str)
 #define d_inst_name()
+
 #define d_int(i) 
 #define d_dob(d) 
 #define d_bol(b) 
@@ -18,6 +19,7 @@
 #define d_strp(str, ptr) 
 #define d_ptr(p) 
 #define d_tVarPtr(s) 
+
 
 #else
 
