@@ -34,14 +34,11 @@ int main(int argc, char *argv[]) {
         //void * x = insert_string_const(&mem_constants, "Hello World");
         //DLInsertLast(&inst_tape, generate(I_PRINT, x, NULL, NULL));
 
-        printf("\x1b[32mFIRST PASS\x1b[0m\n");
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
                 return SYNTACTIC_ANALYSIS_ERROR;
         }
 
-        printf("SYNTACTIC ANALYSIS\tOK\n");
-        printf("\x1b[32mSECOND PASS\x1b[0m\n");
         parse(&inst_tape);
 
         symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
@@ -51,7 +48,6 @@ int main(int argc, char *argv[]) {
         DLInsertLast(&inst_tape, generate(I_INIT_FRAME, run_method, NULL, NULL));
         DLInsertLast(&inst_tape, generate(I_F_CALL, run_tape, NULL, NULL));
 
-        printf("INTERPRET:\n");
         processed_tape = &inst_tape;
         interpret_tac(&inst_tape);
 

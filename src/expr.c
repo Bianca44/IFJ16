@@ -110,13 +110,13 @@ int choose_rule(PStack *P){
     }
     int first_operand;
     int second_operand;
-    
+
     switch(top_item->term){
 
         //pravidlo E -> int_literal,double_literal,...
         case P_LIT:
-        
-        
+
+
           d_print("Data type je: %d\n",top_item->value.data_type);
            switch(top_item->value.data_type){
 
@@ -144,10 +144,10 @@ int choose_rule(PStack *P){
            }
 
             break;
-        
+
         // E->id,special_id
         case P_ID:
-        
+
         d_print("Data type je: %d\n",top_item->value.data_type);
         switch(top_item->value.data_type){
 
@@ -260,7 +260,7 @@ int choose_rule(PStack *P){
             op_2 = P->top->expr;
             d_print("First operand data_type: %d\n",first_operand);
             d_print("Second operand data_type: %d\n",second_operand);
-            
+
             if(first_operand == INT && second_operand == INT){
 
                 result_item->value.data_type = INT;
@@ -369,7 +369,7 @@ int choose_rule(PStack *P){
 
             if(first_operand == INT && second_operand == INT){
 
-                
+
                 //zatial sa nekontroluje delenie 0
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
@@ -487,7 +487,7 @@ int choose_rule(PStack *P){
                 fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
             result_item->expr = tmp;
             break;
 
@@ -544,7 +544,7 @@ int choose_rule(PStack *P){
                 fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
             result_item->expr = tmp;
             break;
 
@@ -601,7 +601,7 @@ int choose_rule(PStack *P){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-           
+
             result_item->expr = tmp;
 
             break;
@@ -656,7 +656,7 @@ int choose_rule(PStack *P){
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            
+
             result_item->expr = tmp;
 
 
@@ -711,7 +711,7 @@ int choose_rule(PStack *P){
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            
+
             result_item->expr = tmp;
 
             break;
@@ -761,9 +761,9 @@ int choose_rule(PStack *P){
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            
+
             result_item->expr = tmp;
-            
+
             break;
         case P_AND:
              if(!expr_check(P)){
@@ -776,15 +776,15 @@ int choose_rule(PStack *P){
             op_2 = P->top->expr;
             d_bol(op_1->b);
             d_bol(op_2->b);
-            
+
            if(first_operand == INT && second_operand == INT){
-                
+
                  fprintf(stderr,"Unexpected expression.\n");
                  cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                
+
                 fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
 
@@ -811,7 +811,7 @@ int choose_rule(PStack *P){
                 fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
             result_item->expr = tmp;
             break;
 
@@ -827,13 +827,13 @@ int choose_rule(PStack *P){
             d_bol(op_1->b);
             d_bol(op_2->b);
            if(first_operand == INT && second_operand == INT){
-                
+
                  fprintf(stderr,"Unexpected expression.\n");
                  cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                
+
                 fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
 
@@ -893,8 +893,8 @@ int init_item(PStack *P,token_t *t){
                 if (current_function.id_name != NULL) {
 
                     symbol_table_t *function = get_symbol_table_for_function(current_class,current_function.id_name);
-                    printf("Current function is:%s\n",current_function.id_name);
-                    printf("premenna %s \n", t->string_value);
+                    d_print("Current function is:%s\n",current_function.id_name);
+                    d_print("premenna %s \n", t->string_value);
                     item = get_symbol_table_function_item(function,t->string_value);
                     if(item == NULL){
                     item = get_symbol_table_class_item(current_class, t->string_value);
@@ -936,7 +936,7 @@ int init_item(PStack *P,token_t *t){
                             push_item->value.data_type = INT;
                             push_item->expr = &item->variable;
                             d_int(push_item->expr->i);
-    
+
                              break;
                         case DOUBLE:
 
@@ -1000,15 +1000,15 @@ int init_item(PStack *P,token_t *t){
 
 
             case INT_LITERAL:
-                
+
                 push_item->value.i = t->int_value;
                 push_item->value.data_type = INT;
-                
+
                 tVar *i = insert_int_const(&mem_constants, t->int_value);
                 push_item->expr = i;
                 break;
             case DOUBLE_LITERAL:
-                
+
                 push_item->value.d = t->double_value;
                 push_item->value.data_type = DOUBLE;
 
@@ -1016,26 +1016,26 @@ int init_item(PStack *P,token_t *t){
                 push_item->expr = d;
                 break;
             case STRING_LITERAL:
-              
+
                 push_item->value.s = t->string_value;
                 push_item->value.data_type = STRING;
-               
+
                 tVar *s = insert_string_const(&mem_constants, t->string_value);
                 push_item->expr = s;
                 break;
             case TRUE:
-               
+
                 push_item->value.b = true;
                 push_item->value.data_type = BOOLEAN;
-               
+
                 tVar *bt = insert_boolean_const(&mem_constants, true);
                 push_item->expr = bt;
                 break;
             case FALSE:
-               
+
                 push_item->value.b = false;
                 push_item->value.data_type = BOOLEAN;
-               
+
                 tVar *bf = insert_boolean_const(&mem_constants, false);
                 push_item->expr = bf;
                 break;
@@ -1066,27 +1066,27 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
         d_print("vo funkcii %s\n", current_function.id_name);
         symbol_table_item_t *function = get_symbol_table_class_item(current_class, current_function.id_name);
         work_tape = function->function.instruction_tape;
-        
+
     }
     else {
                work_tape = global_inst_tape;
-                
+
     }
       token_t *t = NULL;
       token_t end;
       end.type = ENDMARK;
       add_token_to_buffer(buffer,&end);
-      
+
       PStack *P = PSInit();
       PSPush(P,P_ENDMARK);
-      
+
         buffer_position = 0;
         d_print("in PSO %d:\n", buffer->length);
-        
+
         t = get_next_token_psa(buffer);
         do{
 
-           
+
             int r = PSTopTerm(P);
             switch(decode_table(r,decode_token_array[t->type])){
 
@@ -1099,13 +1099,13 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                     PSPush(P,decode_token_array[t->type]);
                     init_item(P,t);
                     t = get_next_token_psa(buffer);
-                   
+
                     break;
 
                 case '>':
-                   
+
                     choose_rule(P);
-                   
+
                     break;
                 case ' ':
                     fprintf(stderr,"Unexpected expression.\n");
@@ -1131,7 +1131,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        d_message("Na konci:\n");
        PSPrint(P);
        d_print("Data type of result is:%d\n",P->top->value.data_type);
-       
+
         return P->top->value.data_type;
 
 

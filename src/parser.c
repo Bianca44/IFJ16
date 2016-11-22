@@ -10,6 +10,7 @@
 #include "expr.h"
 #include "memory_constants.h"
 #include "error_codes.h"
+#include "debug.h"
 
 char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
                                 "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
@@ -35,8 +36,6 @@ token_buffer_t token_buffer;
 
 #define PARSE_ERROR 0
 #define PARSED_OK 1
-
-#define DEBUG_PRINT 0
 
 string_t param_data_types;
 string_t local_vars_data_types;
@@ -80,9 +79,6 @@ int get_token() {
 }
 
 
-/*    PARSING   */
-
-
 int parse_expression(bool ends_semicolon) {
 
         if (t.type == SEMICOLON || t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
@@ -97,7 +93,7 @@ int parse_expression(bool ends_semicolon) {
                 while (1) {
                         if (t.type == SEMICOLON) break;
 
-                        if (DEBUG_PRINT) printf("%s, ", t_names[t.type]);
+                        d_print("%s, ", t_names[t.type]);
 
                         add_token_to_buffer(&tb, &t);
 
@@ -127,7 +123,7 @@ int parse_expression(bool ends_semicolon) {
                         }
                         get_token();
                 }
-                if (DEBUG_PRINT) printf("\n");
+                d_message("\n");
                 //printf("uvolnujem\n");
                 //free_token_buffer(&tb);
                 get_psa(&tb, &expr_result,  &expr_var_result);
@@ -241,7 +237,7 @@ int parse_expression(bool ends_semicolon) {
         int brackets_counter = 0;
         if (is_second_pass) {
                 init_token_buffer(&tb);
-                if (DEBUG_PRINT) printf("IN EXPR: ");
+                d_message("IN EXPR: ");
         }
 
         while (1) {
@@ -265,7 +261,7 @@ int parse_expression(bool ends_semicolon) {
                 }
 
                 if (is_second_pass) {
-                        if (DEBUG_PRINT) printf("%s, ", t_names[t.type]);
+                        d_print("%s, ", t_names[t.type]);
                         add_token_to_buffer(&tb, &t);
                 }
 
@@ -304,7 +300,7 @@ int parse_expression(bool ends_semicolon) {
         if (is_second_pass) {
                 // PSA
                 //free_token_buffer(&tb);
-                if (DEBUG_PRINT) printf("\n");
+                d_message("\n");
                 if (!skip_precedence_analysis) {
                         get_psa(&tb, &expr_result, &expr_var_result);
                 }
@@ -501,7 +497,7 @@ int parse_param_value () {
         if (is_second_pass) {
                 params_counter = 0;
 
-                if (DEBUG_PRINT) printf("CALL %s\n", function_name_call );
+                d_print("CALL %s\n", function_name_call );
 
                 if (strstr(function_name_call, "ifj16.") == NULL) {
                         symbol_table_item_t * function = NULL;
@@ -941,7 +937,7 @@ int parse_method_element() {
                         current_function.function.param_data_types = copy_string(param_data_types.data);
                         current_function.function.local_vars_data_types = copy_string(local_vars_data_types.data);
                         current_function.function.params_count = param_data_types.length;
-                        if (DEBUG_PRINT) printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
+                        d_print("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
@@ -952,15 +948,14 @@ int parse_method_element() {
                         }
 
                         free_string(&param_data_types);
-                        free_string(&local_vars_data_types); /* vyprazdni string ale neuvolni */
-                        current_function.function.local_vars_count = 0;
+                        free_string(&local_vars_data_types);                         current_function.function.local_vars_count = 0;
                         current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
                         current_function.function.params_count = 0;
                         current_function.function.return_type = 0;
                 } else {
                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
-                        if (function->function.return_type == VOID && !has_function_return) { /* je void a nema return */
+                        if (function->function.return_type == VOID && !has_function_return) {
                                 DLInsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
                         }
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
