@@ -24,17 +24,6 @@ static void play(String str)
         str = ifj16.readString();
         str = ifj16.sort(str);
         int cmp = ifj16.compare(str, "abcdefgh");
-        if (cmp != 0) {
-                while (cmp != 0) {
-                        ifj16.print("Spatne zadana posloupnost, zkuste znovu:");
-                        str = ifj16.readString();
-                        str = ifj16.sort(str);
-                        cmp = ifj16.compare(str, "abcdefgh");
-                }
-        }
-        else {
-        }
-        return;
 }
 // end of static void play(String)
 }
