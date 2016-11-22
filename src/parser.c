@@ -504,7 +504,13 @@ int parse_param_value () {
                 if (DEBUG_PRINT) printf("CALL %s\n", function_name_call );
 
                 if (strstr(function_name_call, "ifj16.") == NULL) {
-                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, function_name_call);
+                        symbol_table_item_t * function = NULL;
+                        if (strchr(function_name_call, '.') != NULL) {
+                                function = get_symbol_table_special_id_item(function_name_call);
+                        }
+                        else {
+                                function = get_symbol_table_class_item(current_class, function_name_call);
+                        }
                         DLInsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
                 } else {
                         if (strcmp(function_name_call, "ifj16.substr") == 0) {
