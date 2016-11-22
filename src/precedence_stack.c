@@ -1,5 +1,6 @@
 #include "precedence_stack.h"
 #include "token_buffer.h"
+#include "debug.h"
 
 
 char *prec_names[20] = { "P_ADD","P_SUB","P_MUL","P_DIV","P_LB", "P_RB",     // )
@@ -26,35 +27,8 @@ void PSPush(PStack *P,enum Terminals term){
     if(term_item == NULL){
         return;
     }
-    /*if(t!= NULL){      
-        switch(t->type){
-    
-            case INT_LITERAL:
-                term_item->value.data_type = INT;
-                term_item->value.i = t->int_value;
-                break;
-            case DOUBLE_LITERAL:
-                term_item->value.data_type = DOUBLE;
-                term_item->value.d = t->double_value;
-                break;
-            case STRING_LITERAL:
-                term_item->value.data_type = STRING;
-                term_item->value.s = t->string_value;
-                break;
-            case TRUE:
-                term_item->value.data_type = TRUE;
-                term_item->value.b = true;
-                break;
-            case FALSE:
-                term_item->value.data_type = FALSE;
-                term_item->value.b = false;
-                break;
-            default:
-                term_item->value.data_type = t->type;
-        }
-    }    
-    */
-    
+   
+    term_item->expr = NULL;
     term_item->term = term;
     term_item->LPtr = P->top;
     term_item->RPtr = NULL;
@@ -171,7 +145,7 @@ void PSPrint(PStack *P){
     while(tmp != NULL){
             //if(P->top->RPtr != NULL){
                //printf("Prvok zasobnika je: %d\n",tmp->term);
-               printf("Prvok zasobnika je: %s\n",prec_names[tmp->term]);
+               d_print("Prvok zasobnika je: %s\n",prec_names[tmp->term]);
                 tmp = tmp->LPtr;
                 
             //}
