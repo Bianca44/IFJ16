@@ -1,8 +1,16 @@
 class Main {
 static void run () {
-        int a;
+        int a = 9;
 
-        if (true) a=5; else a=4;
+        /*if (true) {
+            a = a + 5;
+            a = a + 3;
+        } else {
+            a = a - 5;
+            a = a - 3;
+        }*/
+
+        if (true) a = a + 5;
 
         ifj16.print(a);
 

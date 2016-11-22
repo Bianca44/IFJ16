@@ -171,11 +171,9 @@ int compare(char *s1, char *s2) {
         int comparison = strcmp (s1, s2);
         if (comparison < 0) {
                 return -1;
-        }
-        else if (comparison > 0) {
+        } else if (comparison > 0) {
                 return 1;
-        }
-        else if (comparison == 0) {
+        } else if (comparison == 0) {
                 return 0;
         } else {
                 return -1;
