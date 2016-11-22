@@ -36,7 +36,7 @@ token_buffer_t token_buffer;
 #define PARSE_ERROR 0
 #define PARSED_OK 1
 
-#define DEBUG_PRINT 1
+#define DEBUG_PRINT 0
 
 string_t param_data_types;
 string_t local_vars_data_types;
@@ -226,11 +226,10 @@ int parse_expression(bool ends_semicolon) {
                                                                         DLInsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
 
-                                                                first_param = second_param = NULL;
+                                                                first_param = second_param = expr_var_result = NULL;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
-                                                        expr_var_result = NULL;
                                                         return PARSED_OK;
                                                 }
                                         }
@@ -523,12 +522,12 @@ int parse_param_value () {
                                         int data_type = 0;
                                         if (t.type == SPECIAL_ID) {
                                                 if (!is_special_id_declared(t.string_value)) {
-                                                        fprintf(stderr, "Param \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value, current_class, function_name_call);
+                                                        fprintf(stderr, "Parameter \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value, current_class, function_name_call);
                                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 } else {
                                                         item = get_symbol_table_special_id_item(t.string_value);
                                                         if (item->is_function) {
-                                                                fprintf(stderr, "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
+                                                                fprintf(stderr, "Parameter \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
                                                                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                         data_type = item->variable.data_type;
@@ -788,6 +787,7 @@ int parse_statement() {
                                 if (p->is_function) {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
                                                 DLInsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
+                                                first_param = expr_var_result = NULL;
                                         } else {
                                                 DLInsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, NULL, NULL));
                                         }
@@ -800,7 +800,7 @@ int parse_statement() {
                                                 tVar * from = expr_var_result;
 
                                                 DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
-                                                expr_var_result = NULL;
+                                                first_param = second_param = expr_var_result = NULL;
                                         }
                                 }
                         }
