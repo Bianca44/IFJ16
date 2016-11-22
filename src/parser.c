@@ -219,6 +219,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else if (strcmp(function_name_call, "ifj16.find") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
+                                                                        printf("ADRESA %p\n",res );
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
@@ -733,12 +734,13 @@ int parse_condition_list() {
 int parse_else() {
         if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (is_second_pass) {
-                    // NEMA ELSE
-                    // TODO
+                    set_label(js_top(), DLGetLast(function_inst_tape));
+                    js_pop();
                 }
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 if (is_second_pass) {
+                        DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
                         set_label(js_top(), DLGetLast(function_inst_tape));
                         js_pop();
                         js_push(DLGetLast(function_inst_tape));
@@ -811,6 +813,8 @@ int parse_statement() {
                                                 DLInsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, NULL, NULL));
                                         }
 
+                                        first_param = second_param = expr_var_result = NULL;
+
                                 } else if (function_variable.id_name != NULL) {
                                         if (expr_var_result != NULL) { /* neni priradenie cez funkciu */
                                                 tVar * to = &p->variable;
@@ -831,9 +835,6 @@ int parse_statement() {
                 }
 
         } else if (t.type == IF) {
-                if (is_second_pass) {
-                        js_push(DLGetLast(function_inst_tape));
-                }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
@@ -845,9 +846,6 @@ int parse_statement() {
                                         get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
-                                                        if (is_second_pass) {
-                                                                DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
-                                                        }
                                                         return parse_else();
                                                 }
                                         }
