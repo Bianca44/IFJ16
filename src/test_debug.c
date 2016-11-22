@@ -318,7 +318,7 @@ int main(){
     //KONIEC FAKTORIALU  ========================================
     //y = readInt();
     //str = readString();
-    DLInsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
+    //DLInsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
     DLInsertLast(&gl_tape, generate(I_RSTR, NULL, NULL, get_adress("str",main_f)));
     //print(y)
     //print str
@@ -326,7 +326,8 @@ int main(){
     //len(str)
     //print(len)
     pomocna[10].data_type = INT;
-    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("y",main_f), NULL, NULL));
+    //DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("y",main_f), NULL, NULL));
+    DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("x",main_f), NULL, NULL));
     DLInsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
    
 
