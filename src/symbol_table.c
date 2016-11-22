@@ -6,7 +6,6 @@
 #include "symbol_table.h"
 #include "ial.h"
 #include "scanner.h"
-#include "DLList.h"
 
 symbol_table_t *class_list;
 char* current_class;
@@ -25,24 +24,20 @@ void dispose_class_symbol_table(tData data) {
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-     //                   free(item->function.param_data_types);
+                        //free(item->function.param_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
-                        printf("nenu null %d\n", item->function.symbol_table->n_items);
                         ht_free((symbol_table_t *)(item->function.symbol_table));
                 }
                 // pasku
                 //ht_free((symbol_table_t *)(item->function.symbol_table));
         } else {
-                if (item->variable.s != NULL) {
-        //                free(item->variable.s);
+                //if (item->variable.s != NULL) {
+                       // free(item->variable.s);
+                //}
+                if(item->variable.initialized && item->variable.data_type == STRING){
+                    free(item->variable.s);
                 }
-        }
-        if(!item->is_function){
-            if(item->variable.initialized && item->variable.data_type == STRING){
-                free(item->variable.s);
-            }
-
         }
         free(item);
 }
@@ -84,6 +79,9 @@ symbol_table_t * get_symbol_table_for_class(char* class_name) {
 /* Najde funkciu v triede a vrati tabulku symbolov pre danu funkciu */
 symbol_table_t * get_symbol_table_for_function(char *class_name, char * id_name) {
         symbol_table_item_t * item = get_symbol_table_class_item(class_name, id_name);
+        if (item == NULL) {
+                return NULL;
+        }
         return item->function.symbol_table;
 }
 
@@ -118,6 +116,9 @@ symbol_table_item_t * insert_variable_symbol_table(char * id_name, int data_type
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = false;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
         insert_symbol_table_item(id_name, p);
@@ -131,6 +132,9 @@ symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symb
         p->variable.data_type = data_type;
         p->variable.offset = offset;
         p->variable.initialized = false;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
         p->is_function = false;
         p->declared = true;
         ht_insert(symbol_table, id_name, p);
@@ -138,13 +142,19 @@ symbol_table_item_t * insert_function_variable_symbol_table(symbol_table_t *symb
 }
 
 /* Vlozi polozku - funkciu -  do tabulky symbolov aktualnej triedy */
-symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, symbol_table_t * symbol_table) {
+symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type, int params_count, int local_vars_count, char * param_data_types, char * local_vars_data_types, symbol_table_t * symbol_table) {
         symbol_table_item_t * p = create_symbol_table_item();
         p->id_name = id_name;
         p->function.return_type = data_type;
         p->function.params_count = params_count;
         p->function.local_vars_count = local_vars_count;
+        p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
+        if (local_vars_data_types == NULL) {
+            /* compatibility */
+            local_vars_data_types = copy_string("");
+        }
+        p->function.local_vars_data_types = local_vars_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
@@ -152,46 +162,54 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         return p;
 }
 
+void insert_instr_tape_for_function(char * class_name, char * function_name, tDLList * tape) {
+    symbol_table_item_t * function_item = get_symbol_table_class_item(class_name, function_name);
+    function_item->function.instruction_tape = tape;
+}
+
 /* Vrati polozku z tabulky symbolov pre danu triedu */
 symbol_table_item_t * get_symbol_table_class_item(char * class_name, char * id_name) {
-        symbol_table_t * sym_table = get_symbol_table_for_class(class_name);
-        if (sym_table == NULL) {
+        if (id_name == NULL) {
                 return NULL;
         }
-        symbol_table_item_t * sym_table_item = ht_read(sym_table, id_name);
-        return sym_table_item;
+        symbol_table_t * symbol_table = get_symbol_table_for_class(class_name);
+        if (symbol_table == NULL) {
+                return NULL;
+        }
+        symbol_table_item_t * symbol_table_item = ht_read(symbol_table, id_name);
+        return symbol_table_item;
 }
 
 /* Zisti ci existuje premenna alebo funkcia v aktualnej triede */
 bool is_declared(char * id_name) {
-        symbol_table_item_t * sym_table_item = get_symbol_table_class_item(current_class, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = get_symbol_table_class_item(current_class, id_name);
+        if (symbol_table_item == NULL) {
                 return false;
         }
-        return sym_table_item->declared;
+        return symbol_table_item->declared;
 }
 
 /* Vrati polozku z tabulky symbolov funkcie */
 symbol_table_item_t * get_symbol_table_function_item(symbol_table_t * symbol_table, char * id_name) {
-        symbol_table_item_t * sym_table_item = ht_read(symbol_table, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = ht_read(symbol_table, id_name);
+        if (symbol_table_item == NULL) {
                 return NULL;
         }
 
-        return sym_table_item;
+        return symbol_table_item;
 }
 
 /* Zisti ci je parameter/premenna deklarovana vo funkcii */
 bool is_declared_in_function(symbol_table_t * symbol_table, char * id_name) {
-        symbol_table_item_t * sym_table_item = get_symbol_table_function_item(symbol_table, id_name);
-        if (sym_table_item == NULL) {
+        symbol_table_item_t * symbol_table_item = get_symbol_table_function_item(symbol_table, id_name);
+        if (symbol_table_item == NULL) {
                 return false;
         }
-        return sym_table_item->declared;
+        return symbol_table_item->declared;
 }
 
 /* Prevod datoveho typu na jeho specificky znak */
-void append_param_data_types(int type) {
+void append_type(string_t *str, int type) {
         char data_type_char = 0;
         switch (type) {
         case INT:
@@ -210,11 +228,11 @@ void append_param_data_types(int type) {
                 break;
         }
 
-        append_char(&param_data_types, data_type_char);
+        append_char(str, data_type_char);
 }
 
 
-/* Ziska polozku za tabulky symbolov pre plne kvalifikovany identifikator */
+/* Ziska polozku z tabulky symbolov pre plne kvalifikovany identifikator */
 symbol_table_item_t * get_symbol_table_special_id_item(char * id_name) {
         char *special_id = copy_string(id_name);
         char *class;
@@ -241,6 +259,84 @@ bool is_special_id_declared(char * id_name) {
                 return false;
         }
         return item->declared;
+}
+
+/* Vytvori pomocnu premennu v tabulke pre aktualnu triedu */
+symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
+        symbol_table_item_t * p = create_symbol_table_item();
+        char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
+        static int tmp_id = 0;
+        sprintf(id_name, "#%d", tmp_id);
+
+        p->variable.data_type = data_type;
+        p->variable.initialized = true;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
+        p->is_function = false;
+        p->declared = true;
+        p->id_name = id_name;
+        p->variable.offset = CONSTANT;
+        insert_symbol_table_item(id_name, p);
+        tmp_id++;
+        return p;
+}
+
+/* Vytvori pomocnu premennu v tabulke pre funkciu */
+symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_name, int data_type) {
+        symbol_table_item_t * p = create_symbol_table_item();
+        symbol_table_item_t * function_item = get_symbol_table_class_item(current_class, function_name);
+        symbol_table_t * function_table = function_item->function.symbol_table;
+
+        int offset = function_item->function.params_local_vars_count;
+        char * local_vars_data_types = function_item->function.local_vars_data_types;
+        int new_len = strlen(local_vars_data_types) + 1;
+        local_vars_data_types = (char *) realloc(local_vars_data_types, (new_len + 1)* sizeof(char));
+
+        int c = 0;
+        switch (data_type) {
+            case STRING:
+                        c = 's';
+                        break;
+            case INT:
+                        c = 'i';
+                        break;
+            case DOUBLE:
+                        c = 's';
+                        break;
+            case BOOLEAN:
+                        c = 'b';
+                        break;
+        }
+
+        local_vars_data_types[new_len-1] = c;
+        local_vars_data_types[new_len] = '\0';
+        function_item->function.local_vars_data_types = local_vars_data_types;
+
+        char *id_name = (char *) malloc(TMP_VAR_NAME_SIZE * sizeof(char));
+        static int tmp_id = 0;
+        sprintf(id_name, "#%d", tmp_id);
+
+        p->id_name = id_name;
+        p->variable.data_type = data_type;
+        p->variable.offset = offset;
+        p->variable.initialized = true;
+        if (data_type == STRING) {
+            p->variable.s = NULL;
+        }
+        p->is_function = false;
+        p->declared = true;
+
+        function_item->function.params_local_vars_count++;
+        function_item->function.local_vars_count++;
+        ht_insert(function_table, id_name, p);
+        return p;
+}
+
+/* Naalokuje instrukcnu pasku pre funkciu */
+tDLList * create_function_instr_tape() {
+    tDLList * tape = (tDLList *) malloc(sizeof(tDLList));
+    return tape;
 }
 
 /* Uvolni zoznam tried */

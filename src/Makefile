@@ -34,17 +34,11 @@ precedence_stack.o:precedence_stack.c
 scanner.o:scanner.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-
-ntest:ntest_debug.o
-	$(CC) $(CFLAGS) -o $@ $<
-ntest_debug.o:test_debug.c
-	$(CC) $(CFLAGS_N) -c -o $@ $<
-
 parser:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c token_buffer.c -o main
+	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c interpret.c instructions.c memory_constants.c token_buffer.c -o main
 
 r_test:
-	valgrind ./test
+	./test
 
 clean:
 	rm -f *.o

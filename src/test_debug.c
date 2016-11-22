@@ -116,7 +116,7 @@ int main(){
     insert_function_variable_symbol_table(run, "bool", BOOLEAN, 6);
 
     //pridanie ts funkcie do aktualnej triedy
-    insert_function_symbol_table("run", VOID, 0, 7, "", run);
+    insert_function_symbol_table("run", VOID, 0, 7, "","iiidddb", run);
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
 
     //global instruction tape
@@ -134,7 +134,7 @@ int main(){
     pomocna[4].i = 2;
     pomocna[4].data_type = INT;
     symbol_table_item_t *x = get_symbol_table_class_item("Main", "run");
-    x->function.local_vars_data_types = "iiidddb";
+
     x->function.params_local_vars_count = 7;
     //paska pre run  
     tDLList  run_tape;
@@ -263,14 +263,13 @@ int main(){
     insert_function_variable_symbol_table(fact, "bool", BOOLEAN, 3);
 
     //pridanie ts funkcie do aktualnej triedy
-    insert_function_symbol_table("fact", INT, 1, 4, "i", fact);
+    insert_function_symbol_table("fact", INT, 1, 4, "i","iib", fact);
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
 
     //paska pre fact 
     tDLList  fact_tape;
     DLInitList(&fact_tape, dispose_inst);
     symbol_table_item_t *z = get_symbol_table_class_item("Main", "fact");
-    z->function.local_vars_data_types = "iib";
     z->function.params_local_vars_count = 4;
     d_int(z->function.params_local_vars_count);
     pomocna[6].i = 11;
@@ -333,9 +332,8 @@ int main(){
 
     //sort 
     symbol_table_t * substr = create_function_symbol_table();
-    insert_function_symbol_table("substr", STRING, 3, 0, "sii", substr);
+    insert_function_symbol_table("substr", STRING, 3, 0, "sii","", substr);
     symbol_table_item_t *y = get_symbol_table_class_item("Main", "substr");
-    y->function.local_vars_data_types = "";
     y->function.params_local_vars_count = 3; 
     pomocna[11].data_type = INT;
     pomocna[11].i = 1;

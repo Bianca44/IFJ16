@@ -1,14 +1,14 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
+#include <stdio.h>
 #include "strings.h"
-
-extern int parser_error_flag;
 
 #define LONGEST_KEYWORD 8
 #define KEYWORDS_COUNT 17
 #define TOKENS_COUNT 43
 #define KEYWORD_TOKENS_OFFSET (TOKENS_COUNT - KEYWORDS_COUNT)
+#define OCTAL_STRING_SIZE 4
 
 typedef struct {
         int type;
@@ -20,7 +20,7 @@ typedef struct {
 } token_t;
 
 int get_next_token (token_t * t);
-//FILE* init_scanner(char *filename);
+FILE* init_scanner(char *filename);
 int save_token(token_t *t, int type, string_t *attr);
 int detect_keyword(string_t *str);
 

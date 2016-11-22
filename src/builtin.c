@@ -21,17 +21,17 @@ int find(char *p, char *t) {
 void print(tVar *var) {
     switch (var->data_type) {
         case STRING:
-                printf("%s\n", var->s);
+                printf("%s", var->s);
                 break;
         case INT:
-                printf("%d\n", var->i);
+                printf("%d", var->i);
                 break;
         case DOUBLE:
-                printf("%g\n", var->d);
+                printf("%g", var->d);
                 break;
 
         case BOOLEAN:
-                printf("%s\n", (var->b) ? "true" : "false");
+                printf("%s", (var->b) ? "true" : "false");
                 break;
     }
 }

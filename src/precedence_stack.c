@@ -19,33 +19,42 @@ PStack *PSInit(){
     return P;
 }
 
-void PSPush(PStack *P,enum Terminals term,int type){
+void PSPush(PStack *P,enum Terminals term){
     
     PStack_item *term_item;
     term_item = malloc(sizeof(PStack_item));
     if(term_item == NULL){
         return;
     }
-    /*if(term != P_EXPR){
-       
-            if(type == INT_LITERAL){
-                term_item->value.data_type = type;
-            }
-            if(type == STRING_LITERAL){
-                term_item->value.data_type = type;
-            }
-            if(type == DOUBLE_LITERAL){
-                term_item->value.data_type = type;
-            }
-            if(type == TRUE){
-                term_item->value.data_type = type;
-            }
-            if(type == FALSE){
-                term_item->value.data_type = type;
-            }
-        
-    }*/
-    term_item->value.data_type = type;
+    /*if(t!= NULL){      
+        switch(t->type){
+    
+            case INT_LITERAL:
+                term_item->value.data_type = INT;
+                term_item->value.i = t->int_value;
+                break;
+            case DOUBLE_LITERAL:
+                term_item->value.data_type = DOUBLE;
+                term_item->value.d = t->double_value;
+                break;
+            case STRING_LITERAL:
+                term_item->value.data_type = STRING;
+                term_item->value.s = t->string_value;
+                break;
+            case TRUE:
+                term_item->value.data_type = TRUE;
+                term_item->value.b = true;
+                break;
+            case FALSE:
+                term_item->value.data_type = FALSE;
+                term_item->value.b = false;
+                break;
+            default:
+                term_item->value.data_type = t->type;
+        }
+    }    
+    */
+    
     term_item->term = term;
     term_item->LPtr = P->top;
     term_item->RPtr = NULL;
