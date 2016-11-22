@@ -681,7 +681,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
             new_inst->f = i_and;
             break;
         case I_OR:
-            new_inst->f = i_and;
+            new_inst->f = i_or;
             break;
         //BUILT-IN AND OTHER  
         case I_ASSIGN:
