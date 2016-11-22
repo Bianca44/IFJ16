@@ -487,8 +487,13 @@ void i_cat(tVar *op1, tVar *op2, tVar *result){
 
 void i_strcmp(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
-
-    result->i = compare(op1->s, op2->s);
+    if (result == NULL) {
+        printf("OMG NULL %p\n", result);
+    } else {
+        printf("OMG NULL 2 %d\n", result->i);
+        result->i = 2;
+    }
+    compare(op1->s, op2->s);
 }
 
 void i_substr(tVar *op1, tVar *op2, tVar *result){
