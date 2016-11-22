@@ -951,8 +951,8 @@ int parse_method_element() {
                                 cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
 
-                        clear_string(&param_data_types);
-                        clear_string(&local_vars_data_types); /* vyprazdni string ale neuvolni */
+                        free_string(&param_data_types);
+                        free_string(&local_vars_data_types); /* vyprazdni string ale neuvolni */
                         current_function.function.local_vars_count = 0;
                         current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
