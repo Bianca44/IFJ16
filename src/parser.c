@@ -732,11 +732,24 @@ int parse_condition_list() {
 
 int parse_else() {
         if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+                if (is_second_pass) {
+                    // NEMA ELSE
+                    // TODO
+                }
                 return PARSED_OK;
         } if (t.type == ELSE) {
+                if (is_second_pass) {
+                        set_label(js_top(), DLGetLast(function_inst_tape));
+                        js_pop();
+                        js_push(DLGetLast(function_inst_tape));
+                }
                 get_token();
                 if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET) {
                         if(parse_condition_list()) {
+                                if (is_second_pass) {
+                                        set_label(js_top(), DLGetLast(function_inst_tape));
+                                        js_pop();
+                                }
                                 if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                                         return PARSED_OK;
                                 }
@@ -818,13 +831,23 @@ int parse_statement() {
                 }
 
         } else if (t.type == IF) {
+                if (is_second_pass) {
+                        js_push(DLGetLast(function_inst_tape));
+                }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
+                                        if (is_second_pass) {
+                                                DLInsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                                js_push(DLGetLast(function_inst_tape));
+                                        }
                                         get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
+                                                        if (is_second_pass) {
+                                                                DLInsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
+                                                        }
                                                         return parse_else();
                                                 }
                                         }
@@ -1332,6 +1355,7 @@ int parse(tDLList * inst_tape) {
 
         if (is_first_pass) {
                 init_token_buffer(&token_buffer);
+                js_init();
         }
         get_token();
         if (t.type == CLASS || t.type == EOF) {

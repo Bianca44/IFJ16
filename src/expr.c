@@ -104,7 +104,7 @@ int choose_rule(PStack *P,token_t *t){
 
     PStack_item *top_item = PSTopTermPtr(P);
     PStack_item *result_item = malloc(sizeof(PStack_item));
-    
+
     int first_operand;
     int second_operand;
     if(result_item == NULL){
@@ -180,13 +180,13 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            
+
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
 
              first_operand = P->top->LPtr->LPtr->value.data_type;
              second_operand = P->top->value.data_type;
-            
+
             // int + int
             if(first_operand == INT && second_operand == INT){
                 tmp = generate_tmp_var(result_item->value.data_type);
@@ -211,7 +211,7 @@ int choose_rule(PStack *P,token_t *t){
                 result_item->value.data_type = DOUBLE;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
-                
+
             }
             else if(first_operand == STRING && (second_operand == INT || second_operand == DOUBLE || second_operand == BOOLEAN)){
                // d_int(P->top->expr->i);
@@ -220,8 +220,8 @@ int choose_rule(PStack *P,token_t *t){
                 var =  generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_TO_STRING,op_2,NULL,var));
                 DLInsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
-                
-                
+
+
             }
             else if(second_operand == STRING  && (first_operand == INT || first_operand == DOUBLE || first_operand == BOOLEAN)){
 
@@ -240,7 +240,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            
+
             result_item->expr = tmp;
              break;
 
@@ -256,7 +256,7 @@ int choose_rule(PStack *P,token_t *t){
             op_2 = P->top->expr;
 
             if(first_operand == INT && second_operand == INT){
-               
+
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
@@ -290,7 +290,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-           
+
             result_item->expr = tmp;
 
             break;
@@ -302,22 +302,22 @@ int choose_rule(PStack *P,token_t *t){
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
-            op_1 = P->top->LPtr->LPtr->expr;           
+            op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-               
+
                 result_item->value.data_type = INT;
                  tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
 
 
-                
+
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
                 result_item->value.data_type = DOUBLE;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                
+
                 if(first_operand == INT){
                     DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     DLInsertLast(work_tape, generate(I_MUL, var, op_2, tmp));
@@ -341,7 +341,7 @@ int choose_rule(PStack *P,token_t *t){
                 printf("Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            
+
             result_item->expr = tmp;
 
             break;
@@ -353,23 +353,23 @@ int choose_rule(PStack *P,token_t *t){
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
-           
+
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                
+
                 //TODO mozeme delit 2 INT a mat INT vysledok ?
                 //zatial sa nekontroluje delenie 0
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
-                
+
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
                 result_item->value.data_type = DOUBLE;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                
+
                 if(first_operand == INT){
                     DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     DLInsertLast(work_tape, generate(I_DIV, var, op_2, tmp));
@@ -394,7 +394,7 @@ int choose_rule(PStack *P,token_t *t){
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            
+
             result_item->expr = tmp;
 
              break;
@@ -423,7 +423,7 @@ int choose_rule(PStack *P,token_t *t){
                     break;
             }
             result_item->expr = P->top->LPtr->expr;
-            
+
             break;
         case P_LESS:
              if(!expr_check(P)){
@@ -597,7 +597,7 @@ int choose_rule(PStack *P,token_t *t){
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             d_bol(op_1->b);
-            d_bol(op_2->b);  
+            d_bol(op_2->b);
             //if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
             //    result_item->value.data_type = BOOLEAN;
             //}
@@ -628,7 +628,7 @@ int choose_rule(PStack *P,token_t *t){
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             d_bol(op_1->b);
-            d_bol(op_2->b); 
+            d_bol(op_2->b);
             //if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
             //    result_item->value.data_type = BOOLEAN;
             //}
@@ -640,7 +640,7 @@ int choose_rule(PStack *P,token_t *t){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_OR, op_1, op_2, tmp));
-                
+
             }
             //tmp = generate_tmp_var(result_item->value.data_type);
             //DLInsertLast(work_tape, generate(I_OR, op_1, op_2, tmp));
@@ -663,7 +663,7 @@ int choose_rule(PStack *P,token_t *t){
 
         P->top->value.data_type = result_item->value.data_type;
         P->top->expr = result_item->expr;
-        
+
 return 1;
 }
 
@@ -676,7 +676,7 @@ int init_item(PStack *P,token_t *t){
         switch(t->type){
 
             case ID:
-               
+
                 if (current_function.id_name != NULL) {
 
                     symbol_table_t *function = get_symbol_table_for_function(current_class,current_function.id_name);
@@ -686,29 +686,29 @@ int init_item(PStack *P,token_t *t){
                     if(item == NULL){
                     item = get_symbol_table_class_item(current_class, t->string_value);
                     }
-                  
+
                     switch(item->variable.data_type){
                         case INT:
-                             
+
                              push_item->value.data_type = INT;
                              push_item->expr = &item->variable;
                              //push_item->expr->data_type = INT;
                               d_int(push_item->expr->i);
                             break;
                         case DOUBLE:
-                            
+
                              push_item->value.data_type = DOUBLE;
                              push_item->expr = &item->variable;
                             // push_item->expr->data_type = DOUBLE;
                             break;
                         case STRING:
-                        
+
                              push_item->value.data_type = STRING;
                              push_item->expr = &item->variable;
                              //push_item->expr->data_type = STRING;
                             break;
                         case BOOLEAN:
-                     
+
                              push_item->value.data_type = BOOLEAN;
                              push_item->expr = &item->variable;
                             // push_item->expr->data_type = BOOLEAN;
@@ -720,26 +720,26 @@ int init_item(PStack *P,token_t *t){
                     item = get_symbol_table_class_item(current_class, t->string_value);
                     switch(item->variable.data_type){
                         case INT:
-                            
+
                              push_item->value.data_type = INT;
                              push_item->expr = &item->variable;
                              d_int(push_item->expr->i);
-                            //push_item->expr->data_type = INT;                      
+                            //push_item->expr->data_type = INT;
                              break;
                         case DOUBLE:
-                             
+
                              push_item->value.data_type = DOUBLE;
                              push_item->expr = &item->variable;
                             //  push_item->expr->data_type = DOUBLE;
                             break;
                         case STRING:
-                             
+
                              push_item->value.data_type = STRING;
                              push_item->expr = &item->variable;
                             //  push_item->expr->data_type = STRING;
                             break;
                         case BOOLEAN:
-                             
+
                              push_item->value.data_type = BOOLEAN;
                              push_item->expr = &item->variable;
                            ///   push_item->expr->data_type = BOOLEAN;
@@ -751,39 +751,39 @@ int init_item(PStack *P,token_t *t){
                 break;
             case SPECIAL_ID:
                  printf("Value of literal is:%s\n",t->string_value);
-                 
+
                 item = get_symbol_table_special_id_item(t->string_value);
-                
+
                  printf("data_type special id %d\n", item->variable.data_type);
 
                     switch(item->variable.data_type){
                         case INT:
-                           
+
                             push_item->value.data_type = INT;
                             push_item->expr = &item->variable;
                             // push_item->expr->data_type = INT;
                             break;
                         case DOUBLE:
-                            
+
                             push_item->value.data_type = DOUBLE;
                             push_item->expr = &item->variable;
                             // push_item->expr->data_type = DOUBLE;
                             break;
                         case STRING:
-                           
+
                             push_item->value.data_type = STRING;
                             push_item->expr = &item->variable;
                             // push_item->expr->data_type = STRING;
                             break;
                         case BOOLEAN:
-                            
+
                             push_item->value.data_type = BOOLEAN;
                             push_item->expr = &item->variable;
                             // push_item->expr->data_type = BOOLEAN;
                             break;
                     }
 
-                 
+
                  break;
 
 
@@ -827,10 +827,10 @@ int init_item(PStack *P,token_t *t){
                 tVar *bf = insert_boolean_const(&mem_constants, false);
                 push_item->expr = bf;
                 break;
-            
+
         }
 
-        
+
 
 return 1;
 }
@@ -899,7 +899,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                     insert_handle(P,PSTopTermPtr(P));
                     PSPush(P,decode_token_array[t->type]);
                     init_item(P,t);
-                    
+
 
                    // PSPrint(P);
                     //printf("TOKEN type: %d\n",t->type);
@@ -923,7 +923,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
 
             }
 
-            
+
        }while(PSTopTerm(P) != P_ENDMARK || t->type != ENDMARK);
 
        st_item->id_name = "expr_result";
@@ -939,8 +939,8 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        PSPrint(P);
        printf("Data type of result is:%d\n",P->top->value.data_type);
        //printf("Result value is:%d\n",P->top->value.i);
-      
-      
+
+
         return P->top->value.data_type;
 
 
