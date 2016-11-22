@@ -188,7 +188,7 @@ int parse_expression(bool ends_semicolon) {
                                                                         cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                                 }
 
-                                                                symbol_table_item_t *var;
+                                                                symbol_table_item_t *var = NULL;
 
                                                                 if (strchr(function_variable.id_name, '.') != NULL) {
                                                                         var = get_symbol_table_special_id_item(function_variable.id_name);
@@ -219,7 +219,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else if (strcmp(function_name_call, "ifj16.find") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
-                                                                        printf("ADRESA %p\n",res );
+                                                                        printf("Name %s ADRESA %p dt %d\n",var->id_name, res , var->variable.data_type);
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
@@ -978,7 +978,8 @@ int parse_method_element() {
                         if (is_first_pass) {
                                 //printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                 if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
-                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        symbol_table_item_t * x = insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
+                                        printf("KKS %s %p\n", function_variable.id_name, &x->variable);
                                         function_variable.variable.offset++;
                                 } else {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
@@ -1004,6 +1005,8 @@ int parse_method_element() {
                                                         tVar * from = expr_var_result;
 
                                                         DLInsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+
+                                                        expr_var_result = NULL;
                                                 }
                                         }
                                         function_variable.id_name = NULL;

@@ -489,7 +489,6 @@ void i_strcmp(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->i = compare(op1->s, op2->s);
-    printf("OMG NULL 2 %d\n", result->i);
 }
 
 void i_substr(tVar *op1, tVar *op2, tVar *result){
