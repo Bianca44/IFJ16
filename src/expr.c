@@ -100,55 +100,55 @@ token_t* get_next_token_psa(token_buffer_t *token_buf) {
         }
 }
 
-int choose_rule(PStack *P,token_t *t){
+int choose_rule(PStack *P){
 
     PStack_item *top_item = PSTopTermPtr(P);
     PStack_item *result_item = malloc(sizeof(PStack_item));
-
-    int first_operand;
-    int second_operand;
     if(result_item == NULL){
         fprintf(stderr,"Unable to allocate memory.\n");
         exit(42); //TODO
     }
+    int first_operand;
+    int second_operand;
+    
     switch(top_item->term){
 
         //pravidlo E -> int_literal,double_literal,...
         case P_LIT:
-           printf("Hodnota jeeee: %d\n",top_item->value.i);
-           printf("Data type jeeee: %d\n",top_item->value.data_type);
+        
+        
+          d_print("Data type je: %d\n",top_item->value.data_type);
            switch(top_item->value.data_type){
 
                 case INT:
                    result_item->value.data_type = INT; // TODO odmazat potom
-                   //result_item->value.i = top_item->value.i;
                    d_int(top_item->expr->i);
                    result_item->expr = top_item->expr;
                     break;
                 case DOUBLE:
                     result_item->value.data_type = DOUBLE;
-                     //esult_item->value.d = top_item->value.d;
+                    d_dob(top_item->expr->d);
                     result_item->expr = top_item->expr;
                     break;
                 case STRING:
                     result_item->value.data_type = STRING;
+                    d_str(top_item->expr->s);
                    result_item->expr = top_item->expr;
                     break;
                 case BOOLEAN:
                     result_item->value.data_type = BOOLEAN;
+                    d_bol(top_item->expr->b);
                     result_item->expr = top_item->expr;
                     break;
 
            }
 
-
-
-            //printf("Typ tokenu je: %d\n",t->type);
             break;
+        
         // E->id,special_id
         case P_ID:
-        printf("Hodnota jeeee: %d\n",top_item->value.i);
-        printf("Data type jeeee: %d\n",top_item->value.data_type);
+        
+        d_print("Data type je: %d\n",top_item->value.data_type);
         switch(top_item->value.data_type){
 
              case INT:
@@ -159,15 +159,17 @@ int choose_rule(PStack *P,token_t *t){
              case DOUBLE:
                  result_item->value.data_type = DOUBLE;
                  result_item->expr = top_item->expr;
-                 d_int(top_item->expr->i);
+                 d_dob(top_item->expr->d);
                  break;
              case STRING:
                  result_item->value.data_type = STRING;
-                  result_item->expr = top_item->expr;
+                 result_item->expr = top_item->expr;
+                 d_str(top_item->expr->s);
                  break;
              case BOOLEAN:
                  result_item->value.data_type = BOOLEAN;
-                  result_item->expr = top_item->expr;
+                 result_item->expr = top_item->expr;
+                 d_bol(top_item->expr->b);
                  break;
 
         }
@@ -177,15 +179,17 @@ int choose_rule(PStack *P,token_t *t){
         //E-> E + E
         case P_ADD:
             if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
 
-             first_operand = P->top->LPtr->LPtr->value.data_type;
-             second_operand = P->top->value.data_type;
+            first_operand = P->top->LPtr->LPtr->value.data_type;
+            second_operand = P->top->value.data_type;
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
 
             // int + int
             if(first_operand == INT && second_operand == INT){
@@ -237,7 +241,7 @@ int choose_rule(PStack *P,token_t *t){
                 DLInsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
-                printf("Incompatible data types.\n");
+                fprintf(stderr,"Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
@@ -247,14 +251,16 @@ int choose_rule(PStack *P,token_t *t){
         //E -> E - E
         case P_SUB:
             if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
-
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
+            
             if(first_operand == INT && second_operand == INT){
 
                 result_item->value.data_type = INT;
@@ -297,17 +303,19 @@ int choose_rule(PStack *P,token_t *t){
         // E -> E * E
         case P_MUL:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
             if(first_operand == INT && second_operand == INT){
 
                 result_item->value.data_type = INT;
-                 tmp = generate_tmp_var(result_item->value.data_type);
+                tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
 
 
@@ -348,7 +356,7 @@ int choose_rule(PStack *P,token_t *t){
         //E -> E / E
         case P_DIV:
               if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
@@ -356,9 +364,12 @@ int choose_rule(PStack *P,token_t *t){
 
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
+
             if(first_operand == INT && second_operand == INT){
 
-                //TODO mozeme delit 2 INT a mat INT vysledok ?
+                
                 //zatial sa nekontroluje delenie 0
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
@@ -386,11 +397,11 @@ int choose_rule(PStack *P,token_t *t){
                     DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                printf("Incompatible data types.\n");
+                fprintf(stderr,"Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
-                printf("Incompatible data types.\n");
+                fprintf(stderr,"Incompatible data types.\n");
                 cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
@@ -401,25 +412,21 @@ int choose_rule(PStack *P,token_t *t){
         //E -> (E)
         case P_RB:
              if(PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB){
-                printf("Chyba pravidla pre zatvorku");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             switch(P->top->LPtr->value.data_type){
                 case INT:
                     result_item->value.data_type = INT;
-                    //result_item->value.i = P->top->LPtr->value.i;
                     break;
                 case DOUBLE:
                     result_item->value.data_type = DOUBLE;
-                    //result_item->value.d = P->top->LPtr->value.d;
                     break;
                 case STRING:
                     result_item->value.data_type = STRING;
-                    //result_item->value.s = P->top->LPtr->value.s;
                     break;
                 case BOOLEAN:
                     result_item->value.data_type = BOOLEAN;
-                    //result_item->value.b = P->top->LPtr->value.b;
                     break;
             }
             result_item->expr = P->top->LPtr->expr;
@@ -427,44 +434,100 @@ int choose_rule(PStack *P,token_t *t){
             break;
         case P_LESS:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-             //d_int(P->top->expr->i);
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
+
+            }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_L, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_L, op_1, var, tmp));
+                }
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
+                fprintf(stderr,"Incompatible data types for this operation.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+            else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                //TODO nemozeme porovnavat 2 bool hodnoty
             }
-            //TODO boolean < int/double resp int/double < boolean
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            
             result_item->expr = tmp;
             break;
 
         case P_LESSE:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-             //d_int(P->top->expr->i);
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
+
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_LE, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_LE, op_1, var, tmp));
+                }
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
@@ -473,36 +536,72 @@ int choose_rule(PStack *P,token_t *t){
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            //TODO boolean < int/double resp int/double < boolean
-             tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            
             result_item->expr = tmp;
             break;
 
         case P_GRT:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
-             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-            //d_int(P->top->expr->i);
+            op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            d_print("First operand data_type: %d\n",first_operand);
+            d_print("Second operand data_type: %d\n",second_operand);
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
+
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_G, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_G, op_1, var, tmp));
+                }
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
+                fprintf(stderr,"Incompatible data types for this operation.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            //TODO boolean < int/double resp int/double < boolean
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
+           else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+           
             result_item->expr = tmp;
 
             break;
@@ -514,24 +613,52 @@ int choose_rule(PStack *P,token_t *t){
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-            //d_int(P->top->expr->i);
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
+
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_GE, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_GE, op_1, var, tmp));
+                }
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
+            
             result_item->expr = tmp;
 
-            //TODO boolean < int/double resp int/double < boolean
 
         case P_EQL:
              if(!expr_check(P)){
@@ -541,23 +668,51 @@ int choose_rule(PStack *P,token_t *t){
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-            //d_int(P->top->expr->i);
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
+
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_E, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_E, op_1, var, tmp));
+                }
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                    result_item->value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item->value.data_type);
+                    DLInsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
+                fprintf(stderr,"Incompatible operands.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
+            
             result_item->expr = tmp;
-            //TODO boolean < int/double resp int/double < boolean
 
             break;
         case P_NEQL:
@@ -568,24 +723,47 @@ int choose_rule(PStack *P,token_t *t){
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
             op_1 = P->top->LPtr->LPtr->expr;
-            //d_int(P->top->LPtr->LPtr->expr->i);
-            //d_int(P->top->expr->i);
             op_2 = P->top->expr;
-            if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+            if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
+
+            }
+            else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                var =  generate_tmp_var(DOUBLE);
+
+                if(first_operand == INT){
+                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    DLInsertLast(work_tape, generate(I_NE, var, op_2, tmp));
+                }
+                else{
+                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    DLInsertLast(work_tape, generate(I_NE, op_1, var, tmp));
+                }
+
+
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
-            tmp = generate_tmp_var(result_item->value.data_type);
-            DLInsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
+            
             result_item->expr = tmp;
-            //TODO boolean < int/double resp int/double < boolean
-
+            
             break;
         case P_AND:
              if(!expr_check(P)){
@@ -598,29 +776,48 @@ int choose_rule(PStack *P,token_t *t){
             op_2 = P->top->expr;
             d_bol(op_1->b);
             d_bol(op_2->b);
-            //if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-            //    result_item->value.data_type = BOOLEAN;
-            //}
-            if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
+            
+           if(first_operand == INT && second_operand == INT){
+                
+                 fprintf(stderr,"Unexpected expression.\n");
+                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+
+
+            }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+
+
+            }
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 DLInsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
-                result_item->expr = tmp;
             }
-            //TODO boolean < int/double resp int/double < boolean
-            //TODO este neni instrukcia pre AND
-            //tmp = generate_tmp_var(result_item->value.data_type);
-            //DLInsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
-            //result_item->expr = tmp;
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            
+            result_item->expr = tmp;
             break;
 
         case P_OR:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
@@ -629,37 +826,53 @@ int choose_rule(PStack *P,token_t *t){
             op_2 = P->top->expr;
             d_bol(op_1->b);
             d_bol(op_2->b);
-            //if((first_operand == INT && second_operand == INT) || (first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-            //    result_item->value.data_type = BOOLEAN;
-            //}
-            if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
+           if(first_operand == INT && second_operand == INT){
+                
+                 fprintf(stderr,"Unexpected expression.\n");
+                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+
+
+            }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
+                
+                fprintf(stderr,"Unexpected expression.\n");
                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
-            }
-            if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_OR, op_1, op_2, tmp));
+
 
             }
-            //tmp = generate_tmp_var(result_item->value.data_type);
-            //DLInsertLast(work_tape, generate(I_OR, op_1, op_2, tmp));
-            //result_item->expr = tmp;
-            //TODO boolean < int/double resp int/double < boolean
+            else if(first_operand == DOUBLE && second_operand == DOUBLE){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if(first_operand == STRING || second_operand == STRING){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
+                result_item->value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item->value.data_type);
+                DLInsertLast(work_tape, generate(I_OR,op_1, op_2, tmp));
+            }
+            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
+            else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
+                fprintf(stderr,"Unexpected expression.\n");
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+            }
             result_item->expr = tmp;
             break;
+
+        default:
+           d_message("Nastala chyba.\n");
+           cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
         while(P->top->term != P_HANDLE){
             PSPop(P);
         }
         PSPop(P);
         PSPush(P,P_EXPR);
-        //P->top->value.data_type = INT;
-        printf("Term: %d\n",P->top->term);
-
-        //top->value.data_type = result_item->value.data_type;
-        //top->value = result_item->value;
-
+        d_print("Term: %d\n",P->top->term);
 
         P->top->value.data_type = result_item->value.data_type;
         P->top->expr = result_item->expr;
@@ -690,28 +903,27 @@ int init_item(PStack *P,token_t *t){
                     switch(item->variable.data_type){
                         case INT:
 
-                             push_item->value.data_type = INT;
-                             push_item->expr = &item->variable;
-                             //push_item->expr->data_type = INT;
-                              d_int(push_item->expr->i);
+                            push_item->value.data_type = INT;
+                            push_item->expr = &item->variable;
+                            d_int(push_item->expr->i);
                             break;
                         case DOUBLE:
 
-                             push_item->value.data_type = DOUBLE;
-                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = DOUBLE;
+                            push_item->value.data_type = DOUBLE;
+                            push_item->expr = &item->variable;
+                            d_dob(push_item->expr->d);
                             break;
                         case STRING:
 
-                             push_item->value.data_type = STRING;
-                             push_item->expr = &item->variable;
-                             //push_item->expr->data_type = STRING;
+                            push_item->value.data_type = STRING;
+                            push_item->expr = &item->variable;
+                            d_str(push_item->expr->s);
                             break;
                         case BOOLEAN:
 
-                             push_item->value.data_type = BOOLEAN;
-                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = BOOLEAN;
+                            push_item->value.data_type = BOOLEAN;
+                            push_item->expr = &item->variable;
+                            d_bol(push_item->expr->b);
                             break;
                     }
 
@@ -721,28 +933,28 @@ int init_item(PStack *P,token_t *t){
                     switch(item->variable.data_type){
                         case INT:
 
-                             push_item->value.data_type = INT;
-                             push_item->expr = &item->variable;
-                             d_int(push_item->expr->i);
-                            //push_item->expr->data_type = INT;
+                            push_item->value.data_type = INT;
+                            push_item->expr = &item->variable;
+                            d_int(push_item->expr->i);
+    
                              break;
                         case DOUBLE:
 
-                             push_item->value.data_type = DOUBLE;
-                             push_item->expr = &item->variable;
-                            //  push_item->expr->data_type = DOUBLE;
+                            push_item->value.data_type = DOUBLE;
+                            push_item->expr = &item->variable;
+                            d_dob(push_item->expr->d);
                             break;
                         case STRING:
 
-                             push_item->value.data_type = STRING;
-                             push_item->expr = &item->variable;
-                            //  push_item->expr->data_type = STRING;
+                            push_item->value.data_type = STRING;
+                            push_item->expr = &item->variable;
+                            d_str(push_item->expr->s);
                             break;
                         case BOOLEAN:
 
-                             push_item->value.data_type = BOOLEAN;
-                             push_item->expr = &item->variable;
-                           ///   push_item->expr->data_type = BOOLEAN;
+                            push_item->value.data_type = BOOLEAN;
+                            push_item->expr = &item->variable;
+                            d_bol(push_item->expr->b);
                             break;
                     }
                 }
@@ -750,36 +962,36 @@ int init_item(PStack *P,token_t *t){
 
                 break;
             case SPECIAL_ID:
-                 printf("Value of literal is:%s\n",t->string_value);
+                 d_print("Value of literal is:%s\n",t->string_value);
 
                 item = get_symbol_table_special_id_item(t->string_value);
 
-                 printf("data_type special id %d\n", item->variable.data_type);
+                 d_print("data_type special id %d\n", item->variable.data_type);
 
                     switch(item->variable.data_type){
                         case INT:
 
                             push_item->value.data_type = INT;
                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = INT;
+                            d_int(push_item->expr->i);
                             break;
                         case DOUBLE:
 
                             push_item->value.data_type = DOUBLE;
                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = DOUBLE;
+                            d_dob(push_item->expr->d);
                             break;
                         case STRING:
 
                             push_item->value.data_type = STRING;
                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = STRING;
+                            d_str(push_item->expr->s);
                             break;
                         case BOOLEAN:
 
                             push_item->value.data_type = BOOLEAN;
                             push_item->expr = &item->variable;
-                            // push_item->expr->data_type = BOOLEAN;
+                            d_bol(push_item->expr->b);
                             break;
                     }
 
@@ -788,51 +1000,49 @@ int init_item(PStack *P,token_t *t){
 
 
             case INT_LITERAL:
-                //printf("Value of literal is:%d\n",t->int_value);
+                
                 push_item->value.i = t->int_value;
                 push_item->value.data_type = INT;
-                 //push_item->expr->data_type = INT;
+                
                 tVar *i = insert_int_const(&mem_constants, t->int_value);
                 push_item->expr = i;
                 break;
             case DOUBLE_LITERAL:
-                //printf("Value of literal is:%f\n",t->double_value);
+                
                 push_item->value.d = t->double_value;
                 push_item->value.data_type = DOUBLE;
-                 //push_item->expr->data_type = DOUBLE;
+
                 tVar *d = insert_double_const(&mem_constants, t->double_value);
                 push_item->expr = d;
                 break;
             case STRING_LITERAL:
-               // printf("Value of literal is:%s\n",t->string_value);
+              
                 push_item->value.s = t->string_value;
                 push_item->value.data_type = STRING;
-                // push_item->expr->data_type = STRING;
+               
                 tVar *s = insert_string_const(&mem_constants, t->string_value);
                 push_item->expr = s;
                 break;
             case TRUE:
-               // printf("Value of literal is:%d\n",true);
+               
                 push_item->value.b = true;
                 push_item->value.data_type = BOOLEAN;
-                // push_item->expr->data_type = BOOLEAN;
+               
                 tVar *bt = insert_boolean_const(&mem_constants, true);
                 push_item->expr = bt;
                 break;
             case FALSE:
-               // printf("Value of literal is:%d\n",false);
+               
                 push_item->value.b = false;
                 push_item->value.data_type = BOOLEAN;
-                // push_item->expr->data_type = BOOLEAN;
+               
                 tVar *bf = insert_boolean_const(&mem_constants, false);
                 push_item->expr = bf;
                 break;
 
         }
 
-
-
-return 1;
+    return 1;
 }
 
 
@@ -851,44 +1061,33 @@ tVar * generate_tmp_var(int data_type) {
 
 
 int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result) {
-    printf("class %s\n", current_class);
+    d_print("class %s\n", current_class);
     if (current_function.id_name != NULL) {
-        printf("vo funkcii %s\n", current_function.id_name);
+        d_print("vo funkcii %s\n", current_function.id_name);
         symbol_table_item_t *function = get_symbol_table_class_item(current_class, current_function.id_name);
         work_tape = function->function.instruction_tape;
-        //void * x = insert_string_const(&mem_constants, "Hello World Function");
-        //DLInsertLast(work_tape, generate(I_PRINT, x, NULL, NULL));
+        
     }
     else {
                work_tape = global_inst_tape;
-                /*void * x = insert_string_const(&mem_constants, "Hello World Global");
-                DLInsertLast(work_tape, generate(I_PRINT, x, NULL, NULL));*/
+                
     }
       token_t *t = NULL;
       token_t end;
       end.type = ENDMARK;
       add_token_to_buffer(buffer,&end);
-      //char result;
+      
       PStack *P = PSInit();
       PSPush(P,P_ENDMARK);
-      //printf("term %d\n",P->top->value.data_type);
-
-
+      
         buffer_position = 0;
-        printf("in PSO %d:\n", buffer->length);
-        //token_t *t;
-        //t = get_next_token_psa(buffer);
-        //printf("TOKEN type: %d\n",t->type);
+        d_print("in PSO %d:\n", buffer->length);
+        
         t = get_next_token_psa(buffer);
         do{
 
-           // printf("TOKEN type: %d\n",t->type);
-            /*if((t = get_next_token_psa(buffer)) == NULL){
-                printf("KOncim\n");
-                break;
-            }*/
-             //printf("Pouzit pravidlo: %c\n",decode_table(P,decode_token_array[t->type]));
-                int r = PSTopTerm(P);
+           
+            int r = PSTopTerm(P);
             switch(decode_table(r,decode_token_array[t->type])){
 
                 case '=':
@@ -899,20 +1098,14 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                     insert_handle(P,PSTopTermPtr(P));
                     PSPush(P,decode_token_array[t->type]);
                     init_item(P,t);
-
-
-                   // PSPrint(P);
-                    //printf("TOKEN type: %d\n",t->type);
-                     t = get_next_token_psa(buffer);
-                    //printf("TOKEN type: %d\n",t->type);
+                    t = get_next_token_psa(buffer);
+                   
                     break;
 
                 case '>':
-                    //PSPrint(P);
-                    choose_rule(P,t);
-                    //PSPush(P,P_ADD);
-                    //PSPrint(P);
-                    //t = get_next_token_psa(buffer);
+                   
+                    choose_rule(P);
+                   
                     break;
                 case ' ':
                     fprintf(stderr,"Unexpected expression.\n");
@@ -930,17 +1123,15 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        st_item->variable = *P->top->expr;
        *expr_result = P->top->expr;
 
-       printf("TOP term je : %d\n",PSTopTerm(P));
-       printf("TOP term je : %d\n",PSTopTermPtr(P)->RPtr->term);
+       d_print("TOP (dollar) term je : %d\n",PSTopTerm(P));
+       d_print("TOP term je : %d\n",PSTopTermPtr(P)->RPtr->term);
        if(PSTopTermPtr(P)->RPtr->RPtr == NULL){
-        printf("Uspech\n");
+        d_message("Uspech\n");
        }
-       printf("Na konci:\n");
+       d_message("Na konci:\n");
        PSPrint(P);
-       printf("Data type of result is:%d\n",P->top->value.data_type);
-       //printf("Result value is:%d\n",P->top->value.i);
-
-
+       d_print("Data type of result is:%d\n",P->top->value.data_type);
+       
         return P->top->value.data_type;
 
 
