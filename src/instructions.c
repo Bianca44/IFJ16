@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "strings.h"
 #include "builtin.h"
+#include "error_codes.h"
 
 #define UNUSED(x) (void)(x)
 #define L_BUFFER 256
@@ -88,19 +89,18 @@ void i_div_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(op2->i == 0){
-        fprintf(stderr, "DELENIE NULOU");
-        exit(42);
+        fprintf(stderr, "Zero division\n");
+        exit(RUN_DEVIDE_ZERO_ERROR);
     }
     result->i = op1->i / op2->i;
-    //TODO delenie nulu
 }
 
 void i_div_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(op2->d == 0){
-        fprintf(stderr, "DELENIE NULOU");
-        exit(42);
+        fprintf(stderr, "Zero division\n");
+        exit(RUN_DEVIDE_ZERO_ERROR);
     }
     result->d = op1->d / op2->d;
 }
@@ -128,7 +128,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
             n = snprintf(load, L_BUFFER - 1,"%d",op1->i);
             n = n + 1;
             if((new = malloc(sizeof(char)*n)) == NULL){
-                //TODO
+                exit(INTERNAL_INTERPRET_ERROR);
             }
             memcpy(new, load, n);
             break;
@@ -136,7 +136,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
             n = snprintf(load, L_BUFFER - 1,"%g",op1->d);
             n = n + 1;
             if((new = malloc(sizeof(char)*n)) == NULL){
-                //TODO
+                exit(INTERNAL_INTERPRET_ERROR);
             }
             memcpy(new, load, n);
             break;
@@ -435,8 +435,9 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
                 d_print("%g ==VYSL== ", result->d);
                 break;
             case STRING:
-                free(result->s); //uvolnovat ? //TODO
-                result->s =  copy_string(frame_stack.top->frame->ret_val->s);
+                if(result->initialized)
+                    free(result->s);
+                result->s = copy_string(frame_stack.top->frame->ret_val->s);
                 d_print("%s ==VYSL== ", result->s);
                 break;
             case BOOLEAN:
@@ -473,7 +474,7 @@ void i_cat(tVar *op1, tVar *op2, tVar *result){
     char *new;
 
     if((new = malloc(sizeof(char)*(n+m+1))) == NULL){
-        //TODO
+        exit(INTERNAL_INTERPRET_ERROR);
     }
 
     memcpy(new, op1->s, n);
@@ -556,7 +557,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     tInst * new_inst;
 
     if((new_inst = malloc(sizeof(tInst))) == NULL){
-        //TODO
+        exit(INTERNAL_INTERPRET_ERROR);
     }
 
     new_inst->op1 = op1;
