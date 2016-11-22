@@ -21,6 +21,9 @@ void clear_string(string_t *str) {
 }
 
 char * copy_string(char *text) {
+        if (text == NULL ) {
+                return NULL;
+        }
         char *ptr;
         int length = strlen(text);
         if ((ptr = (char *) malloc((length + 1) * sizeof(char))) == NULL) {

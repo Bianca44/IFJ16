@@ -219,7 +219,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else if (strcmp(function_name_call, "ifj16.find") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
-                                                                        printf("Name %s ADRESA %p dt %d\n",var->id_name, res , var->variable.data_type);
                                                                         DLInsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
                                                                         DLInsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
@@ -939,8 +938,8 @@ int parse_method_element() {
                                 has_function_return = false;
                         }
 
-                        current_function.function.param_data_types = param_data_types.data;
-                        current_function.function.local_vars_data_types = local_vars_data_types.data;
+                        current_function.function.param_data_types = copy_string(param_data_types.data);
+                        current_function.function.local_vars_data_types = copy_string(local_vars_data_types.data);
                         current_function.function.params_count = param_data_types.length;
                         if (DEBUG_PRINT) printf("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
                         if (!is_declared(current_function.id_name)) {
@@ -978,8 +977,7 @@ int parse_method_element() {
                         if (is_first_pass) {
                                 //printf("local fun var .. name %s type %d offset %d\n", function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                 if (!is_declared_in_function(current_function.function.symbol_table, function_variable.id_name)) {
-                                        symbol_table_item_t * x = insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
-                                        printf("KKS %s %p\n", function_variable.id_name, &x->variable);
+                                        insert_function_variable_symbol_table(current_function.function.symbol_table, function_variable.id_name, function_variable.variable.data_type, function_variable.variable.offset);
                                         function_variable.variable.offset++;
                                 } else {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
