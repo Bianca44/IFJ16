@@ -8,8 +8,6 @@
 #define pr_er \
                     fprintf(stderr, "Using uninitialized variable\n")\
 
-                    
-        
 #define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
 #define check_init(var) (var->initialized) ? (var) : (pr_er,exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
 #define evaluate_res(adress) ((adress != NULL) ? (get_e_adr(adress)) : (NULL))
@@ -26,7 +24,7 @@ tFrame * init_frame(unsigned size){
     
     tFrame * new_frame;
     if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL){
-        //TODO
+        exit(INTERNAL_INTERPRET_ERROR);
     }
 
     new_frame->ret_val = NULL;
@@ -52,7 +50,7 @@ void push_frame(tFrameStack *stack, tFrame * frame){
     
     tFSElem *ptr;
     if((ptr = malloc(sizeof(tFSElem))) == NULL){
-        //TODO
+        exit(INTERNAL_INTERPRET_ERROR);
     }
 
     ptr->frame = frame;
