@@ -171,7 +171,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 if (call_function->function.params_count != params_counter) {
                                                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
                                                                         fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, call_function->function.params_count, params_counter);
-                                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
 
                                                                 symbol_table_item_t *var = NULL;
@@ -651,7 +651,8 @@ int parse_param_value () {
                                 }
 
                                 if (function_item->function.params_count > 0) {
-                                        fprintf(stderr, "Missing arguments\n");
+                                        fprintf(stderr, "Missing arguments when calling function \'%s\'\n", function_name_call);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
                         }
                         return PARSED_OK;
