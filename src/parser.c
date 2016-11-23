@@ -42,6 +42,8 @@ tVar * expr_var_result;
 tVar * first_param;
 tVar * second_param;
 
+tVar EMPTY;
+
 char* current_class;
 char* function_name_call;
 
@@ -191,25 +193,25 @@ int parse_expression(bool ends_semicolon) {
                                                                 res->initialized = true;
 
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
+                                                                        InsertLast(function_inst_tape, generate(I_PRINT, first_param, &EMPTY, &EMPTY));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_RINT, NULL, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_RINT, &EMPTY, &EMPTY, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.readString") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_RSTR, NULL, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_RSTR, &EMPTY, &EMPTY, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.readDouble") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_RDBL, NULL, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_RDBL, &EMPTY, &EMPTY, res));
                                                                 }  else if (strcmp(function_name_call, "ifj16.length") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_LEN, first_param, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_LEN, first_param, &EMPTY, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.sort") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_SORT, first_param, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_SORT, first_param, &EMPTY, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.find") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.compare") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.substr") == 0) {
-                                                                        InsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_SUBSTR, &EMPTY, &EMPTY, res));
                                                                 } else {
-                                                                        InsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
+                                                                        InsertLast(function_inst_tape, generate(I_F_CALL, call_function->function.instruction_tape, &EMPTY, res));
                                                                 }
 
                                                                 first_param = second_param = expr_var_result = NULL;
@@ -318,7 +320,7 @@ int parse_return_value() {
                                                 if (current_variable.variable.data_type != expr_data_type) {
                                                         if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
                                                                 expr_var_result->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
+                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, &EMPTY, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
                                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -326,7 +328,7 @@ int parse_return_value() {
                                                 }
                                         }
 
-                                        InsertLast(function_inst_tape, generate(I_RETURN, expr_var_result, NULL, NULL));
+                                        InsertLast(function_inst_tape, generate(I_RETURN, expr_var_result, &EMPTY, &EMPTY));
                                         expr_var_result = NULL;
                                 }
                                 expr_result.id_name = NULL;
@@ -337,7 +339,7 @@ int parse_return_value() {
                         }
                 } else if (t.type == SEMICOLON) {
                         if (is_second_pass) {
-                                InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
+                                InsertLast(function_inst_tape, generate(I_RETURN, &EMPTY, &EMPTY, &EMPTY));
                         }
                         return PARSED_OK;
                 }
@@ -453,7 +455,7 @@ int parse_next_param_value() {
                                                         second_param = insert_double_const(&mem_constants, val);
                                                 } else {
                                                         second_param->data_type = DOUBLE;
-                                                        InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, second_param, NULL, second_param));
+                                                        InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, second_param, &EMPTY, second_param));
                                                 }
 
                                         } else if (data_type != DOUBLE) {
@@ -466,7 +468,7 @@ int parse_next_param_value() {
                                 }
 
                                 if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
-                                        InsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, NULL, NULL));
+                                        InsertLast(function_inst_tape, generate(I_PUSH_PARAM, second_param, &EMPTY, &EMPTY));
                                 }
                         }
                         get_token();
@@ -497,11 +499,11 @@ int parse_param_value () {
                         else {
                                 function = get_symbol_table_class_item(current_class, function_name_call);
                         }
-                        InsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
+                        InsertLast(function_inst_tape, generate(I_INIT_FRAME, function, &EMPTY, &EMPTY));
                 } else {
                         if (strcmp(function_name_call, "ifj16.substr") == 0) {
                                 symbol_table_item_t *  function = get_symbol_table_special_id_item(function_name_call);
-                                InsertLast(function_inst_tape, generate(I_INIT_FRAME, function, NULL, NULL));
+                                InsertLast(function_inst_tape, generate(I_INIT_FRAME, function, &EMPTY, &EMPTY));
                         }
                 }
         }
@@ -608,7 +610,7 @@ int parse_param_value () {
                                                                 first_param = insert_double_const(&mem_constants, val);
                                                         } else {
                                                                 first_param->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, first_param, NULL, first_param));
+                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, first_param, &EMPTY, first_param));
                                                         }
 
                                                 } else if (data_type != DOUBLE) {
@@ -620,7 +622,7 @@ int parse_param_value () {
                                                 break;
                                         }
                                         if (strstr(function_name_call, "ifj16.") == NULL || strcmp(function_name_call, "ifj16.substr") == 0) {
-                                                InsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_PUSH_PARAM, first_param, &EMPTY, &EMPTY));
                                         }
                                 }
                                 get_token();
@@ -725,7 +727,7 @@ int parse_else() {
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 if (is_second_pass) {
-                        InsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
+                        InsertLast(function_inst_tape, generate(I_GOTO, &EMPTY, &EMPTY, &EMPTY));
                         set_label(js_top(), GetLastElem_M(function_inst_tape));
                         js_pop();
                         js_push(GetLastElem_M(function_inst_tape));
@@ -789,10 +791,10 @@ int parse_statement() {
 
                                 if (p->is_function) {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
-                                                InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_PRINT, first_param, &EMPTY, &EMPTY));
                                                 first_param = expr_var_result = NULL;
                                         } else {
-                                                InsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, &EMPTY, &EMPTY));
                                         }
 
                                         first_param = second_param = expr_var_result = NULL;
@@ -804,7 +806,7 @@ int parse_statement() {
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
 
-                                                InsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                InsertLast(function_inst_tape, generate(I_ASSIGN, from, &EMPTY, to));
                                                 first_param = second_param = expr_var_result = NULL;
                                         }
                                 }
@@ -822,7 +824,7 @@ int parse_statement() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, &EMPTY, &EMPTY));
                                                 js_push(GetLastElem_M(function_inst_tape));
                                         }
                                         get_token();
@@ -844,14 +846,14 @@ int parse_statement() {
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
-                                                InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, &EMPTY, &EMPTY));
                                                 js_push(GetLastElem_M(function_inst_tape));
                                         }
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
                                                         if (is_second_pass) {
-                                                                InsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
+                                                                InsertLast(function_inst_tape, generate(I_GOTO, &EMPTY, &EMPTY, &EMPTY));
                                                                 set_label(js_top(), GetLastElem_M(function_inst_tape));
                                                                 js_pop();
                                                                 set_label(GetLastElem_M(function_inst_tape), js_top());
@@ -944,7 +946,7 @@ int parse_method_element() {
                 } else {
                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
                         if (function->function.return_type == VOID && !has_function_return) {
-                                InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
+                                InsertLast(function_inst_tape, generate(I_RETURN, &EMPTY, &EMPTY, &EMPTY));
                         }
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
@@ -984,7 +986,7 @@ int parse_method_element() {
                                                         to->initialized = true;
                                                         tVar * from = expr_var_result;
 
-                                                        InsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                        InsertLast(function_inst_tape, generate(I_ASSIGN, from, &EMPTY, to));
 
                                                         expr_var_result = NULL;
                                                 }
@@ -1114,7 +1116,7 @@ int parse_value() {
                                                 if (current_variable.variable.data_type != expr_data_type) {
                                                         if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
                                                                 expr_var_result->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
+                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, &EMPTY, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -1129,7 +1131,7 @@ int parse_value() {
                                                 if (function_variable.variable.data_type != expr_data_type) {
                                                         if (function_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
                                                                 expr_var_result->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
+                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, &EMPTY, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -1184,7 +1186,7 @@ int parse_declaration() {
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
 
-                                                InsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
+                                                InsertLast(global_inst_tape, generate(I_ASSIGN, from, &EMPTY, to));
                                                 expr_var_result = NULL;
                                         }
                                 } else {
@@ -1335,6 +1337,9 @@ int parse(tList * inst_tape) {
         if (is_first_pass) {
                 init_token_buffer(&global_token_buffer);
                 js_init();
+        } else {
+            EMPTY.initialized = true;
+            EMPTY.offset = CONSTANT;
         }
         get_token();
         if (t.type == CLASS || t.type == EOF) {
