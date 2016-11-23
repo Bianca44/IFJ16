@@ -1,5 +1,5 @@
-CFLAGS=-std=c11 -pedantic -Wall -Wextra -O2
-CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -DNDEBUG
+CFLAGS=-std=c11 -pedantic -Wall -Wextra
+CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -DNDEBUG -O3
 CC=gcc
 
 .PHONY: all clean r_test

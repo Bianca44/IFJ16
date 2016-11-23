@@ -53,7 +53,7 @@ int read_int() {
                 } else {
                         fprintf(stderr, "Wrongly entered integer from input.\n");
                         free_string(&s);
-                        cleanup_exit(RUN_INPUT_ERROR);
+                        exit(RUN_INPUT_ERROR);
                 }
         }
 }
@@ -77,7 +77,7 @@ double read_double() {
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 free_string(&s);
-                                cleanup_exit(RUN_INPUT_ERROR);
+                                exit(RUN_INPUT_ERROR);
                 }
                         break;
 
@@ -89,7 +89,7 @@ double read_double() {
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 free_string(&s);
-                                cleanup_exit(RUN_INPUT_ERROR);
+                                exit(RUN_INPUT_ERROR);
                 }
                         break;
                 case 2: if (isdigit(c)) {
@@ -98,7 +98,7 @@ double read_double() {
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 free_string(&s);
-                                cleanup_exit(RUN_INPUT_ERROR);
+                                exit(RUN_INPUT_ERROR);
                                 return -1;
                 }
                         break;
@@ -111,7 +111,7 @@ double read_double() {
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 free_string(&s);
-                                cleanup_exit(RUN_INPUT_ERROR);
+                                exit(RUN_INPUT_ERROR);
                                 return -1;
                 }
                         break;
@@ -183,7 +183,7 @@ int compare(char *s1, char *s2) {
 char *substr(char *s, int i, int n) {
         if (i<0 || n < 0) {
                 fprintf(stderr, "substr: index or length of search string is negative value.\n");
-                cleanup_exit(RUN_OTHER_ERROR);
+                exit(RUN_OTHER_ERROR);
         }
         char *new_str = (char *) malloc((n + 1) * sizeof(char));
         if (new_str == NULL) {
@@ -193,14 +193,14 @@ char *substr(char *s, int i, int n) {
         if (i > (int) strlen(s)) {
                 fprintf(stderr, "substr: index is greater than length of the string.\n");
                 free(new_str);
-                cleanup_exit(RUN_OTHER_ERROR);
+                exit(RUN_OTHER_ERROR);
         }
 
         //osetrenie kedy pozadovana dlzka hladaneho podretazca je dlhsia ako samotny retazec
         if (n > (int) strlen(s) - i) {
                 fprintf(stderr, "substr: length of search string is longer than length of the string.\n");
                 free(new_str);
-                cleanup_exit(RUN_OTHER_ERROR);
+                exit(RUN_OTHER_ERROR);
         }
 
         for (int j = 0; j<n; j++, i++) {

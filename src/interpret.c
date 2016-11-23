@@ -4,13 +4,12 @@
 #include "instructions.h"
 #include "debug.h"
 #include "error_codes.h"
-#include "parser.h"
 
 #define pr_er \
                     fprintf(stderr, "Using uninitialized variable\n")\
 
 #define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
-#define check_init(var) (var->initialized) ? (var) : (pr_er,cleanup_exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
+#define check_init(var) (var->initialized) ? (var) : (pr_er, exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
 #define evaluate_res(adress) ((adress != NULL) ? (get_e_adr(adress)) : (NULL))
 #define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
 #define get_e_adr(adress) \

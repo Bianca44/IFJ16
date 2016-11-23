@@ -18,20 +18,20 @@ int main(int argc, char *argv[]) {
                 return INTERNAL_INTERPRET_ERROR;
         }
 
-        // atexit dma
-
         FILE *source_file = init_scanner(argv[1]);
         if (source_file == NULL) {
             fprintf(stderr, "Wrong path to file.\n");
             return INTERNAL_INTERPRET_ERROR;
         }
 
+        atexit(cleanup_resources);
+
         tList inst_tape;
         InitList(&inst_tape, dispose_inst);
 
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                exit(SYNTACTIC_ANALYSIS_ERROR);
         }
 
         parse(&inst_tape);
@@ -45,5 +45,5 @@ int main(int argc, char *argv[]) {
         processed_tape = &inst_tape;
         interpret_tac(&inst_tape);
 
-        cleanup_exit(INTERPRET_OK);
+        exit(INTERPRET_OK);
 }

@@ -17,6 +17,8 @@ extern symbol_table_item_t current_function;
 extern tList * global_inst_tape;
 extern constant_t * mem_constants;
 
+token_buffer_t *global_token_buffer;
+
 
 tVar * top_expr_variable;
 
@@ -82,6 +84,11 @@ int expr_check(PStack *P){
                 return 0;
     }
  return 1;
+}
+
+void free_token_buffer_exit(int exit_code) {
+        free_token_buffer(global_token_buffer);
+        exit(exit_code);
 }
 
 char decode_table(int top_term,int input_token){
@@ -180,7 +187,7 @@ int choose_rule(PStack *P){
         case P_ADD:
             if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             op_1 = P->top->LPtr->LPtr->expr;
@@ -242,7 +249,7 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -252,7 +259,7 @@ int choose_rule(PStack *P){
         case P_SUB:
             if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -290,11 +297,11 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
             }else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
                 printf("Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -304,7 +311,7 @@ int choose_rule(PStack *P){
         case P_MUL:
              if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -343,11 +350,11 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
                 printf("Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -357,7 +364,7 @@ int choose_rule(PStack *P){
         case P_DIV:
               if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -398,11 +405,11 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types.\n");
-                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
 
@@ -413,7 +420,7 @@ int choose_rule(PStack *P){
         case P_RB:
              if(PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             switch(P->top->LPtr->value.data_type){
                 case INT:
@@ -435,7 +442,7 @@ int choose_rule(PStack *P){
         case P_LESS:
              if(!expr_check(P)){
                 fprintf(stderr,"Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -471,21 +478,21 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
                 //TODO nemozeme porovnavat 2 bool hodnoty
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             result_item->expr = tmp;
@@ -494,7 +501,7 @@ int choose_rule(PStack *P){
         case P_LESSE:
              if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -531,18 +538,18 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             result_item->expr = tmp;
@@ -551,7 +558,7 @@ int choose_rule(PStack *P){
         case P_GRT:
              if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -588,18 +595,18 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
             }
            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             result_item->expr = tmp;
@@ -608,7 +615,7 @@ int choose_rule(PStack *P){
         case P_GRE:
              if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -643,15 +650,15 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
@@ -663,7 +670,7 @@ int choose_rule(PStack *P){
         case P_EQL:
              if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -698,15 +705,15 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible operands.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
@@ -718,7 +725,7 @@ int choose_rule(PStack *P){
         case P_NEQL:
              if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -748,15 +755,15 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
                 result_item->value.data_type = BOOLEAN;
@@ -768,7 +775,7 @@ int choose_rule(PStack *P){
         case P_AND:
              if(!expr_check(P)){
                 printf("Chybny vyraz.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -780,23 +787,23 @@ int choose_rule(PStack *P){
            if(first_operand == INT && second_operand == INT){
 
                  fprintf(stderr,"Unexpected expression.\n");
-                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
 
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
@@ -805,11 +812,11 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
 
             result_item->expr = tmp;
@@ -818,7 +825,7 @@ int choose_rule(PStack *P){
         case P_OR:
              if(!expr_check(P)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
             second_operand = P->top->value.data_type;
@@ -829,23 +836,23 @@ int choose_rule(PStack *P){
            if(first_operand == INT && second_operand == INT){
 
                  fprintf(stderr,"Unexpected expression.\n");
-                 cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
 
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
 
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
@@ -854,18 +861,18 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Unexpected expression.\n");
-                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             result_item->expr = tmp;
             break;
 
         default:
            d_message("Nastala chyba.\n");
-           cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+           free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
         while(P->top->term != P_HANDLE){
             PSPop(P);
@@ -1045,10 +1052,6 @@ int init_item(PStack *P,token_t *t){
     return 1;
 }
 
-
-
-symbol_table_item_t * expr_res;
-
 tVar * generate_tmp_var(int data_type) {
     if (current_function.id_name != NULL) {
         top_expr_variable = &insert_tmp_variable_symbol_table_function(current_function.id_name, data_type)->variable;
@@ -1059,8 +1062,8 @@ tVar * generate_tmp_var(int data_type) {
     return top_expr_variable;
 }
 
-
 int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result) {
+    global_token_buffer = buffer;
     d_print("class %s\n", current_class);
     if (current_function.id_name != NULL) {
         d_print("vo funkcii %s\n", current_function.id_name);
@@ -1109,7 +1112,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                     break;
                 case ' ':
                     fprintf(stderr,"Unexpected expression.\n");
-                    cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
+                    free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
                     break;
 
 

@@ -56,16 +56,13 @@ char* function_name_call;
 extern FILE* file;
 
 
-void cleanup_exit(int exit_code) {
-        //TODO free memory
-
+void cleanup_resources() {
         fclose(file);
         DisposeList(global_inst_tape);
 
         free_constants(&mem_constants);
         free_token_buffer(&token_buffer);
         free_class_list();
-        exit(exit_code);
 }
 
 int get_token() {
@@ -78,7 +75,7 @@ int get_token() {
         }
         if (t.type == LEXICAL_ERROR) {
                 fprintf(stderr, "Lexical error: unknown token\n");
-                cleanup_exit(LEXICAL_ANALYSIS_ERROR);
+                exit(LEXICAL_ANALYSIS_ERROR);
         }
         return t.type;
 }
@@ -103,24 +100,24 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
                         }
                         else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
                         }
@@ -140,7 +137,7 @@ int parse_expression(bool ends_semicolon) {
                         if (function_symbol_table == NULL || (function_symbol_table != NULL &&  !is_declared_in_function(function_symbol_table, t.string_value))) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         item = get_symbol_table_class_item(current_class, t.string_value);
                                 }
@@ -154,7 +151,7 @@ int parse_expression(bool ends_semicolon) {
                         item = get_symbol_table_special_id_item(t.string_value);
                         if (item == NULL) {
                                 fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
                         is_function = item->is_function;
                 }
@@ -178,7 +175,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 if (call_function->function.params_count != params_counter) {
                                                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
                                                                         fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, call_function->function.params_count, params_counter);
-                                                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                                 }
 
                                                                 symbol_table_item_t *var = NULL;
@@ -264,12 +261,12 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                 }
                         }
@@ -278,12 +275,12 @@ int parse_expression(bool ends_semicolon) {
                                 if (function_symbol_table == NULL || (function_symbol_table != NULL &&  !is_declared_in_function(function_symbol_table, t.string_value))) {
                                         if (!is_declared(t.string_value)) {
                                                 fprintf(stderr, "Expression: ID \'%s\' was not declared in the function nor in the class \'%s\'.\n", t.string_value, current_class);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 symbol_table_item_t * item =  get_symbol_table_class_item(current_class, t.string_value);
                                                 if (item->is_function) {
                                                         fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                         }
                                 }
@@ -310,7 +307,7 @@ int parse_return_value() {
                         if (is_first_pass) {
                                 if (current_function.function.return_type == VOID) {
                                         fprintf(stderr, "Return in function \'%s\' with void return type.\n", current_function.id_name);
-                                        cleanup_exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                 }
                         }
 
@@ -324,7 +321,7 @@ int parse_return_value() {
                                                                 InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                 }
                                         }
@@ -360,12 +357,12 @@ int parse_next_param_value() {
                                 if (t.type == SPECIAL_ID) {
                                         if (!is_special_id_declared(t.string_value)) {
                                                 fprintf(stderr, "Param \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value, current_class, function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 item = get_symbol_table_special_id_item(t.string_value);
                                                 if (item->is_function) {
                                                         fprintf(stderr, "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 data_type = item->variable.data_type;
                                         }
@@ -379,12 +376,12 @@ int parse_next_param_value() {
                                         } else {
                                                 if (!is_declared(t.string_value)) {
                                                         fprintf(stderr, "Neither param \'%s\' for function \'%s.%s\' was not declared nor in the class \'%s\'.\n", t.string_value, current_class, function_name_call, current_class);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 } else {
                                                         item = get_symbol_table_class_item(current_class, t.string_value);
                                                         if (item->is_function) {
                                                                 fprintf(stderr, "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                         data_type = item->variable.data_type;
                                                 }
@@ -419,7 +416,7 @@ int parse_next_param_value() {
                                 if (params_counter > function_item->function.params_count) {
                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
                                         fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, function_item->function.params_count, params_counter);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
                                 bool is_var = (t.type != ID && t.type != SPECIAL_ID);
@@ -428,14 +425,14 @@ int parse_next_param_value() {
                                 case 's':
                                         if (data_type != STRING) {
                                                 fprintf(stderr, "%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                         if (is_var) second_param = insert_string_const(&mem_constants, t.string_value);
                                         break;
                                 case 'b':
                                         if (data_type != BOOLEAN) {
                                                 fprintf(stderr, "%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
                                         bool val = (t.type == TRUE);
@@ -444,7 +441,7 @@ int parse_next_param_value() {
                                 case 'i':
                                         if (data_type != INT) {
                                                 fprintf(stderr, "%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                         if (is_var) second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
@@ -461,7 +458,7 @@ int parse_next_param_value() {
 
                                         } else if (data_type != DOUBLE) {
                                                 fprintf(stderr, "%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         } else {
                                                 if (is_var) second_param = insert_double_const(&mem_constants, t.double_value);
                                         }
@@ -518,12 +515,12 @@ int parse_param_value () {
                                         if (t.type == SPECIAL_ID) {
                                                 if (!is_special_id_declared(t.string_value)) {
                                                         fprintf(stderr, "Parameter \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value, current_class, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 } else {
                                                         item = get_symbol_table_special_id_item(t.string_value);
                                                         if (item->is_function) {
                                                                 fprintf(stderr, "Parameter \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                         data_type = item->variable.data_type;
                                                 }
@@ -538,12 +535,12 @@ int parse_param_value () {
                                                 } else {
                                                         if (!is_declared(t.string_value)) {
                                                                 fprintf(stderr, "Neither param \'%s\' for function \'%s.%s\' was not declared nor in the class \'%s\'.\n", t.string_value, current_class, function_name_call, current_class);
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                         } else {
                                                                 item = get_symbol_table_class_item(current_class, t.string_value);
                                                                 if (item->is_function) {
                                                                         fprintf(stderr, "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value, current_class, function_name_call);
-                                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
                                                                 data_type = item->variable.data_type;
                                                         }
@@ -572,7 +569,7 @@ int parse_param_value () {
 
                                         if (function_item->function.param_data_types == NULL) {
                                                 fprintf(stderr, "Calling function \'%s\' with param(s) but function has no parameters.\n", function_name_call);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
                                         bool is_var = (t.type != ID && t.type != SPECIAL_ID);
@@ -584,14 +581,14 @@ int parse_param_value () {
                                         case 's':
                                                 if (data_type != STRING) {
                                                         fprintf(stderr, "%d. parameter when calling function \'%s\' must be string.\n", params_counter, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_string_const(&mem_constants, t.string_value);
                                                 break;
                                         case 'b':
                                                 if (data_type != BOOLEAN) {
                                                         fprintf(stderr, "%d. parameter when calling function \'%s\' must be boolean.\n", params_counter, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
 
                                                 bool val = (t.type == TRUE);
@@ -600,7 +597,7 @@ int parse_param_value () {
                                         case 'i':
                                                 if (data_type != INT) {
                                                         fprintf(stderr, "%d. parameter when calling function \'%s\' must be int.\n", params_counter, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                                 if (is_var) first_param = insert_int_const(&mem_constants, t.int_value);
                                                 break;
@@ -616,7 +613,7 @@ int parse_param_value () {
 
                                                 } else if (data_type != DOUBLE) {
                                                         fprintf(stderr, "%d. parameter when calling function \'%s\' must be double.\n", params_counter, function_name_call);
-                                                        cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 } else {
                                                         if (is_var) first_param = insert_double_const(&mem_constants, t.double_value);
                                                 }
@@ -685,7 +682,7 @@ int parse_call_assign() {
                                                         if (params_counter > function_item->function.params_count) {
                                                                 fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
                                                                 fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, function_item->function.params_count, params_counter);
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                         params_counter = 0;
                                                 }
@@ -722,8 +719,8 @@ int parse_condition_list() {
 int parse_else() {
         if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (is_second_pass) {
-                    set_label(js_top(), GetLastElem_M(function_inst_tape));
-                    js_pop();
+                        set_label(js_top(), GetLastElem_M(function_inst_tape));
+                        js_pop();
                 }
                 return PARSED_OK;
         } if (t.type == ELSE) {
@@ -765,7 +762,7 @@ int parse_statement() {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         p = get_symbol_table_special_id_item(t.string_value);
                                         function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
@@ -775,7 +772,7 @@ int parse_statement() {
                                         symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class, current_function.id_name);
                                         if(!is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 fprintf(stderr, "Neither ID \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n", t.string_value, current_class, current_function.id_name, current_class);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 p = get_symbol_table_function_item(function_symbol_table, t.string_value);
                                                 function_variable.variable.data_type = p->is_function ? p->function.return_type : p->variable.data_type;
@@ -919,7 +916,7 @@ int parse_method_element() {
                         if (current_function.function.return_type != VOID) {
                                 if (!has_function_return) {
                                         fprintf(stderr, "Return in function \'%s\' was not found\n", current_function.id_name);
-                                        cleanup_exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                 }
                                 has_function_return = false;
                         }
@@ -934,11 +931,10 @@ int parse_method_element() {
                                 current_function.id_name = NULL;
                         } else {
                                 fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
-                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
 
-                        free_string(&param_data_types);
-                        free_string(&local_vars_data_types);                         current_function.function.local_vars_count = 0;
+                        current_function.function.local_vars_count = 0;
                         current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
                         current_function.function.params_count = 0;
@@ -965,7 +961,7 @@ int parse_method_element() {
                                         function_variable.variable.offset++;
                                 } else {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
 
@@ -1028,7 +1024,7 @@ int parse_next_param() {
                                                 function_variable.id_name = NULL;
                                         } else {
                                                 fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                                 get_token();
@@ -1065,7 +1061,7 @@ int parse_param_list() {
                                         function_variable.id_name = NULL;
                                 } else {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name, current_function.id_name);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
 
@@ -1119,7 +1115,7 @@ int parse_value() {
                                                                 InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                 }
 
@@ -1134,7 +1130,7 @@ int parse_value() {
                                                                 InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
-                                                                cleanup_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                         }
                                                 }
 
@@ -1178,7 +1174,7 @@ int parse_declaration() {
                                                 insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type, CONSTANT);
                                         } else {
                                                 fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name, current_class);
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
 
                                         if (expr_var_result != NULL) {
@@ -1290,7 +1286,7 @@ int parse_class_list() {
                                         set_current_class(current_class);
                                 } else {
                                         fprintf(stderr, "Class \'%s\' was redeclared.\n", current_class);
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
                         if (get_token() == LEFT_CURVED_BRACKET) {
@@ -1350,11 +1346,11 @@ int parse(tList * inst_tape) {
                                 symbol_table_item_t * run_method = get_symbol_table_class_item("Main", "run");
                                 if (run_method == NULL) {
                                         fprintf(stderr, "Missing function\'Main.run\'.\n");
-                                        cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         if (!(run_method->function.return_type == VOID) || !(run_method->function.params_count == 0)) {
                                                 fprintf(stderr, "Bad signature of \'Main.run\' method.\n");
-                                                cleanup_exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                         } else /* second pass */ {

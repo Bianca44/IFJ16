@@ -3,7 +3,7 @@
 
 #include "list.h"
 
-void cleanup_exit(int exit_code);
+void cleanup_resources();
 
 int parse_expression(bool ends_semicolon);
 int parse_return_value();
