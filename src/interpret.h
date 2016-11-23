@@ -1,6 +1,6 @@
 #ifndef INTERPRET_H
 #define INTERPRET_H
-#include "DLList.h"
+#include "list.h"
 #include "symbol_table.h"
 
 typedef struct tFrame{       
@@ -23,9 +23,9 @@ typedef struct tFrameStack{
 
 extern tFrameStack frame_stack;
 extern int push_counter;
-extern tDLList * processed_tape;
+extern tList * processed_tape;
 
-int interpret_tac(tDLList *inst_tape);
+int interpret_tac(tList *inst_tape);
 
 void init_frame_stack(tFrameStack *stack);
 tFrame * top_frame(tFrameStack *stack);
@@ -34,6 +34,6 @@ void push_frame(tFrameStack *stack, tFrame * frame);
 void dispose_frame(tFrame *frame);
 tFrame * init_frame(unsigned size);
 
-void set_effective_adresess(tDLList *inst_tape);
+void set_effective_adresess(tList *inst_tape);
 
 #endif //INTERPRET

@@ -18,11 +18,7 @@ typedef struct tInst{
     tVar *result;
 } tInst;
 
-tInst *init_inst();
-tInst *init_inst2();
 void dispose_inst(void *);
-void dispose_inst2(void *);
-
 
 typedef enum instructions {
     //INPUT
@@ -68,6 +64,7 @@ typedef enum instructions {
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
+void set_label(tElemPtr jump, tElemPtr where);
 
 //INPUT
 void i_rint(tVar *op1, tVar *op2, tVar *result);
@@ -133,9 +130,4 @@ void i_or(tVar *op1, tVar *op2, tVar *result);
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);
-
-
-void set_label(tDLElemPtr jump, tDLElemPtr where);
-
-
 #endif //INSTRUCTIONS_H

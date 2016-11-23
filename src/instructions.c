@@ -206,7 +206,7 @@ void i_goto(tVar *op1, tVar *op2, tVar *result){
 
     d_inst_name();
 
-    DLSetActive(processed_tape, (tDLElemPtr)result->s);
+    SetActiveElem(processed_tape, (tElemPtr)result->s);
 }
 
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
@@ -215,7 +215,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(!op1->b){
-        DLSetActive(processed_tape, (tDLElemPtr)result->s);
+        SetActiveElem(processed_tape, (tElemPtr)result->s);
         d_print("%p",(void *)result);
     }
 }
@@ -226,7 +226,7 @@ void i_jt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(op1->b){
-        DLSetActive(processed_tape, (tDLElemPtr)result->s);
+        SetActiveElem(processed_tape, (tElemPtr)result->s);
         d_print("%p", (void *) result);
     }
 }
@@ -412,17 +412,17 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     push_frame(&frame_stack, frame_stack.prepared);
     d_message("ramec pridany na vrchol");
     //remembering state of tape in the time of function call
-    tDLElemPtr pi = DLActiveElem(processed_tape);
-    tDLList *parent_tape = processed_tape;
+    tElemPtr pi = GetActiveElem(processed_tape);
+    tList *parent_tape = processed_tape;
     //change of awareness of instruction tape (jumps)
-    processed_tape = (tDLList *)(op1->s);
+    processed_tape = (tList *)(op1->s);
     d_message("zapocatie tac funckie");
     //executing function
     interpret_tac(processed_tape);
     d_message("opustenie tac funkcie");
     //realoading previous state
     processed_tape = parent_tape;
-    DLSetActive(processed_tape, pi);
+    SetActiveElem(processed_tape, pi);
     //saving result
     if(result != NULL){
         switch(result->data_type){
@@ -460,7 +460,7 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     frame_stack.top->frame->ret_val = op1;
-    DLLast(processed_tape);
+    Last(processed_tape);
 }
 
 //BUILT-IN
@@ -548,7 +548,7 @@ void i_len(tVar *op1, tVar *op2, tVar *result){
 }
 //GENERATING INSTRUCTIONS
 
-void set_label(tDLElemPtr jump, tDLElemPtr where){
+void set_label(tElemPtr jump, tElemPtr where){
     ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
 }
 

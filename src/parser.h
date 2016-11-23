@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "DLList.h"
+#include "list.h"
 
 void cleanup_exit(int exit_code);
 
@@ -25,7 +25,7 @@ int parse_param();
 int parse_declaration_element();
 int parse_class_element();
 int parse_class_list();
-int parse(tDLList *inst_tape);
+int parse(tList *inst_tape);
 
 void add_builtin_functions();
 

@@ -9,7 +9,7 @@ test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strin
 	$(CC) $(CFLAGS) -o $@ $^
 instructions.o:instructions.c instructions.h interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
-DLList.o:DLList.c DLList.h
+DLList.o:list.c list.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 interpret.o:interpret.c interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -35,7 +35,7 @@ scanner.o:scanner.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 parser:
-	$(CC) $(CFLAGS) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c DLList.c interpret.c instructions.c memory_constants.c token_buffer.c -o main
+	$(CC) $(CFLAGS_N) main.c scanner.c parser.c symbol_table.c builtin.c strings.c ial.c expr.c precedence_stack.c list.c interpret.c instructions.c memory_constants.c token_buffer.c -o main
 
 r_test:
 	./test

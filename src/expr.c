@@ -14,13 +14,13 @@
 
 extern char* current_class;
 extern symbol_table_item_t current_function;
-extern tDLList * global_inst_tape;
+extern tList * global_inst_tape;
 extern constant_t * mem_constants;
 
 
 tVar * top_expr_variable;
 
-tDLList * work_tape;
+tList * work_tape;
 tVar* op_1;
 tVar* op_2;
 tVar* tmp;
@@ -194,7 +194,7 @@ int choose_rule(PStack *P){
             // int + int
             if(first_operand == INT && second_operand == INT){
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
 
             } //int + double or double + int
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
@@ -203,18 +203,18 @@ int choose_rule(PStack *P){
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_ADD, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_ADD, op_1, var, tmp));
                 }
 
             }else if(first_operand == DOUBLE && second_operand == DOUBLE){
                 result_item->value.data_type = DOUBLE;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
 
             }
             else if(first_operand == STRING && (second_operand == INT || second_operand == DOUBLE || second_operand == BOOLEAN)){
@@ -222,8 +222,8 @@ int choose_rule(PStack *P){
                 result_item->value.data_type = STRING;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_TO_STRING,op_2,NULL,var));
-                DLInsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
+                InsertLast(work_tape, generate(I_TO_STRING,op_2,NULL,var));
+                InsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
 
 
             }
@@ -232,13 +232,13 @@ int choose_rule(PStack *P){
                 result_item->value.data_type = STRING;
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_TO_STRING,op_1,NULL,var));
-                DLInsertLast(work_tape, generate(I_CAT, var, op_2, tmp));
+                InsertLast(work_tape, generate(I_TO_STRING,op_1,NULL,var));
+                InsertLast(work_tape, generate(I_CAT, var, op_2, tmp));
             }
             else if(first_operand == STRING && second_operand == STRING){
                 result_item->value.data_type = STRING;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types.\n");
@@ -265,7 +265,7 @@ int choose_rule(PStack *P){
 
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
@@ -274,18 +274,18 @@ int choose_rule(PStack *P){
                 tmp = generate_tmp_var(result_item->value.data_type);
                 var =  generate_tmp_var(result_item->value.data_type);
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
                 }
                 else{
-                     DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_SUB, op_1, var, tmp));
+                     InsertLast(work_tape, generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_SUB, op_1, var, tmp));
                 }
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE ){
                 result_item->value.data_type = DOUBLE;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -316,7 +316,7 @@ int choose_rule(PStack *P){
 
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
 
 
 
@@ -327,19 +327,19 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(result_item->value.data_type);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_MUL, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_MUL, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_MUL, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_MUL, op_1, var, tmp));
                 }
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = DOUBLE;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 printf("Incompatible data types.\n");
@@ -373,7 +373,7 @@ int choose_rule(PStack *P){
                 //zatial sa nekontroluje delenie 0
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
@@ -382,19 +382,19 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(result_item->value.data_type);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_DIV, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_DIV, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_DIV, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_DIV, op_1, var, tmp));
                 }
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = DOUBLE;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types.\n");
@@ -446,7 +446,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
                 result_item->value.data_type = BOOLEAN;
@@ -454,12 +454,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_L, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_L, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_L, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_L, op_1, var, tmp));
                 }
 
 
@@ -467,7 +467,7 @@ int choose_rule(PStack *P){
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = BOOLEAN;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
@@ -505,7 +505,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
@@ -514,12 +514,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_LE, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_LE, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_LE, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_LE, op_1, var, tmp));
                 }
 
 
@@ -527,7 +527,7 @@ int choose_rule(PStack *P){
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = BOOLEAN;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
@@ -562,7 +562,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
@@ -571,12 +571,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_G, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_G, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_G, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_G, op_1, var, tmp));
                 }
 
 
@@ -584,7 +584,7 @@ int choose_rule(PStack *P){
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = BOOLEAN;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
@@ -617,7 +617,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
@@ -626,12 +626,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_GE, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_GE, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_GE, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_GE, op_1, var, tmp));
                 }
 
 
@@ -639,7 +639,7 @@ int choose_rule(PStack *P){
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = BOOLEAN;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Chybny vyraz.\n");
@@ -672,7 +672,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
@@ -681,12 +681,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_E, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_E, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_E, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_E, op_1, var, tmp));
                 }
 
 
@@ -694,7 +694,7 @@ int choose_rule(PStack *P){
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
                     result_item->value.data_type = BOOLEAN;
                     tmp = generate_tmp_var(result_item->value.data_type);
-                    DLInsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
+                    InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible operands.\n");
@@ -727,7 +727,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
@@ -736,12 +736,12 @@ int choose_rule(PStack *P){
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
-                    DLInsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
-                    DLInsertLast(work_tape, generate(I_NE, var, op_2, tmp));
+                    InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
+                    InsertLast(work_tape, generate(I_NE, var, op_2, tmp));
                 }
                 else{
-                    DLInsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
-                    DLInsertLast(work_tape, generate(I_NE, op_1, var, tmp));
+                    InsertLast(work_tape,  generate(I_CONV_I_TO_D,op_2,NULL,var));
+                    InsertLast(work_tape, generate(I_NE, op_1, var, tmp));
                 }
 
 
@@ -801,7 +801,7 @@ int choose_rule(PStack *P){
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");
@@ -850,7 +850,7 @@ int choose_rule(PStack *P){
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                DLInsertLast(work_tape, generate(I_OR,op_1, op_2, tmp));
+                InsertLast(work_tape, generate(I_OR,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Unexpected expression.\n");

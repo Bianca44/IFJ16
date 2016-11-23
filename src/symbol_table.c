@@ -23,17 +23,17 @@ void dispose_class_symbol_table(tData data) {
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-                        free(item->function.param_data_types);
+//                        free(item->function.param_data_types);
                 }
                 if (item->function.local_vars_data_types != NULL) {
-                        free(item->function.local_vars_data_types);
+  //                      free(item->function.local_vars_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
                         ht_free((symbol_table_t *)(item->function.symbol_table));
                 }
 
                 if (item->function.instruction_tape != NULL) {
-                        DLDisposeList(item->function.instruction_tape);
+      //                  DisposeList(item->function.instruction_tape);
                 }
         } else {
                 if(item->variable.initialized && item->variable.data_type == STRING){
@@ -162,7 +162,7 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         return p;
 }
 
-void insert_instr_tape_for_function(char * class_name, char * function_name, tDLList * tape) {
+void insert_instr_tape_for_function(char * class_name, char * function_name, tList * tape) {
     symbol_table_item_t * function_item = get_symbol_table_class_item(class_name, function_name);
     function_item->function.instruction_tape = tape;
 }
@@ -334,8 +334,8 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
 }
 
 /* Naalokuje instrukcnu pasku pre funkciu */
-tDLList * create_function_instr_tape() {
-    tDLList * tape = (tDLList *) malloc(sizeof(tDLList));
+tList * create_function_instr_tape() {
+    tList * tape = (tList *) malloc(sizeof(tList));
     return tape;
 }
 
@@ -348,14 +348,14 @@ void js_init() {
         head = NULL;
 }
 
-void js_push(tDLElemPtr instr) {
+void js_push(tElemPtr instr) {
         js_item * p = malloc(sizeof(js_item));
         p->data = instr;
         p->next = head;
         head = p;
 }
 
-tDLElemPtr js_top() {
+tElemPtr js_top() {
         return head->data;
 }
 
