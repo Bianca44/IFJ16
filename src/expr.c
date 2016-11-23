@@ -88,6 +88,7 @@ int expr_check(PStack *P){
 
 void free_token_buffer_exit(int exit_code) {
         free_token_buffer(global_token_buffer);
+        //PSDispose(P);
         exit(exit_code);
 }
 
@@ -483,16 +484,16 @@ int choose_rule(PStack *P){
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                 //TODO nemozeme porovnavat 2 bool hodnoty
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -537,19 +538,20 @@ int choose_rule(PStack *P){
                     InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -595,18 +597,19 @@ int choose_rule(PStack *P){
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
            else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -649,19 +652,20 @@ int choose_rule(PStack *P){
                     InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -669,7 +673,7 @@ int choose_rule(PStack *P){
 
         case P_EQL:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Chybny vyraz.\n");
                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
@@ -704,19 +708,20 @@ int choose_rule(PStack *P){
                     InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Incompatible operands.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -724,7 +729,7 @@ int choose_rule(PStack *P){
             break;
         case P_NEQL:
              if(!expr_check(P)){
-                printf("Chybny vyraz.\n");
+                fprintf(stderr,"Chybny vyraz.\n");
                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             first_operand = P->top->LPtr->LPtr->value.data_type;
@@ -754,19 +759,20 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == STRING || second_operand == STRING){
-                fprintf(stderr,"Chybny vyraz.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            else if(first_operand == BOOLEAN || second_operand == BOOLEAN ){
-                result_item->value.data_type = BOOLEAN;
+            else if(first_operand == BOOLEAN && second_operand == BOOLEAN ){
+               fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -786,24 +792,24 @@ int choose_rule(PStack *P){
 
            if(first_operand == INT && second_operand == INT){
 
-                 fprintf(stderr,"Unexpected expression.\n");
-                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                 fprintf(stderr,"Incompatible data types for this operation.\n");
+                 free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
 
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
@@ -811,12 +817,12 @@ int choose_rule(PStack *P){
                 InsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
             result_item->expr = tmp;
@@ -835,24 +841,24 @@ int choose_rule(PStack *P){
             d_bol(op_2->b);
            if(first_operand == INT && second_operand == INT){
 
-                 fprintf(stderr,"Unexpected expression.\n");
-                 free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                 fprintf(stderr,"Incompatible data types for this operation.\n");
+                 free_token_buffer_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
 
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if(first_operand == STRING || second_operand == STRING){
                 fprintf(stderr,"Incompatible data types for this operation.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
                 result_item->value.data_type = BOOLEAN;
@@ -860,12 +866,12 @@ int choose_rule(PStack *P){
                 InsertLast(work_tape, generate(I_OR,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == INT || first_operand == DOUBLE) && second_operand == BOOLEAN){
-                fprintf(stderr,"Unexpected expression.\n");
-                free_token_buffer_exit(SYNTACTIC_ANALYSIS_ERROR);
+                fprintf(stderr,"Incompatible data types for this operation.\n");
+                free_token_buffer_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             result_item->expr = tmp;
             break;
@@ -1075,6 +1081,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
                work_tape = global_inst_tape;
 
     }
+      int psa_result;
       token_t *t = NULL;
       token_t end;
       end.type = ENDMARK;
@@ -1134,8 +1141,9 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        d_message("Na konci:\n");
        PSPrint(P);
        d_print("Data type of result is:%d\n",P->top->value.data_type);
-
-        return P->top->value.data_type;
+       psa_result = P->top->value.data_type;
+       //PSDispose(P);
+       return psa_result;
 
 
 }
