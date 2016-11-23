@@ -83,10 +83,14 @@ int get_next_token(token_t *t) {
                                         state = NUMBER;
                                         init_string(&s);
                                         append_char(&s, c);
-                                } else if (isalpha(c) || c == '_' || c == '$') {
+                                } else if (isalpha(c) || c == '$') {
                                         state = IDENTIFICATOR;
                                         init_string(&s);
                                         append_char(&s, c);
+                                } else if (c == '_') {
+                                        init_string(&s);
+                                        append_char(&s, c);
+                                        state = UNDERSCORE;
                                 } else if (c == ',') {
                                         return save_token(t, COMMA, NULL);
                                 } else if (c == '"') {
@@ -138,6 +142,17 @@ int get_next_token(token_t *t) {
                         } else {
                                 ungetc(c, file);
                                 return save_token(t, detect_keyword(&s), &s);
+                        }
+                        break;
+
+
+                case UNDERSCORE:
+                        if (isalnum(c) || c == '_' || c == '$') {
+                                append_char(&s, c);
+                                state = IDENTIFICATOR;
+                        } else {
+                                ungetc(c, file);
+                                return save_token(t, LEXICAL_ERROR, NULL);
                         }
                         break;
 
@@ -231,7 +246,21 @@ int get_next_token(token_t *t) {
 
 
                 case QUALIFIED_ID:
-                        if (isalpha(c) || c == '_' || c == '$') {
+                        if (isalpha(c) || c == '$') {
+                                append_char(&s, c);
+                                state = QUALIFIED_ID_END;
+                        } else if ( c == '_') {
+                                append_char(&s, c);
+                                state = QUALIFIED_ID_UNDERSCORE;
+                        }
+                        else {
+                                ungetc(c, file);
+                                return save_token(t, LEXICAL_ERROR, NULL);
+                        }
+                        break;
+
+                case QUALIFIED_ID_UNDERSCORE:
+                        if (isalnum(c) || c == '_' || c == '$') {
                                 append_char(&s, c);
                                 state = QUALIFIED_ID_END;
                         } else {
