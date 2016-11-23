@@ -722,22 +722,22 @@ int parse_condition_list() {
 int parse_else() {
         if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (is_second_pass) {
-                    set_label(js_top(), GetLastElem(function_inst_tape));
+                    set_label(js_top(), GetLastElem_M(function_inst_tape));
                     js_pop();
                 }
                 return PARSED_OK;
         } if (t.type == ELSE) {
                 if (is_second_pass) {
                         InsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
-                        set_label(js_top(), GetLastElem(function_inst_tape));
+                        set_label(js_top(), GetLastElem_M(function_inst_tape));
                         js_pop();
-                        js_push(GetLastElem(function_inst_tape));
+                        js_push(GetLastElem_M(function_inst_tape));
                 }
                 get_token();
                 if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET) {
                         if(parse_condition_list()) {
                                 if (is_second_pass) {
-                                        set_label(js_top(), GetLastElem(function_inst_tape));
+                                        set_label(js_top(), GetLastElem_M(function_inst_tape));
                                         js_pop();
                                 }
                                 if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
@@ -826,7 +826,7 @@ int parse_statement() {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
-                                                js_push(GetLastElem(function_inst_tape));
+                                                js_push(GetLastElem_M(function_inst_tape));
                                         }
                                         get_token();
                                         if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
@@ -840,7 +840,7 @@ int parse_statement() {
                 }
         } else if (t.type == WHILE) {
                 if (is_second_pass) {
-                        js_push(GetLastElem(function_inst_tape));
+                        js_push(GetLastElem_M(function_inst_tape));
                 }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
@@ -848,16 +848,16 @@ int parse_statement() {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
-                                                js_push(GetLastElem(function_inst_tape));
+                                                js_push(GetLastElem_M(function_inst_tape));
                                         }
                                         get_token();
                                         if (t.type == SEMICOLON || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE || t.type == LEFT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                                                 if (parse_condition_list()) {
                                                         if (is_second_pass) {
                                                                 InsertLast(function_inst_tape, generate(I_GOTO, NULL, NULL, NULL));
-                                                                set_label(js_top(), GetLastElem(function_inst_tape));
+                                                                set_label(js_top(), GetLastElem_M(function_inst_tape));
                                                                 js_pop();
-                                                                set_label(GetLastElem(function_inst_tape), js_top());
+                                                                set_label(GetLastElem_M(function_inst_tape), js_top());
                                                                 js_pop();
                                                         }
                                                         return PARSED_OK;

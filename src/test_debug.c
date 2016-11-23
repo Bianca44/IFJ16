@@ -9,6 +9,7 @@
 #include "strings.h"
 #include "scanner.h"
 #include "memory_constants.h"
+#include "list.h"
 
 
 symbol_table_t *class_list;

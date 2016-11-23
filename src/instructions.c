@@ -6,6 +6,7 @@
 #include "strings.h"
 #include "builtin.h"
 #include "error_codes.h"
+#include "list.h"
 
 #define UNUSED(x) (void)(x)
 #define L_BUFFER 256
@@ -206,7 +207,7 @@ void i_goto(tVar *op1, tVar *op2, tVar *result){
 
     d_inst_name();
 
-    SetActiveElem(processed_tape, (tElemPtr)result->s);
+    SetActiveElem_M(processed_tape, (tElemPtr)result->s);
 }
 
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
@@ -215,7 +216,7 @@ void i_jnt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(!op1->b){
-        SetActiveElem(processed_tape, (tElemPtr)result->s);
+        SetActiveElem_M(processed_tape, (tElemPtr)result->s);
         d_print("%p",(void *)result);
     }
 }
@@ -226,7 +227,7 @@ void i_jt(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     if(op1->b){
-        SetActiveElem(processed_tape, (tElemPtr)result->s);
+        SetActiveElem_M(processed_tape, (tElemPtr)result->s);
         d_print("%p", (void *) result);
     }
 }
@@ -412,7 +413,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     push_frame(&frame_stack, frame_stack.prepared);
     d_message("ramec pridany na vrchol");
     //remembering state of tape in the time of function call
-    tElemPtr pi = GetActiveElem(processed_tape);
+    tElemPtr pi = GetActiveElem_M(processed_tape);
     tList *parent_tape = processed_tape;
     //change of awareness of instruction tape (jumps)
     processed_tape = (tList *)(op1->s);
@@ -422,7 +423,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     d_message("opustenie tac funkcie");
     //realoading previous state
     processed_tape = parent_tape;
-    SetActiveElem(processed_tape, pi);
+    SetActiveElem_M(processed_tape, pi);
     //saving result
     if(result != NULL){
         switch(result->data_type){

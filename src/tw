@@ -5,7 +5,7 @@ static void run()
 
     int i = 0;
         int x = 0;
-        while (i != 50000000) {
+        while (i != 10000000) {
             x = x + 5;
             i = i + 1;
         }

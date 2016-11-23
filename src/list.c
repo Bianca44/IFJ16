@@ -26,8 +26,8 @@ void DisposeList (tList *L) {
     L->Last = NULL;
     L->Act = NULL;	
 }
-/*
-void DLInsertFirst (tList *L, void * val) {
+
+void InsertFirst (tList *L, void * val) {
 
     tElemPtr item; 
     //kontrola alokovania pamati
@@ -36,21 +36,18 @@ void DLInsertFirst (tList *L, void * val) {
         return;
     }
     //nastavnie predchodcu a nasledovnika
-    item->lptr = NULL;
-    item->rptr = L->First;
+    //item->lptr = NULL;
+    item->ptr = L->First;
     item->data = val;
     
-    if(L->First != NULL){
-        //nastavnie noveho prvku ako predchodcu minuleho
-        L->First->lptr = item;
-    }
-    else{ // ak bol zaznam prazdny, je pridavany prvy aj posledny
+
+    if(L->First == NULL){ // ak bol zaznam prazdny, je pridavany prvy aj posledny
         L->Last = item;
     }
 
     L->First = item;
 }
-*/
+
 void InsertLast(tList *L, void * val) {
 
     tElemPtr item; 
@@ -67,7 +64,7 @@ void InsertLast(tList *L, void * val) {
     //nastavnie noveho prvku ako nasledovika minuleho
         L->Last->ptr = item;
     }
-    else{ // ak bol zaznam prazdny, je pridavany prvy aj posledny
+    else{ // ak bol zaznam prazdny, je pridavany prvym aj posledny
         L->First = item;
     }
 
@@ -105,7 +102,7 @@ void CopyLast (tList *L, void **val) {
     *val = L->Last->data;
 }
 
-void Copy (tList *L, void **val) {
+void Copy(tList *L, void **val) {
    
     if(L->Act == NULL){
         //TODO

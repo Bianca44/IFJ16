@@ -5,7 +5,7 @@ CC=gcc
 .PHONY: all clean r_test
 
 all:test
-test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o memory_constants.o builtin.o parser.o expr.o token_buffer.o precedence_stack.o scanner.o
+test:test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o memory_constants.o builtin.o parser.o expr.o token_buffer.o precedence_stack.o scanner.o list.h
 	$(CC) $(CFLAGS) -o $@ $^
 instructions.o:instructions.c instructions.h interpret.h
 	$(CC) $(CFLAGS) -c -o $@ $<

@@ -89,9 +89,9 @@ int interpret_tac(tList *inst_tape){
     d_message("skok na zaciatok pasky");
     tVar *op1, *op2, *result;
     tInst * inst;
-    while(Active(inst_tape)){
+    while(Active_M(inst_tape)){
 
-        Copy(inst_tape, (void **)&inst);
+        Copy_M(inst_tape, inst);
 
         d_message("spracovanie adries");
         op1 = evaluate_op(inst->op1);
@@ -104,7 +104,7 @@ int interpret_tac(tList *inst_tape){
         initialize(result);
         d_tVarPtr(result);
         d_message("instrukcia bola vykonana");
-        Succ(inst_tape);
+        Succ_M(inst_tape);
     }
 
    return 0; //TODO

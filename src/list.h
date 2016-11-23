@@ -1,5 +1,5 @@
-#ifndef DLList_H
-#define DLList_H
+#ifndef list_H
+#define list_H
 
 //TODO IAL
 typedef struct tDLElem {
@@ -16,7 +16,7 @@ typedef struct {
 
 void InitList (tList *, void (*dispose_fun)(void *));
 void DisposeList (tList *);
-//void DLInsertFirst (tList *, void *);
+void InsertFirst (tList *, void *);
 void InsertLast(tList *, void *);
 void First (tList *);
 void Last (tList *);
@@ -28,12 +28,18 @@ void CopyLast (tList *, void **);
 //void DLPreDelete (tList *);
 //void DLPostInsert (tList *, void *);
 //void DLPreInsert (tList *, void*);
-void Copy (tList *, void **);
+#define Copy_M(List, val) val = List->Act->data 
+//void Copy (tList *, void **);
 void Actualize (tList *, void *);
-void Succ (tList *);
 //void DLPred (tList *);
-int Active (tList *);
-void SetActiveElem(tList *L, tElemPtr e);
+#define Succ_M(List) (List->Act = List->Act->ptr)
+#define Active_M(List) (List->Act != NULL)
+#define GetActiveElem_M(List) (List->Act)
+#define SetActiveElem_M(List, elem) List->Act = elem
+#define GetLastElem_M(List) (List->Last)
+void Succ(tList *);
+int Active(tList *);
 tElemPtr GetActiveElem(tList *L);
+void SetActiveElem(tList *L, tElemPtr e);
 tElemPtr GetLastElem(tList *L);
 #endif
