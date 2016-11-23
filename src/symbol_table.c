@@ -19,7 +19,7 @@ void dispose_class_list(tData data) {
 /* Zrusi tabulku symbolov pre triedu */
 void dispose_class_symbol_table(tData data) {
         symbol_table_item_t * item = (symbol_table_item_t *) data;
-        free(item->id_name);
+        //free(item->id_name);
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
