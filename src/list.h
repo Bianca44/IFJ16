@@ -20,6 +20,7 @@ void InsertFirst (tList *, void *);
 void InsertLast(tList *, void *);
 void First (tList *);
 void Last (tList *);
+#define Last_M(List) List->Act = List->Last
 void CopyFirst (tList *, void **);
 void CopyLast (tList *, void **);
 //void DLDeleteFirst (tList *);

@@ -8,6 +8,13 @@
 #define pr_er \
                     fprintf(stderr, "Using uninitialized variable\n")\
 
+#define initialize(var) (var->initialized) ? (var->initialized = true, var) : (var)
+#define check_init(var) (var->initialized) ? (var) : (pr_er, exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
+#define evaluate_res(adress) (get_e_adr(adress))
+#define evaluate_op(adress) (check_init(get_e_adr(adress)))
+#define get_e_adr(adress) \
+    ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
+/*
 #define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
 #define check_init(var) (var->initialized) ? (var) : (pr_er, exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
 #define evaluate_res(adress) ((adress != NULL) ? (get_e_adr(adress)) : (NULL))
@@ -15,6 +22,7 @@
 #define get_e_adr(adress) \
     ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
 
+*/
 //todo inicializovane ? assign, call_f
 
 int push_counter;

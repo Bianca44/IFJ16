@@ -1,0 +1,907 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 79.44      2.24     2.24        2     1.12     1.38  interpret_tac
+  6.03      2.41     0.17 100000000     0.00     0.00  i_add_i
+  4.26      2.53     0.12 50000001     0.00     0.00  i_ne_i
+  3.19      2.62     0.09 100000002     0.00     0.00  i_assign_i
+  3.19      2.71     0.09 50000000     0.00     0.00  i_goto
+  1.42      2.75     0.04 50000001     0.00     0.00  i_jnt
+  1.06      2.78     0.03                             i_assign_s
+  1.06      2.81     0.03                             i_rstr
+  0.35      2.82     0.01                             i_to_str
+  0.00      2.82     0.00      141     0.00     0.00  hash_code
+  0.00      2.82     0.00      126     0.00     0.00  ht_search
+  0.00      2.82     0.00      109     0.00     0.00  ht_read
+  0.00      2.82     0.00       94     0.00     0.00  get_token
+  0.00      2.82     0.00       68     0.00     0.00  append_char
+  0.00      2.82     0.00       65     0.00     0.00  add_token_to_buffer
+  0.00      2.82     0.00       48     0.00     0.00  PSTopTerm
+  0.00      2.82     0.00       48     0.00     0.00  get_symbol_table_for_class
+  0.00      2.82     0.00       47     0.00     0.00  get_next_token
+  0.00      2.82     0.00       47     0.00     0.00  get_next_token_buffer
+  0.00      2.82     0.00       47     0.00     0.00  save_token
+  0.00      2.82     0.00       37     0.00     0.00  get_symbol_table_class_item
+  0.00      2.82     0.00       31     0.00     0.00  copy_string
+  0.00      2.82     0.00       30     0.00     0.00  PSPop
+  0.00      2.82     0.00       30     0.00     0.00  PSPush
+  0.00      2.82     0.00       30     0.00     0.00  PSTopTermPtr
+  0.00      2.82     0.00       24     0.00     0.00  decode_table
+  0.00      2.82     0.00       24     0.00     0.00  get_symbol_table_function_item
+  0.00      2.82     0.00       23     0.00     0.00  init_string
+  0.00      2.82     0.00       18     0.00     0.00  get_next_token_psa
+  0.00      2.82     0.00       17     0.00     0.00  ht_insert
+  0.00      2.82     0.00       16     0.00     0.00  detect_keyword
+  0.00      2.82     0.00       16     0.00     0.00  get_symbol_table_for_function
+  0.00      2.82     0.00       15     0.00     0.00  create_symbol_table_item
+  0.00      2.82     0.00       13     0.00     0.00  InsertLast
+  0.00      2.82     0.00       13     0.00     0.00  dispose_class_symbol_table
+  0.00      2.82     0.00       13     0.00     0.00  dispose_inst
+  0.00      2.82     0.00       13     0.00     0.00  generate
+  0.00      2.82     0.00       12     0.00     0.00  choose_rule
+  0.00      2.82     0.00       12     0.00     0.00  init_item
+  0.00      2.82     0.00       12     0.00     0.00  insert_handle
+  0.00      2.82     0.00       12     0.00     0.00  is_declared_in_function
+  0.00      2.82     0.00       12     0.00     0.00  is_top_terminal
+  0.00      2.82     0.00       12     0.00     0.00  parse_expression
+  0.00      2.82     0.00       10     0.00     0.00  insert_function_symbol_table
+  0.00      2.82     0.00       10     0.00     0.00  insert_symbol_table_item
+  0.00      2.82     0.00       10     0.00     0.00  insert_symbol_table_item_class
+  0.00      2.82     0.00        8     0.00     0.00  parse_statement
+  0.00      2.82     0.00        8     0.00     0.00  parse_value
+  0.00      2.82     0.00        7     0.00     0.00  free_token_buffer
+  0.00      2.82     0.00        7     0.00     0.00  init_token_buffer
+  0.00      2.82     0.00        6     0.00     0.00  PSInit
+  0.00      2.82     0.00        6     0.00     0.00  PSPrint
+  0.00      2.82     0.00        6     0.00     0.00  get_psa
+  0.00      2.82     0.00        6     0.00     0.00  parse_call_assign
+  0.00      2.82     0.00        5     0.00     0.00  decode_type
+  0.00      2.82     0.00        5     0.00     0.00  insert_int_const
+  0.00      2.82     0.00        4     0.00     0.00  append_type
+  0.00      2.82     0.00        4     0.00     0.00  ht_clear_all
+  0.00      2.82     0.00        4     0.00     0.00  ht_free
+  0.00      2.82     0.00        4     0.00     0.00  ht_init
+  0.00      2.82     0.00        4     0.00     0.00  insert_special_const
+  0.00      2.82     0.00        4     0.00     0.00  parse_class_element
+  0.00      2.82     0.00        4     0.00     0.00  parse_element_list
+  0.00      2.82     0.00        4     0.00     0.00  parse_param
+  0.00      2.82     0.00        3     0.00     0.00  expr_check
+  0.00      2.82     0.00        3     0.00     0.00  generate_tmp_var
+  0.00      2.82     0.00        3     0.00     0.00  get_symbol_table_special_id_item
+  0.00      2.82     0.00        3     0.00     0.00  insert_tmp_variable_symbol_table_function
+  0.00      2.82     0.00        3     0.00     0.00  is_declared
+  0.00      2.82     0.00        2     0.00     0.00  DisposeList
+  0.00      2.82     0.00        2     0.00     0.00  First
+  0.00      2.82     0.00        2     0.00     0.00  InitList
+  0.00      2.82     0.00        2     0.00     0.00  dispose_class_list
+  0.00      2.82     0.00        2     0.00     0.00  insert_class
+  0.00      2.82     0.00        2     0.00     0.00  insert_function_variable_symbol_table
+  0.00      2.82     0.00        2     0.00     0.00  insert_instr_tape_for_function
+  0.00      2.82     0.00        2     0.00     0.00  js_pop
+  0.00      2.82     0.00        2     0.00     0.00  js_push
+  0.00      2.82     0.00        2     0.00     0.00  js_top
+  0.00      2.82     0.00        2     0.00     0.00  parse
+  0.00      2.82     0.00        2     0.00     0.00  parse_class_list
+  0.00      2.82     0.00        2     0.00     0.00  parse_condition_list
+  0.00      2.82     0.00        2     0.00     0.00  parse_declaration_element
+  0.00      2.82     0.00        2     0.00     0.00  parse_method_declaration
+  0.00      2.82     0.00        2     0.00     0.00  parse_method_element
+  0.00      2.82     0.00        2     0.00     0.00  parse_param_list
+  0.00      2.82     0.00        2     0.00     0.00  parse_param_value
+  0.00      2.82     0.00        2     0.00     0.00  parse_statement_list
+  0.00      2.82     0.00        2     0.00     0.00  set_current_class
+  0.00      2.82     0.00        2     0.00     0.00  set_label
+  0.00      2.82     0.00        1     0.00     0.00  add_builtin_functions
+  0.00      2.82     0.00        1     0.00     0.00  create_function_instr_tape
+  0.00      2.82     0.00        1     0.00     0.00  create_function_symbol_table
+  0.00      2.82     0.00        1     0.00     0.00  dispose_frame
+  0.00      2.82     0.00        1     0.00     0.00  exists_class
+  0.00      2.82     0.00        1     0.00     0.00  free_class_list
+  0.00      2.82     0.00        1     0.00     0.00  free_constants
+  0.00      2.82     0.00        1     0.00     0.00  i_f_call
+  0.00      2.82     0.00        1     0.00     0.00  i_init_frame
+  0.00      2.82     0.00        1     0.00     0.00  i_print
+  0.00      2.82     0.00        1     0.00     0.00  i_return
+  0.00      2.82     0.00        1     0.00     0.00  init_class_list
+  0.00      2.82     0.00        1     0.00     0.00  init_frame
+  0.00      2.82     0.00        1     0.00     0.00  init_scanner
+  0.00      2.82     0.00        1     0.00     0.00  is_special_id_declared
+  0.00      2.82     0.00        1     0.00     0.00  is_special_id_ok
+  0.00      2.82     0.00        1     0.00     0.00  js_free
+  0.00      2.82     0.00        1     0.00     0.00  js_init
+  0.00      2.82     0.00        1     0.00     0.00  pop_frame
+  0.00      2.82     0.00        1     0.00     0.00  print
+  0.00      2.82     0.00        1     0.00     0.00  push_frame
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.35% of 2.82 seconds
+
+index % time    self  children    called     name
+[1]     97.5    2.24    0.51       1+2       <cycle 4 as a whole> [1]
+                2.24    0.51       2             interpret_tac <cycle 4> [2]
+                0.00    0.00       1             i_f_call <cycle 4> [103]
+-----------------------------------------------
+                                   1             i_f_call <cycle 4> [103]
+                2.24    0.51       1/1           main [3]
+[2]     97.5    2.24    0.51       2         interpret_tac <cycle 4> [2]
+                0.17    0.00 100000000/100000000     i_add_i [4]
+                0.12    0.00 50000001/50000001     i_ne_i [5]
+                0.09    0.00 100000002/100000002     i_assign_i [6]
+                0.09    0.00 50000000/50000000     i_goto [7]
+                0.04    0.00 50000001/50000001     i_jnt [8]
+                0.00    0.00       2/2           First [76]
+                0.00    0.00       1/1           i_return [106]
+                0.00    0.00       1/1           i_print [105]
+                0.00    0.00       1/1           i_init_frame [104]
+                                   1             i_f_call <cycle 4> [103]
+-----------------------------------------------
+                                                 <spontaneous>
+[3]     97.5    0.00    2.75                 main [3]
+                2.24    0.51       1/1           interpret_tac <cycle 4> [2]
+                0.00    0.00       2/2           parse [85]
+                0.00    0.00       2/13          generate [42]
+                0.00    0.00       2/13          InsertLast [39]
+                0.00    0.00       1/1           init_scanner [109]
+                0.00    0.00       1/2           InitList [77]
+                0.00    0.00       1/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                0.17    0.00 100000000/100000000     interpret_tac <cycle 4> [2]
+[4]      6.0    0.17    0.00 100000000         i_add_i [4]
+-----------------------------------------------
+                0.12    0.00 50000001/50000001     interpret_tac <cycle 4> [2]
+[5]      4.3    0.12    0.00 50000001         i_ne_i [5]
+-----------------------------------------------
+                0.09    0.00 100000002/100000002     interpret_tac <cycle 4> [2]
+[6]      3.2    0.09    0.00 100000002         i_assign_i [6]
+-----------------------------------------------
+                0.09    0.00 50000000/50000000     interpret_tac <cycle 4> [2]
+[7]      3.2    0.09    0.00 50000000         i_goto [7]
+-----------------------------------------------
+                0.04    0.00 50000001/50000001     interpret_tac <cycle 4> [2]
+[8]      1.4    0.04    0.00 50000001         i_jnt [8]
+-----------------------------------------------
+                                                 <spontaneous>
+[9]      1.1    0.03    0.00                 i_assign_s [9]
+-----------------------------------------------
+                                                 <spontaneous>
+[10]     1.1    0.03    0.00                 i_rstr [10]
+-----------------------------------------------
+                                                 <spontaneous>
+[11]     0.4    0.01    0.00                 i_to_str [11]
+-----------------------------------------------
+[12]     0.0    0.00    0.00       4+8       <cycle 1 as a whole> [12]
+                0.00    0.00       8             parse_statement <cycle 1> [52]
+                0.00    0.00       2+4           parse_statement_list <cycle 1> [93]
+                0.00    0.00       2             parse_condition_list <cycle 1> [87]
+-----------------------------------------------
+[13]     0.0    0.00    0.00       2+6       <cycle 2 as a whole> [13]
+                0.00    0.00       4             parse_class_element <cycle 2> [67]
+                0.00    0.00       2             parse_declaration_element <cycle 2> [88]
+                0.00    0.00       2             parse_method_declaration <cycle 2> [89]
+-----------------------------------------------
+[14]     0.0    0.00    0.00       1+22      <cycle 3 as a whole> [14]
+                0.00    0.00      13             dispose_class_symbol_table <cycle 3> [40]
+                0.00    0.00       4             ht_free <cycle 3> [64]
+                0.00    0.00       4             ht_clear_all <cycle 3> [63]
+                0.00    0.00       2             dispose_class_list <cycle 3> [78]
+-----------------------------------------------
+                0.00    0.00      15/141         ht_insert [35]
+                0.00    0.00     126/141         ht_search [16]
+[15]     0.0    0.00    0.00     141         hash_code [15]
+-----------------------------------------------
+                0.00    0.00      17/126         ht_insert [35]
+                0.00    0.00     109/126         ht_read [17]
+[16]     0.0    0.00    0.00     126         ht_search [16]
+                0.00    0.00     126/141         hash_code [15]
+-----------------------------------------------
+                0.00    0.00      24/109         get_symbol_table_function_item [32]
+                0.00    0.00      37/109         get_symbol_table_class_item [26]
+                0.00    0.00      48/109         get_symbol_table_for_class [22]
+[17]     0.0    0.00    0.00     109         ht_read [17]
+                0.00    0.00     109/126         ht_search [16]
+-----------------------------------------------
+                0.00    0.00       2/94          parse_param_value [92]
+                0.00    0.00       2/94          parse_method_declaration <cycle 2> [89]
+                0.00    0.00       2/94          parse [85]
+                0.00    0.00       4/94          parse_condition_list <cycle 1> [87]
+                0.00    0.00       4/94          parse_param [69]
+                0.00    0.00       6/94          parse_param_list [91]
+                0.00    0.00       6/94          parse_declaration_element <cycle 2> [88]
+                0.00    0.00       8/94          parse_call_assign [59]
+                0.00    0.00       8/94          parse_method_element [90]
+                0.00    0.00       8/94          parse_value [53]
+                0.00    0.00       8/94          parse_class_list [86]
+                0.00    0.00      12/94          parse_statement <cycle 1> [52]
+                0.00    0.00      24/94          parse_expression [48]
+[18]     0.0    0.00    0.00      94         get_token [18]
+                0.00    0.00      47/47          get_next_token [23]
+                0.00    0.00      47/65          add_token_to_buffer [20]
+                0.00    0.00      47/47          get_next_token_buffer [24]
+-----------------------------------------------
+                0.00    0.00       4/68          append_type [62]
+                0.00    0.00      64/68          get_next_token [23]
+[19]     0.0    0.00    0.00      68         append_char [19]
+-----------------------------------------------
+                0.00    0.00       6/65          get_psa [58]
+                0.00    0.00      12/65          parse_expression [48]
+                0.00    0.00      47/65          get_token [18]
+[20]     0.0    0.00    0.00      65         add_token_to_buffer [20]
+-----------------------------------------------
+                0.00    0.00      48/48          get_psa [58]
+[21]     0.0    0.00    0.00      48         PSTopTerm [21]
+-----------------------------------------------
+                0.00    0.00       1/48          exists_class [100]
+                0.00    0.00      10/48          insert_symbol_table_item_class [51]
+                0.00    0.00      37/48          get_symbol_table_class_item [26]
+[22]     0.0    0.00    0.00      48         get_symbol_table_for_class [22]
+                0.00    0.00      48/109         ht_read [17]
+-----------------------------------------------
+                0.00    0.00      47/47          get_token [18]
+[23]     0.0    0.00    0.00      47         get_next_token [23]
+                0.00    0.00      64/68          append_char [19]
+                0.00    0.00      47/47          save_token [25]
+                0.00    0.00      22/23          init_string [33]
+                0.00    0.00      16/16          detect_keyword [36]
+                0.00    0.00       1/1           is_special_id_ok [111]
+-----------------------------------------------
+                0.00    0.00      47/47          get_token [18]
+[24]     0.0    0.00    0.00      47         get_next_token_buffer [24]
+-----------------------------------------------
+                0.00    0.00      47/47          get_next_token [23]
+[25]     0.0    0.00    0.00      47         save_token [25]
+-----------------------------------------------
+                0.00    0.00       1/37          main [3]
+                0.00    0.00       1/37          parse_method_element [90]
+                0.00    0.00       1/37          parse_declaration_element <cycle 2> [88]
+                0.00    0.00       1/37          parse [85]
+                0.00    0.00       2/37          insert_instr_tape_for_function [81]
+                0.00    0.00       3/37          is_declared [74]
+                0.00    0.00       3/37          get_symbol_table_special_id_item [72]
+                0.00    0.00       3/37          insert_tmp_variable_symbol_table_function [73]
+                0.00    0.00       6/37          get_psa [58]
+                0.00    0.00      16/37          get_symbol_table_for_function [37]
+[26]     0.0    0.00    0.00      37         get_symbol_table_class_item [26]
+                0.00    0.00      37/48          get_symbol_table_for_class [22]
+                0.00    0.00      37/109         ht_read [17]
+-----------------------------------------------
+                0.00    0.00       1/31          is_special_id_ok [111]
+                0.00    0.00       2/31          parse_method_element [90]
+                0.00    0.00       3/31          get_symbol_table_special_id_item [72]
+                0.00    0.00       9/31          insert_function_symbol_table [49]
+                0.00    0.00      16/31          add_builtin_functions [96]
+[27]     0.0    0.00    0.00      31         copy_string [27]
+-----------------------------------------------
+                0.00    0.00      30/30          choose_rule [43]
+[28]     0.0    0.00    0.00      30         PSPop [28]
+-----------------------------------------------
+                0.00    0.00      12/30          choose_rule [43]
+                0.00    0.00      18/30          get_psa [58]
+[29]     0.0    0.00    0.00      30         PSPush [29]
+-----------------------------------------------
+                0.00    0.00      12/30          choose_rule [43]
+                0.00    0.00      18/30          get_psa [58]
+[30]     0.0    0.00    0.00      30         PSTopTermPtr [30]
+                0.00    0.00      12/12          is_top_terminal [47]
+-----------------------------------------------
+                0.00    0.00      24/24          get_psa [58]
+[31]     0.0    0.00    0.00      24         decode_table [31]
+-----------------------------------------------
+                0.00    0.00       2/24          parse_statement <cycle 1> [52]
+                0.00    0.00       2/24          parse_method_element [90]
+                0.00    0.00       4/24          parse_expression [48]
+                0.00    0.00       4/24          init_item [44]
+                0.00    0.00      12/24          is_declared_in_function [46]
+[32]     0.0    0.00    0.00      24         get_symbol_table_function_item [32]
+                0.00    0.00      24/109         ht_read [17]
+-----------------------------------------------
+                0.00    0.00       1/23          parse_declaration_element <cycle 2> [88]
+                0.00    0.00      22/23          get_next_token [23]
+[33]     0.0    0.00    0.00      23         init_string [33]
+-----------------------------------------------
+                0.00    0.00      18/18          get_psa [58]
+[34]     0.0    0.00    0.00      18         get_next_token_psa [34]
+-----------------------------------------------
+                0.00    0.00       2/17          insert_class [79]
+                0.00    0.00       2/17          insert_function_variable_symbol_table [80]
+                0.00    0.00       3/17          insert_tmp_variable_symbol_table_function [73]
+                0.00    0.00      10/17          insert_symbol_table_item_class [51]
+[35]     0.0    0.00    0.00      17         ht_insert [35]
+                0.00    0.00      17/126         ht_search [16]
+                0.00    0.00      15/141         hash_code [15]
+-----------------------------------------------
+                0.00    0.00      16/16          get_next_token [23]
+[36]     0.0    0.00    0.00      16         detect_keyword [36]
+-----------------------------------------------
+                0.00    0.00       2/16          parse_statement <cycle 1> [52]
+                0.00    0.00       2/16          parse_method_element [90]
+                0.00    0.00       4/16          init_item [44]
+                0.00    0.00       8/16          parse_expression [48]
+[37]     0.0    0.00    0.00      16         get_symbol_table_for_function [37]
+                0.00    0.00      16/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                0.00    0.00       2/15          insert_function_variable_symbol_table [80]
+                0.00    0.00       3/15          insert_tmp_variable_symbol_table_function [73]
+                0.00    0.00      10/15          insert_function_symbol_table [49]
+[38]     0.0    0.00    0.00      15         create_symbol_table_item [38]
+-----------------------------------------------
+                0.00    0.00       2/13          main [3]
+                0.00    0.00       3/13          parse_method_element [90]
+                0.00    0.00       3/13          choose_rule [43]
+                0.00    0.00       5/13          parse_statement <cycle 1> [52]
+[39]     0.0    0.00    0.00      13         InsertLast [39]
+-----------------------------------------------
+                                  13             ht_clear_all <cycle 3> [63]
+[40]     0.0    0.00    0.00      13         dispose_class_symbol_table <cycle 3> [40]
+                0.00    0.00       1/2           DisposeList [75]
+                                   1             ht_free <cycle 3> [64]
+-----------------------------------------------
+                0.00    0.00      13/13          DisposeList [75]
+[41]     0.0    0.00    0.00      13         dispose_inst [41]
+-----------------------------------------------
+                0.00    0.00       2/13          main [3]
+                0.00    0.00       3/13          parse_method_element [90]
+                0.00    0.00       3/13          choose_rule [43]
+                0.00    0.00       5/13          parse_statement <cycle 1> [52]
+[42]     0.0    0.00    0.00      13         generate [42]
+                0.00    0.00       2/4           insert_special_const [66]
+-----------------------------------------------
+                0.00    0.00      12/12          get_psa [58]
+[43]     0.0    0.00    0.00      12         choose_rule [43]
+                0.00    0.00      30/30          PSPop [28]
+                0.00    0.00      12/30          PSTopTermPtr [30]
+                0.00    0.00      12/30          PSPush [29]
+                0.00    0.00       3/3           expr_check [70]
+                0.00    0.00       3/3           generate_tmp_var [71]
+                0.00    0.00       3/13          generate [42]
+                0.00    0.00       3/13          InsertLast [39]
+-----------------------------------------------
+                0.00    0.00      12/12          get_psa [58]
+[44]     0.0    0.00    0.00      12         init_item [44]
+                0.00    0.00       5/5           insert_int_const [61]
+                0.00    0.00       4/16          get_symbol_table_for_function [37]
+                0.00    0.00       4/24          get_symbol_table_function_item [32]
+-----------------------------------------------
+                0.00    0.00      12/12          get_psa [58]
+[45]     0.0    0.00    0.00      12         insert_handle [45]
+-----------------------------------------------
+                0.00    0.00       2/12          parse_statement <cycle 1> [52]
+                0.00    0.00       2/12          parse_method_element [90]
+                0.00    0.00       8/12          parse_expression [48]
+[46]     0.0    0.00    0.00      12         is_declared_in_function [46]
+                0.00    0.00      12/24          get_symbol_table_function_item [32]
+-----------------------------------------------
+                0.00    0.00      12/12          PSTopTermPtr [30]
+[47]     0.0    0.00    0.00      12         is_top_terminal [47]
+-----------------------------------------------
+                0.00    0.00       2/12          parse_param_value [92]
+                0.00    0.00       2/12          parse_statement <cycle 1> [52]
+                0.00    0.00       8/12          parse_value [53]
+[48]     0.0    0.00    0.00      12         parse_expression [48]
+                0.00    0.00      24/94          get_token [18]
+                0.00    0.00      12/65          add_token_to_buffer [20]
+                0.00    0.00       8/16          get_symbol_table_for_function [37]
+                0.00    0.00       8/12          is_declared_in_function [46]
+                0.00    0.00       6/7           init_token_buffer [55]
+                0.00    0.00       6/6           get_psa [58]
+                0.00    0.00       6/7           free_token_buffer [54]
+                0.00    0.00       4/24          get_symbol_table_function_item [32]
+-----------------------------------------------
+                0.00    0.00       1/10          parse_method_element [90]
+                0.00    0.00       9/10          add_builtin_functions [96]
+[49]     0.0    0.00    0.00      10         insert_function_symbol_table [49]
+                0.00    0.00      10/15          create_symbol_table_item [38]
+                0.00    0.00      10/10          insert_symbol_table_item [50]
+                0.00    0.00       9/31          copy_string [27]
+-----------------------------------------------
+                0.00    0.00      10/10          insert_function_symbol_table [49]
+[50]     0.0    0.00    0.00      10         insert_symbol_table_item [50]
+                0.00    0.00      10/10          insert_symbol_table_item_class [51]
+-----------------------------------------------
+                0.00    0.00      10/10          insert_symbol_table_item [50]
+[51]     0.0    0.00    0.00      10         insert_symbol_table_item_class [51]
+                0.00    0.00      10/48          get_symbol_table_for_class [22]
+                0.00    0.00      10/17          ht_insert [35]
+-----------------------------------------------
+                                   4             parse_statement_list <cycle 1> [93]
+                0.00    0.00       4/4           parse_element_list [68]
+[52]     0.0    0.00    0.00       8         parse_statement <cycle 1> [52]
+                0.00    0.00      12/94          get_token [18]
+                0.00    0.00       6/6           parse_call_assign [59]
+                0.00    0.00       5/13          generate [42]
+                0.00    0.00       5/13          InsertLast [39]
+                0.00    0.00       2/3           is_declared [74]
+                0.00    0.00       2/16          get_symbol_table_for_function [37]
+                0.00    0.00       2/12          is_declared_in_function [46]
+                0.00    0.00       2/24          get_symbol_table_function_item [32]
+                0.00    0.00       2/2           js_push [83]
+                0.00    0.00       2/12          parse_expression [48]
+                0.00    0.00       2/2           js_top [84]
+                0.00    0.00       2/2           set_label [95]
+                0.00    0.00       2/2           js_pop [82]
+                0.00    0.00       1/1           is_special_id_declared [110]
+                0.00    0.00       1/3           get_symbol_table_special_id_item [72]
+                                   2             parse_condition_list <cycle 1> [87]
+-----------------------------------------------
+                0.00    0.00       4/8           parse_call_assign [59]
+                0.00    0.00       4/8           parse_method_element [90]
+[53]     0.0    0.00    0.00       8         parse_value [53]
+                0.00    0.00       8/94          get_token [18]
+                0.00    0.00       8/12          parse_expression [48]
+-----------------------------------------------
+                0.00    0.00       1/7           cleanup_resources [130]
+                0.00    0.00       6/7           parse_expression [48]
+[54]     0.0    0.00    0.00       7         free_token_buffer [54]
+-----------------------------------------------
+                0.00    0.00       1/7           parse [85]
+                0.00    0.00       6/7           parse_expression [48]
+[55]     0.0    0.00    0.00       7         init_token_buffer [55]
+-----------------------------------------------
+                0.00    0.00       6/6           get_psa [58]
+[56]     0.0    0.00    0.00       6         PSInit [56]
+-----------------------------------------------
+                0.00    0.00       6/6           get_psa [58]
+[57]     0.0    0.00    0.00       6         PSPrint [57]
+-----------------------------------------------
+                0.00    0.00       6/6           parse_expression [48]
+[58]     0.0    0.00    0.00       6         get_psa [58]
+                0.00    0.00      48/48          PSTopTerm [21]
+                0.00    0.00      24/24          decode_table [31]
+                0.00    0.00      18/30          PSPush [29]
+                0.00    0.00      18/18          get_next_token_psa [34]
+                0.00    0.00      18/30          PSTopTermPtr [30]
+                0.00    0.00      12/12          insert_handle [45]
+                0.00    0.00      12/12          init_item [44]
+                0.00    0.00      12/12          choose_rule [43]
+                0.00    0.00       6/37          get_symbol_table_class_item [26]
+                0.00    0.00       6/65          add_token_to_buffer [20]
+                0.00    0.00       6/6           PSInit [56]
+                0.00    0.00       6/6           PSPrint [57]
+-----------------------------------------------
+                0.00    0.00       6/6           parse_statement <cycle 1> [52]
+[59]     0.0    0.00    0.00       6         parse_call_assign [59]
+                0.00    0.00       8/94          get_token [18]
+                0.00    0.00       4/8           parse_value [53]
+                0.00    0.00       2/2           parse_param_value [92]
+                0.00    0.00       1/3           get_symbol_table_special_id_item [72]
+-----------------------------------------------
+                0.00    0.00       5/5           i_init_frame [104]
+[60]     0.0    0.00    0.00       5         decode_type [60]
+-----------------------------------------------
+                0.00    0.00       5/5           init_item [44]
+[61]     0.0    0.00    0.00       5         insert_int_const [61]
+-----------------------------------------------
+                0.00    0.00       4/4           parse_method_element [90]
+[62]     0.0    0.00    0.00       4         append_type [62]
+                0.00    0.00       4/68          append_char [19]
+-----------------------------------------------
+                                   4             ht_free <cycle 3> [64]
+[63]     0.0    0.00    0.00       4         ht_clear_all <cycle 3> [63]
+                                  13             dispose_class_symbol_table <cycle 3> [40]
+                                   2             dispose_class_list <cycle 3> [78]
+-----------------------------------------------
+                                   1             dispose_class_symbol_table <cycle 3> [40]
+                                   2             dispose_class_list <cycle 3> [78]
+                0.00    0.00       1/1           free_class_list [101]
+[64]     0.0    0.00    0.00       4         ht_free <cycle 3> [64]
+                                   4             ht_clear_all <cycle 3> [63]
+-----------------------------------------------
+                0.00    0.00       1/4           init_class_list [107]
+                0.00    0.00       1/4           create_function_symbol_table [98]
+                0.00    0.00       2/4           insert_class [79]
+[65]     0.0    0.00    0.00       4         ht_init [65]
+-----------------------------------------------
+                0.00    0.00       2/4           set_label [95]
+                0.00    0.00       2/4           generate [42]
+[66]     0.0    0.00    0.00       4         insert_special_const [66]
+-----------------------------------------------
+                                   2             parse_method_declaration <cycle 2> [89]
+                0.00    0.00       2/2           parse_class_list [86]
+[67]     0.0    0.00    0.00       4         parse_class_element <cycle 2> [67]
+                                   2             parse_declaration_element <cycle 2> [88]
+-----------------------------------------------
+                0.00    0.00       4/4           parse_method_element [90]
+[68]     0.0    0.00    0.00       4         parse_element_list [68]
+                0.00    0.00       4/4           parse_statement <cycle 1> [52]
+-----------------------------------------------
+                0.00    0.00       4/4           parse_method_element [90]
+[69]     0.0    0.00    0.00       4         parse_param [69]
+                0.00    0.00       4/94          get_token [18]
+-----------------------------------------------
+                0.00    0.00       3/3           choose_rule [43]
+[70]     0.0    0.00    0.00       3         expr_check [70]
+-----------------------------------------------
+                0.00    0.00       3/3           choose_rule [43]
+[71]     0.0    0.00    0.00       3         generate_tmp_var [71]
+                0.00    0.00       3/3           insert_tmp_variable_symbol_table_function [73]
+-----------------------------------------------
+                0.00    0.00       1/3           parse_call_assign [59]
+                0.00    0.00       1/3           parse_statement <cycle 1> [52]
+                0.00    0.00       1/3           is_special_id_declared [110]
+[72]     0.0    0.00    0.00       3         get_symbol_table_special_id_item [72]
+                0.00    0.00       3/31          copy_string [27]
+                0.00    0.00       3/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                0.00    0.00       3/3           generate_tmp_var [71]
+[73]     0.0    0.00    0.00       3         insert_tmp_variable_symbol_table_function [73]
+                0.00    0.00       3/15          create_symbol_table_item [38]
+                0.00    0.00       3/37          get_symbol_table_class_item [26]
+                0.00    0.00       3/17          ht_insert [35]
+-----------------------------------------------
+                0.00    0.00       1/3           parse_method_element [90]
+                0.00    0.00       2/3           parse_statement <cycle 1> [52]
+[74]     0.0    0.00    0.00       3         is_declared [74]
+                0.00    0.00       3/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                0.00    0.00       1/2           cleanup_resources [130]
+                0.00    0.00       1/2           dispose_class_symbol_table <cycle 3> [40]
+[75]     0.0    0.00    0.00       2         DisposeList [75]
+                0.00    0.00      13/13          dispose_inst [41]
+-----------------------------------------------
+                0.00    0.00       2/2           interpret_tac <cycle 4> [2]
+[76]     0.0    0.00    0.00       2         First [76]
+-----------------------------------------------
+                0.00    0.00       1/2           main [3]
+                0.00    0.00       1/2           parse_declaration_element <cycle 2> [88]
+[77]     0.0    0.00    0.00       2         InitList [77]
+-----------------------------------------------
+                                   2             ht_clear_all <cycle 3> [63]
+[78]     0.0    0.00    0.00       2         dispose_class_list <cycle 3> [78]
+                                   2             ht_free <cycle 3> [64]
+-----------------------------------------------
+                0.00    0.00       1/2           parse_class_list [86]
+                0.00    0.00       1/2           add_builtin_functions [96]
+[79]     0.0    0.00    0.00       2         insert_class [79]
+                0.00    0.00       2/4           ht_init [65]
+                0.00    0.00       2/17          ht_insert [35]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_method_element [90]
+[80]     0.0    0.00    0.00       2         insert_function_variable_symbol_table [80]
+                0.00    0.00       2/15          create_symbol_table_item [38]
+                0.00    0.00       2/17          ht_insert [35]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_method_element [90]
+[81]     0.0    0.00    0.00       2         insert_instr_tape_for_function [81]
+                0.00    0.00       2/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_statement <cycle 1> [52]
+[82]     0.0    0.00    0.00       2         js_pop [82]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_statement <cycle 1> [52]
+[83]     0.0    0.00    0.00       2         js_push [83]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_statement <cycle 1> [52]
+[84]     0.0    0.00    0.00       2         js_top [84]
+-----------------------------------------------
+                0.00    0.00       2/2           main [3]
+[85]     0.0    0.00    0.00       2         parse [85]
+                0.00    0.00       2/94          get_token [18]
+                0.00    0.00       2/2           parse_class_list [86]
+                0.00    0.00       1/7           init_token_buffer [55]
+                0.00    0.00       1/1           js_init [113]
+                0.00    0.00       1/1           init_class_list [107]
+                0.00    0.00       1/1           add_builtin_functions [96]
+                0.00    0.00       1/37          get_symbol_table_class_item [26]
+-----------------------------------------------
+                                   2             parse_class_list [86]
+                0.00    0.00       2/2           parse [85]
+[86]     0.0    0.00    0.00       2+2       parse_class_list [86]
+                0.00    0.00       8/94          get_token [18]
+                0.00    0.00       2/2           parse_class_element <cycle 2> [67]
+                0.00    0.00       1/1           exists_class [100]
+                0.00    0.00       1/2           insert_class [79]
+                0.00    0.00       1/2           set_current_class [94]
+                                   2             parse_class_list [86]
+-----------------------------------------------
+                                   2             parse_statement <cycle 1> [52]
+[87]     0.0    0.00    0.00       2         parse_condition_list <cycle 1> [87]
+                0.00    0.00       4/94          get_token [18]
+                                   2             parse_statement_list <cycle 1> [93]
+-----------------------------------------------
+                                   2             parse_class_element <cycle 2> [67]
+[88]     0.0    0.00    0.00       2         parse_declaration_element <cycle 2> [88]
+                0.00    0.00       6/94          get_token [18]
+                0.00    0.00       1/1           create_function_symbol_table [98]
+                0.00    0.00       1/23          init_string [33]
+                0.00    0.00       1/1           create_function_instr_tape [97]
+                0.00    0.00       1/2           InitList [77]
+                0.00    0.00       1/37          get_symbol_table_class_item [26]
+                                   2             parse_method_declaration <cycle 2> [89]
+-----------------------------------------------
+                                   2             parse_declaration_element <cycle 2> [88]
+[89]     0.0    0.00    0.00       2         parse_method_declaration <cycle 2> [89]
+                0.00    0.00       2/94          get_token [18]
+                0.00    0.00       2/2           parse_param_list [91]
+                                   2             parse_class_element <cycle 2> [67]
+-----------------------------------------------
+                                   8             parse_method_element [90]
+                0.00    0.00       2/2           parse_param_list [91]
+[90]     0.0    0.00    0.00       2+8       parse_method_element [90]
+                0.00    0.00       8/94          get_token [18]
+                0.00    0.00       4/4           append_type [62]
+                0.00    0.00       4/4           parse_param [69]
+                0.00    0.00       4/8           parse_value [53]
+                0.00    0.00       4/4           parse_element_list [68]
+                0.00    0.00       3/13          generate [42]
+                0.00    0.00       3/13          InsertLast [39]
+                0.00    0.00       2/31          copy_string [27]
+                0.00    0.00       2/2           insert_instr_tape_for_function [81]
+                0.00    0.00       2/12          is_declared_in_function [46]
+                0.00    0.00       2/2           insert_function_variable_symbol_table [80]
+                0.00    0.00       2/16          get_symbol_table_for_function [37]
+                0.00    0.00       2/24          get_symbol_table_function_item [32]
+                0.00    0.00       1/3           is_declared [74]
+                0.00    0.00       1/10          insert_function_symbol_table [49]
+                0.00    0.00       1/37          get_symbol_table_class_item [26]
+                                   8             parse_method_element [90]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_method_declaration <cycle 2> [89]
+[91]     0.0    0.00    0.00       2         parse_param_list [91]
+                0.00    0.00       6/94          get_token [18]
+                0.00    0.00       2/2           parse_method_element [90]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_call_assign [59]
+[92]     0.0    0.00    0.00       2         parse_param_value [92]
+                0.00    0.00       2/94          get_token [18]
+                0.00    0.00       2/12          parse_expression [48]
+-----------------------------------------------
+                                   4             parse_statement_list <cycle 1> [93]
+                                   2             parse_condition_list <cycle 1> [87]
+[93]     0.0    0.00    0.00       2+4       parse_statement_list <cycle 1> [93]
+                                   4             parse_statement <cycle 1> [52]
+                                   4             parse_statement_list <cycle 1> [93]
+-----------------------------------------------
+                0.00    0.00       1/2           parse_class_list [86]
+                0.00    0.00       1/2           add_builtin_functions [96]
+[94]     0.0    0.00    0.00       2         set_current_class [94]
+-----------------------------------------------
+                0.00    0.00       2/2           parse_statement <cycle 1> [52]
+[95]     0.0    0.00    0.00       2         set_label [95]
+                0.00    0.00       2/4           insert_special_const [66]
+-----------------------------------------------
+                0.00    0.00       1/1           parse [85]
+[96]     0.0    0.00    0.00       1         add_builtin_functions [96]
+                0.00    0.00      16/31          copy_string [27]
+                0.00    0.00       9/10          insert_function_symbol_table [49]
+                0.00    0.00       1/2           insert_class [79]
+                0.00    0.00       1/2           set_current_class [94]
+-----------------------------------------------
+                0.00    0.00       1/1           parse_declaration_element <cycle 2> [88]
+[97]     0.0    0.00    0.00       1         create_function_instr_tape [97]
+-----------------------------------------------
+                0.00    0.00       1/1           parse_declaration_element <cycle 2> [88]
+[98]     0.0    0.00    0.00       1         create_function_symbol_table [98]
+                0.00    0.00       1/4           ht_init [65]
+-----------------------------------------------
+                0.00    0.00       1/1           pop_frame [114]
+[99]     0.0    0.00    0.00       1         dispose_frame [99]
+-----------------------------------------------
+                0.00    0.00       1/1           parse_class_list [86]
+[100]    0.0    0.00    0.00       1         exists_class [100]
+                0.00    0.00       1/48          get_symbol_table_for_class [22]
+-----------------------------------------------
+                0.00    0.00       1/1           cleanup_resources [130]
+[101]    0.0    0.00    0.00       1         free_class_list [101]
+                0.00    0.00       1/1           ht_free <cycle 3> [64]
+-----------------------------------------------
+                0.00    0.00       1/1           cleanup_resources [130]
+[102]    0.0    0.00    0.00       1         free_constants [102]
+-----------------------------------------------
+                                   1             interpret_tac <cycle 4> [2]
+[103]    0.0    0.00    0.00       1         i_f_call <cycle 4> [103]
+                0.00    0.00       1/1           push_frame [116]
+                0.00    0.00       1/1           pop_frame [114]
+                                   1             interpret_tac <cycle 4> [2]
+-----------------------------------------------
+                0.00    0.00       1/1           interpret_tac <cycle 4> [2]
+[104]    0.0    0.00    0.00       1         i_init_frame [104]
+                0.00    0.00       5/5           decode_type [60]
+                0.00    0.00       1/1           init_frame [108]
+-----------------------------------------------
+                0.00    0.00       1/1           interpret_tac <cycle 4> [2]
+[105]    0.0    0.00    0.00       1         i_print [105]
+                0.00    0.00       1/1           print [115]
+-----------------------------------------------
+                0.00    0.00       1/1           interpret_tac <cycle 4> [2]
+[106]    0.0    0.00    0.00       1         i_return [106]
+-----------------------------------------------
+                0.00    0.00       1/1           parse [85]
+[107]    0.0    0.00    0.00       1         init_class_list [107]
+                0.00    0.00       1/4           ht_init [65]
+-----------------------------------------------
+                0.00    0.00       1/1           i_init_frame [104]
+[108]    0.0    0.00    0.00       1         init_frame [108]
+-----------------------------------------------
+                0.00    0.00       1/1           main [3]
+[109]    0.0    0.00    0.00       1         init_scanner [109]
+-----------------------------------------------
+                0.00    0.00       1/1           parse_statement <cycle 1> [52]
+[110]    0.0    0.00    0.00       1         is_special_id_declared [110]
+                0.00    0.00       1/3           get_symbol_table_special_id_item [72]
+-----------------------------------------------
+                0.00    0.00       1/1           get_next_token [23]
+[111]    0.0    0.00    0.00       1         is_special_id_ok [111]
+                0.00    0.00       1/31          copy_string [27]
+-----------------------------------------------
+                0.00    0.00       1/1           cleanup_resources [130]
+[112]    0.0    0.00    0.00       1         js_free [112]
+-----------------------------------------------
+                0.00    0.00       1/1           parse [85]
+[113]    0.0    0.00    0.00       1         js_init [113]
+-----------------------------------------------
+                0.00    0.00       1/1           i_f_call <cycle 4> [103]
+[114]    0.0    0.00    0.00       1         pop_frame [114]
+                0.00    0.00       1/1           dispose_frame [99]
+-----------------------------------------------
+                0.00    0.00       1/1           i_print [105]
+[115]    0.0    0.00    0.00       1         print [115]
+-----------------------------------------------
+                0.00    0.00       1/1           i_f_call <cycle 4> [103]
+[116]    0.0    0.00    0.00       1         push_frame [116]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [75] DisposeList            [37] get_symbol_table_for_function [2] interpret_tac
+  [76] First                  [32] get_symbol_table_function_item [74] is_declared
+  [77] InitList               [72] get_symbol_table_special_id_item [46] is_declared_in_function
+  [39] InsertLast             [18] get_token             [110] is_special_id_declared
+  [56] PSInit                 [15] hash_code             [111] is_special_id_ok
+  [28] PSPop                  [63] ht_clear_all           [47] is_top_terminal
+  [57] PSPrint                [64] ht_free               [112] js_free
+  [29] PSPush                 [65] ht_init               [113] js_init
+  [21] PSTopTerm              [35] ht_insert              [82] js_pop
+  [30] PSTopTermPtr           [17] ht_read                [83] js_push
+  [96] add_builtin_functions  [16] ht_search              [84] js_top
+  [20] add_token_to_buffer     [4] i_add_i                [85] parse
+  [19] append_char             [6] i_assign_i             [59] parse_call_assign
+  [62] append_type             [9] i_assign_s             [67] parse_class_element
+  [43] choose_rule           [103] i_f_call               [86] parse_class_list
+  [27] copy_string             [7] i_goto                 [87] parse_condition_list
+  [97] create_function_instr_tape [104] i_init_frame      [88] parse_declaration_element
+  [98] create_function_symbol_table [8] i_jnt             [68] parse_element_list
+  [38] create_symbol_table_item [5] i_ne_i                [48] parse_expression
+  [31] decode_table          [105] i_print                [89] parse_method_declaration
+  [60] decode_type           [106] i_return               [90] parse_method_element
+  [36] detect_keyword         [10] i_rstr                 [69] parse_param
+  [78] dispose_class_list     [11] i_to_str               [91] parse_param_list
+  [40] dispose_class_symbol_table [107] init_class_list   [92] parse_param_value
+  [99] dispose_frame         [108] init_frame             [52] parse_statement
+  [41] dispose_inst           [44] init_item              [93] parse_statement_list
+ [100] exists_class          [109] init_scanner           [53] parse_value
+  [70] expr_check             [33] init_string           [114] pop_frame
+ [101] free_class_list        [55] init_token_buffer     [115] print
+ [102] free_constants         [79] insert_class          [116] push_frame
+  [54] free_token_buffer      [49] insert_function_symbol_table [25] save_token
+  [42] generate               [80] insert_function_variable_symbol_table [94] set_current_class
+  [71] generate_tmp_var       [45] insert_handle          [95] set_label
+  [23] get_next_token         [81] insert_instr_tape_for_function [12] <cycle 1>
+  [24] get_next_token_buffer  [61] insert_int_const       [13] <cycle 2>
+  [34] get_next_token_psa     [66] insert_special_const   [14] <cycle 3>
+  [58] get_psa                [50] insert_symbol_table_item [1] <cycle 4>
+  [26] get_symbol_table_class_item [51] insert_symbol_table_item_class
+  [22] get_symbol_table_for_class [73] insert_tmp_variable_symbol_table_function

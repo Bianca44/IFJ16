@@ -461,7 +461,7 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     frame_stack.top->frame->ret_val = op1;
-    Last(processed_tape);
+    Last_M(processed_tape);
 }
 
 //BUILT-IN
