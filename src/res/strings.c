@@ -49,9 +49,6 @@ bool append_char(string_t *str, char c) {
 }
 
 void free_string(string_t *str) {
-        if (str->data != NULL) {
-                free(str->data);
-                str->data = NULL;
-        }
+        free(str->data);
         clear_string(str);
 }

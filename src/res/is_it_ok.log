@@ -1,0 +1,50 @@
+Archive:  xbolva00.zip
+  inflating: builtin.c               
+  inflating: dma.c                   
+  inflating: expr.c                  
+  inflating: ial.c                   
+  inflating: instructions.c          
+  inflating: interpret.c             
+  inflating: list.c                  
+  inflating: main.c                  
+  inflating: memory_constants.c      
+  inflating: parser.c                
+  inflating: precedence_stack.c      
+  inflating: scanner.c               
+  inflating: strings.c               
+  inflating: symbol_table.c          
+  inflating: test_debug.c            
+  inflating: token_buffer.c          
+  inflating: token_buffer_test.c     
+  inflating: builtin.h               
+  inflating: debug.h                 
+  inflating: dma.h                   
+  inflating: error_codes.h           
+  inflating: expr.h                  
+  inflating: ial.h                   
+  inflating: instructions.h          
+  inflating: interpret.h             
+  inflating: list.h                  
+  inflating: memory_constants.h      
+  inflating: parser.h                
+  inflating: precedence_stack.h      
+  inflating: scanner.h               
+  inflating: strings.h               
+  inflating: symbol_table.h          
+  inflating: token_buffer.h          
+  inflating: Makefile                
+gcc -std=c11 -pedantic -Wall -Wextra   -c -o test_debug.o test_debug.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o instructions.o instructions.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o DLList.o list.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o interpret.o interpret.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o ial.o ial.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o symbol_table.o symbol_table.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o strings.o strings.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o memory_constants.o memory_constants.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o builtin.o builtin.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o parser.o parser.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o expr.o expr.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o token_buffer.o token_buffer.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o precedence_stack.o precedence_stack.c
+gcc -std=c11 -pedantic -Wall -Wextra -c -o scanner.o scanner.c
+gcc -std=c11 -pedantic -Wall -Wextra -o test test_debug.o instructions.o DLList.o interpret.o ial.o symbol_table.o strings.o memory_constants.o builtin.o parser.o expr.o token_buffer.o precedence_stack.o scanner.o list.h
