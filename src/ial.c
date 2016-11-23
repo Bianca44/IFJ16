@@ -176,7 +176,7 @@ void quick_sort(char *str, int left, int right) {
         if (left < j) {
                 quick_sort(str, left, j);
         }
-        if (right < i) {
+        if (i < right) {
                 quick_sort(str, i, right);
         }
 }
@@ -216,7 +216,7 @@ void compute_char_jump(char *p, int char_jump[]) {
 
         int length_p = strlen(p) - 1;
 
-        for(int k = 0; k < ALPHABET; k++) {
+        for(int k = 0; k < ASCII_SIZE; k++) {
                 char_jump[k] = length_p;
         }
 
@@ -231,7 +231,7 @@ void compute_match_jump(char* p, int match_jump[]) {
         int k = 0;
         int q = 0;
         int qq = 0;
-        int backup[ALPHABET];
+        int backup[ASCII_SIZE];
 
         for(k = 0; k < length_p + 1; k++) {
                 match_jump[k] = 2 * length_p - k;
@@ -270,7 +270,7 @@ int find_bma(char *p, char *t) {
         int m = strlen(p);
         int n = strlen(t);
         int j = m;
-        int char_jump[ALPHABET];
+        int char_jump[ASCII_SIZE];
         int match_jump[m];
 
         compute_char_jump(p, char_jump);

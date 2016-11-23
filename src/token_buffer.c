@@ -52,15 +52,7 @@ char *tr_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_L
 void free_token_buffer(token_buffer_t *token_buf) {
         if (token_buf == NULL) return;
         for (int i = 0; i < token_buf->length; i++) {
-
-                int type = token_buf->list[i]->type;
-                if (type == ID || type == SPECIAL_ID || type == STRING_LITERAL) {
-                        if (token_buf->list[i]->string_value != NULL) {
-                                free(token_buf->list[i]->string_value);
-                        }
-                }
-
-                free(token_buf->list[i]);
+            free(token_buf->list[i]);
         }
 
         if (token_buf->list != NULL) {

@@ -27,11 +27,11 @@ int main(int argc, char *argv[]) {
         }
 
         tDLList inst_tape;
-        DLInitList(&inst_tape, NULL /*todo */);
+        DLInitList(&inst_tape, dispose_inst);
 
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
-                return SYNTACTIC_ANALYSIS_ERROR;
+                cleanup_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
 
         parse(&inst_tape);
@@ -45,7 +45,5 @@ int main(int argc, char *argv[]) {
         processed_tape = &inst_tape;
         interpret_tac(&inst_tape);
 
-        //DLDisposeList(&inst_tape);
-
-        return INTERPRET_OK;
+        cleanup_exit(INTERPRET_OK);
 }

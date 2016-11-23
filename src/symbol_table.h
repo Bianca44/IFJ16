@@ -5,8 +5,9 @@
 #include "ial.h"
 #include "strings.h"
 #include "DLList.h"
-// TODO
-#define SYMBOL_TABLE_SIZE 11
+
+#define CLASS_TABLE_SIZE 11
+#define SYMBOL_TABLE_SIZE 101
 #define TMP_VAR_NAME_SIZE 8
 
 #define CONSTANT -1

@@ -18,23 +18,24 @@ void dispose_class_list(tData data) {
 /* Zrusi tabulku symbolov pre triedu */
 void dispose_class_symbol_table(tData data) {
         symbol_table_item_t * item = (symbol_table_item_t *) data;
-        //printf("FREE %s\n", item->id_name);
-        //free(item->id_name);
+        free(item->id_name);
 
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-                        //free(item->function.param_data_types);
+                        free(item->function.param_data_types);
+                }
+                if (item->function.local_vars_data_types != NULL) {
+                        free(item->function.local_vars_data_types);
                 }
                 if (item->function.symbol_table != NULL) {
                         ht_free((symbol_table_t *)(item->function.symbol_table));
                 }
-                // pasku
-                //ht_free((symbol_table_t *)(item->function.symbol_table));
+
+                if (item->function.instruction_tape != NULL) {
+                        DLDisposeList(item->function.instruction_tape);
+                }
         } else {
-                //if (item->variable.s != NULL) {
-                       // free(item->variable.s);
-                //}
                 if(item->variable.initialized && item->variable.data_type == STRING){
                     free(item->variable.s);
                 }
@@ -44,7 +45,7 @@ void dispose_class_symbol_table(tData data) {
 
 /* Inicializacia zoznamu tried */
 void init_class_list() {
-        class_list = ht_init(SYMBOL_TABLE_SIZE, hash_code, dispose_class_list); /* TODO */
+        class_list = ht_init(CLASS_TABLE_SIZE, hash_code, dispose_class_list);
 }
 
 /* Nastavi aktualnu triedu */
@@ -151,7 +152,6 @@ symbol_table_item_t * insert_function_symbol_table(char * id_name, int data_type
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
         if (local_vars_data_types == NULL) {
-            /* compatibility */
             local_vars_data_types = copy_string("");
         }
         p->function.local_vars_data_types = local_vars_data_types;

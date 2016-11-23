@@ -391,19 +391,7 @@ int get_next_token(token_t *t) {
 
 }
 
-
-void close_file() {
-        fclose(file);
-}
-
 FILE* init_scanner(char *filename) {
         file = fopen(filename, "r");
-
-        if (file == NULL) {
-                return NULL;
-        } else {
-                atexit(close_file);
-        }
-
         return file;
 }

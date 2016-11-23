@@ -1,7 +1,7 @@
 #ifndef IAL_H
 #define IAL_H
 
-#define ALPHABET 256
+#define ASCII_SIZE 256
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
 #define MIN(a,b) (((a)<(b)) ? (a) : (b))
 
