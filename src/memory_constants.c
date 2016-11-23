@@ -108,54 +108,21 @@ tVar * insert_special_const(constant_t **const_arr, void * special) {
 
 
 void free_constants(constant_t **const_arr) {
-    if (const_arr == NULL) {
-            return;
-    }
-    constant_t * tmp = *const_arr;
-    constant_t * next = NULL;
-    while (tmp != NULL) {
-        if (tmp->data->data_type == STRING) {
-            //free(tmp->data->s);
+        if (const_arr == NULL) {
+                return;
         }
-
-        free(tmp->data);
-        next = tmp->next;
-        free(tmp);
-        tmp = next;
-    }
-    *const_arr = NULL;
-}
-
-
-
-int main3() {
-        constant_t *head = NULL;
-        insert_int_const(&head, 5000);
-        insert_int_const(&head, 5000);
-        insert_int_const(&head, 5000);
-        insert_double_const(&head, 26.5);
-        insert_string_const(&head, "test");
-        insert_string_const(&head, "test2");
-        insert_boolean_const(&head, false);
-
-        constant_t * tmp = head;
-
+        constant_t * tmp = *const_arr;
+        constant_t * next = NULL;
         while (tmp != NULL) {
-            switch (tmp->data->data_type) {
-                case INT:
-                        printf("%d\n", tmp->data->i);
-                        break;
-                case DOUBLE: printf("%g\n", tmp->data->d);
-                break;
-                case STRING: printf("%s\n", tmp->data->s);
-                break;
-                case BOOLEAN: printf("%s\n", (tmp->data->b) ? "true" : "false");
-                break;
+                if (tmp->data->data_type == STRING) {
+                        free(tmp->data->s);
                 }
 
-                tmp = tmp->next;
+                free(tmp->data);
+                tmp->data = NULL;
+                next = tmp->next;
+                free(tmp);
+                tmp = next;
         }
-
-        free_constants(&head);
-        return 0;
+        *const_arr = NULL;
 }

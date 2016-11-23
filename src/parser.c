@@ -59,7 +59,7 @@ extern FILE* file;
 void cleanup_resources() {
         fclose(file);
         DisposeList(global_inst_tape);
-
+        js_free();
         free_constants(&mem_constants);
         free_token_buffer(&token_buffer);
         free_class_list();

@@ -1,7 +1,7 @@
 class Main {
-    static int a;
+
     static void run () {
-            Main._ =2;
+            int b =2;
             if (9) {
 
 

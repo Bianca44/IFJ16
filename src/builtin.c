@@ -44,7 +44,6 @@ int read_int() {
                 c = getchar();
                 if (c =='\n' || c == EOF) {
                         int num = atoi(s.data);
-                        free_string(&s);
                         return num;
                 }
 
@@ -52,7 +51,6 @@ int read_int() {
                         append_char(&s, c);
                 } else {
                         fprintf(stderr, "Wrongly entered integer from input.\n");
-                        free_string(&s);
                         exit(RUN_INPUT_ERROR);
                 }
         }
@@ -67,7 +65,7 @@ double read_double() {
                 c = getchar();
                 if (c =='\n' || c == EOF) {
                         double num = atof(s.data);
-                        free_string(&s);
+
                         return num;
                 }
                 switch (state) {
@@ -76,7 +74,6 @@ double read_double() {
                                 state = 1;
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
-                                free_string(&s);
                                 exit(RUN_INPUT_ERROR);
                 }
                         break;
@@ -88,7 +85,6 @@ double read_double() {
                                 state = 2;
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
-                                free_string(&s);
                                 exit(RUN_INPUT_ERROR);
                 }
                         break;
@@ -97,7 +93,6 @@ double read_double() {
                                 state = 3;
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
-                                free_string(&s);
                                 exit(RUN_INPUT_ERROR);
                                 return -1;
                 }
@@ -110,7 +105,6 @@ double read_double() {
                                 state = 4;
                 } else {
                                 fprintf(stderr, "Wrongly entered double from input.\n");
-                                free_string(&s);
                                 exit(RUN_INPUT_ERROR);
                                 return -1;
                 }
@@ -140,29 +134,6 @@ char * read_string() {
         }
 }
 
-int main2 () { /* TODO REMOVE */
-
-        //length
-        char str [] = "blablabla";
-        int dlzka = length(str);
-        printf("String length is: %d\n", dlzka);
-
-        //compare
-        char string1 [] = "ahoj";
-        char string2 [] = "cau";
-        int comparison = compare(string1, string2);
-        printf("Vysledok porovnavania: %d\n", comparison);
-
-        //substr
-        char source [] = "Cauko volam sa Tamara";
-        int position = 6;
-        int length_of_substring = 4;
-        char *ot = substr(source, position, length_of_substring);
-        printf("Substr: %s\n", ot);
-
-        return 0;
-}
-
 int length(char *string) {
         return strlen(string);
 }
@@ -187,7 +158,7 @@ char *substr(char *s, int i, int n) {
         }
         char *new_str = (char *) malloc((n + 1) * sizeof(char));
         if (new_str == NULL) {
-                return NULL;
+                exit(INTERNAL_INTERPRET_ERROR);
         }
         //osetrenie stavu, kedy pozadujeme zacinajuci index > ako dlzka samotneho retazca
         if (i > (int) strlen(s)) {

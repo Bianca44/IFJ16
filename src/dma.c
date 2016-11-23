@@ -31,6 +31,7 @@ void dma_free_all() {
         memory_ptr_t * next = NULL;
         while (tmp != NULL) {
                 free(tmp->memory_data_ptr);
+                tmp->memory_data_ptr = NULL;
                 next = tmp->next;
                 free(tmp);
                 tmp = next;
@@ -46,9 +47,10 @@ void dma_free(void *ptr) {
         while (tmp != NULL) {
                 if (tmp->memory_data_ptr == ptr) {
                         free(tmp->memory_data_ptr);
+                        tmp->memory_data_ptr = NULL;
                         next = tmp->next;
                         free(tmp);
-
+                        tmp = NULL;
                         if (prev == NULL) {
                                 memory_ptr_list = next;
                         } else {

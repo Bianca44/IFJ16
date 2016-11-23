@@ -32,15 +32,12 @@ int save_token(token_t *t, int type, string_t *attr) {
                         break;
                 case INT_LITERAL:
                         t->int_value = atoi(attr->data);
-                        free_string(attr);
                         break;
 
                 case DOUBLE_LITERAL:
                         t->double_value = atof(attr->data);
-                        free_string(attr);
                         break;
                 default:
-                        free_string(attr);
                         break;
                 }
         }
@@ -59,6 +56,21 @@ int detect_keyword(string_t *str) {
         }
 
         return ID;
+}
+
+int is_special_id_ok(string_t *str) {
+        char *special_id = copy_string(str->data);
+        char *delimeter = ".";
+        char *class = strtok(special_id, delimeter);
+        char *method = strtok(NULL, delimeter);
+
+        for (int i = 0; i < KEYWORDS_COUNT; i++) {
+                if (strcmp(keywords[i], class) == 0 || strcmp(keywords[i], method) == 0) {
+                        return 0;
+                }
+        }
+        free(special_id);
+        return 1;
 }
 
 int get_next_token(token_t *t) {
@@ -346,7 +358,12 @@ int get_next_token(token_t *t) {
                                 append_char(&s, c);
                         } else {
                                 ungetc(c, file);
-                                return save_token(t, SPECIAL_ID, &s);
+                                if (is_special_id_ok(&s)) {
+                                        return save_token(t, SPECIAL_ID, &s);
+                                } else {
+                                        ungetc(c, file);
+                                        return save_token(t, LEXICAL_ERROR, NULL);
+                                }
                         }
                         break;
 

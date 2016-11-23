@@ -81,9 +81,10 @@ typedef struct js_item {
 js_item *head;
 
 void js_init();
-void js_push(tElemPtr instr) ;
+void js_push(tElemPtr instr);
 tElemPtr js_top();
-void js_pop() ;
+void js_pop();
+void js_free();
 
 extern symbol_table_item_t current_variable;
 extern symbol_table_item_t function_variable;
