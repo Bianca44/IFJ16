@@ -166,59 +166,57 @@ void ht_free(tHTable *ptrht){
         free(ptrht);
 }
 
-void quick_sort(char *text, int left, int right) {
+void quick_sort(char *str, int left, int right) {
         int indexes[2];
+        partition (str, left, right, indexes);
 
-        partition(text, left, right, indexes);
-
-        int i = indexes[0], j = indexes[1];
+        int i = indexes[0];
+        int j = indexes[1];
 
         if (left < j) {
-                quick_sort(text, left, j);
+                quick_sort(str, left, j);
         }
-        if (i < right) {
-                quick_sort(text, i, right);
+        if (right < i) {
+                quick_sort(str, i, right);
         }
 }
 
-void partition(char *text, int left, int right, int indexes[]) {
+void partition (char *str, int left, int right, int indexes[]) {
         int median = 0;
-
         int i = left;
-        int j = right;
+        int j= right;
 
-        median = text[(i + j) / 2];
+        median = str[(i+j)/2];
 
         do {
-                while (text[i] < median) {
+                while (str[i] < median) {
                         i++;
                 }
 
-                while (text[j] > median) {
+                while (str[j] > median) {
                         j--;
                 }
-                if (i <= j) {
-                        int c = text[i];
 
-                        text[i] = text[j];
-                        text[j] = c;
+                if (i<=j) {
+                        int temp = str[i];
+                        str[i] = str[j];
+                        str[j] = temp;
 
                         i++;
                         j--;
                 }
         }
-        while (i <= j);
+
+        while (i<=j);
 
         indexes[0] = i;
         indexes[1] = j;
 }
-
-
-void compute_jumps(char *p, int char_jump[]) {
+void compute_char_jump(char *p, int char_jump[]) {
 
         int length_p = strlen(p) - 1;
 
-        for(int k = 0; k < MAXCHAR; k++) {
+        for(int k = 0; k < ALPHABET; k++) {
                 char_jump[k] = length_p;
         }
 
@@ -229,75 +227,68 @@ void compute_jumps(char *p, int char_jump[]) {
 
 void compute_match_jump(char* p, int match_jump[]) {
 
-        int k, q, qq, m;
-        int backup[256];
+        int length_p = strlen(p);
+        int k = 0;
+        int q = 0;
+        int qq = 0;
+        int backup[ALPHABET];
 
-        k = q = qq = m = 0;
-
-        m = strlen(p) - 1;
-
-        for (int k = 0; k <= m; k++) {
-                match_jump[k] = 2 * m - k;
+        for(k = 0; k < length_p + 1; k++) {
+                match_jump[k] = 2 * length_p - k;
         }
 
-        k = m;
-        q = m + 1;
+        k = length_p;
+        q = length_p + 1;
 
-        while (k > 0) {
+        while(k > 0) {
                 backup[k] = q;
-                while ((q <= m) && (p[k] != p[q])) {
-                        match_jump[q] = MIN(match_jump[k], m - k);
+                while(q <= length_p && p[k-1] != p[q-1]) {
+                        match_jump[q] = MIN(match_jump[q], length_p - k);
                         q = backup[q];
                 }
                 k--;
                 q--;
         }
 
-        for (k = 0; k <= q; k++) {
-                match_jump[k] = MIN(match_jump[k], m + q - k);
+        for(k = 0; k < q + 1; k++) {
+                match_jump[k] = MIN(match_jump[k], length_p + q - k);
         }
 
         qq = backup[q];
 
-        while (q < m) {
-                while (q <= qq) {
-                        match_jump[q] = MIN(match_jump[q], qq - q + m);
+        while(q <= length_p ) {
+                while(q <= qq ) {
+                        match_jump[q] = MIN(match_jump[q], qq - q + length_p);
                         q++;
                 }
                 qq = backup[qq];
         }
-
 }
 
 int find_bma(char *p, char *t) {
-        int j, k;
-        j = k = 0;
+        // BMA
+        int m = strlen(p);
+        int n = strlen(t);
+        int j = m;
+        int char_jump[ALPHABET];
+        int match_jump[m];
 
-        int char_jump[MAXCHAR];
-        int match_jump[MAXCHAR];
+        compute_char_jump(p, char_jump);
+        compute_match_jump(p, match_jump);
 
-
-        compute_jumps(t, char_jump);
-
-        compute_match_jump(t, match_jump);
-
-        j = k = strlen(t) - 1;
-
-        int len = strlen(p);
-
-        while ((j <= len) && (k > 0)) {
-                if (p[j] == t[k]) {
+        while(j <= n && m > 0) {
+                if( t[j-1] == p[m-1]) {
                         j--;
-                        k--;
-                } else {
-                        j = j + MAX(char_jump[(int) p[j]], match_jump[k]);
-                        k = strlen(t) - 1;
+                        m--;
                 }
-
+                else {
+                        j = j + MAX(char_jump[(int)t[j]], match_jump[m]);
+                        m = strlen(p);
+                }
         }
-
-        if (k == 0) {
-                return j + 1;
+        if (m == 0) {
+                // Java indexes from 0
+                return j;
         } else {
                 return -1;
         }

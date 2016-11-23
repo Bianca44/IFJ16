@@ -14,12 +14,12 @@ void sort(char *str) {
         quick_sort(str, 0, (strlen(str)-1));
 }
 
-int find(char *p, char *t) {
-        return find_bma(p, t);
+int find(char *text, char *search) {
+        return find_bma(search, text);
 }
 
 void print(tVar *var) {
-    switch (var->data_type) {
+        switch (var->data_type) {
         case STRING:
                 printf("%s", var->s);
                 break;
@@ -33,7 +33,7 @@ void print(tVar *var) {
         case BOOLEAN:
                 printf("%s", (var->b) ? "true" : "false");
                 break;
-    }
+        }
 }
 
 int read_int() {
