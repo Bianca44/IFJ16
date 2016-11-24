@@ -666,6 +666,25 @@ int parse_call_assign() {
                 function_name_call = t.string_value;
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET) {
+                    if (is_second_pass) {
+                        symbol_table_item_t *var = NULL;
+
+                        if (strchr(function_variable.id_name, '.') != NULL) {
+                                var = get_symbol_table_special_id_item(function_variable.id_name);
+                        } else {
+
+                                symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                                var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                                if (var == NULL) {
+                                        var = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                }
+                        }
+
+                        if (!var->is_function) {
+                            printf("Calling \'%s\' which is not a function.\n", function_variable.id_name);
+                            exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                        }
+                    }
                         if (parse_param_value()) {
                                 if (t.type == RIGHT_ROUNDED_BRACKET) {
                                         if (get_token() == SEMICOLON) {
