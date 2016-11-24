@@ -66,7 +66,7 @@ int get_token() {
                 t = *get_next_token_buffer(&global_token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
-                fprintf(stderr, "Lexical error: unknown token\n");
+                fprintf(stderr, "Lexical analysis failed.\n");
                 exit(LEXICAL_ANALYSIS_ERROR);
         }
         return t.type;

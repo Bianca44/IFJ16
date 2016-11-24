@@ -10,6 +10,9 @@
 #define KEYWORD_TOKENS_OFFSET (TOKENS_COUNT - KEYWORDS_COUNT)
 #define OCTAL_STRING_SIZE 4
 
+char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do", "double", "else", "false",
+                                   "for", "if", "int", "return", "String", "static", "true", "void", "while" };
+
 typedef struct {
         int type;
         union {

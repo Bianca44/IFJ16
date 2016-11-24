@@ -9,9 +9,6 @@
 
 FILE *file;
 
-char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do", "double", "else", "false",
-                                   "for", "if", "int", "return", "String", "static", "true", "void", "while" };
-
 int save_token(token_t *t, int type, string_t *attr) {
         t->type = type;
         if (attr != NULL) {
