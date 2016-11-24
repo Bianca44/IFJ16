@@ -10,9 +10,6 @@
 #define KEYWORD_TOKENS_OFFSET (TOKENS_COUNT - KEYWORDS_COUNT)
 #define OCTAL_STRING_SIZE 4
 
-char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do", "double", "else", "false",
-                                   "for", "if", "int", "return", "String", "static", "true", "void", "while" };
-
 typedef struct {
         int type;
         union {
@@ -28,7 +25,7 @@ int save_token(token_t *t, int type, string_t *attr);
 int detect_keyword(string_t *str);
 
 enum states { SPACE, IDENTIFICATOR, NUMBER, NUM_DOUBLE, SCIENTIC_DOUBLE, SLASH, COMMENT, EXCLAMATION, COMPARE_LESS, COMPARE_GREATER,
-              COMPARE_ASSIGN, QUALIFIED_ID, LITERAL, QUALIFIED_ID_END, LINE_COMMENT_END, DOUBLE_END, BLOCK_COMMENT_END, SIMPLE_DOUBLE, SCIENTIC_DOUBLE_EXP, OR, AND, LITERAL_SLASH, UNDERSCORE, QUALIFIED_ID_UNDERSCORE};
+              COMPARE_ASSIGN, QUALIFIED_ID, LITERAL, QUALIFIED_ID_END, LINE_COMMENT_END, DOUBLE_END, BLOCK_COMMENT_END, SIMPLE_DOUBLE, SCIENTIC_DOUBLE_EXP, OR, AND, LITERAL_SLASH};
 
 enum tokens { LEXICAL_ERROR, ID, INT_LITERAL, DOUBLE_LITERAL, ADD, SUB, MUL, DIV, SEMICOLON, LEFT_CURVED_BRACKET,
               RIGHT_CURVED_BRACKET, LEFT_ROUNDED_BRACKET, RIGHT_ROUNDED_BRACKET, ASSIGN, LOGICAL_AND, LOGICAL_OR,
