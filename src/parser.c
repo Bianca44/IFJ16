@@ -66,7 +66,7 @@ int get_token() {
                 t = *get_next_token_buffer(&global_token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
-                fprintf(stderr, "Lexical error: unknown token\n");
+                fprintf(stderr, "Lexical analysis failed.\n");
                 exit(LEXICAL_ANALYSIS_ERROR);
         }
         return t.type;
@@ -74,10 +74,6 @@ int get_token() {
 
 
 int parse_expression(bool ends_semicolon) {
-
-        if (t.type == SEMICOLON || t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
-                return PARSE_ERROR;
-        }
 
         token_buffer_t tb;
 
@@ -99,7 +95,7 @@ int parse_expression(bool ends_semicolon) {
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer(&tb);
-                                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                 }
                         }
@@ -113,7 +109,7 @@ int parse_expression(bool ends_semicolon) {
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer(&tb);
-                                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                 }
                         }
@@ -171,7 +167,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 if (call_function->function.params_count != params_counter) {
                                                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n", function_name_call);
                                                                         fprintf(stderr, "Function \'%s\' requires %d param(s) but is called with %d param(s).\n", function_name_call, call_function->function.params_count, params_counter);
-                                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
 
                                                                 symbol_table_item_t *var = NULL;
@@ -336,9 +332,9 @@ int parse_return_value() {
                                 }
                         }
                 } else if (t.type == SEMICOLON) {
-                        if (is_second_pass) {
+                        /*if (is_second_pass) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                        }
+                        }*/
                         return PARSED_OK;
                 }
         }
@@ -507,7 +503,7 @@ int parse_param_value () {
         }
         if (t.type == LEFT_ROUNDED_BRACKET) {
                 get_token();
-                if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
                         if (strcmp(function_name_call, "ifj16.print") != 0) {
                                 if (is_second_pass) {
                                         symbol_table_item_t * item;
@@ -651,7 +647,8 @@ int parse_param_value () {
                                 }
 
                                 if (function_item->function.params_count > 0) {
-                                        fprintf(stderr, "Missing arguments\n");
+                                        fprintf(stderr, "Missing arguments when calling function \'%s\'\n", function_name_call);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
                         }
                         return PARSED_OK;
@@ -669,6 +666,25 @@ int parse_call_assign() {
                 function_name_call = t.string_value;
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET) {
+                    if (is_second_pass) {
+                        symbol_table_item_t *var = NULL;
+
+                        if (strchr(function_variable.id_name, '.') != NULL) {
+                                var = get_symbol_table_special_id_item(function_variable.id_name);
+                        } else {
+
+                                symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                                var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                                if (var == NULL) {
+                                        var = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                }
+                        }
+
+                        if (!var->is_function) {
+                            printf("Calling \'%s\' which is not a function.\n", function_variable.id_name);
+                            exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                        }
+                    }
                         if (parse_param_value()) {
                                 if (t.type == RIGHT_ROUNDED_BRACKET) {
                                         if (get_token() == SEMICOLON) {
@@ -819,7 +835,7 @@ int parse_statement() {
         } else if (t.type == IF) {
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
@@ -841,7 +857,7 @@ int parse_statement() {
                 }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {
                         get_token();
-                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                        if (t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
@@ -942,10 +958,10 @@ int parse_method_element() {
                         current_function.function.params_count = 0;
                         current_function.function.return_type = 0;
                 } else {
-                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                        /*symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
                         if (function->function.return_type == VOID && !has_function_return) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                        }
+                        }*/
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
                 return PARSED_OK;
@@ -1105,7 +1121,7 @@ int parse_method_declaration () {
 int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
-                if (t.type == LEFT_ROUNDED_BRACKET || t.type == SEMICOLON || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
+                if (t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (parse_expression(true)) {
                                 if (is_first_pass) {
                                         if (expr_result.id_name != NULL) {
