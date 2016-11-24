@@ -19,25 +19,30 @@ void dispose_class_list(tData data) {
 /* Zrusi tabulku symbolov pre triedu */
 void dispose_class_symbol_table(tData data) {
         symbol_table_item_t * item = (symbol_table_item_t *) data;
-        //free(item->id_name);
+        if (item->id_name != NULL) {
+           // free(item->id_name);
+        }
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
-                        free(item->function.param_data_types);
+                 //       free(item->function.param_data_types);
+               //         item->function.param_data_types = NULL;
                 }
                 if (item->function.local_vars_data_types != NULL) {
-                        free(item->function.local_vars_data_types);
+            //            free(item->function.local_vars_data_types);
+           //             item->function.local_vars_data_types = NULL;
                 }
                 if (item->function.symbol_table != NULL) {
                         ht_free((symbol_table_t *)(item->function.symbol_table));
                 }
 
                 if (item->function.instruction_tape != NULL) {
-                        DisposeList(item->function.instruction_tape);
+       //                 DisposeList(item->function.instruction_tape);
                 }
         } else {
-                if(item->variable.initialized && item->variable.data_type == STRING) {
+                if(item->variable.initialized && item->variable.data_type == STRING && item->variable.s != NULL) {
                         free(item->variable.s);
+                        item->variable.s = NULL;
                 }
         }
         free(item);

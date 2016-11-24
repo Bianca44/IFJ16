@@ -31,7 +31,7 @@ void InsertFirst (tList *L, void * val) {
 
     tElemPtr item; 
     //kontrola alokovania pamati
- 	if((item = malloc(sizeof(struct tDLElem))) == NULL){
+ 	if((item = malloc(sizeof(struct tElem))) == NULL){
         //TODO
         return;
     }
@@ -52,7 +52,7 @@ void InsertLast(tList *L, void * val) {
 
     tElemPtr item; 
     //kontrola alokovania pamati
- 	if((item = malloc(sizeof(struct tDLElem))) == NULL){
+ 	if((item = malloc(sizeof(struct tElem))) == NULL){
         //TODO
         return;
     }

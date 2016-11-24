@@ -55,7 +55,7 @@ void PSPush(PStack *P,enum Terminals terms);
 void PSPop(PStack *P);
 int  PSTopTerm(PStack *P); // zistenie prveho terminalu
 PStack_item *PSTopTermPtr(PStack *P); // ukazatel na polozku s najvrchnejsim terminalom
-void PSDestroy(PStack *P);
+void PSDispose(PStack *P);
 bool is_top_terminal(int term);
 void insert_handle(PStack *P,PStack_item *item);
 void PSPrint(PStack *P);

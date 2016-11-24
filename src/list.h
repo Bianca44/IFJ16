@@ -2,9 +2,9 @@
 #define list_H
 
 //TODO IAL
-typedef struct tDLElem {
+typedef struct tElem {
         void *data;
-        struct tDLElem *ptr;
+        struct tElem *ptr;
 } *tElemPtr;
 
 typedef struct {
@@ -18,6 +18,7 @@ void InitList (tList *, void (*dispose_fun)(void *));
 void DisposeList (tList *);
 void InsertFirst (tList *, void *);
 void InsertLast(tList *, void *);
+#define First_M(List) List->Act = List->First
 void First (tList *);
 void Last (tList *);
 #define Last_M(List) List->Act = List->Last

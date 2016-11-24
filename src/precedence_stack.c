@@ -115,7 +115,7 @@ void insert_handle(PStack *P,PStack_item *item){
 
 }
 
-void PSDestroy(PStack *P){
+void PSDispose(PStack *P){
     //TODO rusenie,este nieco pridat 
     PStack_item *tmp;
     while(P->top != NULL){

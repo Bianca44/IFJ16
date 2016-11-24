@@ -280,6 +280,7 @@ int main(){
     //y = readInt();
 
     InsertLast(&gl_tape, generate(I_PRINT, &pomocna[9], NULL, NULL));
+//LEAK    
     InsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
 
     // x = factorial(y)
@@ -321,6 +322,7 @@ int main(){
     //str = readString();
     //InsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
     InsertLast(&gl_tape, generate(I_RSTR, NULL, NULL, get_adress("str",main_f)));
+
     //print(y)
     //print str
     //sort(str)
@@ -367,7 +369,7 @@ int main(){
     free_class_list();
     free_constants(&labels);
     free_constants(&tape_ref);
-
+    dispose_buffer();
 
 
     return 0;

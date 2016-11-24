@@ -6,6 +6,7 @@
 typedef struct tFrame{       
     tVar *ret_val;
     int size;
+    char *loc_types;
     tVar local[]; //flexible array member    
 }tFrame;
 
@@ -21,6 +22,7 @@ typedef struct tFrameStack{
     
 
 
+
 extern tFrameStack frame_stack;
 extern int push_counter;
 extern tList * processed_tape;
@@ -32,8 +34,9 @@ tFrame * top_frame(tFrameStack *stack);
 void pop_frame(tFrameStack *stack);
 void push_frame(tFrameStack *stack, tFrame * frame);
 void dispose_frame(tFrame *frame);
-tFrame * init_frame(unsigned size);
+tFrame * init_frame(unsigned size, char *);
 
 void set_effective_adresess(tList *inst_tape);
+void dispose_buffer();
 
 #endif //INTERPRET

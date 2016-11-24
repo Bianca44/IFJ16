@@ -9,7 +9,7 @@ void dispose_inst2(void * a){
     free((tInst *)a);
         
 }
-#define SIZE 200000000
+#define SIZE 3
 tList *list;
 tInst * arr[SIZE] = {NULL, };
 tInst *p;
@@ -22,6 +22,9 @@ void read_arr(){
 }
 
 void read_list(){
+    printf("pred\n");
+
+    printf("po\n");
     First(list);
     while(Active_M(list)){
      
@@ -35,13 +38,17 @@ void read_list(){
 int main(){
      list = malloc(sizeof(tList));
      InitList(list, dispose_inst2);
+    goto SKOC;
 
     for(int i = 0; i < SIZE; i++){
        InsertFirst(list, NULL); 
     }
     read_arr();
-    read_list();
-    
+    while(1){
+        read_list();
+        printf("dad\n");
+    }
+    SKOC: printf("sd\n");
     DisposeList(list);
     free(list);
 }

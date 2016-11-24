@@ -38,7 +38,7 @@ void print(tVar *var) {
 
 int read_int() {
         string_t s;
-        init_string(&s);
+        init_string(&s); //NIEKDE TU JE LEAK
         int c = 0;
         while (1) {
                 c = getchar();

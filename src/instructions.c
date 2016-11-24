@@ -371,7 +371,7 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     symbol_table_item_t *fun = (symbol_table_item_t *)(op1->s);
-    frame_stack.prepared = init_frame(fun->function.params_local_vars_count);
+    frame_stack.prepared = init_frame(fun->function.params_local_vars_count,fun->function.local_vars_data_types);
     int i = fun->function.params_count;
 
     d_int(i);
@@ -379,8 +379,25 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     d_str(fun->function.local_vars_data_types);
 
 
-    for(char *s = fun->function.local_vars_data_types; *s != '\0'; s++){
-        frame_stack.prepared->local[i].data_type = decode_type(*s);
+    for(char *s = frame_stack.prepared->loc_types; *s != '\0'; s++){
+
+        switch (*s) {
+        case 'i':
+            frame_stack.prepared->local[i].data_type = INT;
+            break;
+        case 'd':
+            frame_stack.prepared->local[i].data_type = DOUBLE;
+            break;
+        case 'b':
+            frame_stack.prepared->local[i].data_type = BOOLEAN;
+            break;
+        case 's':
+            frame_stack.prepared->local[i].data_type = STRING;
+            break;
+        default:
+           d_message("CHYBA V DECODE_TYPE");
+        }
+        //frame_stack.prepared->local[i].data_type = decode_type(*s);
         frame_stack.prepared->local[i].initialized = false;
         i++;
     }

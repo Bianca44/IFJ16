@@ -12,14 +12,6 @@
 #include "error_codes.h"
 #include "debug.h"
 
-char *t_names[TOKENS_COUNT] = { "LEXICAL_ERROR", "ID", "INT_LITERAL", "DOUBLE_LITERAL", "ADD", "SUB", "MUL",
-                                "DIV", "SEMICOLON", "LEFT_CURVED_BRACKET", "RIGHT_CURVED_BRACKET",
-                                "LEFT_ROUNDED_BRACKET", "RIGHT_ROUNDED_BRACKET", "ASSIGN", "LOGICAL_AND",
-                                "LOGICAL_OR", "COMMA", "NEG",  "STRING_LITERAL", "NOT_EQUAL", "LESS_EQUAL",
-                                "LESS", "GREATER_EQUAL", "GREATER", "EQUAL", "SPECIAL_ID", "BOOLEAN", "BREAK",
-                                "CLASS", "CONTINUE", "DO", "DOUBLE", "ELSE", "FALSE", "FOR", "IF", "INT", "RETURN",
-                                "STRING", "STATIC", "TRUE", "VOID", "WHILE" };
-
 int params_counter = 0;
 bool is_first_pass = true;
 bool is_second_pass = false;
@@ -32,7 +24,7 @@ tList * global_inst_tape;
 
 tList * function_inst_tape;
 token_t t;
-token_buffer_t token_buffer;
+token_buffer_t global_token_buffer;
 
 #define PARSE_ERROR 0
 #define PARSED_OK 1
@@ -61,7 +53,7 @@ void cleanup_resources() {
         DisposeList(global_inst_tape);
         js_free();
         free_constants(&mem_constants);
-        free_token_buffer(&token_buffer);
+        free_token_buffer(&global_token_buffer);
         free_class_list();
 }
 
@@ -69,9 +61,9 @@ int get_token() {
         if (is_first_pass) {
                 t.string_value = NULL;
                 get_next_token(&t);
-                add_token_to_buffer(&token_buffer, &t);
+                add_token_to_buffer(&global_token_buffer, &t);
         } else /* second pass */ {
-                t = *get_next_token_buffer(&token_buffer);
+                t = *get_next_token_buffer(&global_token_buffer);
         }
         if (t.type == LEXICAL_ERROR) {
                 fprintf(stderr, "Lexical error: unknown token\n");
@@ -100,11 +92,13 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
+                                        free_token_buffer(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                free_token_buffer(&tb);
                                                 exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
@@ -112,11 +106,13 @@ int parse_expression(bool ends_semicolon) {
                         else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
+                                        free_token_buffer(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                free_token_buffer(&tb);
                                                 exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
@@ -261,11 +257,13 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
+                                        free_token_buffer(&tb);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                free_token_buffer(&tb);
                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
                                 }
@@ -275,11 +273,13 @@ int parse_expression(bool ends_semicolon) {
                                 if (function_symbol_table == NULL || (function_symbol_table != NULL &&  !is_declared_in_function(function_symbol_table, t.string_value))) {
                                         if (!is_declared(t.string_value)) {
                                                 fprintf(stderr, "Expression: ID \'%s\' was not declared in the function nor in the class \'%s\'.\n", t.string_value, current_class);
+                                                free_token_buffer(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 symbol_table_item_t * item =  get_symbol_table_class_item(current_class, t.string_value);
                                                 if (item->is_function) {
                                                         fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                        free_token_buffer(&tb);
                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
                                         }
@@ -934,6 +934,8 @@ int parse_method_element() {
                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
 
+                        free_string(&param_data_types);
+                        free_string(&local_vars_data_types);
                         current_function.function.local_vars_count = 0;
                         current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
@@ -1331,7 +1333,7 @@ int parse(tList * inst_tape) {
         global_inst_tape = inst_tape;
 
         if (is_first_pass) {
-                init_token_buffer(&token_buffer);
+                init_token_buffer(&global_token_buffer);
                 js_init();
         }
         get_token();
@@ -1361,11 +1363,11 @@ int parse(tList * inst_tape) {
                                 is_first_pass = false;
                                 is_second_pass = true;
                         } else /* second pass */ {
-                                // free_token_buffer(&token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
+                                // free_token_buffer(&global_token_buffer); // uvolni zoznam tokenov urceny pre druhy prechod
                         }
                         return PARSED_OK;
                 } else {
-                        // free_token_buffer(&token_buffer);
+                        // free_token_buffer(&global_token_buffer);
                         return SYNTACTIC_ANALYSIS_ERROR;
                 }
         } else {
