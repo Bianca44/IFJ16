@@ -35,6 +35,8 @@
 # Temp files
 *.c~
 *.h~
+*.swo
+*.swp
 
 # Our extensions
 *.tp
