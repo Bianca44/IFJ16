@@ -207,7 +207,7 @@ int choose_rule(PStack *P){
             if(first_operand == INT && second_operand == INT){
                 result_item->value.data_type = INT;
                 tmp = generate_tmp_var(result_item->value.data_type);
-                
+
                 //just test for now
                 //if(P->top->LPtr->LPtr->is_constant && P->top->is_constant){
                 //    i_add_i(op_1,op_2,tmp);
@@ -889,7 +889,7 @@ int choose_rule(PStack *P){
 
         default:
            d_message("Nastala chyba.\n");
-           fprintf(stderr,"Unexpected expression.\n")
+           fprintf(stderr,"Unexpected expression.\n");
            expr_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
         while(P->top->term != P_HANDLE){

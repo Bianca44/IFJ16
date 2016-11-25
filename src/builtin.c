@@ -44,12 +44,14 @@ int read_int() {
                 c = getchar();
                 if (c =='\n' || c == EOF) {
                         int num = atoi(s.data);
+                        free_string(&s);
                         return num;
                 }
 
                 if (isdigit(c)) {
                         append_char(&s, c);
                 } else {
+                        free_string(&s);
                         fprintf(stderr, "Wrongly entered integer from input.\n");
                         exit(RUN_INPUT_ERROR);
                 }
@@ -65,57 +67,66 @@ double read_double() {
                 c = getchar();
                 if (c =='\n' || c == EOF) {
                         double num = atof(s.data);
-
+                        free_string(&s);
                         return num;
                 }
                 switch (state) {
-                case 0: if (isdigit(c)) {
+                case 0:
+                        if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = 1;
-                } else {
+                        } else {
+                                free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 exit(RUN_INPUT_ERROR);
-                }
+                        }
                         break;
 
-                case 1: if (isdigit(c)) {
+                case 1:
+                        if (isdigit(c)) {
                                 append_char(&s, c);
-                } else if (c=='.') {
+                        } else if (c=='.') {
                                 append_char(&s, c);
                                 state = 2;
-                } else {
+                        } else {
+                                free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 exit(RUN_INPUT_ERROR);
-                }
+                        }
                         break;
-                case 2: if (isdigit(c)) {
+                case 2:
+                        if (isdigit(c)) {
                                 append_char(&s, c);
                                 state = 3;
-                } else {
+                        } else {
+                                free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 exit(RUN_INPUT_ERROR);
                                 return -1;
-                }
+                        }
                         break;
 
-                case 3: if (isdigit(c)) {
+                case 3:
+                        if (isdigit(c)) {
                                 append_char(&s, c);
-                } else if (c=='e' || c == 'E') {
+                        } else if (c=='e' || c == 'E') {
                                 append_char(&s, c);
                                 state = 4;
-                } else {
+                        } else {
+                                free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 exit(RUN_INPUT_ERROR);
                                 return -1;
-                }
+                        }
                         break;
 
-                case 4: if (isdigit(c)) {
+                case 4:
+                        if (isdigit(c)) {
                                 append_char(&s, c);
-                } else if (c=='+' || c == '-') {
+                        } else if (c=='+' || c == '-') {
                                 append_char(&s, c);
                                 state = 0;
-                }
+                        }
                         break;
                 }
         }
