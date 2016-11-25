@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "token_buffer.h"
+#include "debug.h"
 
 bool init_token_buffer(token_buffer_t *token_buf) {
         token_buf->list = (token_t **) malloc(TOKEN_BUFFER_INITIAL_ALLOCATION * sizeof(token_t));
@@ -45,11 +46,6 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
 void free_token_buffer(token_buffer_t *token_buf) {
         if (token_buf == NULL) return;
         for (int i = 0; i < token_buf->length; i++) {
-
-                if (token_buf->list[i]->string_value != NULL) {
-                    //free(token_buf->list[i]->string_value);
-                    //token_buf->list[i]->string_value = NULL;
-                }
                 free(token_buf->list[i]);
                 token_buf->list[i] = NULL;
         }

@@ -3,6 +3,7 @@
 #include "symbol_table.h"
 #include "memory_constants.h"
 #include "scanner.h"
+#include "debug.h"
 
 
 tVar * insert_int_const(constant_t **const_arr, int num) {
@@ -115,7 +116,10 @@ void free_constants(constant_t **const_arr) {
         constant_t * next = NULL;
         while (tmp != NULL) {
                 if (tmp->data->data_type == STRING) {
+                        d_ptr(tmp->data->s);
+                        d_str(tmp->data->s);
                         free(tmp->data->s);
+                        d_message("String uvolneni");
                 }
 
                 free(tmp->data);

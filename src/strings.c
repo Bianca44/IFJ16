@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "strings.h"
+#include "debug.h"
 
 bool init_string(string_t *str) {
         if ((str->data = (char *) malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
@@ -11,6 +12,7 @@ bool init_string(string_t *str) {
         str->data[0] = '\0';
         str->length = 0;
         str->allocated_size = STRING_INITIAL_ALLOCATION;
+    
         return true;
 
 }
@@ -31,6 +33,8 @@ char * copy_string(char *text) {
         }
         strcpy(ptr, text);
         ptr[length] = '\0';
+        d_ptr(text);
+        d_str(text);
         return ptr;
 }
 
@@ -50,7 +54,9 @@ bool append_char(string_t *str, char c) {
 
 void free_string(string_t *str) {
         if (str->data != NULL) {
+                d_str(str->data);
                 free(str->data);
+                d_str(str->data);
                 str->data = NULL;
         }
         clear_string(str);

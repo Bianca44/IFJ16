@@ -111,11 +111,8 @@ token_t* get_next_token_psa(token_buffer_t *token_buf) {
 int choose_rule(PStack *P){
 
     PStack_item *top_item = PSTopTermPtr(P);
-    PStack_item *result_item = malloc(sizeof(PStack_item));
-    if(result_item == NULL){
-        fprintf(stderr,"Unable to allocate memory.\n");
-        expr_exit(INTERNAL_INTERPRET_ERROR);
-    }
+    PStack_item result_item;
+
     int first_operand;
     int second_operand;
 
@@ -129,28 +126,28 @@ int choose_rule(PStack *P){
            switch(top_item->value.data_type){
 
                 case INT:
-                   result_item->value.data_type = INT; // TODO odmazat potom
+                   result_item.value.data_type = INT; // TODO odmazat potom
                    d_int(top_item->expr->i);
-                   result_item->expr = top_item->expr;
-                   //result_item->is_constant = true;
+                   result_item.expr = top_item->expr;
+                   //result_item.is_constant = true;
                     break;
                 case DOUBLE:
-                    result_item->value.data_type = DOUBLE;
+                    result_item.value.data_type = DOUBLE;
                     d_dob(top_item->expr->d);
-                    result_item->expr = top_item->expr;
-                    //result_item->is_constant = true;
+                    result_item.expr = top_item->expr;
+                    //result_item.is_constant = true;
                     break;
                 case STRING:
-                    result_item->value.data_type = STRING;
+                    result_item.value.data_type = STRING;
                     d_str(top_item->expr->s);
-                   result_item->expr = top_item->expr;
-                   //result_item->is_constant = true;
+                   result_item.expr = top_item->expr;
+                   //result_item.is_constant = true;
                     break;
                 case BOOLEAN:
-                    result_item->value.data_type = BOOLEAN;
+                    result_item.value.data_type = BOOLEAN;
                     d_bol(top_item->expr->b);
-                    result_item->expr = top_item->expr;
-                    //result_item->is_constant = true;
+                    result_item.expr = top_item->expr;
+                    //result_item.is_constant = true;
                     break;
 
            }
@@ -164,23 +161,23 @@ int choose_rule(PStack *P){
         switch(top_item->value.data_type){
 
              case INT:
-                 result_item->value.data_type = INT;
-                 result_item->expr = top_item->expr;
+                 result_item.value.data_type = INT;
+                 result_item.expr = top_item->expr;
                  d_int(top_item->expr->i);
                  break;
              case DOUBLE:
-                 result_item->value.data_type = DOUBLE;
-                 result_item->expr = top_item->expr;
+                 result_item.value.data_type = DOUBLE;
+                 result_item.expr = top_item->expr;
                  d_dob(top_item->expr->d);
                  break;
              case STRING:
-                 result_item->value.data_type = STRING;
-                 result_item->expr = top_item->expr;
+                 result_item.value.data_type = STRING;
+                 result_item.expr = top_item->expr;
                  d_str(top_item->expr->s);
                  break;
              case BOOLEAN:
-                 result_item->value.data_type = BOOLEAN;
-                 result_item->expr = top_item->expr;
+                 result_item.value.data_type = BOOLEAN;
+                 result_item.expr = top_item->expr;
                  d_bol(top_item->expr->b);
                  break;
 
@@ -205,8 +202,8 @@ int choose_rule(PStack *P){
 
             // int + int
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = INT;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = INT;
+                tmp = generate_tmp_var(result_item.value.data_type);
 
                 //just test for now
                 //if(P->top->LPtr->LPtr->is_constant && P->top->is_constant){
@@ -218,9 +215,9 @@ int choose_rule(PStack *P){
             } //int + double or double + int
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
 
-                result_item->value.data_type = DOUBLE;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
                 if(first_operand == INT){
                     InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     InsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
@@ -231,16 +228,16 @@ int choose_rule(PStack *P){
                 }
 
             }else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                result_item->value.data_type = DOUBLE;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
 
             }
             else if(first_operand == STRING && (second_operand == INT || second_operand == DOUBLE || second_operand == BOOLEAN)){
                // d_int(P->top->expr->i);
-                result_item->value.data_type = STRING;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = STRING;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_TO_STRING,op_2,NULL,var));
                 InsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
 
@@ -248,15 +245,15 @@ int choose_rule(PStack *P){
             }
             else if(second_operand == STRING  && (first_operand == INT || first_operand == DOUBLE || first_operand == BOOLEAN)){
 
-                result_item->value.data_type = STRING;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = STRING;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_TO_STRING,op_1,NULL,var));
                 InsertLast(work_tape, generate(I_CAT, var, op_2, tmp));
             }
             else if(first_operand == STRING && second_operand == STRING){
-                result_item->value.data_type = STRING;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = STRING;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
@@ -264,7 +261,7 @@ int choose_rule(PStack *P){
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
              break;
 
         //E -> E - E
@@ -282,16 +279,16 @@ int choose_rule(PStack *P){
 
             if(first_operand == INT && second_operand == INT){
 
-                result_item->value.data_type = INT;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = INT;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT &&  second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
-                result_item->value.data_type = DOUBLE;
+                result_item.value.data_type = DOUBLE;
 
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
                 if(first_operand == INT){
                     InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
                     InsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
@@ -302,8 +299,8 @@ int choose_rule(PStack *P){
                 }
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE ){
-                result_item->value.data_type = DOUBLE;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
             }
@@ -316,7 +313,7 @@ int choose_rule(PStack *P){
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
             break;
         // E -> E * E
@@ -333,17 +330,17 @@ int choose_rule(PStack *P){
             d_print("Second operand data_type: %d\n",second_operand);
             if(first_operand == INT && second_operand == INT){
 
-                result_item->value.data_type = INT;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = INT;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
 
 
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
-                result_item->value.data_type = DOUBLE;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
 
                 if(first_operand == INT){
                     InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
@@ -356,8 +353,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = DOUBLE;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = DOUBLE;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -369,7 +366,7 @@ int choose_rule(PStack *P){
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
             break;
         //E -> E / E
@@ -390,15 +387,15 @@ int choose_rule(PStack *P){
 
 
                 //zatial sa nekontroluje delenie 0
-                result_item->value.data_type = INT;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = INT;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (second_operand == INT && first_operand == DOUBLE)){
-                result_item->value.data_type = DOUBLE;
-                tmp = generate_tmp_var(result_item->value.data_type);
-                var =  generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = DOUBLE;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                var =  generate_tmp_var(result_item.value.data_type);
 
                 if(first_operand == INT){
                     InsertLast(work_tape, generate(I_CONV_I_TO_D,op_1,NULL,var));
@@ -411,8 +408,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = DOUBLE;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = DOUBLE;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -425,7 +422,7 @@ int choose_rule(PStack *P){
             }
 
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
              break;
         //E -> (E)
@@ -436,19 +433,19 @@ int choose_rule(PStack *P){
             }
             switch(P->top->LPtr->value.data_type){
                 case INT:
-                    result_item->value.data_type = INT;
+                    result_item.value.data_type = INT;
                     break;
                 case DOUBLE:
-                    result_item->value.data_type = DOUBLE;
+                    result_item.value.data_type = DOUBLE;
                     break;
                 case STRING:
-                    result_item->value.data_type = STRING;
+                    result_item.value.data_type = STRING;
                     break;
                 case BOOLEAN:
-                    result_item->value.data_type = BOOLEAN;
+                    result_item.value.data_type = BOOLEAN;
                     break;
             }
-            result_item->expr = P->top->LPtr->expr;
+            result_item.expr = P->top->LPtr->expr;
 
             break;
         case P_LESS:
@@ -463,13 +460,13 @@ int choose_rule(PStack *P){
             d_print("First operand data_type: %d\n",first_operand);
             d_print("Second operand data_type: %d\n",second_operand);
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
 
             }else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -484,8 +481,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = BOOLEAN;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -493,7 +490,7 @@ int choose_rule(PStack *P){
                 expr_exit(SYNTACTIC_ANALYSIS_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
-                result_item->value.data_type = BOOLEAN;
+                result_item.value.data_type = BOOLEAN;
                 fprintf(stderr,"Incompatible data types.\n");
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                 //TODO nemozeme porovnavat 2 bool hodnoty
@@ -507,7 +504,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
             break;
 
         case P_LESSE:
@@ -522,14 +519,14 @@ int choose_rule(PStack *P){
             d_print("First operand data_type: %d\n",first_operand);
             d_print("Second operand data_type: %d\n",second_operand);
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -544,8 +541,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = BOOLEAN;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -565,7 +562,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
             break;
 
         case P_GRT:
@@ -580,14 +577,14 @@ int choose_rule(PStack *P){
             d_print("First operand data_type: %d\n",first_operand);
             d_print("Second operand data_type: %d\n",second_operand);
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -602,8 +599,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = BOOLEAN;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -623,7 +620,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
             break;
         case P_GRE:
@@ -636,14 +633,14 @@ int choose_rule(PStack *P){
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -658,8 +655,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = BOOLEAN;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -679,7 +676,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
 
         case P_EQL:
@@ -692,14 +689,14 @@ int choose_rule(PStack *P){
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -714,8 +711,8 @@ int choose_rule(PStack *P){
 
             }
             else if(first_operand == DOUBLE && second_operand == DOUBLE){
-                    result_item->value.data_type = BOOLEAN;
-                    tmp = generate_tmp_var(result_item->value.data_type);
+                    result_item.value.data_type = BOOLEAN;
+                    tmp = generate_tmp_var(result_item.value.data_type);
                     InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
             }
             else if(first_operand == STRING || second_operand == STRING){
@@ -735,7 +732,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
             break;
         case P_NEQL:
@@ -748,14 +745,14 @@ int choose_rule(PStack *P){
             op_1 = P->top->LPtr->LPtr->expr;
             op_2 = P->top->expr;
             if(first_operand == INT && second_operand == INT){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
 
             }
             else if((first_operand == INT && second_operand == DOUBLE) || (first_operand == DOUBLE && second_operand == INT)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 var =  generate_tmp_var(DOUBLE);
 
                 if(first_operand == INT){
@@ -786,7 +783,7 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
 
             break;
         case P_AND:
@@ -823,8 +820,8 @@ int choose_rule(PStack *P){
                 expr_exit( SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_AND,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
@@ -836,7 +833,7 @@ int choose_rule(PStack *P){
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
 
-            result_item->expr = tmp;
+            result_item.expr = tmp;
             break;
 
         case P_OR:
@@ -872,8 +869,8 @@ int choose_rule(PStack *P){
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
             else if((first_operand == BOOLEAN && second_operand == BOOLEAN) || (second_operand == BOOLEAN && first_operand == BOOLEAN)){
-                result_item->value.data_type = BOOLEAN;
-                tmp = generate_tmp_var(result_item->value.data_type);
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_OR,op_1, op_2, tmp));
             }
             else if(first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)){
@@ -884,7 +881,7 @@ int choose_rule(PStack *P){
                 fprintf(stderr,"Incompatible data types.\n");
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
-            result_item->expr = tmp;
+            result_item.expr = tmp;
             break;
 
         default:
@@ -899,8 +896,8 @@ int choose_rule(PStack *P){
         PSPush(P,P_EXPR);
         d_print("Term: %d\n",P->top->term);
 
-        P->top->value.data_type = result_item->value.data_type;
-        P->top->expr = result_item->expr;
+        P->top->value.data_type = result_item.value.data_type;
+        P->top->expr = result_item.expr;
 
 return 1;
 }
@@ -1164,7 +1161,7 @@ int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_re
        PSPrint(P);
        d_print("Data type of result is:%d\n",P->top->value.data_type);
        psa_result = P->top->value.data_type;
-       //PSDispose(P);
+       PSDispose(P);
        return psa_result;
 
 

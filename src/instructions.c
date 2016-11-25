@@ -553,7 +553,7 @@ void i_print(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
 
     d_inst_name();
-
+    //d_ptr(op1->s);
     print(op1); // priamo sem alebo makro TODO
 }
 

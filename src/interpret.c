@@ -32,7 +32,7 @@ tFrame * init_frame(unsigned size, char *loc_types){
 
         tFrame * new_frame;
         int i = 0;
-        d_message("dsad");
+
         //recyklovanie ramcov
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= (int) size){

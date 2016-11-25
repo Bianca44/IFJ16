@@ -50,11 +50,16 @@ extern FILE* file;
 
 void cleanup_resources() {
         fclose(file);
-        DisposeList(global_inst_tape);
+
         js_free();
         free_constants(&mem_constants);
+        free_constants(&labels);
+        free_constants(&tape_ref);
+        dispose_buffer();
         free_token_buffer(&global_token_buffer);
         free_class_list();
+        DisposeList(global_inst_tape);
+
 }
 
 int get_token() {
@@ -332,9 +337,9 @@ int parse_return_value() {
                                 }
                         }
                 } else if (t.type == SEMICOLON) {
-                        /*if (is_second_pass) {
+                        if (is_second_pass) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                           }*/
+                           }
                         return PARSED_OK;
                 }
         }
@@ -938,11 +943,15 @@ int parse_method_element() {
                         }
 
                         current_function.function.param_data_types = copy_string(param_data_types.data);
+                        d_message("TU to nepadlo");
                         current_function.function.local_vars_data_types = copy_string(local_vars_data_types.data);
+                        d_message("TU to nepadlo");
                         current_function.function.params_count = param_data_types.length;
                         d_print("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n", current_function.id_name, current_function.function.return_type, current_function.function.param_data_types, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.params_count + current_function.function.local_vars_count, current_function.function.local_vars_data_types);
+                        d_message("TU to nepadlo");
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
+                        d_message("TU to nepadlo");
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                                 current_function.id_name = NULL;
                         } else {
@@ -952,25 +961,25 @@ int parse_method_element() {
 
                         free_string(&param_data_types);
                         free_string(&local_vars_data_types);
+
                         current_function.function.local_vars_count = 0;
                         current_function.function.params_count = 0;
                         function_variable.variable.offset = 0;
                         current_function.function.params_count = 0;
                         current_function.function.return_type = 0;
                 } else {
-                        /*symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
                            if (function->function.return_type == VOID && !has_function_return) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                           }*/
+                           }
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
                 return PARSED_OK;
         } else if (t.type == INT || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN) {
                 function_variable.variable.data_type = t.type;
-                append_type(&local_vars_data_types, t.type);
-
                 if (is_first_pass) {
                         current_function.function.local_vars_count++;
+                        append_type(&local_vars_data_types, t.type);
                 }
                 if (parse_param()) {
                         if (is_first_pass) {
@@ -1301,6 +1310,7 @@ int parse_class_list() {
                         if (is_first_pass) {
                                 if (!exists_class(current_class)) {
                                         insert_class(current_class);
+                                        insert_string_const(&mem_constants, current_class);
                                         set_current_class(current_class);
                                 } else {
                                         fprintf(stderr, "Class \'%s\' was redeclared.\n", current_class);
@@ -1329,7 +1339,7 @@ int parse_class_list() {
 
 
 void add_builtin_functions() {
-        char *ifj_class = copy_string("ifj16");
+        char *ifj_class = "ifj16";//copy_string("ifj16");
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
