@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
 
         tList inst_tape;
         InitList(&inst_tape, dispose_inst);
-        
-        
+
+
 
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         InsertLast(&inst_tape, generate(I_F_CALL, run_tape, NULL, NULL));
 
         processed_tape = &inst_tape;
-        init_frame_stack(&frame_stack); 
+        init_frame_stack(&frame_stack);
         interpret_tac(&inst_tape);
 
         exit(INTERPRET_OK);

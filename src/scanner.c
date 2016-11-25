@@ -6,6 +6,10 @@
 #include "strings.h"
 #include "scanner.h"
 #include "parser.h"
+#include "memory_constants.h"
+
+
+extern constant_t * mem_constants;
 
 FILE *file;
 
@@ -17,9 +21,16 @@ int save_token(token_t *t, int type, string_t *attr) {
         if (attr != NULL) {
                 switch (type) {
                 case ID:
+                        t->string_value = attr->data;
+                        //insert_string_const(&mem_constants, t->string_value);
+                        break;
                 case SPECIAL_ID:
+                        t->string_value = attr->data;
+                        insert_string_const(&mem_constants, t->string_value);
+                        break;
                 case STRING_LITERAL:
                         t->string_value = attr->data;
+                        //insert_string_const(&mem_constants, t->string_value);
                         break;
                 case INT_LITERAL:
                         t->int_value = atoi(attr->data);
