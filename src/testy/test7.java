@@ -9,8 +9,8 @@ class Main {
 
 		while (10000000 > c) {
 			vysledok = a/b;
-			b--; //po 15 cykle bude b=0 --> delenie nulou;
-			c++;
+			b = b - 1; //po 15 cykle bude b=0 --> delenie nulou;
+			c = c + 1;
 		}
 	}
 }
