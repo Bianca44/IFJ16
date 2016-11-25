@@ -787,7 +787,7 @@ int parse_statement() {
 
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
-                                        fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
+                                        fprintf(stderr, "Variable \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         p = get_symbol_table_special_id_item(t.string_value);
