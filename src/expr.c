@@ -112,7 +112,8 @@ int choose_rule(PStack *P){
 
     PStack_item *top_item = PSTopTermPtr(P);
     PStack_item result_item;
-
+    result_item.expr = NULL;
+    result_item.value.data_type = 0;
     int first_operand;
     int second_operand;
 
