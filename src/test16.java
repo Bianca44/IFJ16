@@ -10,7 +10,7 @@ class Main
          x = x + 5;
 
         }
-            x = 10;
+            x = 3;
           ifj16.print(x);
           ifj16.print("HEIL MEIN JUGEND\n");
           ifj16.print("HEIL VASKY\n");

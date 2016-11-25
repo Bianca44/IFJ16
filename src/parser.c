@@ -337,7 +337,7 @@ int parse_return_value() {
                 } else if (t.type == SEMICOLON) {
                         if (is_second_pass) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                           }
+                        }
                         return PARSED_OK;
                 }
         }
@@ -667,22 +667,22 @@ int parse_param_value () {
 int parse_call_assign() {
         if (t.type == ID || t.type == SPECIAL_ID) {
                 function_name_call = t.string_value;
+                symbol_table_item_t *var = NULL;
+                if (is_second_pass) {
+                        if (strchr(function_variable.id_name, '.') != NULL) {
+                                var = get_symbol_table_special_id_item(function_variable.id_name);
+                        } else {
+
+                                symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                                var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                                if (var == NULL) {
+                                        var = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                }
+                        }
+                }
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET) {
                         if (is_second_pass) {
-                                symbol_table_item_t *var = NULL;
-
-                                if (strchr(function_variable.id_name, '.') != NULL) {
-                                        var = get_symbol_table_special_id_item(function_variable.id_name);
-                                } else {
-
-                                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
-                                        var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
-                                        if (var == NULL) {
-                                                var = get_symbol_table_class_item(current_class, function_variable.id_name);
-                                        }
-                                }
-
                                 if (!var->is_function) {
                                         printf("Calling \'%s\' which is not a function.\n", function_variable.id_name);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
@@ -711,6 +711,12 @@ int parse_call_assign() {
                                 }
                         }
                 } else if (t.type == ASSIGN || t.type == SEMICOLON) {
+                        if (is_second_pass) {
+                                if (var->is_function) {
+                                        fprintf(stderr, "Can\'t assign value to function \'%s\'\n", function_name_call);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                }
+                        }
                         return parse_value();
                 }
         }
@@ -776,8 +782,9 @@ int parse_statement() {
         }
 
         else if (t.type == ID || t.type == SPECIAL_ID) {
-                symbol_table_item_t * p = NULL;
                 if (is_second_pass) {
+                        symbol_table_item_t * p = NULL;
+
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "ID \'%s\' in function \'%s.%s\' was not declared.\n", t.string_value, current_class, current_function.id_name);
@@ -805,20 +812,31 @@ int parse_statement() {
                 function_variable.id_name = t.string_value;
                 if(parse_call_assign()) {
                         if (is_second_pass) {
+                                symbol_table_item_t * var = NULL;
+                                if (strchr(function_variable.id_name, '.') != NULL) {
+                                        var = get_symbol_table_special_id_item(function_variable.id_name);
+                                } else {
 
-                                if (p->is_function) {
+                                        symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
+                                        var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                                        if (var == NULL) {
+                                                var = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                        }
+                                }
+
+                                if (var->is_function) {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
                                                 InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                 first_param = expr_var_result = NULL;
                                         } else {
-                                                InsertLast(function_inst_tape, generate(I_F_CALL, p->function.instruction_tape, NULL, NULL));
+                                                InsertLast(function_inst_tape, generate(I_F_CALL, var->function.instruction_tape, NULL, NULL));
                                         }
 
                                         first_param = second_param = expr_var_result = NULL;
 
                                 } else if (function_variable.id_name != NULL) {
                                         if (expr_var_result != NULL) { /* neni priradenie cez funkciu */
-                                                tVar * to = &p->variable;
+                                                tVar * to = &var->variable;
 
                                                 to->initialized = true;
                                                 tVar * from = expr_var_result;
@@ -949,7 +967,7 @@ int parse_method_element() {
                         d_message("TU to nepadlo");
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name, current_function.function.return_type, current_function.function.params_count, current_function.function.local_vars_count, current_function.function.param_data_types, current_function.function.local_vars_data_types, current_function.function.symbol_table);
-                        d_message("TU to nepadlo");
+                                d_message("TU to nepadlo");
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                                 current_function.id_name = NULL;
                         } else {
@@ -967,9 +985,9 @@ int parse_method_element() {
                         current_function.function.return_type = 0;
                 } else {
                         symbol_table_item_t * function = get_symbol_table_class_item(current_class, current_function.id_name);
-                           if (function->function.return_type == VOID && !has_function_return) {
+                        if (function->function.return_type == VOID && !has_function_return) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
-                           }
+                        }
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                 }
                 return PARSED_OK;
@@ -1278,9 +1296,9 @@ int parse_declaration_element() {
                                 current_function.function.local_vars_count = 0;
                         }
                         get_token();
-                        if(t.type == LEFT_ROUNDED_BRACKET && is_first_pass){
-                            current_function.function.symbol_table = create_function_symbol_table();
-                            init_string(&local_vars_data_types);
+                        if(t.type == LEFT_ROUNDED_BRACKET && is_first_pass) {
+                                current_function.function.symbol_table = create_function_symbol_table();
+                                init_string(&local_vars_data_types);
                         }
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
                                 return parse_declaration();
@@ -1338,7 +1356,7 @@ int parse_class_list() {
 
 
 void add_builtin_functions() {
-        char *ifj_class = "ifj16";//copy_string("ifj16");
+        char *ifj_class = "ifj16"; //copy_string("ifj16");
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
