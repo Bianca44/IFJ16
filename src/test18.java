@@ -1,5 +1,6 @@
 class Main {
-    static boolean ff =  true < true;
+    static int po = 5;
+    static int ll = 5+5 ;
     static boolean g = 3 < 4.5 ;
     static boolean mm = (5 != 5) && true;
     static boolean dd = 3.5 != 6;

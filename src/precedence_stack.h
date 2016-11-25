@@ -40,6 +40,7 @@ typedef struct PStack_item{
     enum Terminals term;  //typ terminalu
     tVar value;
     tVar *expr;
+    bool is_constant;
 }PStack_item;
 
 typedef struct{

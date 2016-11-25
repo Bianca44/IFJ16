@@ -27,7 +27,7 @@ void PSPush(PStack *P,enum Terminals term){
     if(term_item == NULL){
         return;
     }
-   
+    term_item->is_constant = false;
     term_item->expr = NULL;
     term_item->term = term;
     term_item->LPtr = P->top;
@@ -55,12 +55,13 @@ void PSPop(PStack *P){
 int PSTopTerm(PStack *P){
     
     PStack_item *top_term = P->top;
-    if(top_term->term <= P_ENDMARK){
+    //TODO ide sa skusit NOT, bol tu P_ENDMARK
+    if(top_term->term <= P_NOT){
         return top_term->term;
     }
     else{//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
         top_term = top_term->LPtr;
-        if(top_term->term <= P_ENDMARK){
+        if(top_term->term <= P_NOT){
             return top_term->term;
         }
         while(!is_top_terminal(top_term->term)){
@@ -78,7 +79,7 @@ int PSTopTerm(PStack *P){
 PStack_item *PSTopTermPtr(PStack *P){
     
     PStack_item *top_term = P->top;
-    if(top_term->term <= P_ENDMARK){
+    if(top_term->term <= P_NOT){
         return top_term;
     }
     else{//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
