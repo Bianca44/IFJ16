@@ -87,7 +87,7 @@ int expr_check(PStack *P){
 }
 
 void expr_exit(int exit_code) {
-        free_token_buffer(expr_token_buffer);
+        free_token_buffer_local(expr_token_buffer);
         //PSDispose(P);
         exit(exit_code);
 }

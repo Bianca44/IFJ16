@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include "list.h"
+#include "memory_constants.h"
 
 void cleanup_resources();
 
@@ -26,6 +27,8 @@ int parse_declaration_element();
 int parse_class_element();
 int parse_class_list();
 int parse(tList *inst_tape);
+
+extern constant_t * mem_constants;
 
 void add_builtin_functions();
 

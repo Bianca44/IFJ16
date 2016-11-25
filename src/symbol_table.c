@@ -7,6 +7,8 @@
 #include "ial.h"
 #include "scanner.h"
 #include "error_codes.h"
+#include "parser.h"
+#include "memory_constants.h"
 
 symbol_table_t *class_list;
 char* current_class;
@@ -19,9 +21,9 @@ void dispose_class_list(tData data) {
 /* Zrusi tabulku symbolov pre triedu */
 void dispose_class_symbol_table(tData data) {
         symbol_table_item_t * item = (symbol_table_item_t *) data;
-        if (item->id_name != NULL) {
-            free(item->id_name);
-        }
+//        if (item->id_name != NULL) {
+//            free(item->id_name);
+//        }
 
         if (item->is_function) {
                 if (item->function.param_data_types != NULL) {
@@ -275,6 +277,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_class(int data_type) {
         if (id_name == NULL) {
                 exit(INTERNAL_INTERPRET_ERROR);
         }
+        insert_string_const(&mem_constants, id_name);
         static int tmp_id = 0;
         sprintf(id_name, "#%d", tmp_id);
 
@@ -327,6 +330,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         if (id_name == NULL) {
                 exit(INTERNAL_INTERPRET_ERROR);
         }
+        insert_string_const(&mem_constants, id_name);
         static int tmp_id = 0;
         sprintf(id_name, "#%d", tmp_id);
 
@@ -343,6 +347,7 @@ symbol_table_item_t * insert_tmp_variable_symbol_table_function(char * function_
         function_item->function.params_local_vars_count++;
         function_item->function.local_vars_count++;
         ht_insert(function_table, id_name, p);
+        tmp_id++;
         return p;
 }
 

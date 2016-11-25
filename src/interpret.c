@@ -59,9 +59,10 @@ tFrame * init_frame(unsigned size, char *loc_types){
         return new_frame;
 }
 void dispose_buffer(){
-    for(int i=0; i < FRAME_BUFFER_SIZE; i++)
-        if(frame_buffer[i] != NULL)
-            free(frame_buffer[i]);
+    for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
+        if(frame_buffer[i] != NULL){
+           free(frame_buffer[i]);
+        }
 }
 /*
 void dispose_frame(tFrame *frame){

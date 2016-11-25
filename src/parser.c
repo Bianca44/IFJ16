@@ -50,16 +50,14 @@ extern FILE* file;
 
 void cleanup_resources() {
         fclose(file);
-
+        free_token_buffer(&global_token_buffer);
         js_free();
         free_constants(&mem_constants);
         free_constants(&labels);
         free_constants(&tape_ref);
-        dispose_buffer();
-        free_token_buffer(&global_token_buffer);
         free_class_list();
         DisposeList(global_inst_tape);
-
+        dispose_buffer();
 }
 
 int get_token() {
@@ -93,13 +91,13 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        free_token_buffer(&tb);
+                                        free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                free_token_buffer(&tb);
+                                                free_token_buffer_local(&tb);
                                                 exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
@@ -107,13 +105,13 @@ int parse_expression(bool ends_semicolon) {
                         else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        free_token_buffer(&tb);
+                                        free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_class_item(current_class, t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                free_token_buffer(&tb);
+                                                free_token_buffer_local(&tb);
                                                 exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
@@ -121,7 +119,7 @@ int parse_expression(bool ends_semicolon) {
                         get_token();
                 }
                 get_psa(&tb, &expr_result,  &expr_var_result);
-                free_token_buffer(&tb);
+                free_token_buffer_local(&tb);
                 return PARSED_OK;
         }
 
@@ -258,13 +256,13 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr,"Expression: ID %s was not declared.\n", t.string_value);
-                                        free_token_buffer(&tb);
+                                        free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t * item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                free_token_buffer(&tb);
+                                                free_token_buffer_local(&tb);
                                                 exit(SYNTACTIC_ANALYSIS_ERROR);
                                         }
                                 }
@@ -274,13 +272,13 @@ int parse_expression(bool ends_semicolon) {
                                 if (function_symbol_table == NULL || (function_symbol_table != NULL &&  !is_declared_in_function(function_symbol_table, t.string_value))) {
                                         if (!is_declared(t.string_value)) {
                                                 fprintf(stderr, "Expression: ID \'%s\' was not declared in the function nor in the class \'%s\'.\n", t.string_value, current_class);
-                                                free_token_buffer(&tb);
+                                                free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 symbol_table_item_t * item =  get_symbol_table_class_item(current_class, t.string_value);
                                                 if (item->is_function) {
                                                         fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
-                                                        free_token_buffer(&tb);
+                                                        free_token_buffer_local(&tb);
                                                         exit(SYNTACTIC_ANALYSIS_ERROR);
                                                 }
                                         }
@@ -294,7 +292,7 @@ int parse_expression(bool ends_semicolon) {
                 if (!skip_precedence_analysis) {
                         get_psa(&tb, &expr_result, &expr_var_result);
                 }
-                free_token_buffer(&tb);
+                free_token_buffer_local(&tb);
         }
         return PARSED_OK;
 
@@ -1277,11 +1275,13 @@ int parse_declaration_element() {
                         current_function.id_name = t.string_value; /* potrebne pre oba prechody */
                         has_function_return = false;
                         if (is_first_pass) {
-                                current_function.function.symbol_table = create_function_symbol_table();
-                                init_string(&local_vars_data_types);
                                 current_function.function.local_vars_count = 0;
                         }
                         get_token();
+                        if(t.type == LEFT_ROUNDED_BRACKET && is_first_pass){
+                            current_function.function.symbol_table = create_function_symbol_table();
+                            init_string(&local_vars_data_types);
+                        }
                         if (t.type == LEFT_ROUNDED_BRACKET || t.type == RIGHT_ROUNDED_BRACKET || t.type == ASSIGN || t.type == SEMICOLON) {
                                 return parse_declaration();
                         }
@@ -1310,7 +1310,6 @@ int parse_class_list() {
                         if (is_first_pass) {
                                 if (!exists_class(current_class)) {
                                         insert_class(current_class);
-                                        insert_string_const(&mem_constants, current_class);
                                         set_current_class(current_class);
                                 } else {
                                         fprintf(stderr, "Class \'%s\' was redeclared.\n", current_class);
@@ -1343,16 +1342,16 @@ void add_builtin_functions() {
         insert_class(ifj_class);
         set_current_class(ifj_class);
 
-        insert_function_symbol_table(copy_string("sort"), STRING, 1, 0, copy_string("s"), NULL, NULL);
-        insert_function_symbol_table(copy_string("find"), INT, 2, 0, copy_string("ss"), NULL, NULL);
-        insert_function_symbol_table(copy_string("length"), INT, 1, 0, copy_string("s"), NULL, NULL);
-        insert_function_symbol_table(copy_string("compare"), INT, 2, 0, copy_string("ss"), NULL, NULL);
-        insert_function_symbol_table(copy_string("substr"), STRING, 3, 0, copy_string("sii"), NULL, NULL);
-        insert_function_symbol_table(copy_string("print"), VOID, 1, 0, copy_string("s"), NULL, NULL);
+        insert_function_symbol_table("sort", STRING, 1, 0, copy_string("s"), NULL, NULL);
+        insert_function_symbol_table("find", INT, 2, 0, copy_string("ss"), NULL, NULL);
+        insert_function_symbol_table("length", INT, 1, 0, copy_string("s"), NULL, NULL);
+        insert_function_symbol_table("compare", INT, 2, 0, copy_string("ss"), NULL, NULL);
+        insert_function_symbol_table("substr", STRING, 3, 0, copy_string("sii"), NULL, NULL);
+        insert_function_symbol_table("print", VOID, 1, 0, copy_string("s"), NULL, NULL);
 
-        insert_function_symbol_table(copy_string("readInt"), INT, 0, 0, NULL, NULL, NULL);
-        insert_function_symbol_table(copy_string("readDouble"), DOUBLE, 0, 0, NULL, NULL, NULL);
-        insert_function_symbol_table(copy_string("readString"), STRING, 0, 0, NULL, NULL, NULL);
+        insert_function_symbol_table("readInt", INT, 0, 0, NULL, NULL, NULL);
+        insert_function_symbol_table("readDouble", DOUBLE, 0, 0, NULL, NULL, NULL);
+        insert_function_symbol_table("readString", STRING, 0, 0, NULL, NULL, NULL);
 }
 
 int parse(tList * inst_tape) {

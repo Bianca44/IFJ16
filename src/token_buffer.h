@@ -15,6 +15,7 @@ typedef struct {
 bool init_token_buffer(token_buffer_t *token_buf);
 bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t);
 void free_token_buffer(token_buffer_t *token_buf);
+void free_token_buffer_local(token_buffer_t *token_buf);
 token_t* get_next_token_buffer(token_buffer_t *token_buf);
 
 #endif //TOKEN_BUFFER_H

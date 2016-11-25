@@ -26,7 +26,7 @@ int save_token(token_t *t, int type, string_t *attr) {
                         break;
                 case SPECIAL_ID:
                         t->string_value = attr->data;
-                        insert_string_const(&mem_constants, t->string_value);
+                //        insert_string_const(&mem_constants, t->string_value);
                         break;
                 case STRING_LITERAL:
                         t->string_value = attr->data;

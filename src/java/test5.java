@@ -23,7 +23,7 @@ static void play(String str)
         ifj16.print("pricemz se pismena nesmeji v posloupnosti opakovat:");
         str = ifj16.readString();
         str = ifj16.sort(str);
-        int cmp = ifj16.compare(str, "abcdefgh");
+        int cmp = ifj16.compare(str, "a");
         if (cmp != 0) {
                 while (cmp != 0) {
                         ifj16.print("Spatne zadana posloupnost, zkuste znovu:");

@@ -46,10 +46,30 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
 void free_token_buffer(token_buffer_t *token_buf) {
         if (token_buf == NULL) return;
         for (int i = 0; i < token_buf->length; i++) {
+                if(token_buf->list[i]->type == ID || token_buf->list[i]->type == SPECIAL_ID)
+                    free(token_buf->list[i]->string_value);
+
                 free(token_buf->list[i]);
                 token_buf->list[i] = NULL;
         }
+        
+        if (token_buf->list != NULL) {
+                free(token_buf->list);
+                token_buf->list = NULL;
+        }
 
+        token_buf->length = 0;
+        token_buf->allocated_size = 0;
+
+}
+
+void free_token_buffer_local(token_buffer_t *token_buf) {
+        if (token_buf == NULL) return;
+        for (int i = 0; i < token_buf->length; i++) {
+                free(token_buf->list[i]);
+                token_buf->list[i] = NULL;
+        }
+        
         if (token_buf->list != NULL) {
                 free(token_buf->list);
                 token_buf->list = NULL;
