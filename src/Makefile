@@ -43,6 +43,8 @@ r_test:
 
 clean:
 	rm -f *.o
+	rm -f *.c~
+	rm -f *.h~
 	rm -f test
 	rm -f ntest
 	rm -f main
