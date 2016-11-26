@@ -37,23 +37,23 @@ tFrame * init_frame(unsigned size, char *loc_types){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
                 new_frame->loc_types = loc_types;
-                frame_buf_size -= 1;
+                frame_buf_size -= 1;                
                 frame_buffer[i] = frame_buffer[frame_buf_size];
                 frame_buffer[frame_buf_size] = NULL;
                 return new_frame;
             }
             i++;
-        }
-
+        }        
+          
         if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL) {
-                exit(INTERNAL_INTERPRET_ERROR);
+                exit(INTERNAL_INTERPRET_ERROR);        
         }
 
         new_frame->loc_types = loc_types;//TODO
         new_frame->ret_val = NULL;
         new_frame->size = size;
 
-
+       
         return new_frame;
 }
 void dispose_frame_buffer(){
@@ -101,7 +101,7 @@ void pop_frame(tFrameStack *stack){
                 tmp = stack->top;
                 //change stack top
                 stack->top = stack->top->next;
-                //free frame
+                //free frame 
                 for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
                                 if(tmp->frame->local[i].initialized)
@@ -109,7 +109,7 @@ void pop_frame(tFrameStack *stack){
                         }
                 }
                 //posledny neplnime bude vzdy NULL - zarazka
-
+                
                 if(frame_buf_size < FRAME_BUFFER_SIZE - 1){
                     frame_buffer[frame_buf_size++] = tmp->frame;
                 }
