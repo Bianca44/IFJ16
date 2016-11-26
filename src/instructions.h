@@ -30,6 +30,8 @@ typedef enum instructions {
     I_MUL,
     I_SUB,
     I_DIV,
+    I_INC,
+    I_DEC,
     //CONVERSIONS
     I_CONV_I_TO_D,
     I_TO_STRING,
@@ -76,6 +78,8 @@ void i_add_i(tVar *op1, tVar *op2, tVar *result);
 void i_add_d(tVar *op1, tVar *op2, tVar *result);
 void i_sub_i(tVar *op1, tVar *op2, tVar *result);
 void i_sub_d(tVar *op1, tVar *op2, tVar *result);
+void i_inc_i(tVar *op1, tVar *op2, tVar *result);
+void i_dec_i(tVar *op1, tVar *op2, tVar *result);
 void i_mul_i(tVar *op1, tVar *op2, tVar *result);
 void i_mul_d(tVar *op1, tVar *op2, tVar *result);
 void i_div_i(tVar *op1, tVar *op2, tVar *result);

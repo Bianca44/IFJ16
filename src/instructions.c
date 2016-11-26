@@ -77,6 +77,20 @@ void i_sub_d(tVar *op1, tVar *op2, tVar *result){
     result->d = op1->d - op2->d;
 }
 
+void i_inc_i(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
+
+    result->i = result->i + 1;
+}
+
+
+void i_dec_i(tVar *op1, tVar *op2, tVar *result){
+    d_inst_name();
+
+    result->i = result->i - 1;
+}
+
+
 void i_mul_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -178,14 +192,6 @@ void i_assign_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->d = op1->d;
-}
-
-void i_assign_i_to_d(tVar *op1, tVar *op2, tVar *result){
-    UNUSED(op2);
-
-    d_inst_name();
-
-    result->d = (double)op1->i;
 }
 
 void i_assign_b(tVar *op1, tVar *op2, tVar *result){
@@ -614,6 +620,12 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
             else
                 new_inst->f = i_div_d;
 			break;
+        case I_INC:
+            new_inst->f = i_inc_i;
+            break;
+        case I_DEC:
+            new_inst->f = i_sub_i;
+            break;
         //CONVERSIONS
         case I_CONV_I_TO_D:
                 new_inst->f = i_conv_i_to_d;
