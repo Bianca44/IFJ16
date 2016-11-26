@@ -78,6 +78,9 @@ void i_sub_d(tVar *op1, tVar *op2, tVar *result){
 }
 
 void i_inc_i(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    UNUSED(op2);
+
     d_inst_name();
 
     result->i = result->i + 1;
@@ -85,6 +88,9 @@ void i_inc_i(tVar *op1, tVar *op2, tVar *result){
 
 
 void i_dec_i(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    UNUSED(op2);
+
     d_inst_name();
 
     result->i = result->i - 1;
@@ -726,9 +732,6 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
                     break;
             }
 			break;
-        case I_ASSIGN_I_TO_D:
-            new_inst->f = i_assign_i_to_d;
-            break;
         case I_CAT:
             new_inst->f = i_cat;
 			break;

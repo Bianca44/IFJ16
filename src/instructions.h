@@ -45,9 +45,8 @@ typedef enum instructions {
     I_NOT,
     I_AND,
     I_OR,
-    //BUILT-IN AND OTHER  
+    //BUILT-IN AND OTHER
     I_ASSIGN,
-    I_ASSIGN_I_TO_D,
     I_CAT,
     I_STRCMP,
     I_SUBSTR,
@@ -86,7 +85,7 @@ void i_div_i(tVar *op1, tVar *op2, tVar *result);
 void i_div_d(tVar *op1, tVar *op2, tVar *result);
 //Conversions
 void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result);
-void i_to_str(tVar *op1, tVar *op2, tVar *result); 
+void i_to_str(tVar *op1, tVar *op2, tVar *result);
 //assigns
 void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
@@ -99,7 +98,7 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 void i_return(tVar *op1, tVar *op2, tVar *result);
 //built-in
-void i_cat(tVar *op1, tVar *op2, tVar *result); 
+void i_cat(tVar *op1, tVar *op2, tVar *result);
 void i_strcmp(tVar *op1, tVar *op2, tVar *result);
 void i_substr(tVar *op1, tVar *op2, tVar *result);
 void i_find(tVar *op1, tVar *op2, tVar *result);
