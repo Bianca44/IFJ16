@@ -1,5 +1,5 @@
 CFLAGS=-std=c11 -pedantic -Wall -Wextra
-CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -Ofast -DNDEBUG
+CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -O3 -DNDEBUG
 #-DNDEBUG
 CC=gcc
 
@@ -43,8 +43,6 @@ r_test:
 
 clean:
 	rm -f *.o
-	rm -f *.c~
-	rm -f *.h~
 	rm -f test
 	rm -f ntest
 	rm -f main
