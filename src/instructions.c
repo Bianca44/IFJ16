@@ -9,8 +9,11 @@
 #include "list.h"
 
 #define UNUSED(x) (void)(x)
-#define L_BUFFER 256
+#define LOAD_BUFFER 256
+#define STRING_BUFFER 256
 
+char * string_buffer[STRING_BUFFER];
+int push_counter;
 constant_t * tape_ref;
 constant_t * labels;
 tFrameStack frame_stack;
@@ -120,13 +123,13 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
 
     d_inst_name();
 
-    char load[L_BUFFER];
+    char load[LOAD_BUFFER];
     char *new = NULL;
     int n;
 
     switch(op1->data_type){
         case INT: //_sprintf
-            n = snprintf(load, L_BUFFER - 1,"%d",op1->i);
+            n = snprintf(load, LOAD_BUFFER - 1,"%d",op1->i);
             n = n + 1;
             if((new = malloc(sizeof(char)*n)) == NULL){
                 exit(INTERNAL_INTERPRET_ERROR);
@@ -134,7 +137,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
             memcpy(new, load, n);
             break;
         case DOUBLE:
-            n = snprintf(load, L_BUFFER - 1,"%g",op1->d);
+            n = snprintf(load, LOAD_BUFFER - 1,"%g",op1->d);
             n = n + 1;
             if((new = malloc(sizeof(char)*n)) == NULL){
                 exit(INTERNAL_INTERPRET_ERROR);
@@ -348,22 +351,6 @@ void i_or(tVar *op1, tVar *op2, tVar *result){
 //initialization of frame
 //op1 size of frame
 
-int decode_type(char type){
-    switch (type) {
-    case 'i':
-        return INT;
-    case 'd':
-        return DOUBLE;
-    case 'b':
-        return BOOLEAN;
-    case 's':
-        return STRING;
-    default:
-       d_message("CHYBA V DECODE_TYPE");
-       return -42;
-    }
-}
-
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -397,7 +384,7 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
         default:
            d_message("CHYBA V DECODE_TYPE");
         }
-        //frame_stack.prepared->local[i].data_type = decode_type(*s);
+
         frame_stack.prepared->local[i].initialized = false;
         i++;
     }

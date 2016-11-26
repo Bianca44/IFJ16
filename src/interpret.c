@@ -16,16 +16,15 @@
 #define get_e_adr(adress) \
         ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
 
-#define STACK_BUF_SIZE 32
+#define STACK_BUFFER_SIZE 32
 #define FRAME_BUFFER_SIZE 9
 
-int push_counter;
+
 tList * processed_tape;
 
-tFrame * frame_buffer[FRAME_BUFFER_SIZE] = {NULL, };
+tFrame * frame_buffer[FRAME_BUFFER_SIZE];
 int frame_buf_size;
-
-tFSElem stack_buf[STACK_BUF_SIZE];// = {NULL, };
+tFSElem stack_buf[STACK_BUFFER_SIZE];
 int stack_buf_size = 0;
 
 tFrame * init_frame(unsigned size, char *loc_types){
@@ -35,7 +34,7 @@ tFrame * init_frame(unsigned size, char *loc_types){
 
         //recyklovanie ramcov
         while(frame_buffer[i] != NULL){
-            if(frame_buffer[i]->size >= (int) size){
+            if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
                 new_frame->loc_types = loc_types;
                 frame_buf_size -= 1;                
@@ -47,18 +46,17 @@ tFrame * init_frame(unsigned size, char *loc_types){
         }        
           
         if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL) {
-                exit(INTERNAL_INTERPRET_ERROR);
+                exit(INTERNAL_INTERPRET_ERROR);        
         }
-        
-        
-        new_frame->loc_types = loc_types;
+
+        new_frame->loc_types = loc_types;//TODO
         new_frame->ret_val = NULL;
         new_frame->size = size;
 
        
         return new_frame;
 }
-void dispose_buffer(){
+void dispose_frame_buffer(){
     for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
         if(frame_buffer[i] != NULL){
            free(frame_buffer[i]);
@@ -81,7 +79,7 @@ tFrame * top_frame(tFrameStack *stack){
 void push_frame(tFrameStack *stack, tFrame * frame){
 
         tFSElem *ptr;
-        if(stack_buf_size >= STACK_BUF_SIZE){
+        if(stack_buf_size >= STACK_BUFFER_SIZE){
             if((ptr = malloc(sizeof(tFSElem))) == NULL) {
                     exit(INTERNAL_INTERPRET_ERROR);
             }
@@ -103,20 +101,13 @@ void pop_frame(tFrameStack *stack){
                 tmp = stack->top;
                 //change stack top
                 stack->top = stack->top->next;
-                //free frame
-                //TODO dalo by sa optimalizovat
-                if(tmp->frame == NULL) {
-                        d_message("PIL SI");
-                        exit(42);
-                }
-                int i;
-                for(i = tmp->frame->size; i--;) {
-
+                //free frame 
+                for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
-                                free(tmp->frame->local[i].s);
+                                if(tmp->frame->local[i].initialized)
+                                    free(tmp->frame->local[i].s);
                         }
                 }
-                //dispose_frame(tmp->frame);
                 //posledny neplnime bude vzdy NULL - zarazka
                 
                 if(frame_buf_size < FRAME_BUFFER_SIZE - 1){
@@ -125,9 +116,8 @@ void pop_frame(tFrameStack *stack){
                 else{
                     free(frame_buffer[0]);
                     frame_buffer[0] = tmp->frame;
-                    //free(tmp->frame);
                 }
-                if(stack_buf_size > STACK_BUF_SIZE)
+                if(stack_buf_size > STACK_BUFFER_SIZE)
                     free(tmp);
                 stack_buf_size--;
         }

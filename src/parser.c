@@ -57,7 +57,7 @@ void cleanup_resources() {
         free_constants(&tape_ref);
         free_class_list();
         DisposeList(global_inst_tape);
-        dispose_buffer();
+        dispose_frame_buffer();
 }
 
 int get_token() {

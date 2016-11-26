@@ -31,7 +31,7 @@ char * copy_string(char *text) {
         if ((ptr = (char *) malloc((length + 1) * sizeof(char))) == NULL) {
                 return false;
         }
-        strcpy(ptr, text);
+        strcpy(ptr, text); //memcpy ?
         ptr[length] = '\0';
         d_ptr(text);
         d_str(text);

@@ -26,7 +26,7 @@ static int factorial(int n) // Definice funkce pro vypocet faktorialu
         }
         else {
 
-                while (i != 90000000) {
+                while (i != 1000000) {
                     x = daco(x);                   
                     i = i + x;
                 }
@@ -37,6 +37,7 @@ static int factorial(int n) // Definice funkce pro vypocet faktorialu
 }
 
 static int daco(int q){
+    String t = "faf";
     int x = d2(q);
     int y = 0;
     int z = x + y;
