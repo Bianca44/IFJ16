@@ -128,7 +128,7 @@ void PSDispose(PStack *P){
 }
 
 bool is_top_terminal(int term){
-      if(term <= P_ENDMARK){
+      if(term <= P_NOT){
           return true;
       }
       else

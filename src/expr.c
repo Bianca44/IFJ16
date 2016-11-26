@@ -116,7 +116,7 @@ int choose_rule(PStack *P){
     result_item.value.data_type = 0;
     int first_operand;
     int second_operand;
-
+    d_int(top_item->term);
     switch(top_item->term){
 
         //pravidlo E -> int_literal,double_literal,...
@@ -257,7 +257,7 @@ int choose_rule(PStack *P){
                 tmp = generate_tmp_var(result_item.value.data_type);
                 InsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
             }
-            else if(first_operand == BOOLEAN && second_operand == BOOLEAN){
+            else if(first_operand == BOOLEAN || second_operand == BOOLEAN){
                 fprintf(stderr,"Incompatible data types.\n");
                 expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
             }
@@ -884,6 +884,34 @@ int choose_rule(PStack *P){
             }
             result_item.expr = tmp;
             break;
+        case P_NOT:
+            if(P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_HANDLE){
+                fprintf(stderr,"Unexpected expression.\n");
+                exit(3); // just for test
+            }
+            first_operand = P->top->value.data_type;
+            op_1 = P->top->expr;
+            d_bol(P->top->expr->b);
+            if(first_operand == BOOLEAN){
+                result_item.value.data_type = BOOLEAN;
+                tmp = generate_tmp_var(result_item.value.data_type);
+                InsertLast(work_tape, generate(I_NOT,op_1, NULL, tmp));
+            }
+            else if(first_operand == INT){
+                fprintf(stderr,"Incompatible data type.\n");
+                expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
+            else if(first_operand == DOUBLE){
+                fprintf(stderr,"Incompatible data type.\n");
+                expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
+            else if(first_operand == STRING){
+                fprintf(stderr,"Incompatible data type.\n");
+                expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+            }
+            
+            result_item.expr = tmp;
+            break;
 
         default:
            d_message("Nastala chyba.\n");
@@ -899,6 +927,7 @@ int choose_rule(PStack *P){
 
         P->top->value.data_type = result_item.value.data_type;
         P->top->expr = result_item.expr;
+        d_bol(P->top->expr->b);
 
 return 1;
 }
