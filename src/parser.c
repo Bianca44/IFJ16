@@ -209,6 +209,11 @@ int parse_expression(bool ends_semicolon) {
                                                                         InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_RINT, NULL, NULL, res));
+                                                                        if (res->data_type == DOUBLE) {
+                                                                                InsertLast(function_inst_tape,
+                                                                                           generate(I_CONV_I_TO_D, res, NULL, res));
+                                                                                expr_result.variable.data_type = DOUBLE;
+                                                                        }
                                                                 } else if (strcmp(function_name_call, "ifj16.readString") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_RSTR, NULL, NULL, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.readDouble") == 0) {
@@ -230,7 +235,8 @@ int parse_expression(bool ends_semicolon) {
                                                                                    generate(I_F_CALL, call_function->function.instruction_tape, NULL, res));
                                                                 }
 
-                                                                first_param = second_param = expr_var_result = NULL;
+                                                                first_param = second_param = NULL;
+                                                                expr_var_result = res;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
@@ -537,8 +543,6 @@ int parse_next_param_value() {
 int parse_param_value() {
         if (is_second_pass) {
                 params_counter = 0;
-
-                d_print("CALL %s\n", function_name_call);
 
                 if (strstr(function_name_call, "ifj16.") == NULL) {
                         symbol_table_item_t *function = NULL;
@@ -1074,9 +1078,7 @@ int parse_method_element() {
                         }
 
                         current_function.function.param_data_types = copy_string(param_data_types.data);
-                        d_message("TU to nepadlo");
                         current_function.function.local_vars_data_types = copy_string(local_vars_data_types.data);
-                        d_message("TU to nepadlo");
                         current_function.function.params_count = param_data_types.length;
                         d_print
                                 ("name=%s, ret_type=%d, data_types=%s, params_count=%d, local_vars_count=%d, all=%d, local_vars_data_types=%s\n",
@@ -1087,7 +1089,6 @@ int parse_method_element() {
                                 current_function.function.local_vars_count,
                                 current_function.function.params_count + current_function.function.local_vars_count,
                                 current_function.function.local_vars_data_types);
-                        d_message("TU to nepadlo");
                         if (!is_declared(current_function.id_name)) {
                                 insert_function_symbol_table(current_function.id_name,
                                                              current_function.function.return_type,
@@ -1096,7 +1097,6 @@ int parse_method_element() {
                                                              current_function.function.param_data_types,
                                                              current_function.function.local_vars_data_types,
                                                              current_function.function.symbol_table);
-                                d_message("TU to nepadlo");
                                 insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                                 current_function.id_name = NULL;
                         } else {
@@ -1141,7 +1141,6 @@ int parse_method_element() {
                         if (t.type == ASSIGN || t.type == SEMICOLON) {
                                 if (parse_value()) {
                                         if (is_second_pass) {
-
                                                 if (expr_var_result != NULL) {
                                                         symbol_table_t *table = get_symbol_table_for_function(current_class,
                                                                                                               current_function.id_name);

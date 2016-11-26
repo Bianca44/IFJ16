@@ -221,7 +221,9 @@ int choose_rule(PStack * P) {
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
                         if (first_operand == INT) {
+                                d_print("OP %d\n", op_1->i);
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
+                                d_print("OP %p\n", var);
                                 InsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
                         } else {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));

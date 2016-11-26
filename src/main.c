@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
                 exit(SYNTACTIC_ANALYSIS_ERROR);
         }
 
+
         parse(&inst_tape);
 
         symbol_table_item_t *run_method = get_symbol_table_class_item("Main", "run");
