@@ -5,8 +5,8 @@
 #include "symbol_table.h"
 #include "instructions.h"
 
-int get_psa(token_buffer_t *buffer,symbol_table_item_t * st_item, tVar** expr_result);
-tVar * generate_tmp_var(int data_type);
+int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr_result);
+tVar *generate_tmp_var(int data_type);
 void expr_exit(int exit_code);
 
-#endif // EXPR_H
+#endif				// EXPR_H

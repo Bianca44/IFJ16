@@ -1,9 +1,13 @@
 #ifndef ERROR_CODES_H
 #define ERROR_CODES_H
 
+/* No errors */
 #define INTERPRET_OK 0
 
+/* Lexical analysis error */
 #define LEXICAL_ANALYSIS_ERROR 1
+
+/* Syntactic analysis error */
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
 /* sémantická chyba v programu – nedefinovaná třída/funkce/proměnná, pokus o re-
@@ -35,4 +39,4 @@ příkazové řádky atd.). */
 
 #define INTERNAL_INTERPRET_ERROR 99
 
-#endif // ERROR_CODES_H
+#endif				// ERROR_CODES_H

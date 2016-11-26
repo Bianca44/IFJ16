@@ -14,14 +14,14 @@ typedef struct {
 
 
 
-bool init_string(string_t *str);
+bool init_string(string_t * str);
 
-void clear_string(string_t *str);
+void clear_string(string_t * str);
 
-char * copy_string(char *text);
+char *copy_string(char *text);
 
-bool append_char(string_t *str, char c);
+bool append_char(string_t * str, char c);
 
-void free_string(string_t *str);
+void free_string(string_t * str);
 
-#endif // STRINGS_H
+#endif				// STRINGS_H

@@ -18,24 +18,24 @@ symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 string_t param_data_types;
 
-tVar * get_adress(char *id, symbol_table_t *t){
-   
-    return &((symbol_table_item_t *)ht_read(t, id))->variable;
+tVar *get_adress(char *id, symbol_table_t * t) {
+
+    return &((symbol_table_item_t *) ht_read(t, id))->variable;
 }
 
 
 
-int main(){
-    
-    
-    
+int main() {
+
+
+
     //pomocne premenna na simulovanie konstant
     tVar pomocna[100];
-    for(int i=0 ;i < 100; i++){
+    for (int i = 0; i < 100; i++) {
 
-        pomocna[i].offset = CONSTANT;
-        pomocna[i].initialized = true;
-        
+	pomocna[i].offset = CONSTANT;
+	pomocna[i].initialized = true;
+
     }
 
     //filling symbol table for test purposes
@@ -90,14 +90,14 @@ int main(){
     //  x = factorial(y);
     //}
 
-    char * name = "Main";
+    char *name = "Main";
     //pridanie triedy
     insert_class(name);
     //nastavime ako aktulanu triedu
     set_current_class(name);
 
     //pristup k tabulke
-    symbol_table_t * main_f = get_symbol_table_for_class(name);
+    symbol_table_t *main_f = get_symbol_table_for_class(name);
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
     //x
     insert_variable_symbol_table("x", INT, CONSTANT);
@@ -105,7 +105,7 @@ int main(){
     insert_variable_symbol_table("str", STRING, CONSTANT);
 
     //vytvorenie tabulka symbolov pre funkciu
-    symbol_table_t * run = create_function_symbol_table();
+    symbol_table_t *run = create_function_symbol_table();
 
     //pridanie lokalnych premennych
     insert_function_variable_symbol_table(run, "a", INT, 0);
@@ -117,69 +117,69 @@ int main(){
     insert_function_variable_symbol_table(run, "bool", BOOLEAN, 6);
 
     //pridanie ts funkcie do aktualnej triedy
-    insert_function_symbol_table("run", VOID, 0, 7, "","iiidddb", run);
+    insert_function_symbol_table("run", VOID, 0, 7, "", "iiidddb", run);
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
 
     //global instruction tape
     tList gl_tape;
     InitList(&gl_tape, dispose_inst);
-      
-    pomocna[0].i = 32; //b
-    pomocna[0].data_type = INT; //b
-    pomocna[1].i = 35; //c
-    pomocna[1].data_type = INT; //c
-    pomocna[2].d = 10.2; //e
-    pomocna[2].data_type = DOUBLE; //e
-    pomocna[3].d = 2.57; //f
-    pomocna[3].data_type = DOUBLE; //f
+
+    pomocna[0].i = 32;		//b
+    pomocna[0].data_type = INT;	//b
+    pomocna[1].i = 35;		//c
+    pomocna[1].data_type = INT;	//c
+    pomocna[2].d = 10.2;	//e
+    pomocna[2].data_type = DOUBLE;	//e
+    pomocna[3].d = 2.57;	//f
+    pomocna[3].data_type = DOUBLE;	//f
     pomocna[4].i = 2;
     pomocna[4].data_type = INT;
     symbol_table_item_t *x = get_symbol_table_class_item("Main", "run");
 
     x->function.params_local_vars_count = 7;
     //paska pre run  
-    tList  run_tape;
+    tList run_tape;
     InitList(&run_tape, dispose_inst);
     // x = 2
-    InsertLast(&gl_tape, generate(I_ASSIGN, &pomocna[4], NULL, get_adress("x",main_f)));
+    InsertLast(&gl_tape, generate(I_ASSIGN, &pomocna[4], NULL, get_adress("x", main_f)));
     // run()
     InsertLast(&gl_tape, generate(I_INIT_FRAME, x, NULL, NULL));
     InsertLast(&gl_tape, generate(I_F_CALL, &run_tape, NULL, NULL));
 
     //ZACIATOK FUNKCIE ========================
     //b = 30
-    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("b",run)));
+    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[0], NULL, get_adress("b", run)));
     //c = 35
-    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("c",run)));
+    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[1], NULL, get_adress("c", run)));
     //      a = b + c;
     //      a = b - c;
     //      a = b * c;
     //      a = b / c;
     //      x = x + b;
-    InsertLast(&run_tape, generate(I_ADD, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
-    InsertLast(&run_tape, generate(I_SUB, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
-    InsertLast(&run_tape, generate(I_MUL, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
-    InsertLast(&run_tape, generate(I_DIV, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
-    InsertLast(&run_tape, generate(I_ADD, get_adress("x",main_f), get_adress("b",run), get_adress("x",main_f)));
+    InsertLast(&run_tape, generate(I_ADD, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
+    InsertLast(&run_tape, generate(I_SUB, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
+    InsertLast(&run_tape, generate(I_MUL, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
+    InsertLast(&run_tape, generate(I_DIV, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
+    InsertLast(&run_tape, generate(I_ADD, get_adress("x", main_f), get_adress("b", run), get_adress("x", main_f)));
     //d = 10.2
-    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("e",run)));
+    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[2], NULL, get_adress("e", run)));
     //e = 2.57
-    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("f",run)));
+    InsertLast(&run_tape, generate(I_ASSIGN, &pomocna[3], NULL, get_adress("f", run)));
     //      d = e + f;
     //      d = e - f;
     //      d = e * f;
     //      d = e / f;
-    InsertLast(&run_tape, generate(I_ADD, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
-    InsertLast(&run_tape, generate(I_SUB, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
-    InsertLast(&run_tape, generate(I_MUL, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
-    InsertLast(&run_tape, generate(I_DIV, get_adress("e",run), get_adress("f",run), get_adress("d",run)));
+    InsertLast(&run_tape, generate(I_ADD, get_adress("e", run), get_adress("f", run), get_adress("d", run)));
+    InsertLast(&run_tape, generate(I_SUB, get_adress("e", run), get_adress("f", run), get_adress("d", run)));
+    InsertLast(&run_tape, generate(I_MUL, get_adress("e", run), get_adress("f", run), get_adress("d", run)));
+    InsertLast(&run_tape, generate(I_DIV, get_adress("e", run), get_adress("f", run), get_adress("d", run)));
 
 
 
     //x = x + x
-    InsertLast(&gl_tape, generate(I_ADD, get_adress("x",main_f), get_adress("x",main_f), get_adress("x",main_f)));
+    InsertLast(&gl_tape, generate(I_ADD, get_adress("x", main_f), get_adress("x", main_f), get_adress("x", main_f)));
     //print(x) 
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("x",main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("x", main_f), NULL, NULL));
     //if(b < c)
     //{
     //  a = b*c
@@ -190,27 +190,27 @@ int main(){
     //}
 
     //ZACIATOK PODM ===================
-    js_init(); // zasobnik na to odkial sa skace alebo kde skocit
-    
+    js_init();			// zasobnik na to odkial sa skace alebo kde skocit
+
     // if a > b
-    InsertLast(&run_tape, generate(I_L, get_adress("b",run), get_adress("c",run), get_adress("bool",run)));
-    InsertLast(&run_tape, generate(I_JNT, get_adress("bool",run), NULL, NULL));
-    js_push(GetLastElem(&run_tape)); //uloz na zosobnik, odkial sa skace
+    InsertLast(&run_tape, generate(I_L, get_adress("b", run), get_adress("c", run), get_adress("bool", run)));
+    InsertLast(&run_tape, generate(I_JNT, get_adress("bool", run), NULL, NULL));
+    js_push(GetLastElem(&run_tape));	//uloz na zosobnik, odkial sa skace
     //c = a * b
-    InsertLast(&run_tape, generate(I_MUL, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
+    InsertLast(&run_tape, generate(I_MUL, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
 
     InsertLast(&run_tape, generate(I_GOTO, NULL, NULL, NULL));
-  
-    set_label(js_top(), GetLastElem(&run_tape));//na if nastavime ze ma skocit za goto
 
-    js_pop();//uvolnime polozku odkial sa skakalo (z ifu)
-    js_push(GetLastElem(&run_tape)); // pridame odkial sa skace (z goto)
+    set_label(js_top(), GetLastElem(&run_tape));	//na if nastavime ze ma skocit za goto
+
+    js_pop();			//uvolnime polozku odkial sa skakalo (z ifu)
+    js_push(GetLastElem(&run_tape));	// pridame odkial sa skace (z goto)
     //c = a/b    
-    InsertLast(&run_tape, generate(I_DIV, get_adress("b",run), get_adress("c",run), get_adress("a",run)));
-    set_label(js_top(), GetLastElem(&run_tape)); //do goto priradime adresu de ma skocit (za DIV)
+    InsertLast(&run_tape, generate(I_DIV, get_adress("b", run), get_adress("c", run), get_adress("a", run)));
+    set_label(js_top(), GetLastElem(&run_tape));	//do goto priradime adresu de ma skocit (za DIV)
     js_pop();
 
-   //KONIEC PODM =======================
+    //KONIEC PODM =======================
 
     //while(b <= c){
     //  b = b + 1;
@@ -218,18 +218,18 @@ int main(){
     pomocna[5].i = 1;
     pomocna[5].data_type = INT;
     //  ZACIATOK CYKLU
-    js_push(GetLastElem(&run_tape)); //pridanie de sa ma skocit, - bude sa pokraocvat na overeni podm
+    js_push(GetLastElem(&run_tape));	//pridanie de sa ma skocit, - bude sa pokraocvat na overeni podm
     // b <= c
-    InsertLast(&run_tape, generate(I_LE, get_adress("b",run), get_adress("c",run), get_adress("bool",run)));
-    InsertLast(&run_tape, generate(I_JNT, get_adress("bool",run), NULL, NULL));
-    js_push(GetLastElem(&run_tape)); //odkial sa skace
+    InsertLast(&run_tape, generate(I_LE, get_adress("b", run), get_adress("c", run), get_adress("bool", run)));
+    InsertLast(&run_tape, generate(I_JNT, get_adress("bool", run), NULL, NULL));
+    js_push(GetLastElem(&run_tape));	//odkial sa skace
     //b = b + 1
-    InsertLast(&run_tape, generate(I_ADD, get_adress("b",run), &pomocna[5], get_adress("b",run)));
-    
+    InsertLast(&run_tape, generate(I_ADD, get_adress("b", run), &pomocna[5], get_adress("b", run)));
+
     InsertLast(&run_tape, generate(I_GOTO, NULL, NULL, NULL));
-    set_label(js_top(), GetLastElem(&run_tape));//do ifu nastavime ze sa ma skocit za goto
+    set_label(js_top(), GetLastElem(&run_tape));	//do ifu nastavime ze sa ma skocit za goto
     js_pop();
-    set_label(GetLastElem(&run_tape), js_top()); // do goto priradime ze sa ma skocit pred while na overenie podm
+    set_label(GetLastElem(&run_tape), js_top());	// do goto priradime ze sa ma skocit pred while na overenie podm
     js_pop();
     //KONIEC CYKLU ==============
 
@@ -255,7 +255,7 @@ int main(){
     //}
 
     //vytvorenie tabulka symbolov pre funkciu
-    symbol_table_t * fact = create_function_symbol_table();
+    symbol_table_t *fact = create_function_symbol_table();
 
     //pridanie lokalnych premennych
     insert_function_variable_symbol_table(fact, "n", INT, 0);
@@ -264,11 +264,11 @@ int main(){
     insert_function_variable_symbol_table(fact, "bool", BOOLEAN, 3);
 
     //pridanie ts funkcie do aktualnej triedy
-    insert_function_symbol_table("fact", INT, 1, 4, "i","iib", fact);
+    insert_function_symbol_table("fact", INT, 1, 4, "i", "iib", fact);
     d_print("pocet funkcii: %d existuje Main: %d", main_f->n_items, exists_class("Main"));
 
     //paska pre fact 
-    tList  fact_tape;
+    tList fact_tape;
     InitList(&fact_tape, dispose_inst);
     symbol_table_item_t *z = get_symbol_table_class_item("Main", "fact");
     z->function.params_local_vars_count = 4;
@@ -281,47 +281,49 @@ int main(){
 
     InsertLast(&gl_tape, generate(I_PRINT, &pomocna[9], NULL, NULL));
 //LEAK    
-    InsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
+    InsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y", main_f)));
 
     // x = factorial(y)
     InsertLast(&gl_tape, generate(I_INIT_FRAME, z, NULL, NULL));
-    InsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("y",main_f), NULL, NULL));
-    InsertLast(&gl_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("x",main_f)));
+    InsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("y", main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("x", main_f)));
 
 
     pomocna[7].i = 1;
     pomocna[7].data_type = INT;
-    InsertLast(&fact_tape, generate(I_SUB, get_adress("n", fact), &pomocna[7], get_adress("decremented_n",fact)));
-    
+    InsertLast(&fact_tape, generate(I_SUB, get_adress("n", fact), &pomocna[7], get_adress("decremented_n", fact)));
+
     pomocna[8].i = 2;
     pomocna[8].data_type = INT;
 
     // if n < 2
-    InsertLast(&fact_tape, generate(I_L, get_adress("n",fact), &pomocna[8], get_adress("bool",fact)));
-    InsertLast(&fact_tape, generate(I_JNT, get_adress("bool",fact), NULL, NULL));
-    js_push(GetLastElem(&fact_tape)); //uloz na zosobnik, odkial sa skace
+    InsertLast(&fact_tape, generate(I_L, get_adress("n", fact), &pomocna[8], get_adress("bool", fact)));
+    InsertLast(&fact_tape, generate(I_JNT, get_adress("bool", fact), NULL, NULL));
+    js_push(GetLastElem(&fact_tape));	//uloz na zosobnik, odkial sa skace
     //return 1
     InsertLast(&fact_tape, generate(I_RETURN, &pomocna[7], NULL, NULL));
-    InsertLast(&fact_tape, generate(I_GOTO, NULL, NULL, NULL));  
-    set_label(js_top(), GetLastElem(&fact_tape));//na if nastavime ze ma skocit za goto
-    js_pop();//uvolnime polozku odkial sa skakalo (z ifu)
-    js_push(GetLastElem(&fact_tape)); // pridame odkial sa skace (z goto)
+    InsertLast(&fact_tape, generate(I_GOTO, NULL, NULL, NULL));
+    set_label(js_top(), GetLastElem(&fact_tape));	//na if nastavime ze ma skocit za goto
+    js_pop();			//uvolnime polozku odkial sa skakalo (z ifu)
+    js_push(GetLastElem(&fact_tape));	// pridame odkial sa skace (z goto)
     //temp_result = factorial(decremented_n)
     InsertLast(&fact_tape, generate(I_INIT_FRAME, z, NULL, NULL));
-    InsertLast(&fact_tape, generate(I_PUSH_PARAM, get_adress("decremented_n",fact), NULL, NULL));
-    InsertLast(&fact_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("temp_result",fact)));
+    InsertLast(&fact_tape, generate(I_PUSH_PARAM, get_adress("decremented_n", fact), NULL, NULL));
+    InsertLast(&fact_tape, generate(I_F_CALL, &fact_tape, NULL, get_adress("temp_result", fact)));
     //temp_result = n * temp_result
-    InsertLast(&fact_tape, generate(I_MUL, get_adress("n", fact), get_adress("temp_result",fact), get_adress("temp_result",fact)));
+    InsertLast(&fact_tape,
+	       generate(I_MUL, get_adress("n", fact), get_adress("temp_result", fact),
+			get_adress("temp_result", fact)));
     //return temp_result
     InsertLast(&fact_tape, generate(I_RETURN, get_adress("temp_result", fact), NULL, NULL));
 
-    set_label(js_top(), GetLastElem(&fact_tape)); //do goto priradime adresu de ma skocit (za DIV)
-    js_pop(); 
+    set_label(js_top(), GetLastElem(&fact_tape));	//do goto priradime adresu de ma skocit (za DIV)
+    js_pop();
     //KONIEC FAKTORIALU  ========================================
     //y = readInt();
     //str = readString();
     //InsertLast(&gl_tape, generate(I_RINT, NULL, NULL, get_adress("y",main_f)));
-    InsertLast(&gl_tape, generate(I_RSTR, NULL, NULL, get_adress("str",main_f)));
+    InsertLast(&gl_tape, generate(I_RSTR, NULL, NULL, get_adress("str", main_f)));
 
     //print(y)
     //print str
@@ -330,36 +332,40 @@ int main(){
     //print(len)
     pomocna[10].data_type = INT;
     //InsertLast(&gl_tape, generate(I_PRINT, get_adress("y",main_f), NULL, NULL));
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("x",main_f), NULL, NULL));
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
-   
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("x", main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str", main_f), NULL, NULL));
+
 
     //sort 
-    symbol_table_t * substr = create_function_symbol_table();
+    symbol_table_t *substr = create_function_symbol_table();
     insert_function_symbol_table("substr", STRING, 3, 0, "sii", "", substr);
     symbol_table_item_t *y = get_symbol_table_class_item("Main", "substr");
-    y->function.params_local_vars_count = 3; 
+    y->function.params_local_vars_count = 3;
     pomocna[11].data_type = INT;
     pomocna[11].i = 1;
     pomocna[12].data_type = INT;
     pomocna[12].i = 3;
     InsertLast(&gl_tape, generate(I_INIT_FRAME, y, NULL, NULL));
-    InsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("str",main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_PUSH_PARAM, get_adress("str", main_f), NULL, NULL));
     InsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[11], NULL, NULL));
     InsertLast(&gl_tape, generate(I_PUSH_PARAM, &pomocna[12], NULL, NULL));
-    InsertLast(&gl_tape, generate(I_SUBSTR, NULL, NULL, get_adress("str",main_f)));
+    InsertLast(&gl_tape, generate(I_SUBSTR, NULL, NULL, get_adress("str", main_f)));
 
-    InsertLast(&gl_tape, generate(I_SORT, get_adress("str",main_f), NULL, get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
-    InsertLast(&gl_tape, generate(I_LEN, get_adress("str",main_f), NULL, &pomocna[10]));
+    InsertLast(&gl_tape, generate(I_SORT, get_adress("str", main_f), NULL, get_adress("str", main_f)));
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str", main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_LEN, get_adress("str", main_f), NULL, &pomocna[10]));
     InsertLast(&gl_tape, generate(I_PRINT, &pomocna[10], NULL, NULL));
-    InsertLast(&gl_tape, generate(I_TO_STRING, &pomocna[10], NULL, get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
-    InsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_CAT, get_adress("str",main_f), get_adress("str",main_f), get_adress("str",main_f)));
-    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str",main_f), NULL, NULL));
+    InsertLast(&gl_tape, generate(I_TO_STRING, &pomocna[10], NULL, get_adress("str", main_f)));
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str", main_f), NULL, NULL));
+    InsertLast(&gl_tape,
+	       generate(I_CAT, get_adress("str", main_f), get_adress("str", main_f), get_adress("str", main_f)));
+    InsertLast(&gl_tape,
+	       generate(I_CAT, get_adress("str", main_f), get_adress("str", main_f), get_adress("str", main_f)));
+    InsertLast(&gl_tape,
+	       generate(I_CAT, get_adress("str", main_f), get_adress("str", main_f), get_adress("str", main_f)));
+    InsertLast(&gl_tape,
+	       generate(I_CAT, get_adress("str", main_f), get_adress("str", main_f), get_adress("str", main_f)));
+    InsertLast(&gl_tape, generate(I_PRINT, get_adress("str", main_f), NULL, NULL));
 
     processed_tape = &gl_tape;
     interpret_tac(&gl_tape);

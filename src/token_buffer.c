@@ -5,7 +5,9 @@
 #include "token_buffer.h"
 #include "debug.h"
 
-bool init_token_buffer(token_buffer_t *token_buf) {
+
+/* Inicializes a token buffer */
+bool init_token_buffer(token_buffer_t * token_buf) {
         token_buf->list = (token_t **) malloc(TOKEN_BUFFER_INITIAL_ALLOCATION * sizeof(token_t));
         if (token_buf->list == NULL) {
                 return false;
@@ -15,7 +17,9 @@ bool init_token_buffer(token_buffer_t *token_buf) {
         return true;
 }
 
-bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t) {
+
+/* Adds a token to the token buffer */
+bool add_token_to_buffer(token_buffer_t * token_buf, token_t * t) {
         if (token_buf->length == token_buf->allocated_size) {
                 int new_size = token_buf->allocated_size + TOKEN_BUFFER_INITIAL_ALLOCATION;
                 token_buf->list = (token_t **) realloc(token_buf->list, new_size * sizeof(token_t));
@@ -33,7 +37,9 @@ bool add_token_to_buffer(token_buffer_t *token_buf, token_t *t) {
         return true;
 }
 
-token_t* get_next_token_buffer(token_buffer_t *token_buf) {
+
+/* Gets a token from the token buffer */
+token_t *get_next_token_buffer(token_buffer_t * token_buf) {
         static int i = 0;
 
         if (i < token_buf->length) {
@@ -43,16 +49,19 @@ token_t* get_next_token_buffer(token_buffer_t *token_buf) {
         }
 }
 
-void free_token_buffer(token_buffer_t *token_buf) {
-        if (token_buf == NULL) return;
+
+/* Frees the token buffer */
+void free_token_buffer(token_buffer_t * token_buf) {
+        if (token_buf == NULL)
+                return;
         for (int i = 0; i < token_buf->length; i++) {
-                if(token_buf->list[i]->type == ID || token_buf->list[i]->type == SPECIAL_ID)
-                    free(token_buf->list[i]->string_value);
+                if (token_buf->list[i]->type == ID || token_buf->list[i]->type == SPECIAL_ID)
+                        free(token_buf->list[i]->string_value);
 
                 free(token_buf->list[i]);
                 token_buf->list[i] = NULL;
         }
-        
+
         if (token_buf->list != NULL) {
                 free(token_buf->list);
                 token_buf->list = NULL;
@@ -63,13 +72,16 @@ void free_token_buffer(token_buffer_t *token_buf) {
 
 }
 
-void free_token_buffer_local(token_buffer_t *token_buf) {
-        if (token_buf == NULL) return;
+
+/* Frees the local token buffer used for expression parsing */
+void free_token_buffer_local(token_buffer_t * token_buf) {
+        if (token_buf == NULL)
+                return;
         for (int i = 0; i < token_buf->length; i++) {
                 free(token_buf->list[i]);
                 token_buf->list[i] = NULL;
         }
-        
+
         if (token_buf->list != NULL) {
                 free(token_buf->list);
                 token_buf->list = NULL;

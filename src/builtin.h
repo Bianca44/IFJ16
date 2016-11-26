@@ -4,12 +4,12 @@
 
 void sort(char *str);
 int find(char *p, char *t);
-void print(tVar *var);
+void print(tVar * var);
 int length(char *string);
 int compare(char *s1, char *s2);
-char * substr(char *s, int i, int n);
+char *substr(char *s, int i, int n);
 int read_int();
 double read_double();
-char * read_string();
+char *read_string();
 
-#endif // BUILTIN_H
+#endif				// BUILTIN_H
