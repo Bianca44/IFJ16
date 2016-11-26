@@ -1,5 +1,5 @@
 CFLAGS=-std=c11 -pedantic -Wall -Wextra
-CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -Ofast 
+CFLAGS_N=-std=c11 -pedantic -Wall -Wextra -Ofast -DNDEBUG
 #-DNDEBUG
 CC=gcc
 

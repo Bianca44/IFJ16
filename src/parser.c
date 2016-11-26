@@ -204,16 +204,12 @@ int parse_expression(bool ends_semicolon) {
 
                                                                 tVar *res = &var->variable;
                                                                 res->initialized = true;
+                                                                expr_var_result = res;
 
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_RINT, NULL, NULL, res));
-                                                                        if (res->data_type == DOUBLE) {
-                                                                                InsertLast(function_inst_tape,
-                                                                                           generate(I_CONV_I_TO_D, res, NULL, res));
-                                                                                expr_result.variable.data_type = DOUBLE;
-                                                                        }
                                                                 } else if (strcmp(function_name_call, "ifj16.readString") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_RSTR, NULL, NULL, res));
                                                                 } else if (strcmp(function_name_call, "ifj16.readDouble") == 0) {
@@ -236,7 +232,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 }
 
                                                                 first_param = second_param = NULL;
-                                                                expr_var_result = res;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
@@ -508,7 +503,11 @@ int parse_next_param_value() {
                                                         second_param = insert_double_const(&mem_constants, val);
                                                 } else {
                                                         second_param->data_type = DOUBLE;
-                                                        InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, second_param, NULL, second_param));
+                                                        symbol_table_item_t *temp = insert_tmp_variable_symbol_table_function(current_function.id_name, DOUBLE);
+                                                        tVar * conv_res = &temp->variable;
+                                                        InsertLast(function_inst_tape,
+                                                                   generate(I_CONV_I_TO_D, second_param, NULL, conv_res));
+                                                        second_param = conv_res;
                                                 }
 
                                         } else if (data_type != DOUBLE) {
@@ -681,7 +680,11 @@ int parse_param_value() {
                                                                 first_param = insert_double_const(&mem_constants, val);
                                                         } else {
                                                                 first_param->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape, generate(I_CONV_I_TO_D, first_param, NULL, first_param));
+                                                                symbol_table_item_t *temp = insert_tmp_variable_symbol_table_function(current_function.id_name, DOUBLE);
+                                                                tVar * conv_res = &temp->variable;
+                                                                InsertLast(function_inst_tape,
+                                                                           generate(I_CONV_I_TO_D, first_param, NULL, conv_res));
+                                                                first_param = conv_res;
                                                         }
 
                                                 } else if (data_type != DOUBLE) {
@@ -1311,8 +1314,11 @@ int parse_value() {
                                                 if (current_variable.variable.data_type != expr_data_type) {
                                                         if (current_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
                                                                 expr_var_result->data_type = DOUBLE;
-                                                                InsertLast(function_inst_tape,
-                                                                           generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
+                                                                symbol_table_item_t *temp = insert_tmp_variable_symbol_table_class(DOUBLE);
+                                                                tVar * conv_res = &temp->variable;
+                                                                InsertLast(global_inst_tape,
+                                                                           generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
+                                                                expr_var_result = conv_res;
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -1328,8 +1334,11 @@ int parse_value() {
                                                 if (function_variable.variable.data_type != expr_data_type) {
                                                         if (function_variable.variable.data_type == DOUBLE && expr_data_type == INT) {
                                                                 expr_var_result->data_type = DOUBLE;
+                                                                symbol_table_item_t *temp = insert_tmp_variable_symbol_table_function(current_function.id_name, DOUBLE);
+                                                                tVar * conv_res = &temp->variable;
                                                                 InsertLast(function_inst_tape,
-                                                                           generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
+                                                                           generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
+                                                                expr_var_result = conv_res;
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
