@@ -316,7 +316,7 @@ symbol_table_item_t *insert_tmp_variable_symbol_table_function(char *function_na
 	c = 'i';
 	break;
     case DOUBLE:
-	c = 's';
+	c = 'd';
 	break;
     case BOOLEAN:
 	c = 'b';

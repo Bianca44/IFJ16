@@ -45,6 +45,7 @@ typedef enum instructions {
     I_OR,
     //BUILT-IN AND OTHER  
     I_ASSIGN,
+    I_ASSIGN_I_TO_D,
     I_CAT,
     I_STRCMP,
     I_SUBSTR,
@@ -85,6 +86,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result);
 //assigns
 void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
+void i_assign_i_to_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
 //function
