@@ -105,7 +105,7 @@ int parse_expression(bool ends_semicolon) {
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
-                                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                         } else if (t.type == ID) {
@@ -119,7 +119,7 @@ int parse_expression(bool ends_semicolon) {
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
-                                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                         }
@@ -287,7 +287,7 @@ int parse_expression(bool ends_semicolon) {
                                         if (item->is_function) {
                                                 fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
-                                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                         } else if (t.type == ID) {
@@ -308,7 +308,7 @@ int parse_expression(bool ends_semicolon) {
                                                 if (item->is_function) {
                                                         fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
                                                         free_token_buffer_local(&tb);
-                                                        exit(SYNTACTIC_ANALYSIS_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 }
                                         }
                                 }
@@ -396,7 +396,7 @@ int parse_next_param_value() {
                                                         fprintf(stderr,
                                                                 "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value,
                                                                 current_class, function_name_call);
-                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 }
                                                 data_type = item->variable.data_type;
                                         }
@@ -419,7 +419,7 @@ int parse_next_param_value() {
                                                                 fprintf(stderr,
                                                                         "Param \'%s\' for function \'%s.%s\' is declared as function.\n",
                                                                         t.string_value, current_class, function_name_call);
-                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                         }
                                                         data_type = item->variable.data_type;
                                                 }
@@ -576,7 +576,7 @@ int parse_param_value() {
                                                                 fprintf(stderr,
                                                                         "Parameter \'%s\' for function \'%s.%s\' is declared as function.\n",
                                                                         t.string_value, current_class, function_name_call);
-                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                         }
                                                         data_type = item->variable.data_type;
                                                 }
@@ -601,7 +601,7 @@ int parse_param_value() {
                                                                         fprintf(stderr,
                                                                                 "Param \'%s\' for function \'%s.%s\' is declared as function.\n",
                                                                                 t.string_value, current_class, function_name_call);
-                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                                 }
                                                                 data_type = item->variable.data_type;
                                                         }
@@ -796,7 +796,7 @@ int parse_call_assign() {
                         if (is_second_pass) {
                                 if (var->is_function) {
                                         fprintf(stderr, "Can\'t assign value to function \'%s\'\n", function_name_call);
-                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
                         return parse_value();
@@ -986,7 +986,7 @@ int parse_statement() {
         } else if (t.type == WHILE) {
                 if (is_second_pass) {
                         if (GetLastElem_M(function_inst_tape) == NULL) {
-                            InsertLast(function_inst_tape, generate(I_NOP, NULL, NULL, NULL));
+                                InsertLast(function_inst_tape, generate(I_NOP, NULL, NULL, NULL));
                         }
                         js_push(GetLastElem_M(function_inst_tape));
                 }
