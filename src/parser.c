@@ -232,6 +232,7 @@ int parse_expression(bool ends_semicolon) {
                                                                 }
 
                                                                 first_param = second_param = NULL;
+                                                                expr_var_result = NULL;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
@@ -968,6 +969,11 @@ int parse_statement() {
                             || t.type == TRUE || t.type == FALSE) {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
+                                                if (expr_var_result->data_type != BOOLEAN) {
+                                                        fprintf(stderr,
+                                                                "Invalid expression in if condition.\n");
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                }
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
                                                 js_push(GetLastElem_M(function_inst_tape));
                                         }
@@ -998,6 +1004,11 @@ int parse_statement() {
                             || t.type == TRUE || t.type == FALSE) {
                                 if (parse_expression(false)) {
                                         if (is_second_pass) {
+                                                if (expr_var_result->data_type != BOOLEAN) {
+                                                        fprintf(stderr,
+                                                                "Invalid expression in while condition.\n");
+                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                }
                                                 InsertLast(function_inst_tape, generate(I_JNT, expr_var_result, NULL, NULL));
                                                 js_push(GetLastElem_M(function_inst_tape));
                                         }

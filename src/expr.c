@@ -282,7 +282,7 @@ int choose_rule(PStack * P) {
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
 
-                        InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
+                        InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
 
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (second_operand == INT && first_operand == DOUBLE)) {

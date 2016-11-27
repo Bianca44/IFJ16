@@ -10,7 +10,7 @@ static void run () {
             a = a - 3;
         }*/
 
-        if (true) a = a + 5;
+        if (42) a = a + 5;
 
         ifj16.print(a);
 
