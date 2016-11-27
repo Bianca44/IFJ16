@@ -868,7 +868,7 @@ int choose_rule(PStack * P) {
         case P_NOT:
                 if (P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_HANDLE) {
                         fprintf(stderr, "Unexpected expression.\n");
-                        exit(3); // just for test
+                        expr_exit(SYNTACTIC_ANALYSIS_ERROR);
                 }
                 first_operand = P->top->value.data_type;
                 op_1 = P->top->expr;
