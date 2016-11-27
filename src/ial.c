@@ -83,7 +83,7 @@ void ht_insert(tHTable * ptrht, const tKey key, tData data) {
 	    ptrht->ptr[index] = new;
 
     	ptrht->n_items += 1;
-        } 
+        }
     else {
 	    //actualizing item
 	    item->data = data;
@@ -114,7 +114,7 @@ void ht_delete(tHTable * ptrht, tKey key) {
 	    //item to be deleted is first
 	        if (tmp == tmp_prev) {
 		        ptrht->ptr[index] = tmp->next;
-	        } 
+	        }
             else {
 		        tmp_prev->next = tmp->next;
 	        }
