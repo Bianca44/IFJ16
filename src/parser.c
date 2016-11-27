@@ -97,27 +97,27 @@ int parse_expression(bool ends_semicolon) {
 
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
-                                        fprintf(stderr, "Expression: ID %s was not declared.\n", t.string_value);
+                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
-                                                fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
                         } else if (t.type == ID) {
                                 if (!is_declared(t.string_value)) {
-                                        fprintf(stderr, "Expression: ID %s was not declared.\n", t.string_value);
+                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_class_item(current_class,
                                                                                                 t.string_value);
                                         if (item->is_function) {
-                                                fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
@@ -140,7 +140,7 @@ int parse_expression(bool ends_semicolon) {
                         if (function_symbol_table == NULL
                             || (function_symbol_table != NULL && !is_declared_in_function(function_symbol_table, t.string_value))) {
                                 if (!is_declared(t.string_value)) {
-                                        fprintf(stderr, "Expression: ID %s was not declared.\n", t.string_value);
+                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         item = get_symbol_table_class_item(current_class, t.string_value);
@@ -154,7 +154,7 @@ int parse_expression(bool ends_semicolon) {
                 } else if (t.type == SPECIAL_ID) {
                         item = get_symbol_table_special_id_item(t.string_value);
                         if (item == NULL) {
-                                fprintf(stderr, "Expression: ID %s was not declared.\n", t.string_value);
+                                fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
                         is_function = item->is_function;
@@ -279,13 +279,13 @@ int parse_expression(bool ends_semicolon) {
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
-                                        fprintf(stderr, "Expression: ID %s was not declared.\n", t.string_value);
+                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
-                                                fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
@@ -298,7 +298,7 @@ int parse_expression(bool ends_semicolon) {
                                         && !is_declared_in_function(function_symbol_table, t.string_value))) {
                                         if (!is_declared(t.string_value)) {
                                                 fprintf(stderr,
-                                                        "Expression: ID \'%s\' was not declared in the function nor in the class \'%s\'.\n",
+                                                        "Expression: Variable \'%s\' was not declared in the function nor in the class \'%s\'.\n",
                                                         t.string_value, current_class);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
@@ -306,7 +306,7 @@ int parse_expression(bool ends_semicolon) {
                                                 symbol_table_item_t *item = get_symbol_table_class_item(current_class,
                                                                                                         t.string_value);
                                                 if (item->is_function) {
-                                                        fprintf(stderr, "Expression: ID \'%s\' is declared as function.\n", t.string_value);
+                                                        fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
                                                         free_token_buffer_local(&tb);
                                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 }
@@ -895,7 +895,7 @@ int parse_statement() {
                                                                                                               current_function.id_name);
                                         if (!is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 fprintf(stderr,
-                                                        "Neither ID \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
+                                                        "Neither Variable \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
                                                         t.string_value, current_class, current_function.id_name, current_class);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
