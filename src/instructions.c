@@ -80,7 +80,7 @@ void i_inc_i(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
 
     d_inst_name();
-    
+
     op1->i = op1->i + 1;
 }
 
@@ -445,7 +445,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     tList *parent_tape = processed_tape;
     //change of awareness of instruction tape (jumps)
     processed_tape = (tList *)(op1->s);
-    d_message("zapocatie tac funckie");
+    d_message("zapocatie tac funkcie");
     //executing function
     interpret_tac(processed_tape);
     d_message("opustenie tac funkcie");
@@ -481,7 +481,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
         }
         else{
             fprintf(stderr,"Using uninitialized value\n");
-            exit(RUN_UNINITIALIZED_VARIABLE_ERROR);    
+            exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }
     //removing frame

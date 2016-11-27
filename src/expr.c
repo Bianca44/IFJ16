@@ -224,7 +224,7 @@ int choose_rule(PStack * P) {
                         if (is_inc) {
                                 /* i = i + 1; */
                                 tmp = op_1;
-                                InsertLast(work_tape, generate(I_INC, NULL, NULL, tmp));
+                                InsertLast(work_tape, generate(I_INC, op_1, NULL, NULL));
                         } else {
                                 InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
                         }
@@ -302,7 +302,7 @@ int choose_rule(PStack * P) {
                         if (is_dec) {
                                 /* i = i - 1; */
                                 tmp = op_1;
-                                InsertLast(work_tape, generate(I_DEC, NULL, NULL, tmp));
+                                InsertLast(work_tape, generate(I_DEC, op_1, NULL, NULL));
                         } else {
                                 InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
                         }

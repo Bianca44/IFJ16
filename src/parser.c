@@ -337,7 +337,7 @@ int parse_return_value() {
                         if (is_first_pass) {
                                 if (current_function.function.return_type == VOID) {
                                         fprintf(stderr, "Return in function \'%s\' with void return type.\n", current_function.id_name);
-                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
                         }
 
@@ -927,6 +927,7 @@ int parse_statement() {
                                 }
 
                                 if (var->is_function) {
+
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
                                                 InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                 first_param = expr_var_result = NULL;
