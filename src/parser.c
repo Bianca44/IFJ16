@@ -139,16 +139,25 @@ int parse_expression(bool ends_semicolon) {
                 if (t.type == ID) {
                         symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
                                                                                               current_function.id_name);
-                        if (function_symbol_table == NULL
-                            || (function_symbol_table != NULL && !is_declared_in_function(function_symbol_table, t.string_value))) {
-                                if (!is_declared(t.string_value)) {
-                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
-                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                } else {
-                                        item = get_symbol_table_class_item(current_class, t.string_value);
+
+                        if (ends_semicolon) {
+                                item = get_symbol_table_class_item(current_class, t.string_value);
+                                if (item == NULL) {
+                                        item = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                        if (item == NULL) {
+                                                fprintf(stderr, "Expression: Variable s %s was not declared.\n", t.string_value);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
                                 }
-                        } else {
+                        } else  {
                                 item = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                if (item == NULL) {
+                                        item = get_symbol_table_class_item(current_class, t.string_value);
+                                        if (item == NULL) {
+                                                fprintf(stderr, "Expression: Variable s %s was not declared.\n", t.string_value);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
+                                }
                         }
                         if (item != NULL) {
                                 is_function = item->is_function;
