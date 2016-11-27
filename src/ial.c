@@ -96,8 +96,7 @@ tData ht_read(tHTable * ptrht, const tKey key) {
     tSTitem *item;
 
     if ((item = ht_search(ptrht, key)) == NULL) {
-        fprintf(stderr,"Could not allocate memory\n");
-	    exit(INTERNAL_INTERPRET_ERROR);
+        return NULL;
     }
 
     return item->data;
