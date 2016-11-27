@@ -34,16 +34,16 @@ tFrame * init_frame(unsigned size){
         int i = 0;
 
         //recyklovanie ramcov
-        while(frame_buffer[i] != NULL) {
-                if(frame_buffer[i]->size >= size) {
-                        new_frame = frame_buffer[i];
-                        new_frame->ret_val = NULL;
-                        frame_buf_size -= 1;
-                        frame_buffer[i] = frame_buffer[frame_buf_size];
-                        frame_buffer[frame_buf_size] = NULL;
-                        return new_frame;
-                }
-                i++;
+        while(frame_buffer[i] != NULL){
+            if(frame_buffer[i]->size >= size){
+                new_frame = frame_buffer[i];
+                new_frame->ret_val = NULL;
+                frame_buf_size -= 1;
+                frame_buffer[i] = frame_buffer[frame_buf_size];
+                frame_buffer[frame_buf_size] = NULL;
+                return new_frame;
+            }
+            i++;
         }
 
         if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL) {
@@ -57,12 +57,12 @@ tFrame * init_frame(unsigned size){
         return new_frame;
 }
 void dispose_frame_buffer(){
-        while(frame_stack.top != NULL) {} /* just magic */
+    while(frame_stack.top != NULL){} /* just magic */
 
-        for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
-                if(frame_buffer[i] != NULL) {
-                        free(frame_buffer[i]);
-                }
+    for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
+        if(frame_buffer[i] != NULL){
+           free(frame_buffer[i]);
+        }
 }
 
 void init_frame_stack(tFrameStack *stack){
@@ -77,13 +77,13 @@ tFrame * top_frame(tFrameStack *stack){
 void push_frame(tFrameStack *stack, tFrame * frame){
 
         tFSElem *ptr;
-        if(stack_buf_size >= STACK_BUFFER_SIZE) {
-                if((ptr = malloc(sizeof(tFSElem))) == NULL) {
-                        exit(INTERNAL_INTERPRET_ERROR);
-                }
+        if(stack_buf_size >= STACK_BUFFER_SIZE){
+            if((ptr = malloc(sizeof(tFSElem))) == NULL) {
+                    exit(INTERNAL_INTERPRET_ERROR);
+            }
         }
         else{
-                ptr = &stack_buffer[stack_buf_size];
+            ptr = &stack_buffer[stack_buf_size];
         }
         stack_buf_size++;
         ptr->frame = frame;
@@ -100,23 +100,23 @@ void pop_frame(tFrameStack *stack){
                 //change stack top
                 stack->top = stack->top->next;
                 //free frame
-                for(int i = tmp->frame->size; i--; ) {
+                for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
                                 if(tmp->frame->local[i].initialized)
-                                        free(tmp->frame->local[i].s);
+                                    free(tmp->frame->local[i].s);
                         }
                 }
                 //posledny neplnime bude vzdy NULL - zarazka
 
-                if(frame_buf_size < FRAME_BUFFER_SIZE - 1) {
-                        frame_buffer[frame_buf_size++] = tmp->frame;
+                if(frame_buf_size < FRAME_BUFFER_SIZE - 1){
+                    frame_buffer[frame_buf_size++] = tmp->frame;
                 }
                 else{
-                        free(frame_buffer[0]);
-                        frame_buffer[0] = tmp->frame;
+                    free(frame_buffer[0]);
+                    frame_buffer[0] = tmp->frame;
                 }
                 if(stack_buf_size > STACK_BUFFER_SIZE)
-                        free(tmp);
+                    free(tmp);
                 stack_buf_size--;
         }
 }
