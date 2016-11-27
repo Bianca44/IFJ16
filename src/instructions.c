@@ -76,28 +76,22 @@ void i_sub_d(tVar *op1, tVar *op2, tVar *result){
 }
 
 void i_inc_i(tVar *op1, tVar *op2, tVar *result){
-    UNUSED(op1);
     UNUSED(op2);
+    UNUSED(result);
 
     d_inst_name();
     
-    UNUSED(op1);
-    UNUSED(op2);
-
-    result->i = result->i + 1;
+    op1->i = op1->i + 1;
 }
 
 
 void i_dec_i(tVar *op1, tVar *op2, tVar *result){
-    UNUSED(op1);
     UNUSED(op2);
+    UNUSED(result);
 
     d_inst_name();
 
-    UNUSED(op1);
-    UNUSED(op2);
-
-    result->i = result->i - 1;
+    op1->i = op1->i - 1;
 }
 
 
@@ -460,29 +454,35 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     SetActiveElem_M(processed_tape, pi);
     //saving result
     if(result != NULL){
-        switch(result->data_type){
-            case INT:
-                result->i = frame_stack.top->frame->ret_val->i;
-                d_print("%d ==VYSL== ", result->i);
-                break;
-            case DOUBLE:
-                result->d = frame_stack.top->frame->ret_val->d;
-                d_print("%g ==VYSL== ", result->d);
-                break;
-            case STRING:
-                if(result->initialized)
-                    free(result->s);
-                result->s = copy_string(frame_stack.top->frame->ret_val->s);
-                d_print("%s ==VYSL== ", result->s);
-                break;
-            case BOOLEAN:
-                result->b = frame_stack.top->frame->ret_val->b;
-                d_print("%d ==VYSL== ", result->b);
-                break;
-            default:
-                fprintf(stderr, " CHYBA V NAVRATOVEJ HODNOTE");
+        if(frame_stack.top->frame->ret_val != NULL){
+            switch(result->data_type){
+                case INT:
+                    result->i = frame_stack.top->frame->ret_val->i;
+                    d_print("%d ==VYSL== ", result->i);
+                    break;
+                case DOUBLE:
+                    result->d = frame_stack.top->frame->ret_val->d;
+                    d_print("%g ==VYSL== ", result->d);
+                    break;
+                case STRING:
+                    if(result->initialized)
+                        free(result->s);
+                    result->s = copy_string(frame_stack.top->frame->ret_val->s);
+                    d_print("%s ==VYSL== ", result->s);
+                    break;
+                case BOOLEAN:
+                    result->b = frame_stack.top->frame->ret_val->b;
+                    d_print("%d ==VYSL== ", result->b);
+                    break;
+                default:
+                    fprintf(stderr, "Error in return value\n");
+                    exit(INTERNAL_INTERPRET_ERROR);
+            }
         }
-
+        else{
+            fprintf(stderr,"Using uninitialized value\n");
+            exit(RUN_UNINITIALIZED_VARIABLE_ERROR);    
+        }
     }
     //removing frame
     pop_frame(&frame_stack);

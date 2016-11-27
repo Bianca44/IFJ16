@@ -37,6 +37,7 @@ tFrame * init_frame(unsigned size){
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
+                new_frame->ret_val = NULL;
                 frame_buf_size -= 1;                
                 frame_buffer[i] = frame_buffer[frame_buf_size];
                 frame_buffer[frame_buf_size] = NULL;
@@ -56,6 +57,11 @@ tFrame * init_frame(unsigned size){
         return new_frame;
 }
 void dispose_frame_buffer(){
+    
+    while(frame_stack.top != NULL){
+        pop_frame(&frame_stack);
+    }
+
     for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
         if(frame_buffer[i] != NULL){
            free(frame_buffer[i]);
