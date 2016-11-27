@@ -168,6 +168,7 @@ int compare(char *s1, char *s2) {
 
 /* Finds and returns certain substring of the given string */
 char *substr(char *s, int i, int n) {
+	//osetrenie, kedy je dlzka podretazca menej ako 0 resp zacinajuci index j mensi ako 0
     if (i < 0 || n < 0) {
 	fprintf(stderr, "substr: index or length of search string is negative value.\n");
 	exit(RUN_OTHER_ERROR);
