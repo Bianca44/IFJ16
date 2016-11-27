@@ -164,6 +164,7 @@ void ht_free(tHTable * ptrht) {
     free(ptrht);
 }
 
+//radenie prvkov rozdelovanim
 void quick_sort(char *str, int left, int right) {
     int indexes[2];
     partition(str, left, right, indexes);
@@ -179,6 +180,11 @@ void quick_sort(char *str, int left, int right) {
     }
 }
 
+/*funkcia partition preskupi prvky pola do dvoch casti a to tak, 
+**ze v lavej casti su vsetky prvky mensie alebo rovne urcitej hodnote
+**a v pravej casti su prvy vacsie nez tato hodnota
+*/
+
 void partition(char *str, int left, int right, int indexes[]) {
     int median = 0;
     int i = left;
@@ -187,14 +193,15 @@ void partition(char *str, int left, int right, int indexes[]) {
     median = str[(i + j) / 2];
 
     do {
+//prechadzame pole zlava a hlavame prve cislo vacsie ako median
 	while (str[i] < median) {
 	    i++;
 	}
-
+//prechadzame pole zprava a hladame prve cislo mensie ako median
 	while (str[j] > median) {
 	    j--;
 	}
-
+//tieto cisla medzi sebou vymenime a pokracujeme v hladani dalsich cisel
 	if (i <= j) {
 	    int temp = str[i];
 	    str[i] = str[j];
@@ -205,6 +212,7 @@ void partition(char *str, int left, int right, int indexes[]) {
 	}
     }
 
+//proces konci ked sa dva indexy prekrizia
     while (i <= j);
 
     indexes[0] = i;
