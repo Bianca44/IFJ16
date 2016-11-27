@@ -139,24 +139,12 @@ int parse_expression(bool ends_semicolon) {
                 if (t.type == ID) {
                         symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
                                                                                               current_function.id_name);
-
-                        if (ends_semicolon) {
+                        item = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                        if (item == NULL) {
                                 item = get_symbol_table_class_item(current_class, t.string_value);
                                 if (item == NULL) {
-                                        item = get_symbol_table_function_item(function_symbol_table, t.string_value);
-                                        if (item == NULL) {
-                                                fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
-                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        }
-                                }
-                        } else  {
-                                item = get_symbol_table_function_item(function_symbol_table, t.string_value);
-                                if (item == NULL) {
-                                        item = get_symbol_table_class_item(current_class, t.string_value);
-                                        if (item == NULL) {
-                                                fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
-                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        }
+                                        fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
                         if (item != NULL) {
@@ -1155,6 +1143,12 @@ int parse_method_element() {
                                                 function_variable.variable.offset);
                                         function_variable.variable.offset++;
                                 } else {
+                                        fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name,
+                                                current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                }
+                        } else {
+                                if (is_declared(function_variable.id_name)) {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name,
                                                 current_function.id_name);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
