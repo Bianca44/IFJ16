@@ -764,10 +764,11 @@ int parse_call_assign() {
                 if (t.type == LEFT_ROUNDED_BRACKET) {
                         if (is_second_pass) {
                                 if (!var->is_function) {
-                                        printf("Calling \'%s\' which is not a function.\n", function_variable.id_name);
+                                        fprintf(stderr, "Calling \'%s\' which is not a function.\n", function_variable.id_name);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
+
                         if (parse_param_value()) {
                                 if (t.type == RIGHT_ROUNDED_BRACKET) {
                                         if (get_token() == SEMICOLON) {
@@ -932,14 +933,14 @@ int parse_statement() {
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
                                                 InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                 first_param = expr_var_result = NULL;
-                                        } else {
+                                        } else if (strstr(function_variable.id_name, "ifj16.") == NULL) {
                                                 InsertLast(function_inst_tape, generate(I_F_CALL, var->function.instruction_tape, NULL, NULL));
                                         }
 
                                         first_param = second_param = expr_var_result = NULL;
 
                                 } else if (function_variable.id_name != NULL) {
-                                        if (expr_var_result != NULL) { /* neni priradenie cez funkciu */
+                                        if (expr_var_result != NULL) {
                                                 tVar *to = &var->variable;
 
                                                 to->initialized = true;
