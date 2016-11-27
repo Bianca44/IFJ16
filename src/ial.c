@@ -22,10 +22,12 @@ void main() {
     bma(p, t);
 }
 
+//prvym krokom posielame prvy a posledny index retazca do funkcie quicksort
 void sort (char *str) {
-    quickSort(str, 0, (strlen(str)-1));
+    quickSort(str, 0, (strlen(str)-1)); 
 }
 
+//radenie prvkov rozdelovanim
 void quickSort (char *str, int left, int right) {
     int index [2];
     partition (str, left, right, index);
@@ -41,22 +43,27 @@ void quickSort (char *str, int left, int right) {
     } 
 }
 
+/*funkcia partition preskupi prvky pola do dvoch casti a to tak, 
+**ze v lavej casti su vsetky prvky mensie alebo rovne urcitej hodnote
+**a v pravej casti su prvy vacsie nez tato hodnota
+*/
 void partition (char *str, int left, int right, int indexes []) {
     int median = 0;
     int i = left;
     int j= right;
 
-    median = str[(i+j)/2];
+    median = str[(i+j)/2]; //stred intervalu
 
+//prechadzame pole zlava a hlavame prve cislo vacsie ako median
     do {
         while (str[i] < median) {
             i++;
         }
-
+//prechadzame pole zprava a hladame prve cislo mensie ako median
         while (str[j] > median) {
             j--;
         }
-
+//tieto cisla medzi sebou vymenime a pokracujeme v hladani dalsich cisel
         if (i<=j) {
             int temp = str[i];
             str[i] = str[j];
@@ -66,7 +73,7 @@ void partition (char *str, int left, int right, int indexes []) {
             j--;
         }
     }
-
+//proces konci ked sa dva indexy prekrizia
     while (i<=j);
 }
 void compute_jumps(char *p, int char_jump[]) {
