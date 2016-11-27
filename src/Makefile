@@ -1,4 +1,4 @@
-CFLAGS=-std=c11 -pedantic -Wall -Wextra -O3 -DNDEBUG
+CFLAGS=-std=c11 -pedantic -Wall -Wextra -O2 -DNDEBUG
 CC=gcc
 
 .PHONY: all clean

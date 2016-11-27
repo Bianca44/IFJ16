@@ -99,7 +99,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
-                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
@@ -112,7 +112,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
-                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_class_item(current_class,
                                                                                                 t.string_value);
