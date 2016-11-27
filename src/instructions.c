@@ -76,6 +76,9 @@ void i_sub_d(tVar *op1, tVar *op2, tVar *result){
 }
 
 void i_inc_i(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    UNUSED(op2);
+
     d_inst_name();
     
     UNUSED(op1);
@@ -86,6 +89,9 @@ void i_inc_i(tVar *op1, tVar *op2, tVar *result){
 
 
 void i_dec_i(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    UNUSED(op2);
+
     d_inst_name();
 
     UNUSED(op1);
