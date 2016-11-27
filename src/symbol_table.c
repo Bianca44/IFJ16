@@ -363,6 +363,7 @@ tList *create_function_instr_tape() {
 
 /* Frees class list table */
 void free_class_list() {
+        if (class_list == NULL) return;
         ht_free(class_list);
 }
 
