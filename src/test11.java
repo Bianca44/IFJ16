@@ -1,7 +1,7 @@
 class Main {
 static void run () {
-        ifj16.print("Hello world\n");
-        run();
+        double x = ifj16.readInt();
+        ifj16.print(x);
 }
 
 }

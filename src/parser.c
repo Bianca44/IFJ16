@@ -232,7 +232,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 }
 
                                                                 first_param = second_param = NULL;
-                                                                expr_var_result = NULL;
                                                                 params_counter = 0;
                                                         }
                                                         function_name_call = NULL;
