@@ -481,9 +481,6 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
         }
         else{
             fprintf(stderr,"Using uninitialized value\n");
-            while(frame_stack.top != NULL){
-                pop_frame(&frame_stack);
-            }
             exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }

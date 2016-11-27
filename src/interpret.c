@@ -57,7 +57,9 @@ tFrame * init_frame(unsigned size){
         return new_frame;
 }
 void dispose_frame_buffer(){
-    while(frame_stack.top != NULL){} /* just magic */
+    while(frame_stack.top != NULL){
+        pop_frame(&frame_stack);
+    }
 
     for(int i=0; i < FRAME_BUFFER_SIZE-1; i++)
         if(frame_buffer[i] != NULL){

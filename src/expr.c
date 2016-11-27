@@ -219,7 +219,7 @@ int choose_rule(PStack * P) {
                         tmp = generate_tmp_var(result_item.value.data_type);
 
 
-                        bool is_inc = expr_in_function && expr_len == 3 && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
+                        bool is_inc = false; // expr_in_function && expr_len == 3 && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
 
                         if (is_inc) {
                                 /* i = i + 1; */
@@ -297,7 +297,7 @@ int choose_rule(PStack * P) {
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
 
-                        bool is_dec = expr_in_function && expr_len == 3 && expr_var_name != NULL  && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
+                        bool is_dec = false; // expr_in_function && expr_len == 3 && expr_var_name != NULL  && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
 
                         if (is_dec) {
                                 /* i = i - 1; */
