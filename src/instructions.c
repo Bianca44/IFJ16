@@ -10,9 +10,7 @@
 
 #define UNUSED(x) (void)(x)
 #define LOAD_BUFFER 256
-#define STRING_BUFFER 256
 
-char * string_buffer[STRING_BUFFER];
 int push_counter;
 constant_t * tape_ref;
 constant_t * labels;
@@ -79,6 +77,9 @@ void i_sub_d(tVar *op1, tVar *op2, tVar *result){
 
 void i_inc_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
+    
+    UNUSED(op1);
+    UNUSED(op2);
 
     result->i = result->i + 1;
 }
@@ -86,6 +87,9 @@ void i_inc_i(tVar *op1, tVar *op2, tVar *result){
 
 void i_dec_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
+
+    UNUSED(op1);
+    UNUSED(op2);
 
     result->i = result->i - 1;
 }
@@ -165,8 +169,8 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
                 new = copy_string("false");
             break;
         default:
-            fprintf(stderr, "CHYBA PRI KONVERZII STRINGU");
-            exit(42);
+            fprintf(stderr, "Chyba pti konverzii stringu");
+            exit(INTERNAL_INTERPRET_ERROR);
     }
 
     if(result->initialized){
@@ -249,6 +253,11 @@ void i_jt(tVar *op1, tVar *op2, tVar *result){
     }
 }
 
+void i_nop(tVar *op1, tVar *op2, tVar *result){
+    UNUSED(op1);
+    UNUSED(op2);
+    UNUSED(result);
+}
 //LOGICAL
 //equal
 void i_e_i(tVar *op1, tVar *op2, tVar *result){
@@ -372,15 +381,15 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     symbol_table_item_t *fun = (symbol_table_item_t *)(op1->s);
-    frame_stack.prepared = init_frame(fun->function.params_local_vars_count,fun->function.local_vars_data_types);
     int i = fun->function.params_count;
+    char *s = fun->function.local_vars_data_types;
+    frame_stack.prepared = init_frame(fun->function.params_local_vars_count);
 
     d_int(i);
     d_int(fun->function.params_local_vars_count);
     d_str(fun->function.local_vars_data_types);
 
-
-    for(char *s = frame_stack.prepared->loc_types; *s != '\0'; s++){
+    for(; *s != '\0'; s++){
 
         switch (*s) {
         case 'i':
@@ -396,7 +405,8 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
             frame_stack.prepared->local[i].data_type = STRING;
             break;
         default:
-           d_message("CHYBA V DECODE_TYPE");
+            d_message("Chyba pri dekodovani typov");
+            exit(INTERNAL_INTERPRET_ERROR);
         }
 
         frame_stack.prepared->local[i].initialized = false;
@@ -726,9 +736,6 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
                     break;
             }
 			break;
-        case I_ASSIGN_I_TO_D:
-            new_inst->f = i_assign_i_to_d;
-            break;
         case I_CAT:
             new_inst->f = i_cat;
 			break;
@@ -777,8 +784,11 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         case I_JT:
             new_inst->f = i_jt;
 			break;
+        case I_NOP:
+            new_inst->f = i_nop;
+            break;
         default:
-            new_inst->f = NULL;
+            exit(INTERNAL_INTERPRET_ERROR);
     }
 
     return new_inst;

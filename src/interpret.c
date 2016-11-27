@@ -24,10 +24,11 @@ tList * processed_tape;
 
 tFrame * frame_buffer[FRAME_BUFFER_SIZE];
 int frame_buf_size;
-tFSElem stack_buf[STACK_BUFFER_SIZE];
+
+tFSElem stack_buffer[STACK_BUFFER_SIZE];
 int stack_buf_size = 0;
 
-tFrame * init_frame(unsigned size, char *loc_types){
+tFrame * init_frame(unsigned size){
 
         tFrame * new_frame;
         int i = 0;
@@ -36,7 +37,6 @@ tFrame * init_frame(unsigned size, char *loc_types){
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
-                new_frame->loc_types = loc_types;
                 frame_buf_size -= 1;                
                 frame_buffer[i] = frame_buffer[frame_buf_size];
                 frame_buffer[frame_buf_size] = NULL;
@@ -49,7 +49,6 @@ tFrame * init_frame(unsigned size, char *loc_types){
                 exit(INTERNAL_INTERPRET_ERROR);        
         }
 
-        new_frame->loc_types = loc_types;//TODO
         new_frame->ret_val = NULL;
         new_frame->size = size;
 
@@ -62,11 +61,7 @@ void dispose_frame_buffer(){
            free(frame_buffer[i]);
         }
 }
-/*
-void dispose_frame(tFrame *frame){
-        free(frame);
-}
-*/
+
 void init_frame_stack(tFrameStack *stack){
         stack->top = NULL;
         stack->prepared = NULL;
@@ -85,7 +80,7 @@ void push_frame(tFrameStack *stack, tFrame * frame){
             }
         }
         else{
-            ptr = &stack_buf[stack_buf_size];
+            ptr = &stack_buffer[stack_buf_size];
         }
         stack_buf_size++;
         ptr->frame = frame;

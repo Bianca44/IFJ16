@@ -47,7 +47,6 @@ typedef enum instructions {
     I_OR,
     //BUILT-IN AND OTHER  
     I_ASSIGN,
-    I_ASSIGN_I_TO_D,
     I_CAT,
     I_STRCMP,
     I_SUBSTR,
@@ -64,6 +63,7 @@ typedef enum instructions {
     I_GOTO,
     I_JNT,
     I_JT,
+    I_NOP,
 }tInstId;
 
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
@@ -106,7 +106,6 @@ void i_find(tVar *op1, tVar *op2, tVar *result);
 void i_sort(tVar *op1, tVar *op2, tVar *result);
 void i_print(tVar *op1, tVar *op2, tVar *result);
 void i_len(tVar *op1, tVar *op2, tVar *result);
-
 //logical
 //equal
 void i_e_i(tVar *op1, tVar *op2, tVar *result);
@@ -136,4 +135,5 @@ void i_or(tVar *op1, tVar *op2, tVar *result);
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);
+void i_nop(tVar *op1, tVar *op2, tVar *result);
 #endif //INSTRUCTIONS_H
