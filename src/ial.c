@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ial.h"
-
+#include "error_codes.h"
+//TODO
 unsigned hash_code(const tKey key, unsigned ht_size) {
     unsigned h = 0;
     const unsigned char *p;
     for (p = (const unsigned char *) key; *p != '\0'; p++) {
-	h = 65599 * h + *p;
+	    h = 65599 * h + *p;
     }
     return h % ht_size;
 }
@@ -18,7 +19,8 @@ tHTable *ht_init(unsigned ht_size, unsigned (*hash_code_ptr) (const tKey, unsign
     tHTable *new_table;
     //allocating space for table
     if ((new_table = malloc(sizeof(tHTable) + ht_size * sizeof(tSTitem *))) == NULL) {
-	return NULL;		//error
+        fprintf(stderr,"Could not allocate memory\n");
+	    exit(INTERNAL_INTERPRET_ERROR);
     }
 
     /*setting values of new hash table */
@@ -41,12 +43,11 @@ tSTitem *ht_search(tHTable * ptrht, const tKey key) {
     tSTitem *first = ptrht->ptr[index];
 
     while (first != NULL) {
-	//TODO strcmp
-	if (strcmp(first->key, key) == 0) {
-	    return first;
-	}
+	    if (strcmp(first->key, key) == 0) {
+	        return first;
+	    }
 
-	first = first->next;
+	    first = first->next;
     }
     // not found
     return NULL;
@@ -56,34 +57,36 @@ void ht_insert(tHTable * ptrht, const tKey key, tData data) {
 
     tSTitem *item = ht_search(ptrht, key);
     if (item == NULL) {
-	//getting index
-	unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-	//accesing list of synonyms
-	tSTitem *first = ptrht->ptr[index];
+	    //getting index
+	    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
+	    //accesing list of synonyms
+	    tSTitem *first = ptrht->ptr[index];
 
-	//adding item
-	tSTitem *new;
+	    //adding item
+	    tSTitem *new;
 
-	if ((new = malloc(sizeof(tSTitem))) == NULL) {
-	    return;		//error
-	}
+	    if ((new = malloc(sizeof(tSTitem))) == NULL) {
+            fprintf(stderr,"Could not allocate memory\n");
+	        exit(INTERNAL_INTERPRET_ERROR);
+	    }
 
-	if ((new->key = malloc(sizeof(char) * (strlen(key) + 1))) == NULL) {
-	    free(new);
-	    return;		//error
-	}
-	//TODO str
-	strcpy(new->key, key);
-	new->data = data;
-	//adding to beginning
-	new->next = first;
-	ptrht->ptr[index] = new;
-	//TODO
-	ptrht->n_items += 1;
-    } else {
-	//actualizing item
-	//TODO dealocate old data ?
-	item->data = data;
+	    if ((new->key = malloc(sizeof(char) * (strlen(key) + 1))) == NULL) {
+	        free(new);
+            fprintf(stderr,"Could not allocate memory\n");
+	        exit(INTERNAL_INTERPRET_ERROR);
+	    }
+
+	    strcpy(new->key, key);
+	    new->data = data;
+	    //adding to beginning
+	    new->next = first;
+	    ptrht->ptr[index] = new;
+
+    	ptrht->n_items += 1;
+        } 
+    else {
+	    //actualizing item
+	    item->data = data;
     }
 
 }
@@ -93,7 +96,8 @@ tData ht_read(tHTable * ptrht, const tKey key) {
     tSTitem *item;
 
     if ((item = ht_search(ptrht, key)) == NULL) {
-	return NULL;
+        fprintf(stderr,"Could not allocate memory\n");
+	    exit(INTERNAL_INTERPRET_ERROR);
     }
 
     return item->data;
@@ -107,23 +111,23 @@ void ht_delete(tHTable * ptrht, tKey key) {
     tSTitem *tmp_prev = tmp;
 
     while (tmp != NULL) {
-	//TODO strcmp
-	if (strcmp(tmp->key, key) == 0) {
+	    if (strcmp(tmp->key, key) == 0) {
 	    //item to be deleted is first
-	    if (tmp == tmp_prev) {
-		ptrht->ptr[index] = tmp->next;
-	    } else {
-		tmp_prev->next = tmp->next;
+	        if (tmp == tmp_prev) {
+		        ptrht->ptr[index] = tmp->next;
+	        } 
+            else {
+		        tmp_prev->next = tmp->next;
+	        }
+	        //freeing item
+	        free(tmp->key);
+	        ptrht->dispose_func_ptr(tmp->data);
+	        free(tmp);
+	        ptrht->n_items -= 1;
+	        return;
 	    }
-	    //freeing item
-	    free(tmp->key);
-	    ptrht->dispose_func_ptr(tmp->data);
-	    free(tmp);
-	    ptrht->n_items -= 1;
-	    return;
-	}
-	tmp_prev = tmp;
-	tmp = tmp->next;
+	    tmp_prev = tmp;
+	    tmp = tmp->next;
     }
 
     return;
@@ -135,20 +139,20 @@ void ht_clear_all(tHTable * ptrht) {
     //going through lists od synonyms
     for (unsigned i = 0; i < ptrht->ht_size; i++) {
 
-	first = ptrht->ptr[i];
+        first = ptrht->ptr[i];
 
-	if (first == NULL) {
-	    continue;
-	}
-	//list of synonyms is not empty
-	while (first != NULL) {
-	    tmp = first;
-	    first = first->next;
-	    free(tmp->key);
-	    ptrht->dispose_func_ptr(tmp->data);
-	    free(tmp);
-	}
-	ptrht->ptr[i] = NULL;
+        if (first == NULL) {
+            continue;
+        }
+        //list of synonyms is not empty
+        while (first != NULL) {
+            tmp = first;
+            first = first->next;
+            free(tmp->key);
+            ptrht->dispose_func_ptr(tmp->data);
+            free(tmp);
+        }
+        ptrht->ptr[i] = NULL;
 
     }
 
