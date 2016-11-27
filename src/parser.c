@@ -145,7 +145,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (item == NULL) {
                                         item = get_symbol_table_function_item(function_symbol_table, t.string_value);
                                         if (item == NULL) {
-                                                fprintf(stderr, "Expression: Variable s %s was not declared.\n", t.string_value);
+                                                fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
@@ -154,7 +154,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (item == NULL) {
                                         item = get_symbol_table_class_item(current_class, t.string_value);
                                         if (item == NULL) {
-                                                fprintf(stderr, "Expression: Variable s %s was not declared.\n", t.string_value);
+                                                fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
