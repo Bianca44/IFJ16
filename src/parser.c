@@ -51,6 +51,8 @@ extern FILE *file;
 /* Cleans all allocated resources */
 void cleanup_resources() {
         fclose(file);
+        free_string(&param_data_types);
+        free_string(&local_vars_data_types);
         free_token_buffer(&global_token_buffer);
         js_free();
         free_constants(&mem_constants);
@@ -1107,20 +1109,15 @@ int parse_method_element() {
                                 current_function.function.local_vars_count,
                                 current_function.function.params_count + current_function.function.local_vars_count,
                                 current_function.function.local_vars_data_types);
-                        if (!is_declared(current_function.id_name)) {
-                                insert_function_symbol_table(current_function.id_name,
-                                                             current_function.function.return_type,
-                                                             current_function.function.params_count,
-                                                             current_function.function.local_vars_count,
-                                                             current_function.function.param_data_types,
-                                                             current_function.function.local_vars_data_types,
-                                                             current_function.function.symbol_table);
-                                insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
-                                current_function.id_name = NULL;
-                        } else {
-                                fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
-                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                        }
+                        insert_function_symbol_table(current_function.id_name,
+                                                     current_function.function.return_type,
+                                                     current_function.function.params_count,
+                                                     current_function.function.local_vars_count,
+                                                     current_function.function.param_data_types,
+                                                     current_function.function.local_vars_data_types,
+                                                     current_function.function.symbol_table);
+                        insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
+                        current_function.id_name = NULL;
 
                         free_string(&param_data_types);
                         free_string(&local_vars_data_types);
@@ -1379,6 +1376,19 @@ int parse_declaration() {
                         is_static_variable_declaration = false;
                         function_inst_tape = create_function_instr_tape();
                         InitList(function_inst_tape, dispose_inst);
+                        if (!is_declared(current_function.id_name)) {
+                                insert_function_symbol_table(current_function.id_name,
+                                                             current_function.function.return_type,
+                                                             current_function.function.params_count,
+                                                             current_function.function.local_vars_count,
+                                                             current_function.function.param_data_types,
+                                                             current_function.function.local_vars_data_types,
+                                                             current_function.function.symbol_table);
+                                insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
+                        } else {
+                                fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
+                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                        }
                 } else {
                         skip_precedence_analysis = false;
                         function_inst_tape =
@@ -1459,6 +1469,20 @@ int parse_declaration_element() {
 
                                 function_inst_tape = create_function_instr_tape();
                                 InitList(function_inst_tape, dispose_inst);
+
+                                if (!is_declared(current_function.id_name)) {
+                                        insert_function_symbol_table(current_function.id_name,
+                                                                     current_function.function.return_type,
+                                                                     current_function.function.params_count,
+                                                                     current_function.function.local_vars_count,
+                                                                     current_function.function.param_data_types,
+                                                                     current_function.function.local_vars_data_types,
+                                                                     current_function.function.symbol_table);
+                                        insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
+                                } else {
+                                        fprintf(stderr, "Function \'%s\' was redeclared.\n", current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                }
 
                         } else {
 
