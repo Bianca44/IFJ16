@@ -4,13 +4,13 @@ class Main
     static int x = 0;*/
     static void run()
     {
-        int i = 0;
-    int x = 0;
-        while (i != 10000000) {
-         i = 1 + 1;
-         x = x + 5;
+        int a = testReturn(5);
+        ifj16.print(a);
+    }
 
+    static int testReturn(int i) {
+        if (i > 10) {
+            return i - 10;
         }
-        ifj16.print(x);
-
-    }}
+    }
+}
