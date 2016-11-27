@@ -1583,12 +1583,12 @@ int parse(tList * inst_tape) {
                         if (is_first_pass) {
                                 symbol_table_item_t *run_method = get_symbol_table_class_item("Main", "run");
                                 if (run_method == NULL) {
-                                        fprintf(stderr, "Missing function\'Main.run\'.\n");
+                                        fprintf(stderr, "Missing function \'Main.run\'.\n");
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
                                         if (!(run_method->function.return_type == VOID)
                                             || !(run_method->function.params_count == 0)) {
-                                                fprintf(stderr, "Bad signature of \'Main.run\' method.\n");
+                                                fprintf(stderr, "Bad signature of function \'Main.run\'.\n");
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
                                 }
