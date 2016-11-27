@@ -985,6 +985,9 @@ int parse_statement() {
                 }
         } else if (t.type == WHILE) {
                 if (is_second_pass) {
+                        if (GetLastElem_M(function_inst_tape) == NULL) {
+                            InsertLast(function_inst_tape, generate(I_NOP, NULL, NULL, NULL));
+                        }
                         js_push(GetLastElem_M(function_inst_tape));
                 }
                 if (get_token() == LEFT_ROUNDED_BRACKET) {

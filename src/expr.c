@@ -9,6 +9,9 @@
 #include "memory_constants.h"
 #include "parser.h"
 #include "debug.h"
+#include <string.h>
+
+
 #define SIZE 18
 
 
@@ -16,6 +19,14 @@ extern char *current_class;
 extern symbol_table_item_t current_function;
 extern tList *global_inst_tape;
 extern constant_t *mem_constants;
+
+bool expr_in_function;
+
+
+char * expr_var_name;
+
+int expr_len;
+
 
 token_buffer_t *expr_token_buffer;
 
@@ -201,17 +212,22 @@ int choose_rule(PStack * P) {
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
 
+
                 // int + int
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
 
-                        //just test for now
-                        //if(P->top->LPtr->LPtr->is_constant && P->top->is_constant){
-                        //    i_add_i(op_1,op_2,tmp);
-                        // }
-                        // else{
-                        InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
+
+                        bool is_inc = expr_in_function && expr_len == 3 && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
+
+                        if (is_inc) {
+                                /* i = i + 1; */
+                                tmp = op_1;
+                                InsertLast(work_tape, generate(I_INC, NULL, NULL, tmp));
+                        } else {
+                                InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
+                        }
                         // }
                 } //int + double or double + int
                 else if ((first_operand == INT && second_operand == DOUBLE)
@@ -221,9 +237,7 @@ int choose_rule(PStack * P) {
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
                         if (first_operand == INT) {
-                                d_print("OP %d\n", op_1->i);
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
-                                d_print("OP %p\n", var);
                                 InsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
                         } else {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
@@ -282,7 +296,16 @@ int choose_rule(PStack * P) {
 
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
-                        InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+
+                        bool is_dec = expr_in_function && expr_len == 3 && expr_var_name != NULL  && op_2->i == 1 && strcmp(function_variable.id_name, expr_var_name) == 0;
+
+                        if (is_dec) {
+                                /* i = i - 1; */
+                                tmp = op_1;
+                                InsertLast(work_tape, generate(I_DEC, NULL, NULL, tmp));
+                        } else {
+                                InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
+                        }
 
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (second_operand == INT && first_operand == DOUBLE)) {
@@ -908,6 +931,9 @@ int init_item(PStack * P, token_t * t) {
                                 item = get_symbol_table_class_item(current_class, t->string_value);
                         }
 
+                        expr_var_name = t->string_value;
+
+
                         switch (item->variable.data_type) {
                         case INT:
 
@@ -937,6 +963,8 @@ int init_item(PStack * P, token_t * t) {
 
                 } else {
                         item = get_symbol_table_class_item(current_class, t->string_value);
+                        expr_var_name = t->string_value;
+
                         switch (item->variable.data_type) {
                         case INT:
 
@@ -972,6 +1000,7 @@ int init_item(PStack * P, token_t * t) {
                 d_print("Value of literal is:%s\n", t->string_value);
 
                 item = get_symbol_table_special_id_item(t->string_value);
+                expr_var_name = t->string_value;
 
                 d_print("data_type special id %d\n", item->variable.data_type);
 
@@ -1074,12 +1103,16 @@ tVar *generate_tmp_var(int data_type) {
 
 int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr_result) {
         expr_token_buffer = buffer;
+        expr_len = buffer->length;
+        expr_in_function = false;
+
         d_print("class %s\n", current_class);
         if (current_function.id_name != NULL) {
                 d_print("vo funkcii %s\n", current_function.id_name);
                 symbol_table_item_t *function = get_symbol_table_class_item(current_class,
                                                                             current_function.id_name);
                 work_tape = function->function.instruction_tape;
+                expr_in_function = true;
 
         } else {
                 work_tape = global_inst_tape;
