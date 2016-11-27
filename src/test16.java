@@ -1,15 +1,16 @@
 class Main
 {
+    /*static int i = 0;
+    static int x = 0;*/
     static void run()
     {
+        int a = testReturn(5);
+        ifj16.print(a);
+    }
 
-        int i = 0;
-        int x = 0;
-        while (i != 10000000) {
-         i = i + 1;
-         x = x + 5;
-
+    static int testReturn(int i) {
+        if (i > 10) {
+            return i - 10;
         }
-        ifj16.print(x);
-
-    }}
+    }
+}
