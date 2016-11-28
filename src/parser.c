@@ -1106,13 +1106,13 @@ int parse_method_element() {
                                 current_function.function.local_vars_count,
                                 current_function.function.params_count + current_function.function.local_vars_count,
                                 current_function.function.local_vars_data_types);
-                        insert_function_symbol_table(current_function.id_name,
-                                                     current_function.function.return_type,
-                                                     current_function.function.params_count,
-                                                     current_function.function.local_vars_count,
-                                                     current_function.function.param_data_types,
-                                                     current_function.function.local_vars_data_types,
-                                                     current_function.function.symbol_table);
+                        set_function_symbol_table(current_function.id_name,
+                                                  current_function.function.return_type,
+                                                  current_function.function.params_count,
+                                                  current_function.function.local_vars_count,
+                                                  current_function.function.param_data_types,
+                                                  current_function.function.local_vars_data_types,
+                                                  current_function.function.symbol_table);
                         insert_instr_tape_for_function(current_class, current_function.id_name, function_inst_tape);
                         current_function.id_name = NULL;
 

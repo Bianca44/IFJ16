@@ -165,6 +165,26 @@ symbol_table_item_t *insert_function_symbol_table(char *id_name, int data_type,
         p->function.local_vars_count = local_vars_count;
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
+        p->function.local_vars_data_types = local_vars_data_types;
+        p->function.symbol_table = symbol_table;
+        p->is_function = true;
+        p->declared = true;
+        insert_symbol_table_item(id_name, p);
+        return p;
+}
+
+/* Sets information about the function */
+symbol_table_item_t *set_function_symbol_table(char *id_name, int data_type,
+                                               int params_count,
+                                               int local_vars_count, char *param_data_types,
+                                               char *local_vars_data_types, symbol_table_t * symbol_table) {
+        symbol_table_item_t *p = get_symbol_table_class_item(current_class, id_name);
+        p->id_name = id_name;
+        p->function.return_type = data_type;
+        p->function.params_count = params_count;
+        p->function.local_vars_count = local_vars_count;
+        p->function.params_local_vars_count = params_count + local_vars_count;
+        p->function.param_data_types = param_data_types;
         if (local_vars_data_types == NULL) {
                 local_vars_data_types = copy_string("");
         }
@@ -172,7 +192,6 @@ symbol_table_item_t *insert_function_symbol_table(char *id_name, int data_type,
         p->function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
-        insert_symbol_table_item(id_name, p);
         return p;
 }
 

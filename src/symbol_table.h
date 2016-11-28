@@ -65,6 +65,10 @@ symbol_table_item_t *insert_function_symbol_table(char *id_name, int data_type,
                                                   int params_count,
                                                   int local_vars_count, char *param_data_types,
                                                   char *local_vars_data_types, symbol_table_t * symbol_table);
+symbol_table_item_t *set_function_symbol_table(char *id_name, int data_type,
+                                               int params_count,
+                                               int local_vars_count, char *param_data_types,
+                                               char *local_vars_data_types, symbol_table_t * symbol_table);
 bool is_declared(char *id_name);
 void append_type(string_t * str, int type);
 symbol_table_t *get_symbol_table_for_class(char *class_name);
