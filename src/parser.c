@@ -1344,7 +1344,11 @@ int parse_value() {
                                                                 expr_var_result = conv_res;
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
-                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                if (expr_data_type == VOID) {
+                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                } else {
+                                                                    exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                }
                                                         }
                                                 }
 
@@ -1364,7 +1368,11 @@ int parse_value() {
                                                                 expr_var_result = conv_res;
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
-                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                if (expr_data_type == VOID) {
+                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                } else {
+                                                                    exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                }
                                                         }
                                                 }
 
