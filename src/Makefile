@@ -1,3 +1,8 @@
+# Project: Interpret for IFJ16
+# Date: November 2016, FIT VUT
+# Team: 026
+# Author: Dávid Bolvanský, xbolva00
+
 CFLAGS=-std=c11 -pedantic -Wall -Wextra -O2 -DNDEBUG
 CC=gcc
 
