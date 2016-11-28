@@ -6,7 +6,7 @@
 #include "debug.h"
 
 
-/* Inicializes a token buffer */
+/* Token buffer initializiation */
 bool init_token_buffer(token_buffer_t * token_buf) {
         token_buf->list = (token_t **) malloc(TOKEN_BUFFER_INITIAL_ALLOCATION * sizeof(token_t));
         if (token_buf->list == NULL) {
@@ -18,7 +18,7 @@ bool init_token_buffer(token_buffer_t * token_buf) {
 }
 
 
-/* Adds a token to the token buffer */
+/* Adds the token to the token buffer */
 bool add_token_to_buffer(token_buffer_t * token_buf, token_t * t) {
         if (token_buf->length == token_buf->allocated_size) {
                 int new_size = token_buf->allocated_size + TOKEN_BUFFER_INITIAL_ALLOCATION;
@@ -38,7 +38,7 @@ bool add_token_to_buffer(token_buffer_t * token_buf, token_t * t) {
 }
 
 
-/* Gets a token from the token buffer */
+/* Gets the token from the token buffer */
 token_t *get_next_token_buffer(token_buffer_t * token_buf) {
         static int i = 0;
 

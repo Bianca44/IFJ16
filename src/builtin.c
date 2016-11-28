@@ -20,7 +20,7 @@ int find(char *text, char *search) {
     return find_bma(search, text);
 }
 
-/* Prints values to output strean */
+/* Prints values to output stream */
 void print(tVar * var) {
     switch (var->data_type) {
     case STRING:
@@ -39,7 +39,7 @@ void print(tVar * var) {
     }
 }
 
-/* Reads integer from input stream, exists with RUN_INPUT_ERROR if not a valid integer number */
+/* Reads integer from the input stream, exists with RUN_INPUT_ERROR if not a valid integer number */
 int read_int() {
     string_t s;
     init_string(&s);
@@ -138,7 +138,7 @@ double read_double() {
     }
 }
 
-/* Reads string from input stream */
+/* Reads string from the input stream */
 char *read_string() {
     string_t s;
     init_string(&s);
@@ -168,7 +168,9 @@ int compare(char *s1, char *s2) {
 
 /* Finds and returns certain substring of the given string */
 char *substr(char *s, int i, int n) {
-	//osetrenie, kedy je dlzka podretazca menej ako 0 resp zacinajuci index j mensi ako 0
+	/* in case the length of a substring is less than zero 
+	** or the beginnig index of the substring is less than zero - prints error 
+	**/
     if (i < 0 || n < 0) {
 	fprintf(stderr, "substr: index or length of search string is negative value.\n");
 	exit(RUN_OTHER_ERROR);
@@ -177,13 +179,17 @@ char *substr(char *s, int i, int n) {
     if (new_str == NULL) {
 	exit(INTERNAL_INTERPRET_ERROR);
     }
-    //osetrenie stavu, kedy pozadujeme zacinajuci index > ako dlzka samotneho retazca
+    /* in case the beginning index of the substring is greater than 
+    ** the length of the given string - prints error 
+    */
     if (i > (int) strlen(s)) {
 	fprintf(stderr, "substr: index is greater than length of the string.\n");
 	free(new_str);
 	exit(RUN_OTHER_ERROR);
     }
-    //osetrenie kedy pozadovana dlzka hladaneho podretazca je dlhsia ako samotny retazec
+    /* in case the length of the substring is greater than the
+    ** length of the given string - prints error
+    */
     if (n > (int) strlen(s) - i) {
 	fprintf(stderr, "substr: length of search string is longer than length of the string.\n");
 	free(new_str);

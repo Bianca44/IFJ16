@@ -14,7 +14,7 @@
 
 typedef tHTable symbol_table_t;
 
-/* Structure which holds info about a variable */
+/* Structure that holds information about the variable */
 typedef struct {
         int data_type;
         union {
@@ -27,7 +27,7 @@ typedef struct {
         int offset;
 } tVar;
 
-/* Structure which holds info about a function */
+/* Structure that holds inforation about the function */
 typedef struct {
         int return_type;
         int params_count;

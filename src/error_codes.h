@@ -10,32 +10,32 @@
 /* Syntactic analysis error */
 #define SYNTACTIC_ANALYSIS_ERROR 2
 
-/* sémantická chyba v programu – nedefinovaná třída/funkce/proměnná, pokus o re-
-definici třídy/funkce/proměnné, atd.*/
+/* Semantic error – not defined class/function/variable, class/function/variable redefinition attempt, etc. */
 #define SEMANTIC_ANALYSIS_PROGRAM_ERROR 3
 
-/* sémantická chyba typové kompatibility v aritmetických, řetězcových a relačních
-výrazech, příp. špatný počet či typ parametrů u volání funkce. */
+/* Semantic error of the type compatibility in arithmetic/string/relational expressions or
+** the incorrect number/type of parameters when calling a function
+**/
 #define SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR 4
 
-/* ostatní sémantické chyby.*/
+/* Other semantic errors */
 #define SEMANTIC_ANALYSIS_OTHER_ERROR 6
 
-/* běhová chyba při načítání číselné hodnoty ze vstupu. */
+/* Runtime error while getting a numerical value from the input */
 #define RUN_INPUT_ERROR 7
 
-/* běhová chyba při práci s neinicializovanou proměnnou.*/
+/* Runtime error while working with non-initialised variable */
 #define RUN_UNINITIALIZED_VARIABLE_ERROR 8
 
-/* běhová chyba dělení nulou.*/
+/* Runtime error when dividing by zero*/
 #define RUN_DEVIDE_ZERO_ERROR 9
 
-/* ostatní běhové chyby. */
+/* Other runtime errors */
 #define RUN_OTHER_ERROR 10
 
-/* interní chyba interpretu tj. neovlivněná vstupním programem (např. chyba a-
-lokace paměti, chyba při otvírání souboru s řídicím programem, špatné parametry
-příkazové řádky atd.). */
+/* Internal interpret error that is not influenced by the input program 
+** (memory allocation error, file opening error, incorrect parameters from the command line,..)
+**/
 
 #define INTERNAL_INTERPRET_ERROR 99
 

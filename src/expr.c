@@ -32,8 +32,8 @@ tVar *op_2;
 tVar *tmp;
 tVar *var = NULL;
 char precedence_table[SIZE][SIZE] = {
-//input token
-        /*  +   -   *   /   (   )   <   >  <=  >=  ==   !=  &&  ||  id  lit  $   ! */ //stack top
+/* input token *
+        /*  +   -   *   /   (   )   <   >  <=  >=  ==   !=  &&  ||  id  lit  $   ! */ /* stack top */
         {'>', '>', '<', '<', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // +
         {'>', '>', '<', '<', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // -
         {'>', '>', '>', '>', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // *
@@ -123,7 +123,7 @@ int choose_rule(PStack * P) {
         d_int(top_item->term);
         switch (top_item->term) {
 
-        //pravidlo E -> int_literal,double_literal,...
+        /* E rule -> int_literal,double_literal,... */
         case P_LIT:
 
 
@@ -159,7 +159,7 @@ int choose_rule(PStack * P) {
 
                 break;
 
-        // E->id,special_id
+        /* E->id,special_id */
         case P_ID:
 
                 d_print("Data type je: %d\n", top_item->value.data_type);
@@ -190,7 +190,7 @@ int choose_rule(PStack * P) {
 
 
                 break;
-        //E-> E + E
+        /* E-> E + E */
         case P_ADD:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -206,7 +206,7 @@ int choose_rule(PStack * P) {
                 d_print("Second operand data_type: %d\n", second_operand);
 
 
-                // int + int
+                /* int + int */
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
@@ -214,7 +214,7 @@ int choose_rule(PStack * P) {
 
                         InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
                         // }
-                } //int + double or double + int
+                } /* int + double or double + int */
                 else if ((first_operand == INT && second_operand == DOUBLE)
                          || (second_operand == INT && first_operand == DOUBLE)) {
 
@@ -264,7 +264,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
                 break;
 
-        //E -> E - E
+        /* E -> E - E */
         case P_SUB:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -314,7 +314,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-        // E -> E * E
+        /* E -> E * E */
         case P_MUL:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -363,7 +363,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-        //E -> E / E
+        /* E -> E / E */
         case P_DIV:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -415,7 +415,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-        //E -> (E)
+        /* E -> (E) */
         case P_RB:
                 if (PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB) {
                         fprintf(stderr, "Unexpected expression.\n");
