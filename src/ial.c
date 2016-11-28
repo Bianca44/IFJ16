@@ -17,13 +17,13 @@ tHTable *ht_init(unsigned ht_size, unsigned (*hash_code_ptr) (const tKey, unsign
 		 void (*dispose_func_ptr) (tData data)) {
 
     tHTable *new_table;
-    //allocating space for table
+    /* allocating space for the table */
     if ((new_table = malloc(sizeof(tHTable) + ht_size * sizeof(tSTitem *))) == NULL) {
         fprintf(stderr,"Could not allocate memory\n");
 	    exit(INTERNAL_INTERPRET_ERROR);
     }
 
-    /*setting values of new hash table */
+    /* setting values of the new hash table */
     new_table->ht_size = ht_size;
     new_table->hash_code_ptr = hash_code_ptr;
     new_table->dispose_func_ptr = dispose_func_ptr;
@@ -37,9 +37,9 @@ tHTable *ht_init(unsigned ht_size, unsigned (*hash_code_ptr) (const tKey, unsign
 }
 
 tSTitem *ht_search(tHTable * ptrht, const tKey key) {
-    //getting index
+    /* getting the index */
     unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-    //accesing list of synonyms
+    /* accesing the list of synonyms */
     tSTitem *first = ptrht->ptr[index];
 
     while (first != NULL) {
@@ -49,7 +49,7 @@ tSTitem *ht_search(tHTable * ptrht, const tKey key) {
 
 	    first = first->next;
     }
-    // not found
+    /* if not found */
     return NULL;
 }
 
@@ -57,12 +57,12 @@ void ht_insert(tHTable * ptrht, const tKey key, tData data) {
 
     tSTitem *item = ht_search(ptrht, key);
     if (item == NULL) {
-	    //getting index
+	    /* getting the index */
 	    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-	    //accesing list of synonyms
+	    /* accesing the list of synonyms */
 	    tSTitem *first = ptrht->ptr[index];
 
-	    //adding item
+	    /* adding item */
 	    tSTitem *new;
 
 	    if ((new = malloc(sizeof(tSTitem))) == NULL) {
@@ -78,14 +78,14 @@ void ht_insert(tHTable * ptrht, const tKey key, tData data) {
 
 	    strcpy(new->key, key);
 	    new->data = data;
-	    //adding to beginning
+	    /* adding to the beginning */
 	    new->next = first;
 	    ptrht->ptr[index] = new;
 
     	ptrht->n_items += 1;
         }
     else {
-	    //actualizing item
+	    /* actualization of the item */
 	    item->data = data;
     }
 
@@ -103,22 +103,22 @@ tData ht_read(tHTable * ptrht, const tKey key) {
 }
 
 void ht_delete(tHTable * ptrht, tKey key) {
-    //getting index
+    /* getting the index */
     unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
-    //accesing list of synonyms
+    /* accesing the list of synonyms */
     tSTitem *tmp = ptrht->ptr[index];
     tSTitem *tmp_prev = tmp;
 
     while (tmp != NULL) {
 	    if (strcmp(tmp->key, key) == 0) {
-	    //item to be deleted is first
+	    /* if the deleting item is the first one */
 	        if (tmp == tmp_prev) {
 		        ptrht->ptr[index] = tmp->next;
 	        }
             else {
 		        tmp_prev->next = tmp->next;
 	        }
-	        //freeing item
+	        /* freeing the item */
 	        free(tmp->key);
 	        ptrht->dispose_func_ptr(tmp->data);
 	        free(tmp);
@@ -135,7 +135,7 @@ void ht_delete(tHTable * ptrht, tKey key) {
 void ht_clear_all(tHTable * ptrht) {
 
     tSTitem *first, *tmp;
-    //going through lists od synonyms
+    /* going through lists of synonyms */
     for (unsigned i = 0; i < ptrht->ht_size; i++) {
 
         first = ptrht->ptr[i];
@@ -143,7 +143,7 @@ void ht_clear_all(tHTable * ptrht) {
         if (first == NULL) {
             continue;
         }
-        //list of synonyms is not empty
+        /* the list of synonyms is not empty */
         while (first != NULL) {
             tmp = first;
             first = first->next;
@@ -164,7 +164,7 @@ void ht_free(tHTable * ptrht) {
     free(ptrht);
 }
 
-//radenie prvkov rozdelovanim
+/* partition-exchange sort */
 void quick_sort(char *str, int left, int right) {
     int indexes[2];
     partition(str, left, right, indexes);
@@ -172,6 +172,7 @@ void quick_sort(char *str, int left, int right) {
     int i = indexes[0];
     int j = indexes[1];
 
+    /* recursive partition */
     if (left < j) {
 	quick_sort(str, left, j);
     }
@@ -180,28 +181,24 @@ void quick_sort(char *str, int left, int right) {
     }
 }
 
-/*funkcia partition preskupi prvky pola do dvoch casti a to tak, 
-**ze v lavej casti su vsetky prvky mensie alebo rovne urcitej hodnote
-**a v pravej casti su prvy vacsie nez tato hodnota
-*/
-
 void partition(char *str, int left, int right, int indexes[]) {
     int median = 0;
     int i = left;
     int j = right;
 
+    /* pseudomedian */
     median = str[(i + j) / 2];
 
     do {
-//prechadzame pole zlava a hlavame prve cislo vacsie ako median
+	/* searching for the first number larger than pseudomedian */
 	while (str[i] < median) {
 	    i++;
 	}
-//prechadzame pole zprava a hladame prve cislo mensie ako median
+	/* searching for the first number smaller than pseudomedian */
 	while (str[j] > median) {
 	    j--;
 	}
-//tieto cisla medzi sebou vymenime a pokracujeme v hladani dalsich cisel
+	/* exchanging */
 	if (i <= j) {
 	    int temp = str[i];
 	    str[i] = str[j];
@@ -212,7 +209,7 @@ void partition(char *str, int left, int right, int indexes[]) {
 	}
     }
 
-//proces konci ked sa dva indexy prekrizia
+	/* the process ends when indexes cross each other */ 
     while (i <= j);
 
     indexes[0] = i;
@@ -273,7 +270,7 @@ void compute_match_jump(char *p, int match_jump[]) {
 }
 
 int find_bma(char *p, char *t) {
-    // BMA
+    /* BMA */
     int m = strlen(p);
     int n = strlen(t);
     int j = m;
@@ -293,7 +290,7 @@ int find_bma(char *p, char *t) {
 	}
     }
     if (m == 0) {
-	// Java indexes from 0
+	/* java indexes from 0 */
 	return j;
     } else {
 	return -1;

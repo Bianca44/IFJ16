@@ -5,7 +5,7 @@
 #include "strings.h"
 #include "debug.h"
 
-/* Inicializes string, allocates initial string size */
+/* String initializiation, allocates initial string size */
 bool init_string(string_t * str) {
         if ((str->data = (char *) malloc(STRING_INITIAL_ALLOCATION * sizeof(char))) == NULL) {
                 return false;

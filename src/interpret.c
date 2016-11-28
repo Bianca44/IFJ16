@@ -33,7 +33,7 @@ tFrame * init_frame(unsigned size){
         tFrame * new_frame;
         int i = 0;
 
-        //recyklovanie ramcov
+        /* frames recycling */
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
@@ -99,16 +99,16 @@ void pop_frame(tFrameStack *stack){
 
         if(stack->top != NULL) {
                 tmp = stack->top;
-                //change stack top
+                /* change the stack top */
                 stack->top = stack->top->next;
-                //free frame
+                /* free the frame */
                 for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
                                 if(tmp->frame->local[i].initialized)
                                     free(tmp->frame->local[i].s);
                         }
                 }
-                //posledny neplnime bude vzdy NULL - zarazka
+                /* the last one will always be NULL - the "stopper"*/
 
                 if(frame_buf_size < FRAME_BUFFER_SIZE - 1){
                     frame_buffer[frame_buf_size++] = tmp->frame;

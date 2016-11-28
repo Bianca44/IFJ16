@@ -64,7 +64,7 @@ void cleanup_resources() {
 }
 
 /*
- * Gets token. If we are in the first pass, we get tokens from input file and save
+ * Gets token. In the first pass, we get tokens from the input file and we save
  * them to a token buffer. In the second pass, we get tokens from that token buffer
  */
 int get_token() {
@@ -133,7 +133,7 @@ int parse_expression(bool ends_semicolon) {
         }
 
         if (is_second_pass) {
-                /* if a identificator is the name of a function, parse it as a function. */
+                /* if the identificator is the name of a function, parse it as a function. */
                 bool is_function = false;
                 symbol_table_item_t *item = NULL;
                 if (t.type == ID) {

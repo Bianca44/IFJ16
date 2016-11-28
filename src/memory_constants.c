@@ -112,7 +112,7 @@ tVar *insert_special_const(constant_t ** const_arr, void *special) {
     return new;
 }
 
-/* Frres all constants from the list */
+/* Frees all constants from the list */
 void free_constants(constant_t ** const_arr) {
     if (const_arr == NULL) {
 	return;

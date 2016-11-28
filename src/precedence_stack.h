@@ -15,7 +15,7 @@ enum Terminals {
     P_RB,			// )
     P_LESS,			// <
     P_GRT,			// >
-    P_LESSE,			// <=
+    P_LESSE,		// <=
     P_GRE,			// >=
     P_EQL,			// ==
     P_NEQL,			// !=
@@ -23,21 +23,22 @@ enum Terminals {
     P_OR,			// ||
     P_ID,			// id
     P_LIT,			// literal
-    P_ENDMARK,			//$
+    P_ENDMARK,		//$
     P_NOT,			//
     P_EXPR,			// E
-    P_HANDLE			// <
+    P_HANDLE		// <
 };
 
 
 
 
-//teoreticky uchovavat typ operacie, typ premennej atd, vytvorit este polozku zasobnika
+//TODO teoreticky uchovavat typ operacie, typ premennej atd, vytvorit este polozku zasobnika
 
 typedef struct PStack_item {
     struct PStack_item *LPtr;
     struct PStack_item *RPtr;
-    enum Terminals term;	//typ terminalu
+    /* tyoe of the terminal */
+    enum Terminals term;	
     tVar value;
     tVar *expr;
     bool is_constant;
@@ -54,8 +55,10 @@ typedef struct {
 PStack *PSInit();
 void PSPush(PStack * P, enum Terminals terms);
 void PSPop(PStack * P);
-int PSTopTerm(PStack * P);	// zistenie prveho terminalu
-PStack_item *PSTopTermPtr(PStack * P);	// ukazatel na polozku s najvrchnejsim terminalom
+/* finds the first terminal */
+int PSTopTerm(PStack * P);	
+/* points to the item on the top of the stack */
+PStack_item *PSTopTermPtr(PStack * P);	
 void PSDispose(PStack * P);
 bool is_top_terminal(int term);
 void insert_handle(PStack * P, PStack_item * item);

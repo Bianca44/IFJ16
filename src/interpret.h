@@ -6,7 +6,8 @@
 typedef struct tFrame{       
     tVar *ret_val;
     unsigned size;
-    tVar local[]; //flexible array member    
+    /* flexible array member */
+    tVar local[];   
 }tFrame;
 
 typedef struct tFSElem {

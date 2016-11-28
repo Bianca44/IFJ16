@@ -38,8 +38,8 @@ void ht_delete(tHTable * ptrht, tKey key);
 void ht_clear_all(tHTable * ptrht);
 void ht_free(tHTable * ptrht);
 
-void quick_sort(char *str, int left, int right); //algoritmus pre radenie prvkov v poli
-void partition(char *str, int left, int right, int indexes[]); //rozdelenie retazca na dva podretazce na zaklade pivotu
+void quick_sort(char *str, int left, int right); 
+void partition(char *str, int left, int right, int indexes[]); 
 void compute_char_jump(char *p, int jump[]);
 void compute_match_jump(char *p, int match_jump[]);
 int find_bma(char *p, char *t);

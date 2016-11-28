@@ -19,7 +19,7 @@ tFrameStack frame_stack;
 void dispose_inst(void * inst){
     free((tInst *)(inst));
 }
-//INPUT
+/* INPUT */
 void i_rint(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
@@ -49,7 +49,7 @@ void i_rstr(tVar *op1, tVar *op2, tVar *result){
 
     result->s = read_string();
 }
-//ARITHMETIC
+/* ARITHMETIC */
 void i_add_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -127,7 +127,7 @@ void i_div_d(tVar *op1, tVar *op2, tVar *result){
     result->d = op1->d / op2->d;
 }
 
-//CONVERSIONS
+/* CONVERSIONS */
 void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -180,7 +180,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
     result->s = new;
 }
 
-//ASSIGNS
+/* ASSIGNS */
 void i_assign_i(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -218,9 +218,10 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     }
 }
 
-//first parameter instruction tape
-//op1 - bool
-//op2 - label
+/* first parameter instruction tape
+** op1 - bool
+** op2 - label
+**/
 
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
@@ -258,8 +259,8 @@ void i_nop(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
 }
-//LOGICAL
-//equal
+/* LOGICAL */
+/* equal */
 void i_e_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -276,7 +277,7 @@ void i_e_b(tVar *op1, tVar *op2, tVar *result){
 
     result->b = (op1->b == op2->b);
 }
-//not equal
+/* not equal */
 void i_ne_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -294,7 +295,7 @@ void i_ne_b(tVar *op1, tVar *op2, tVar *result){
     result->b = (op1->b != op2->b);
 }
 
-//less
+/* less */
 void i_l_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -307,7 +308,7 @@ void i_l_d(tVar *op1, tVar *op2, tVar *result){
     result->b = (op1->d < op2->d);
 }
 
-//greater
+/* greater */
 void i_g_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -320,7 +321,7 @@ void i_g_d(tVar *op1, tVar *op2, tVar *result){
     result->b = (op1->d > op2->d);
 }
 
-//less equal
+/* less or equal */
 void i_le_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -333,7 +334,7 @@ void i_le_d(tVar *op1, tVar *op2, tVar *result){
     result->b = (bool)(op1->d <= op2->d);
 }
 
-//greater equal
+/* greater or equal */
 void i_ge_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -346,7 +347,7 @@ void i_ge_d(tVar *op1, tVar *op2, tVar *result){
     result->b = (bool)(op1->d >= op2->d);
 }
 
-//not
+/* not */
 void i_not(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -370,9 +371,11 @@ void i_or(tVar *op1, tVar *op2, tVar *result){
 
     result->b = op1->b || op2->b;
 }
-//FUNCTIONS
-//initialization of frame
-//op1 size of frame
+
+/* FUNCTIONS */
+
+/* initialization of the frame */
+/* op1 size of the frame */
 
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
@@ -413,7 +416,7 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
         i++;
     }
 }
-//push
+/* push */
 void i_push_param(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -427,32 +430,32 @@ void i_push_param(tVar *op1, tVar *op2, tVar *result){
     d_tVarPtr(op1);
     push_counter++;
 }
-//function call
+/* function call */
 void i_f_call(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
 
-    //ulozit nasledujucu instrukciu na vrchol zasobniku
+    /* inserting the following instruction on the top of the stack */
     d_message("VSTUP do funkcie");
-    //setting push counter to zero
+    /* setting push counter to zero */
     push_counter = 0;
-    //setting frame to stack top
+    /* setting the frame to stack top */
     push_frame(&frame_stack, frame_stack.prepared);
     d_message("ramec pridany na vrchol");
-    //remembering state of tape in the time of function call
+    /* remembering the state of the tape in the time of function call */
     tElemPtr pi = GetActiveElem_M(processed_tape);
     tList *parent_tape = processed_tape;
-    //change of awareness of instruction tape (jumps)
+    /* change of awareness of instruction tape (jumps) */
     processed_tape = (tList *)(op1->s);
     d_message("zapocatie tac funkcie");
-    //executing function
+    /* executing the function */
     interpret_tac(processed_tape);
     d_message("opustenie tac funkcie");
-    //realoading previous state
+    /* realoading the previous state */
     processed_tape = parent_tape;
     SetActiveElem_M(processed_tape, pi);
-    //saving result
+    /* saving the result */
     if(result != NULL){
         if(frame_stack.top->frame->ret_val != NULL){
             switch(result->data_type){
@@ -484,7 +487,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
             exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }
-    //removing frame
+    /* removing the frame */
     pop_frame(&frame_stack);
     d_message("VYSTUP z funkcie");
 }
@@ -498,7 +501,7 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
     Last_M(processed_tape);
 }
 
-//BUILT-IN
+/* BUILT-IN */
 
 void i_cat(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
@@ -581,7 +584,7 @@ void i_len(tVar *op1, tVar *op2, tVar *result){
 
     result->i = strlen(op1->s);
 }
-//GENERATING INSTRUCTIONS
+/* GENERATING INSTRUCTIONS */
 
 void set_label(tElemPtr jump, tElemPtr where){
     ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
@@ -601,7 +604,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     new_inst->f = NULL;
 
     switch(instruction){
-         //INPUT
+         /* INPUT */
         case I_RINT:
             new_inst->f = i_rint;
 			break;
@@ -611,7 +614,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         case I_RSTR:
             new_inst->f = i_rstr;
 			break;
-        //ARITHMETIC
+        /* ARITHMETIC */
         case I_ADD:
             if(new_inst->result->data_type == INT)
                 new_inst->f = i_add_i;
@@ -642,14 +645,14 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         case I_DEC:
             new_inst->f = i_sub_i;
             break;
-        //CONVERSIONS
+        /* CONVERSIONS */
         case I_CONV_I_TO_D:
                 new_inst->f = i_conv_i_to_d;
 			break;
         case I_TO_STRING:
                 new_inst->f = i_to_str;
 			break;
-        //LOGICAL
+        /* LOGICAL */
         case I_E:
             switch(new_inst->op1->data_type){
                 case INT:
@@ -725,7 +728,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         case I_OR:
             new_inst->f = i_or;
             break;
-        //BUILT-IN AND OTHER
+        /* BUILT-IN AND OTHERS */
         case I_ASSIGN:
             switch(new_inst->result->data_type){
                 case INT:
@@ -763,9 +766,9 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         case I_LEN:
             new_inst->f = i_len;
 			break;
-        //ASSOCIATED WITH FUNCTIONS
+        /* ASSOCIATED WITH FUNCTIONS */
         case I_INIT_FRAME:
-            //conv to tVar due to unified access
+            /* conv to tVar due to unified access */
             new_inst->op1 = insert_special_const(&tape_ref, op1);
             new_inst->f = i_init_frame;
 			break;
@@ -773,14 +776,14 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
             new_inst->f = i_push_param;
 			break;
         case I_F_CALL:
-            //conv to tVAR due to unified access
+            /* conv to tVAR due to unified access */
             new_inst->op1 = insert_special_const(&tape_ref, op1);
             new_inst->f = i_f_call;
 			break;
         case I_RETURN:
             new_inst->f = i_return;
 			break;
-        //JUMPS
+        /* JUMPS */
         case I_GOTO:
             new_inst->f = i_goto;
 			break;

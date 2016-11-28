@@ -21,21 +21,21 @@ typedef struct tInst{
 void dispose_inst(void *);
 
 typedef enum instructions {
-    //INPUT
+    /* INPUT */
     I_RINT,
     I_RDBL,
     I_RSTR,
-    //ARITHMETIC
+    /* ARITHMETIC */
     I_ADD,
     I_MUL,
     I_SUB,
     I_DIV,
     I_INC,
     I_DEC,
-    //CONVERSIONS
+    /* CONVERSIONS */
     I_CONV_I_TO_D,
     I_TO_STRING,
-    //LOGICAL
+    /* LOGICAL */
     I_E,
     I_NE,
     I_L,
@@ -45,7 +45,7 @@ typedef enum instructions {
     I_NOT,
     I_AND,
     I_OR,
-    //BUILT-IN AND OTHER
+    /* BUILT-IN AND OTHERS */
     I_ASSIGN,
     I_CAT,
     I_STRCMP,
@@ -54,12 +54,12 @@ typedef enum instructions {
     I_SORT,
     I_PRINT,
     I_LEN,
-    //ASSOCIATED WITH FUNCTIONS
+    /* ASSOCIATED WITH FUNCTIONS */
     I_INIT_FRAME,
     I_PUSH_PARAM,
     I_F_CALL,
     I_RETURN,
-    //JUMPS
+    /* JUMPS */
     I_GOTO,
     I_JNT,
     I_JT,
@@ -69,11 +69,11 @@ typedef enum instructions {
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result);
 void set_label(tElemPtr jump, tElemPtr where);
 
-//INPUT
+/* INPUT */
 void i_rint(tVar *op1, tVar *op2, tVar *result);
 void i_rdbl(tVar *op1, tVar *op2, tVar *result);
 void i_rstr(tVar *op1, tVar *op2, tVar *result);
-//ARITHMETIC
+/* ARITHMETIC */
 void i_add_i(tVar *op1, tVar *op2, tVar *result);
 void i_add_d(tVar *op1, tVar *op2, tVar *result);
 void i_sub_i(tVar *op1, tVar *op2, tVar *result);
@@ -84,21 +84,21 @@ void i_mul_i(tVar *op1, tVar *op2, tVar *result);
 void i_mul_d(tVar *op1, tVar *op2, tVar *result);
 void i_div_i(tVar *op1, tVar *op2, tVar *result);
 void i_div_d(tVar *op1, tVar *op2, tVar *result);
-//Conversions
+/* Conversions */
 void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result);
 void i_to_str(tVar *op1, tVar *op2, tVar *result);
-//assigns
+/* assigns */
 void i_assign_i(tVar *op1, tVar *op2, tVar *result);
 void i_assign_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_i_to_d(tVar *op1, tVar *op2, tVar *result);
 void i_assign_b(tVar *op1, tVar *op2, tVar *result);
 void i_assign_s(tVar *op1, tVar *op2, tVar *result);
-//function
+/* function */
 void i_init_frame(tVar *op1, tVar *op2, tVar *result);
 void i_push_param(tVar *op1, tVar *op2, tVar *result);
 void i_f_call(tVar *op1, tVar *op2, tVar *result);
 void i_return(tVar *op1, tVar *op2, tVar *result);
-//built-in
+/* built-in */
 void i_cat(tVar *op1, tVar *op2, tVar *result);
 void i_strcmp(tVar *op1, tVar *op2, tVar *result);
 void i_substr(tVar *op1, tVar *op2, tVar *result);
@@ -106,32 +106,32 @@ void i_find(tVar *op1, tVar *op2, tVar *result);
 void i_sort(tVar *op1, tVar *op2, tVar *result);
 void i_print(tVar *op1, tVar *op2, tVar *result);
 void i_len(tVar *op1, tVar *op2, tVar *result);
-//logical
-//equal
+/* logical */
+/* equal */
 void i_e_i(tVar *op1, tVar *op2, tVar *result);
 void i_e_d(tVar *op1, tVar *op2, tVar *result);
 void i_e_b(tVar *op1, tVar *op2, tVar *result);
-//not equal
+/* not equal */
 void i_ne_i(tVar *op1, tVar *op2, tVar *result);
 void i_ne_d(tVar *op1, tVar *op2, tVar *result);
 void i_ne_b(tVar *op1, tVar *op2, tVar *result);
-//less
+/* less */
 void i_l_i(tVar *op1, tVar *op2, tVar *result);
 void i_l_d(tVar *op1, tVar *op2, tVar *result);
-//greater
+/* greater */
 void i_g_i(tVar *op1, tVar *op2, tVar *result);
 void i_g_d(tVar *op1, tVar *op2, tVar *result);
-//less equal
+/* less or equal */
 void i_le_i(tVar *op1, tVar *op2, tVar *result);
 void i_le_d(tVar *op1, tVar *op2, tVar *result);
-//greater equal
+/* greater or equal */
 void i_ge_i(tVar *op1, tVar *op2, tVar *result);
 void i_ge_d(tVar *op1, tVar *op2, tVar *result);
-//not, and, or
+/* not, and, or */
 void i_not(tVar *op1, tVar *op2, tVar *result);
 void i_and(tVar *op1, tVar *op2, tVar *result);
 void i_or(tVar *op1, tVar *op2, tVar *result);
-//jumps
+/* jumps */
 void i_goto(tVar *op1, tVar *op2, tVar *result);
 void i_jnt(tVar *op1, tVar *op2, tVar *result);
 void i_jt(tVar *op1, tVar *op2, tVar *result);

@@ -17,12 +17,14 @@ void DisposeList(tList * L) {
 
     while (L->First != NULL) {
 	tElemPtr tmp;
-	tmp = L->First;		//odlizime si ukazatel na prvy prvok - mazany
-	L->First = L->First->ptr;	//posunieme sa
+    /* save the pointer that points at the first (disposing) item */
+	tmp = L->First;
+    /* shift */
+	L->First = L->First->ptr;	
 	L->dispose_fun(tmp->data);
 	free(tmp);
     }
-    //navrat do incializacneho stavu
+    /* return to the initialization state */
     L->Last = NULL;
     L->Act = NULL;
 }
@@ -30,18 +32,18 @@ void DisposeList(tList * L) {
 void InsertFirst(tList * L, void *val) {
 
     tElemPtr item;
-    //kontrola alokovania pamati
+    /* the control of memory allocation */
     if ((item = malloc(sizeof(struct tElem))) == NULL) {
 	//TODO
 	return;
     }
-    //nastavnie predchodcu a nasledovnika
+    /* setting the previous item and the next item */
     //item->lptr = NULL;
     item->ptr = L->First;
     item->data = val;
 
-
-    if (L->First == NULL) {	// ak bol zaznam prazdny, je pridavany prvy aj posledny
+    /* in case of empty list, add the first and the last intem at the same time */
+    if (L->First == NULL) {	
 	L->Last = item;
     }
 
@@ -51,19 +53,20 @@ void InsertFirst(tList * L, void *val) {
 void InsertLast(tList * L, void *val) {
 
     tElemPtr item;
-    //kontrola alokovania pamati
+    /* the control of memory allocation */
     if ((item = malloc(sizeof(struct tElem))) == NULL) {
 	//TODO
 	return;
     }
-    //nastavnie predchodcu a nasledovnika
+    /* setting the previous item and the next item */
     item->ptr = NULL;
     item->data = val;
 
     if (L->Last != NULL) {
-	//nastavnie noveho prvku ako nasledovika minuleho
+	/* setting a new item as the next one of the previous one */
 	L->Last->ptr = item;
-    } else {			// ak bol zaznam prazdny, je pridavany prvym aj posledny
+    /* in case of empty list, add the first and the last intem at the same time */
+    } else {			
 	L->First = item;
     }
 
@@ -137,7 +140,7 @@ void SetActiveElem(tList * L, tElemPtr e) {
     L->Act = e;
 }
 
-//returns last elemt of list
+/* returns last elemt of list */
 tElemPtr GetLastElem(tList * L) {
     return L->Last;
 }

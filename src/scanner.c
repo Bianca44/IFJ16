@@ -19,7 +19,7 @@ char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do"
 };
 
 
-/*Saves a token. In case we do not need attr part, frees it. */
+/*Saves the token. Frees the attr part in case we do not need it */
 int save_token(token_t * t, int type, string_t * attr) {
     t->type = type;
     if (attr != NULL) {
@@ -77,7 +77,7 @@ int is_special_id_ok(string_t * str) {
     return 1;
 }
 
-/* Gets next token from input file */
+/* Gets next token from the input file */
 int get_next_token(token_t * t) {
 
     int c = 0;
@@ -414,7 +414,7 @@ int get_next_token(token_t * t) {
 
 }
 
-/* Inits scanner, sets file in scanner */
+/* Inits the scanner, sets file in the scanner */
 FILE *init_scanner(char *filename) {
     file = fopen(filename, "r");
     return file;
