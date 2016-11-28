@@ -1148,9 +1148,10 @@ int parse_method_element() {
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         } else {
-                                if (is_declared(function_variable.id_name)) {
-                                        fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name,
-                                                current_function.id_name);
+                                symbol_table_item_t * item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                if (item != NULL && item->is_function) {
+                                        fprintf(stderr, "Variable \'%s\' in function \'%s\' has same name as function in the class \'%s\'.\n", function_variable.id_name,
+                                                current_function.id_name, current_class);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
