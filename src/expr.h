@@ -1,4 +1,11 @@
-#ifndef EXPR_Hr
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Juraj Ondrej Dúbrava, xdubra03
+ */
+
+#ifndef EXPR_H
 #define EXPR_H
 #include "token_buffer.h"
 #include "scanner.h"

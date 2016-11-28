@@ -1,3 +1,12 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Authors: Tamara Krestianková, xkrest07
+ *          Veronika Svoradová, xsvora01
+ *          Martin Marušiak, xmarus07
+ */
+
 #ifndef IAL_H
 #define IAL_H
 
@@ -38,8 +47,8 @@ void ht_delete(tHTable * ptrht, tKey key);
 void ht_clear_all(tHTable * ptrht);
 void ht_free(tHTable * ptrht);
 
-void quick_sort(char *str, int left, int right); 
-void partition(char *str, int left, int right, int indexes[]); 
+void quick_sort(char *str, int left, int right);
+void partition(char *str, int left, int right, int indexes[]);
 void compute_char_jump(char *p, int jump[]);
 void compute_match_jump(char *p, int match_jump[]);
 int find_bma(char *p, char *t);

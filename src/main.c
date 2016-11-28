@@ -1,3 +1,10 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Dávid Bolvanský, xbolva00
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"

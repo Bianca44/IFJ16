@@ -1,3 +1,10 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Martin Marušiak, xmarus07
+ */
+
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 

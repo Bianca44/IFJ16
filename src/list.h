@@ -1,7 +1,13 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Martin Marušiak, xmarus07
+ */
+
 #ifndef list_H
 #define list_H
 
-//TODO IAL
 typedef struct tElem {
         void *data;
         struct tElem *ptr;

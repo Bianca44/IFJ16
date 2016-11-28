@@ -1,3 +1,12 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Authors: Dávid Bolvanský, xbolva00
+ *          Martin Marušiak, xmarus07
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "symbol_table.h"

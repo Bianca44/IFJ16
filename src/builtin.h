@@ -1,15 +1,24 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Authors: Tamara Krestianková, xkrest07
+ *          Veronika Svoradová, xsvora01
+ *          Dávid Bolvanský, xbolva00
+ */
+
 #ifndef BUILTIN_H
 #define BUILTIN_H
 #include "symbol_table.h"
 
-void sort(char *str); //Quicksort
-int find(char *p, char *t); //Boyer-Moore algorithm
-void print(tVar * var); //prints values
-int length(char *string); //returns the lenght of a string
-int compare(char *s1, char *s2); //compares two strings
-char *substr(char *s, int i, int n); //finds a substring of a given string
+void sort(char *str);
+int find(char *p, char *t);
+void print(tVar * var);
+int length(char *string);
+int compare(char *s1, char *s2);
+char *substr(char *s, int i, int n);
 int read_int();
 double read_double();
 char *read_string();
 
-#endif				// BUILTIN_H
+#endif              // BUILTIN_H

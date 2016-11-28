@@ -1,4 +1,11 @@
-#include <stdio.h>
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Juraj Ondrej Dúbrava, xdubra03
+ */
+
+ #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "expr.h"
@@ -32,8 +39,8 @@ tVar *op_2;
 tVar *tmp;
 tVar *var = NULL;
 char precedence_table[SIZE][SIZE] = {
-/* input token *
-        /*  +   -   *   /   (   )   <   >  <=  >=  ==   !=  &&  ||  id  lit  $   ! */ /* stack top */
+
+/*token   +   -   *   /   (   )    <    >    <=  >=    ==   !=  &&    ||  id    lit  $   !   stack top   */
         {'>', '>', '<', '<', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // +
         {'>', '>', '<', '<', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // -
         {'>', '>', '>', '>', '<', '>', '>', '>', '>', '>', '>', '>', '>', '>', '<', '<', '>', '<'}, // *

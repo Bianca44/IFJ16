@@ -1,3 +1,11 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Authors: Dávid Bolvanský, xbolva00
+ *          Martin Marušiak, xmarus07
+ */
+
 #ifndef MEMORY_CONSTANTS_H
 #define MEMORY_CONSTANTS_H
 

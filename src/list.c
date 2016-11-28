@@ -1,8 +1,13 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Martin Marušiak, xmarus07
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
-
-//TODO ial, komenty, odstranit nepotrebne
 
 void InitList(tList * L, void (*dispose_fun) (void *)) {
 
@@ -20,7 +25,7 @@ void DisposeList(tList * L) {
     /* save the pointer that points at the first (disposing) item */
 	tmp = L->First;
     /* shift */
-	L->First = L->First->ptr;	
+	L->First = L->First->ptr;
 	L->dispose_fun(tmp->data);
 	free(tmp);
     }
@@ -43,7 +48,7 @@ void InsertFirst(tList * L, void *val) {
     item->data = val;
 
     /* in case of empty list, add the first and the last intem at the same time */
-    if (L->First == NULL) {	
+    if (L->First == NULL) {
 	L->Last = item;
     }
 
@@ -66,7 +71,7 @@ void InsertLast(tList * L, void *val) {
 	/* setting a new item as the next one of the previous one */
 	L->Last->ptr = item;
     /* in case of empty list, add the first and the last intem at the same time */
-    } else {			
+    } else {
 	L->First = item;
     }
 

@@ -1,9 +1,20 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Authors: Tamara Krestianková, xkrest07
+ *          Veronika Svoradová, xsvora01
+ *          Martin Marušiak, xmarus07
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ial.h"
 #include "error_codes.h"
-//TODO
+
+
+/* Hash function */
 unsigned hash_code(const tKey key, unsigned ht_size) {
     unsigned h = 0;
     const unsigned char *p;
@@ -209,7 +220,7 @@ void partition(char *str, int left, int right, int indexes[]) {
 	}
     }
 
-	/* the process ends when indexes cross each other */ 
+	/* the process ends when indexes cross each other */
     while (i <= j);
 
     indexes[0] = i;

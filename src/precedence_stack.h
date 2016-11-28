@@ -1,3 +1,10 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Juraj Ondrej Dúbrava, xdubra03
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -38,7 +45,7 @@ typedef struct PStack_item {
     struct PStack_item *LPtr;
     struct PStack_item *RPtr;
     /* tyoe of the terminal */
-    enum Terminals term;	
+    enum Terminals term;
     tVar value;
     tVar *expr;
     bool is_constant;
@@ -56,9 +63,9 @@ PStack *PSInit();
 void PSPush(PStack * P, enum Terminals terms);
 void PSPop(PStack * P);
 /* finds the first terminal */
-int PSTopTerm(PStack * P);	
+int PSTopTerm(PStack * P);
 /* points to the item on the top of the stack */
-PStack_item *PSTopTermPtr(PStack * P);	
+PStack_item *PSTopTermPtr(PStack * P);
 void PSDispose(PStack * P);
 bool is_top_terminal(int term);
 void insert_handle(PStack * P, PStack_item * item);

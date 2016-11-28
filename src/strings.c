@@ -1,3 +1,10 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Dávid Bolvanský, xbolva00
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -34,7 +41,7 @@ char *copy_string(char *text) {
         if ((ptr = (char *) malloc((length + 1) * sizeof(char))) == NULL) {
                 return false;
         }
-        memcpy(ptr, text, length + 1);
+        memcpy(ptr, text, length);
         ptr[length] = '\0';
         return ptr;
 }

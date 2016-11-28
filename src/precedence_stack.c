@@ -1,3 +1,10 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Juraj Ondrej Dúbrava, xdubra03
+ */
+
 #include "precedence_stack.h"
 #include "token_buffer.h"
 #include "debug.h"
@@ -117,7 +124,7 @@ void insert_handle(PStack * P, PStack_item * item) {
 }
 
 void PSDispose(PStack * P) {
-    //TODO rusenie,este nieco pridat 
+    //TODO rusenie,este nieco pridat
     PStack_item *tmp;
     while (P->top != NULL) {
 	tmp = P->top;
