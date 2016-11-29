@@ -1,4 +1,4 @@
-//error 2 - void nevraca hodnotu
+//error 8 - void nevraca hodnotu
 
 class Main {
 	static void run() {
