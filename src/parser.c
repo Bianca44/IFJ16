@@ -254,14 +254,14 @@ int parse_expression(bool ends_semicolon) {
                 init_token_buffer(&tb);
         }
 
-        /* Parse expresions in functions */
+        /* Parse expresions */
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON)
                                 break;
                 } else {
                         if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == EOF)
-                                return PARSE_ERROR;  /* prevent loop */
+                                return PARSE_ERROR;
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 brackets_counter--;
@@ -902,7 +902,7 @@ int parse_statement() {
                                                                                                               current_function.id_name);
                                         if (!is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 fprintf(stderr,
-                                                        "Neither Variable \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
+                                                        "Neither variable \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
                                                         t.string_value, current_class, current_function.id_name, current_class);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
@@ -920,33 +920,49 @@ int parse_statement() {
                 function_variable.id_name = t.string_value;
                 if (parse_call_assign()) {
                         if (is_second_pass) {
-                                symbol_table_item_t *var = NULL;
+                                symbol_table_item_t *item = NULL;
                                 if (strchr(function_variable.id_name, '.') != NULL) {
-                                        var = get_symbol_table_special_id_item(function_variable.id_name);
+                                        item = get_symbol_table_special_id_item(function_variable.id_name);
                                 } else {
 
                                         symbol_table_item_t *function = get_symbol_table_class_item(current_class,
                                                                                                     current_function.id_name);
-                                        var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
-                                        if (var == NULL) {
-                                                var = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                        item = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                                        if (item == NULL) {
+                                                item = get_symbol_table_class_item(current_class, function_variable.id_name);
                                         }
                                 }
 
-                                if (var->is_function) {
+                                if (item->is_function) {
 
                                         if (strcmp(function_variable.id_name, "ifj16.print") == 0) {
                                                 InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
-                                                first_param = expr_var_result = NULL;
-                                        } else if (strstr(function_variable.id_name, "ifj16.") == NULL) {
-                                                InsertLast(function_inst_tape, generate(I_F_CALL, var->function.instruction_tape, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.readInt") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_RINT, NULL, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.readString") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_RSTR, NULL, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.readDouble") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_RDBL, NULL, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.length") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_LEN, first_param, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.sort") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_SORT, first_param, NULL, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.find") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_FIND, first_param, second_param, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.compare") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_STRCMP, first_param, second_param, NULL));
+                                        } else if (strcmp(function_variable.id_name, "ifj16.substr") == 0) {
+                                                InsertLast(function_inst_tape, generate(I_SUBSTR, NULL, NULL, NULL));
+                                        } else {
+                                                InsertLast(function_inst_tape,
+                                                           generate(I_F_CALL, item->function.instruction_tape, NULL, NULL));
                                         }
 
                                         first_param = second_param = expr_var_result = NULL;
 
                                 } else if (function_variable.id_name != NULL) {
                                         if (expr_var_result != NULL) {
-                                                tVar *to = &var->variable;
+                                                tVar *to = &item->variable;
 
                                                 to->initialized = true;
                                                 tVar *from = expr_var_result;
@@ -1345,9 +1361,9 @@ int parse_value() {
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 if (expr_data_type == VOID) {
-                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {
-                                                                    exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
                                                         }
                                                 }
@@ -1369,9 +1385,9 @@ int parse_value() {
                                                         } else {
                                                                 fprintf(stderr, "Incompatible types to assign value.\n");
                                                                 if (expr_data_type == VOID) {
-                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {
-                                                                    exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
                                                         }
                                                 }
