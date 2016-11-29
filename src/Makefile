@@ -3,7 +3,7 @@
 # Team: 026
 # Author: Dávid Bolvanský, xbolva00
 
-CFLAGS=-std=c11 -pedantic -Wall -Wextra -O3 -DNDEBUG
+CFLAGS=-std=c11 -pedantic -Wall -Wextra  -DNDEBUG
 CC=gcc
 
 BINARY=ifj16

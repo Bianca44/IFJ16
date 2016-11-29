@@ -32,8 +32,10 @@ void i_rint(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
-
-    result->i = read_int();
+    if(result != NULL)
+        result->i = read_int();
+    else
+        read_int();
 
 }
 void i_rdbl(tVar *op1, tVar *op2, tVar *result){
@@ -41,8 +43,10 @@ void i_rdbl(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
-
-    result->d = read_double();
+    if(result != NULL)
+        result->d = read_double();
+    else 
+        read_double();
 
 }
 void i_rstr(tVar *op1, tVar *op2, tVar *result){
@@ -50,11 +54,16 @@ void i_rstr(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
+    
+    if(result != NULL){
+        if(result->initialized)
+            free(result->s);
 
-    if(result->initialized)
-        free(result->s);
-
-    result->s = read_string();
+        result->s = read_string();
+    }
+    else{
+        free(read_string());
+    }
 }
 /* ARITHMETIC */
 void i_add_i(tVar *op1, tVar *op2, tVar *result){
@@ -533,8 +542,9 @@ void i_cat(tVar *op1, tVar *op2, tVar *result){
 
 void i_strcmp(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
-
-    result->i = compare(op1->s, op2->s);
+    if(result != NULL){
+        result->i = compare(op1->s, op2->s);
+    }
 }
 
 void i_substr(tVar *op1, tVar *op2, tVar *result){
@@ -544,12 +554,12 @@ void i_substr(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     push_counter = 0;
+    if(result != NULL){
+        if(result->initialized)
+            free(result->s);
 
-    if(result->initialized)
-        free(result->s);
-
-    result->s = substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
-
+        result->s = substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
+    }
     free(frame_stack.prepared->local[0].s);
     free(frame_stack.prepared);
     frame_stack.prepared = NULL;
@@ -558,21 +568,24 @@ void i_substr(tVar *op1, tVar *op2, tVar *result){
 void i_find(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
-    result->i = find(op1->s, op2->s);
+    if(result != NULL){
+        result->i = find(op1->s, op2->s);
+    }
 }
 
 void i_sort(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
+    if(result != NULL){
+        if(op1 != result){
+            if(result->initialized)
+                free(result->s);
+            result->s = copy_string(op1->s);
+        }
 
-    if(op1 != result){
-        if(result->initialized)
-            free(result->s);
-        result->s = copy_string(op1->s);
+        sort(result->s);
     }
-
-    sort(result->s);
 }
 
 void i_print(tVar *op1, tVar *op2, tVar *result){
@@ -580,7 +593,7 @@ void i_print(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
 
     d_inst_name();
-    //d_ptr(op1->s);
+
     print(op1); // priamo sem alebo makro TODO
 }
 
@@ -588,8 +601,8 @@ void i_len(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
-
-    result->i = strlen(op1->s);
+    if(result != NULL)
+        result->i = strlen(op1->s);
 }
 /* GENERATING INSTRUCTIONS */
 
