@@ -14,6 +14,7 @@
 
 int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr_result);
 tVar *generate_tmp_var(int data_type);
+void check_expr_ifj_print(token_buffer_t * buffer, int expr_end_data_type);
 void expr_exit(int exit_code);
 
 #endif				// EXPR_H

@@ -1,6 +1,6 @@
 class Main {
 static void run () {
-        ifj16.print("Hello world");
+        ifj16.print("ahoj" + "ahoj" + "c");
         //int a;
         //a = run();
         int a = ab();
