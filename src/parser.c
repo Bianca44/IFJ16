@@ -273,7 +273,7 @@ int parse_expression(bool ends_semicolon) {
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 brackets_counter--;
-                                if (brackets_counter != 0) {
+                                if (brackets_counter == -1) {
                                         break;
                                 }
                         }
@@ -290,7 +290,7 @@ int parse_expression(bool ends_semicolon) {
                         add_token_to_buffer(&tb, &t);
                 }
 
-                if (is_second_pass) {
+				if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);

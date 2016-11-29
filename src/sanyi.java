@@ -20,18 +20,17 @@ class Main
 		}
 		doo();
 	}
-
 	static double b = 5.5;
 	static void neviem_kde_som(){
 		boolean baszdmeg = true;
 		boolean faszom = false;
-		if (((5+7)>0))
+		if (faszom || baszdmeg && ((5+(8-1))>0))
 		{
 			bez_na_koniec();
 		}
 		else{}
 	}
-	/*static void doo ()
+	static void doo ()
 	{
 		String A;
 		A = "C";
@@ -80,10 +79,7 @@ class Main
 		}
 		else{
 		}
-	}*/
-
-	
-	
+	}
 	static void goto2()
 	{
 		ifj16.print("I\n");
