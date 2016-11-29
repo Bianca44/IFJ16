@@ -844,8 +844,8 @@ int parse_condition_list() {
 }
 
 int parse_else() {
-        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET
-            || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING
+            || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (is_second_pass) {
                         set_label(js_top(), GetLastElem_M(function_inst_tape));
                         js_pop();
@@ -1073,8 +1073,8 @@ int parse_element_list() {
                 return PARSED_OK;
         } else if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (parse_statement()) {
-                    expr_result.id_name = NULL;
-                    return PARSED_OK;
+                        expr_result.id_name = NULL;
+                        return PARSED_OK;
                 }
         } else if (t.type == LEFT_CURVED_BRACKET) {
                 get_token();
