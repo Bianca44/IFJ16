@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
         }
 
 
-        printf("YOLO\n");
         parse(&inst_tape);
 
         symbol_table_item_t *run_method = get_symbol_table_class_item("Main", "run");

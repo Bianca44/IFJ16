@@ -2,5 +2,7 @@ class Main
 {
     static void run()
     {
-        int a = 5 = 7;
+        //String input = "aa";
+        String output = ifj16.substr("aa", -2, 2);
+    }
 }

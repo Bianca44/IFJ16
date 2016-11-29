@@ -401,14 +401,14 @@ int parse_next_param_value() {
                                 int data_type = 0;
                                 if (t.type == SPECIAL_ID) {
                                         if (!is_special_id_declared(t.string_value)) {
-                                                fprintf(stderr, "Param \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value,
+                                                fprintf(stderr, "Parameter \'%s\' for function \'%s.%s\' was not declared.\n", t.string_value,
                                                         current_class, function_name_call);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
                                                 item = get_symbol_table_special_id_item(t.string_value);
                                                 if (item->is_function) {
                                                         fprintf(stderr,
-                                                                "Param \'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value,
+                                                                "Parameter\'%s\' for function \'%s.%s\' is declared as function.\n", t.string_value,
                                                                 current_class, function_name_call);
                                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 }
@@ -424,14 +424,14 @@ int parse_next_param_value() {
                                         } else {
                                                 if (!is_declared(t.string_value)) {
                                                         fprintf(stderr,
-                                                                "Neither param \'%s\' for function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
+                                                                "Neither parameter \'%s\' for function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
                                                                 t.string_value, current_class, function_name_call, current_class);
                                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                 } else {
                                                         item = get_symbol_table_class_item(current_class, t.string_value);
                                                         if (item->is_function) {
                                                                 fprintf(stderr,
-                                                                        "Param \'%s\' for function \'%s.%s\' is declared as function.\n",
+                                                                        "Parameter \'%s\' for function \'%s.%s\' is declared as function.\n",
                                                                         t.string_value, current_class, function_name_call);
                                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                         }
