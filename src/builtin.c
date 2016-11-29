@@ -180,6 +180,7 @@ char *substr(char *s, int i, int n) {
         /* in case the length of a substring is less than zero
         ** or the beginnig index of the substring is less than zero - prints error
         **/
+        printf("TROLOL\n");
         if (i < 0 || n < 0) {
                 fprintf(stderr, "substr: index or length of search string is negative value.\n");
                 exit(RUN_OTHER_ERROR);
@@ -204,6 +205,8 @@ char *substr(char *s, int i, int n) {
                 free(new_str);
                 exit(RUN_OTHER_ERROR);
         }
+
+        printf("TROLOL\n");
 
         memcpy(new_str, s, n);
         new_str[n] = '\0';

@@ -96,11 +96,19 @@ int parse_expression(bool ends_semicolon) {
         token_buffer_t tb;
 
         /* In the first pass we check expressions in static (global) variables */
+
+
         if (is_first_pass && is_static_variable_declaration) {
                 init_token_buffer(&tb);
                 while (1) {
                         if (t.type == SEMICOLON)
                                 break;
+
+
+                        if (t.type == ASSIGN) {
+                                fprintf(stderr, "Cannot assign value in expression.\n");
+                                exit(SYNTACTIC_ANALYSIS_ERROR);
+                        }
 
                         add_token_to_buffer(&tb, &t);
 
@@ -260,7 +268,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON)
                                 break;
                 } else {
-                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == EOF)
+                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == ASSIGN || t.type == EOF)
                                 return PARSE_ERROR;
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -343,7 +351,7 @@ int parse_return_value() {
                         if (is_first_pass) {
                                 if (current_function.function.return_type == VOID) {
                                         fprintf(stderr, "Return in function \'%s\' with void return type.\n", current_function.id_name);
-                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                 }
                         }
 
@@ -387,7 +395,7 @@ int parse_return_value() {
 int parse_next_param_value() {
         if (t.type == COMMA) {
                 get_token();
-                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) { // EXPR HACK
+                if (t.type == ID || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL || t.type == TRUE || t.type == FALSE) {
                         if (is_second_pass) {
                                 symbol_table_item_t *item = NULL;
                                 int data_type = 0;
@@ -532,6 +540,8 @@ int parse_next_param_value() {
                                 }
                         }
                         get_token();
+
+
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 return PARSED_OK;
                         } else if (t.type == COMMA) {

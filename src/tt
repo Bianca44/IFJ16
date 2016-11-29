@@ -1,1 +1,6 @@
-"Ahoj\nSve'te\\\042"
+class Main
+{
+    static void run()
+    {
+        int a = 5 = 7;
+}
