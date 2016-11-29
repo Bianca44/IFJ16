@@ -1,13 +1,8 @@
 class Main {
 static void run () {
-        ifj16.print("ahoj" + "ahoj" + "c");
-        //int a;
-        //a = run();
-        int a = ab();
-}
+    String str1 = "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ";
+    String str2 = ifj16.substr("JJJ",62,1);
 
-static int ab() {
-    return 1;
-}
 
-}
+    ifj16.print(str2);
+}}

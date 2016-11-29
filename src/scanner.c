@@ -28,6 +28,7 @@ char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do"
 /*Saves the token. Frees the attr part in case we do not need it */
 int save_token(token_t * t, int type, string_t * attr) {
         t->type = type;
+
         if (attr != NULL) {
                 switch (type) {
                 case ID:

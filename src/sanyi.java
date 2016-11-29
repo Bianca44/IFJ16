@@ -9,18 +9,18 @@ class Main
 		if (i == 0) {
 			ifj16.print("A"+"\n");
 		}
-		else {			
+		else {
 		}
 		str2 = "+-*/*-*/*-/*-/*-++++++++++++++++-**/*-";
 		i = ifj16.compare(str1, str2);
 		if (i != 0) {
 			ifj16.print("B"+"\n");
 		}
-		else {			
+		else {
 		}
 		doo();
 	}
-	static double b = 5.5;
+	//static double b = 5.5;
 	static void neviem_kde_som(){
 		boolean baszdmeg = true;
 		boolean faszom = false;
@@ -48,10 +48,12 @@ class Main
 		a = a -1;
 		return a;
 	}
+
+
 	static  double c = 5.5;
 	static double doo1(){
 		ifj16.print("D\n");
-		return 42.42;
+		return 2;
 	}
 	static boolean True = true;
 	static int global = 555555;
@@ -63,6 +65,7 @@ class Main
 		}
 		int dog = ifj16.compare("E","E");
 		boolean cat = dog < 2;
+		String a;
 		while (cat){
 			ifj16.print("F\n");
 			cat=false;

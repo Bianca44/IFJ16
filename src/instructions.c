@@ -45,7 +45,7 @@ void i_rdbl(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     if(result != NULL)
         result->d = read_double();
-    else 
+    else
         read_double();
 
 }
@@ -54,7 +54,7 @@ void i_rstr(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
-    
+
     if(result != NULL){
         if(result->initialized)
             free(result->s);

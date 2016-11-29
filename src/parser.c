@@ -290,7 +290,7 @@ int parse_expression(bool ends_semicolon) {
                         add_token_to_buffer(&tb, &t);
                 }
 
-				if (is_second_pass) {
+                if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
@@ -868,7 +868,8 @@ int parse_else() {
                                         js_pop();
                                 }
                                 if (t.type == LEFT_CURVED_BRACKET
-                                    || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID
+                                    || t.type == RIGHT_CURVED_BRACKET || t.type == INT
+                                    || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID
                                     || t.type == IF || t.type == WHILE) {
                                         return PARSED_OK;
                                 }
@@ -1071,7 +1072,10 @@ int parse_element_list() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 return PARSED_OK;
         } else if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                return parse_statement();
+                if (parse_statement()) {
+                    expr_result.id_name = NULL;
+                    return PARSED_OK;
+                }
         } else if (t.type == LEFT_CURVED_BRACKET) {
                 get_token();
                 if (parse_statement_list()) {
@@ -1393,7 +1397,7 @@ int parse_value() {
                                                                            generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
                                                                 expr_var_result = conv_res;
                                                         } else {
-                                                                fprintf(stderr, "Incompatible types to assign value.\n");
+                                                                fprintf(stderr, "Incompatible types to assign value %s.\n", function_variable.id_name);
                                                                 if (expr_data_type == VOID) {
                                                                         exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {

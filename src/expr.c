@@ -1203,6 +1203,7 @@ int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr
 
         st_item->id_name = "expr_result";
         st_item->variable = *P->top->expr;
+        st_item->variable.data_type = P->top->value.data_type;
         *expr_result = P->top->expr;
 
         if (function_name_call != NULL && strcmp(function_name_call, "ifj16.print") == 0) {
