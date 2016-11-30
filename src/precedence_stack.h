@@ -10,8 +10,7 @@
 #include <stdbool.h>
 #include "symbol_table.h"
 #include "scanner.h"
-//potrebne preto zasobnik, enum tokenov, treba dopnit
-// $, "<" a E do enumu alebo spravit vlastny enum
+
 
 enum Terminals {
     P_ADD,			// +
@@ -31,7 +30,7 @@ enum Terminals {
     P_ID,			// id
     P_LIT,			// literal
     P_ENDMARK,		//$
-    P_NOT,			//
+    P_NOT,			// !
     P_EXPR,			// E
     P_HANDLE		// <
 };
@@ -39,12 +38,12 @@ enum Terminals {
 
 
 
-//TODO teoreticky uchovavat typ operacie, typ premennej atd, vytvorit este polozku zasobnika
+
 
 typedef struct PStack_item {
     struct PStack_item *LPtr;
     struct PStack_item *RPtr;
-    /* tyoe of the terminal */
+    /* type of the terminal */
     enum Terminals term;
     tVar value;
     tVar *expr;
@@ -64,7 +63,7 @@ void PSPush(PStack * P, enum Terminals terms);
 void PSPop(PStack * P);
 /* finds the first terminal */
 int PSTopTerm(PStack * P);
-/* points to the item on the top of the stack */
+/* points to the terminal item on the top of the stack */
 PStack_item *PSTopTermPtr(PStack * P);
 void PSDispose(PStack * P);
 bool is_top_terminal(int term);
