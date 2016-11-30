@@ -1,6 +1,13 @@
-class Main {
-static void run() {
-        int a =  1+b;
-        int b = 4;
-}
+//allright
+class Main
+{
+    static void run()
+    {
+        String h = "k";
+        String g  = "kg";
+
+        String juntos = h = g;
+
+
+    }
 }

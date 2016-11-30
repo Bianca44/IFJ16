@@ -268,7 +268,7 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON)
                                 break;
                 } else {
-                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == ASSIGN || t.type == EOF)
+                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == EOF)
                                 return PARSE_ERROR;
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
@@ -284,6 +284,11 @@ int parse_expression(bool ends_semicolon) {
 
                         if (t.type == COMMA)
                                 break;
+                }
+
+                if (t.type == ASSIGN) {
+                        fprintf(stderr, "Cannot assign value in expression.\n");
+                        exit(SYNTACTIC_ANALYSIS_ERROR);
                 }
 
                 if (is_second_pass) {
