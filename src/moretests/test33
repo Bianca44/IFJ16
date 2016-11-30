@@ -1,0 +1,13 @@
+//ok
+class Main
+{
+    static void run()
+    {
+        String s1 = "Neviem preco to stale pada!";
+
+        String vysledok = ifj16.substr(s1, 5, 8);
+        ifj16.print("podretazec:" +vysledok);
+
+
+    }
+}

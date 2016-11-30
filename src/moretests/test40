@@ -1,0 +1,26 @@
+
+class Main
+{
+    static void run()
+    {
+    	boolean matematik;
+
+    	ifj16.print("Zadaj cislo od 1 do 10: ");
+        int a = ifj16.readInt();
+
+        if (a < 1 || a > 10) {
+        	matematik = false;
+        }
+
+        else {
+        	matematik = true;
+        }											//po tade sa to vyhodnoti dobre
+
+        if (matematik  == true) {					//incompatible data types 
+        	ifj16.print("Debil nepoznas cisla?");	//preco? :D
+        }
+        else {
+        	ifj16.print("Mudry si fakt");
+        } 
+    }
+}
