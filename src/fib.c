@@ -1,17 +1,6 @@
-class Main {
-static void run () {
-        int n = 50;
-        int i = 1;
-        int x = 0;
+#include <stdio.h>
 
-        while (i<=n) {
-                x = fibonacci(i);
-                ifj16.print("" +x+"\n");
-                i = i + 1;
-        }
-}
-
-static int fibonacci (int number) {
+int fibonacci (int number) {
 
         int a;
         int b;
@@ -29,6 +18,20 @@ static int fibonacci (int number) {
                 return a+b;
         }
 
-
 }
+int main() {
+
+            int n = 15;
+            int i = 1;
+            int x = 0;
+
+            while (i<=n) {
+                    x = fibonacci(i);
+                    printf("%d\n",x);
+                    i = i + 1;
+            }
+
+
+    
+return 0;
 }

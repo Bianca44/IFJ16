@@ -1,12 +1,12 @@
 class Main {
 static void run () {
-        int n = 50;
+        int n = 150;
         int i = 1;
         int x = 0;
 
         while (i<=n) {
                 x = fibonacci(i);
-                ifj16.print("" +x+"\n");
+                ifj16.print("" +x);
                 i = i + 1;
         }
 }
