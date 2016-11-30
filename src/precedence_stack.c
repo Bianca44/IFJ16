@@ -4,36 +4,38 @@
  * Team: 026
  * Author: Juraj Ondrej Dúbrava, xdubra03
  */
-
+#include <stdio.h>
 #include "precedence_stack.h"
 #include "token_buffer.h"
 #include "debug.h"
-
+#include "error_codes.h"
 
 char *prec_names[20] = { "P_ADD", "P_SUB", "P_MUL", "P_DIV", "P_LB", "P_RB",	// )
     "P_LESS", "P_GRT", "P_LESSE", "P_GRE", "P_EQL", "P_NEQL",	// !=
     "P_AND", "P_OR", "P_ID", "P_LIT", "P_ENDMARK", "P_NOT", "P_EXPR", "P_HANDLE"
 };
 
-
+/*return pointer to a newly created stack*/
 PStack *PSInit() {
 
     PStack *P = malloc(sizeof(PStack));
     if (P == NULL) {
-	return NULL;
+	fprintf(stderr,"Unable to allocate memory.\n");
+    exit(INTERNAL_INTERPRET_ERROR);
     }
     P->top = NULL;
     P->first = NULL;
 
     return P;
 }
-
+/*push stack item on the top*/
 void PSPush(PStack * P, enum Terminals term) {
 
     PStack_item *term_item;
     term_item = malloc(sizeof(PStack_item));
     if (term_item == NULL) {
-	return;
+	fprintf(stderr,"Unable to allocate memory.\n");
+    exit(INTERNAL_INTERPRET_ERROR);
     }
     term_item->is_constant = false;
     term_item->expr = NULL;
@@ -49,7 +51,7 @@ void PSPush(PStack * P, enum Terminals term) {
     }
     P->top = term_item;
 }
-
+/*pop out the stack item*/
 void PSPop(PStack * P) {
 
     if (P->top != NULL) {
@@ -60,14 +62,14 @@ void PSPop(PStack * P) {
 	free(tmp);
     }
 }
-
+/*returns the top terminal on the stack*/
 int PSTopTerm(PStack * P) {
 
     PStack_item *top_term = P->top;
-    //TODO ide sa skusit NOT, bol tu P_ENDMARK
+    
     if (top_term->term <= P_NOT) {
 	return top_term->term;
-    } else {			//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
+    } else {			
 	top_term = top_term->LPtr;
 	if (top_term->term <= P_NOT) {
 	    return top_term->term;
@@ -76,31 +78,30 @@ int PSTopTerm(PStack * P) {
 	    if (top_term->LPtr != NULL) {
 		top_term = top_term->LPtr;
 	    }
-	    //if(top_term == P->first)
-	    //  return 42; //TODO ked sa najde az zaciatocny $
+	    
 	}
 	return top_term->term;
     }
     return 42;
 }
-
+/*returns the pointer to top terminal item*/
 PStack_item *PSTopTermPtr(PStack * P) {
 
     PStack_item *top_term = P->top;
     if (top_term->term <= P_NOT) {
 	return top_term;
-    } else {			//TODO prehladavat stack a hladat v nom terminal najblizsie vrcholu
+    } else {			
 	top_term = top_term->LPtr;
 	while (!is_top_terminal(top_term->term)) {
 	    top_term = top_term->LPtr;
 	    if (top_term == P->first)
-		return NULL;	//TODO ked sa najde az zaciatocny $
+		return NULL;	
 	}
 	return top_term;
     }
     return NULL;
 }
-
+/*insert handle after terminal */
 void insert_handle(PStack * P, PStack_item * item) {
 
     PStack_item *tmp;
@@ -108,7 +109,8 @@ void insert_handle(PStack * P, PStack_item * item) {
     PStack_item *handle_item;
     handle_item = malloc(sizeof(PStack_item));
     if (handle_item == NULL) {
-	return;
+	fprintf(stderr,"Unable to allocate memory.\n");
+    exit(INTERNAL_INTERPRET_ERROR);
     }
     handle_item->term = P_HANDLE;
     handle_item->RPtr = item->RPtr;
@@ -122,9 +124,9 @@ void insert_handle(PStack * P, PStack_item * item) {
     }
 
 }
-
+/*disposing the stack*/
 void PSDispose(PStack * P) {
-    //TODO rusenie,este nieco pridat
+    
     PStack_item *tmp;
     while (P->top != NULL) {
 	tmp = P->top;
@@ -133,29 +135,24 @@ void PSDispose(PStack * P) {
     }
     free(P);
 }
-
+/*checks if the item on the stack is terminal*/
 bool is_top_terminal(int term) {
     if (term <= P_NOT) {
 	return true;
     } else
 	return false;
 }
-
+/*print the items of stack*/
 void PSPrint(PStack * P) {
 
     if (P->first == NULL) {
 	printf("Je null");
     }
-    //TODO pomocna premenna na cyklenie, nech si nedoserem top
-    //P->top = P->first;
+    
     PStack_item *tmp = P->top;
     while (tmp != NULL) {
-	//if(P->top->RPtr != NULL){
-	//printf("Prvok zasobnika je: %d\n",tmp->term);
 	d_print("Prvok zasobnika je: %s\n", prec_names[tmp->term]);
 	tmp = tmp->LPtr;
-
-	//}
     }
     return;
 
