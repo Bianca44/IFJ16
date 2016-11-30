@@ -6,7 +6,7 @@ class Main {
 		int n = 150;
 
 		for (int i = 1; i<=n; i++){
-			ifj.print(fibonacci(i) + "");
+			ifj16.print(fibonacci(i) + "");
 		}
 	}
 

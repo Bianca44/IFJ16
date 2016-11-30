@@ -1,30 +1,30 @@
 class Main {
 	static void run (){
-		Bool a = true;
-		Bool b = false;
+		boolean a = true;
+		boolean b = false;
 
 		if (a && b) {
-			ifj2016.println("a && b");
+			ifj2016.print("a && b");
 		}
 
 		else if (a || b) {
-			ifj2016.println("a || b");
+			ifj16.print("a || b");
 		}
 
 		else {
-			ifj2016.println("both are false");
+			ifj16.print("both are false");
 		}
 
 		if (a && a) {
-			ifj2016.println("a is true");
+			ifj16.print("a is true");
 		}
 
 		else if (b && b) {
-			ifj2016.println("b is true");
+			ifj16.print("b is true");
 		}
 
 		else {
-			ifj2016.println("both are false");
+			ifj16.print("both are false");
 		}
 	}
 }
