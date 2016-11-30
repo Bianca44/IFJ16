@@ -307,23 +307,14 @@ int parse_expression(bool ends_semicolon) {
                         } else if (t.type == ID) {
                                 symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
                                                                                                       current_function.id_name);
-                                if (function_symbol_table == NULL
-                                    || (function_symbol_table != NULL
-                                        && !is_declared_in_function(function_symbol_table, t.string_value))) {
-                                        if (!is_declared(t.string_value)) {
+                                if (!is_declared(t.string_value)) {
+                                        if (function_symbol_table != NULL
+                                            && !is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 fprintf(stderr,
                                                         "Expression: Variable \'%s\' was not declared in the function nor in the class \'%s\'.\n",
                                                         t.string_value, current_class);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        } else {
-                                                symbol_table_item_t *item = get_symbol_table_class_item(current_class,
-                                                                                                        t.string_value);
-                                                if (item->is_function) {
-                                                        fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
-                                                        free_token_buffer_local(&tb);
-                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                                }
                                         }
                                 }
                         }
