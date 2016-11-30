@@ -28,7 +28,6 @@ char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do"
 /*Saves the token. Frees the attr part in case we do not need it */
 int save_token(token_t * t, int type, string_t * attr) {
         t->type = type;
-
         if (attr != NULL) {
                 switch (type) {
                 case ID:
@@ -184,6 +183,7 @@ int get_next_token(token_t * t) {
                                 append_char(&s, c);
                                 state = SIMPLE_DOUBLE;
                         } else {
+                                ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
                         }
 
@@ -424,5 +424,7 @@ int get_next_token(token_t * t) {
 /* Inits the scanner, sets file in the scanner */
 FILE *init_scanner(char *filename) {
         file = fopen(filename, "r");
+        /* for debug */
+        // file = stdin;
         return file;
 }

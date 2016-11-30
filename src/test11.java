@@ -1,6 +1,8 @@
 class Main {
 static void run () {
-        int n = 50;
+        int n;
+        ifj16.print("Zadejte cislo pro vypocet fibonaciho postupnosti: ");
+        n= ifj16.readInt();
         int i = 1;
         int x = 0;
 
