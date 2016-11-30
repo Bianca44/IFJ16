@@ -1,6 +1,6 @@
 class Main {
 static void run() {
         int a =  1+b;
+        int b = 4;
 }
-static int b = 4;
 }
