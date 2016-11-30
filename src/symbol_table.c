@@ -173,9 +173,8 @@ symbol_table_item_t *insert_function_symbol_table(char *id_name, int data_type,
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
         if (local_vars_data_types == NULL) {
-                local_vars_data_types = copy_string("");
+            p->function.local_vars_data_types = copy_string("");
         }
-        p->function.local_vars_data_types = local_vars_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;
         p->declared = true;
@@ -195,9 +194,7 @@ symbol_table_item_t *set_function_symbol_table(char *id_name, int data_type,
         p->function.local_vars_count = local_vars_count;
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
-        if (local_vars_data_types == NULL) {
-                local_vars_data_types = copy_string("");
-        }
+        free(p->function.local_vars_data_types); /* clears empty string */
         p->function.local_vars_data_types = local_vars_data_types;
         p->function.symbol_table = symbol_table;
         p->is_function = true;

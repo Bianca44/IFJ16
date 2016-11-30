@@ -268,12 +268,12 @@ int parse_expression(bool ends_semicolon) {
                         if (t.type == SEMICOLON)
                                 break;
                 } else {
-                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == ASSIGN || t.type == EOF)
+                        if (t.type == LEFT_CURVED_BRACKET || t.type == SEMICOLON || t.type == EOF)
                                 return PARSE_ERROR;
 
                         if (t.type == RIGHT_ROUNDED_BRACKET) {
                                 brackets_counter--;
-                                if (brackets_counter != 0) {
+                                if (brackets_counter == -1) {
                                         break;
                                 }
                         }
@@ -284,6 +284,11 @@ int parse_expression(bool ends_semicolon) {
 
                         if (t.type == COMMA)
                                 break;
+                }
+
+                if (t.type == ASSIGN) {
+                        fprintf(stderr, "Cannot assign value in expression.\n");
+                        exit(SYNTACTIC_ANALYSIS_ERROR);
                 }
 
                 if (is_second_pass) {
@@ -307,23 +312,14 @@ int parse_expression(bool ends_semicolon) {
                         } else if (t.type == ID) {
                                 symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
                                                                                                       current_function.id_name);
-                                if (function_symbol_table == NULL
-                                    || (function_symbol_table != NULL
-                                        && !is_declared_in_function(function_symbol_table, t.string_value))) {
-                                        if (!is_declared(t.string_value)) {
+                                if (!is_declared(t.string_value)) {
+                                        if (function_symbol_table != NULL
+                                            && !is_declared_in_function(function_symbol_table, t.string_value)) {
                                                 fprintf(stderr,
                                                         "Expression: Variable \'%s\' was not declared in the function nor in the class \'%s\'.\n",
                                                         t.string_value, current_class);
                                                 free_token_buffer_local(&tb);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        } else {
-                                                symbol_table_item_t *item = get_symbol_table_class_item(current_class,
-                                                                                                        t.string_value);
-                                                if (item->is_function) {
-                                                        fprintf(stderr, "Expression: Variable \'%s\' is declared as function.\n", t.string_value);
-                                                        free_token_buffer_local(&tb);
-                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                                }
                                         }
                                 }
                         }
@@ -844,8 +840,8 @@ int parse_condition_list() {
 }
 
 int parse_else() {
-        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET
-            || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
+        if (t.type == LEFT_CURVED_BRACKET || t.type == RIGHT_CURVED_BRACKET || t.type == INT || t.type == DOUBLE || t.type == STRING
+            || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
                 if (is_second_pass) {
                         set_label(js_top(), GetLastElem_M(function_inst_tape));
                         js_pop();
@@ -868,7 +864,8 @@ int parse_else() {
                                         js_pop();
                                 }
                                 if (t.type == LEFT_CURVED_BRACKET
-                                    || t.type == RIGHT_CURVED_BRACKET || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID
+                                    || t.type == RIGHT_CURVED_BRACKET || t.type == INT
+                                    || t.type == DOUBLE || t.type == STRING || t.type == BOOLEAN || t.type == RETURN || t.type == ID || t.type == SPECIAL_ID
                                     || t.type == IF || t.type == WHILE) {
                                         return PARSED_OK;
                                 }
@@ -1071,7 +1068,10 @@ int parse_element_list() {
         if (t.type == RIGHT_CURVED_BRACKET) {
                 return PARSED_OK;
         } else if (t.type == RETURN || t.type == ID || t.type == SPECIAL_ID || t.type == IF || t.type == WHILE) {
-                return parse_statement();
+                if (parse_statement()) {
+                        expr_result.id_name = NULL;
+                        return PARSED_OK;
+                }
         } else if (t.type == LEFT_CURVED_BRACKET) {
                 get_token();
                 if (parse_statement_list()) {
@@ -1393,7 +1393,7 @@ int parse_value() {
                                                                            generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
                                                                 expr_var_result = conv_res;
                                                         } else {
-                                                                fprintf(stderr, "Incompatible types to assign value.\n");
+                                                                fprintf(stderr, "Incompatible types to assign value %s.\n", function_variable.id_name);
                                                                 if (expr_data_type == VOID) {
                                                                         exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {
