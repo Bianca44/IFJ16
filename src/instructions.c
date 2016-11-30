@@ -452,42 +452,41 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
 
     d_inst_name();
 
-    /* inserting the following instruction on the top of the stack */
-    d_message("VSTUP do funkcie");
-    /* setting push counter to zero */
+    d_message("Entrance to function");
+    //setting push counter to zero
     push_counter = 0;
-    /* setting the frame to stack top */
+    //pushing frame
     push_frame(&frame_stack, frame_stack.prepared);
-    d_message("ramec pridany na vrchol");
-    /* remembering the state of the tape in the time of function call */
+    d_message("frame was added to top");
+    //remembering the state of the tape in the time of function call
     tElemPtr pi = GetActiveElem_M(processed_tape);
     tList *parent_tape = processed_tape;
-    /* change of awareness of instruction tape (jumps) */
+    //change of awareness of instruction tape
     processed_tape = (tList *)(op1->s);
-    d_message("zapocatie tac funkcie");
-    /* executing the function */
+    d_message("starting instruction tape of called function");
+    //executing instrution tape of function
     interpret_tac(processed_tape);
-    d_message("opustenie tac funkcie");
-    /* realoading the previous state */
+    d_message("leaving instruction tape of called function");
+    //realoading previous state of instruction tape
     processed_tape = parent_tape;
     SetActiveElem_M(processed_tape, pi);
-    /* saving the result */
+    //saving the result
     if(result != NULL){
         if(frame_stack.top->frame->ret_val != NULL){
             switch(result->data_type){
                 case INT:
                     result->i = frame_stack.top->frame->ret_val->i;
-                    d_print("%d ==VYSL== ", result->i);
+                    d_print("%d ==RESULT== ", result->i);
                     break;
                 case DOUBLE:
                     result->d = frame_stack.top->frame->ret_val->d;
-                    d_print("%g ==VYSL== ", result->d);
+                    d_print("%g ==RESULT== ", result->d);
                     break;
                 case STRING:
                     if(result->initialized)
                         free(result->s);
                     result->s = copy_string(frame_stack.top->frame->ret_val->s);
-                    d_print("%s ==VYSL== ", result->s);
+                    d_print("%s ==RESULT== ", result->s);
                     break;
                 case BOOLEAN:
                     result->b = frame_stack.top->frame->ret_val->b;
@@ -503,9 +502,9 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
             exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }
-    /* removing the frame */
+    //poping the frame of function 
     pop_frame(&frame_stack);
-    d_message("VYSTUP z funkcie");
+    d_message("Leaving instruction i_f_call");
 }
 
 void i_return(tVar *op1, tVar *op2, tVar *result){
@@ -594,7 +593,7 @@ void i_print(tVar *op1, tVar *op2, tVar *result){
 
     d_inst_name();
 
-    print(op1); // priamo sem alebo makro TODO
+    print(op1);
 }
 
 void i_len(tVar *op1, tVar *op2, tVar *result){
@@ -788,7 +787,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
 			break;
         /* ASSOCIATED WITH FUNCTIONS */
         case I_INIT_FRAME:
-            /* conv to tVar due to unified access */
+            /* converting to tVar due to unified access */
             new_inst->op1 = insert_special_const(&tape_ref, op1);
             new_inst->f = i_init_frame;
 			break;
@@ -796,7 +795,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
             new_inst->f = i_push_param;
 			break;
         case I_F_CALL:
-            /* conv to tVAR due to unified access */
+            /* converting to tVAR due to unified access */
             new_inst->op1 = insert_special_const(&tape_ref, op1);
             new_inst->f = i_f_call;
 			break;

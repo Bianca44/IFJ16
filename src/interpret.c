@@ -15,32 +15,39 @@
 
 #define pr_er \
         fprintf(stderr, "Using uninitialized variable\n") \
-
+//this makto initialize variable
 #define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
+//checks if the operand is initialized
 #define check_init(var) (var->initialized) ? (var) : (pr_er, exit(RUN_UNINITIALIZED_VARIABLE_ERROR), NULL)
+//evaluates the adress of results - gets effective adress of result
 #define evaluate_res(adress) ((adress != NULL) ? (get_e_adr(adress)) : (NULL))
+//evaluates the operands - gets their effective adress and check them for initialization
 #define evaluate_op(adress) ((adress != NULL) ? (check_init(get_e_adr(adress))) : (NULL))
+//gets effective adress of variable
 #define get_e_adr(adress) \
         ((adress->offset == CONSTANT) ? (adress) : (adress->offset + frame_stack.top->frame->local))
 
+//max size of stack buffer
 #define STACK_BUFFER_SIZE 32
+//max size of frame buffer
 #define FRAME_BUFFER_SIZE 9
 
-
+//instruction tape that is actually being processed
 tList * processed_tape;
 
 tFrame * frame_buffer[FRAME_BUFFER_SIZE];
-int frame_buf_size;
+int frame_buf_size; 
 
 tFSElem stack_buffer[STACK_BUFFER_SIZE];
-int stack_buf_size = 0;
+int stack_buf_size;
 
+//frame initialization
 tFrame * init_frame(unsigned size){
 
         tFrame * new_frame;
         int i = 0;
 
-        /* frames recycling */
+        /* frames buffer - recycling frames, the list item of array is stop*/
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
@@ -52,7 +59,7 @@ tFrame * init_frame(unsigned size){
             }
             i++;
         }
-
+        //if there isn't suitable frame in frame buffer we will create new frame
         if((new_frame = malloc(sizeof(tFrame) + size*sizeof(tVar))) == NULL) {
                 exit(INTERNAL_INTERPRET_ERROR);
         }
@@ -63,6 +70,7 @@ tFrame * init_frame(unsigned size){
 
         return new_frame;
 }
+//disposes all frames from stack and buffer
 void dispose_frame_buffer(){
     while(frame_stack.top != NULL){
         pop_frame(&frame_stack);
@@ -73,16 +81,16 @@ void dispose_frame_buffer(){
            free(frame_buffer[i]);
         }
 }
-
+//initializes stack of frames
 void init_frame_stack(tFrameStack *stack){
         stack->top = NULL;
         stack->prepared = NULL;
 }
-
+//returns top frame 
 tFrame * top_frame(tFrameStack *stack){
         return stack->top->frame;
 }
-
+//pushes frame on the top of frame stack
 void push_frame(tFrameStack *stack, tFrame * frame){
 
         tFSElem *ptr;
@@ -92,6 +100,7 @@ void push_frame(tFrameStack *stack, tFrame * frame){
             }
         }
         else{
+            //preallocated buffer
             ptr = &stack_buffer[stack_buf_size];
         }
         stack_buf_size++;
@@ -99,7 +108,7 @@ void push_frame(tFrameStack *stack, tFrame * frame){
         ptr->next = stack->top;
         stack->top = ptr;
 }
-
+//pops the frame from stack of frames
 void pop_frame(tFrameStack *stack){
 
         tFSElem *tmp;
@@ -108,52 +117,53 @@ void pop_frame(tFrameStack *stack){
                 tmp = stack->top;
                 /* change the stack top */
                 stack->top = stack->top->next;
-                /* free the frame */
+                /* free the strings allocated "in" frame */
                 for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
                                 if(tmp->frame->local[i].initialized)
                                     free(tmp->frame->local[i].s);
                         }
                 }
-                /* the last one will always be NULL - the "stopper"*/
-
+                /* adding poped frame to frame buffer (the last one item will always be NULL - the stop)*/
                 if(frame_buf_size < FRAME_BUFFER_SIZE - 1){
                     frame_buffer[frame_buf_size++] = tmp->frame;
                 }
-                else{
+                else{//frame buffer is full, freeing first frame in frame buffer and adding poped frame to frame buffer
                     free(frame_buffer[0]);
                     frame_buffer[0] = tmp->frame;
                 }
+                //if stack size is greater than max buffer size, item was allocated on heap so we need to free it
                 if(stack_buf_size > STACK_BUFFER_SIZE)
                     free(tmp);
                 stack_buf_size--;
         }
 }
 
+//processes 3-adress code
 int interpret_tac(tList *inst_tape){
-        d_message("vykonanie novej pasky");
-        First_M(inst_tape);
-        d_message("skok na zaciatok pasky");
-        register tVar *op1;
-        register tVar *op2;
-        register tVar*result;
-        register tInst * inst;
+        d_message("processing new instruction tape");
+        First_M(inst_tape); //setting active instruction to first instruction in instruction tape
+        d_message("beginning of tape");
+        register tVar *op1; //first operand
+        register tVar *op2; //second operand
+        register tVar*result; //result
+        register tInst * inst; //operator - pointer to function
+        //going through instruction tape
         while(Active_M(inst_tape)) {
-
-                Copy_M(inst_tape, inst);
-                d_message("spracovanie adries");
+                Copy_M(inst_tape, inst); //gets active instruction from instruction tape
+                d_message("processing adresses");
                 op1 = evaluate_op(inst->op1);
                 op2 = evaluate_op(inst->op2);
                 result = evaluate_res(inst->result);
-                d_message("vykonanie instrukcie");
-                d_tVarPtr(op1);
+                d_message("processing instruction");
+                d_tVarPtr(op1);//prints value and adress of variable
                 d_tVarPtr(op2);
                 inst->f(op1, op2, result);
-                initialize(result);
+                initialize(result);//initializing result
                 d_tVarPtr(result);
-                d_message("instrukcia bola vykonana");
-                Succ_M(inst_tape);
+                d_message("instruction was processed");
+                Succ_M(inst_tape);//sets activity to next instruction
         }
 
-        return 0; //TODO
+        return 0;
 }
