@@ -290,6 +290,21 @@ int parse_expression(bool ends_semicolon) {
                         add_token_to_buffer(&tb, &t);
                 }
 
+                if (is_first_pass) { /* TODO */
+                        if (t.type == ID) {
+                                symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
+                                                                                                      current_function.id_name);
+                                if (!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                        if (!is_declared(t.string_value)) {
+                                                fprintf(stderr,
+                                                        "Expression: Variable \'%s\' was not declared in the function nor in the class \'%s\'.\n",
+                                                        t.string_value, current_class);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
+                                }
+                        }
+                }
+
                 if (is_second_pass) {
                         if (t.type == SPECIAL_ID) {
                                 if (!is_special_id_declared(t.string_value)) {
