@@ -73,7 +73,7 @@ char precedence_table[SIZE][SIZE] = {
 
 
 
-
+/*decoding input token names to precedence analysis tokens */
 int decode_token_array[ENUM_SIZE] = {
         [ADD] = P_ADD,
         [SUB] = P_SUB,
@@ -99,27 +99,28 @@ int decode_token_array[ENUM_SIZE] = {
         [EQUAL] = P_EQL,
         [ENDMARK] = P_ENDMARK
 };
-
+/*control for nonterminals*/
 int expr_check(PStack * P) {
         if (P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_EXPR) {
                 return 0;
         }
         return 1;
 }
-
+/*cleanup function when error occurs*/
 void expr_exit(int exit_code) {
         free_token_buffer_local(expr_token_buffer);
         //PSDispose(P);
         exit(exit_code);
 }
 
+/*decoding symbol in precedence table*/
 char decode_table(int top_term, int input_token) {
 
 
         return precedence_table[top_term][input_token];
 
 }
-
+/* get next token from token buffer for precedence analysis*/
 int buffer_position = 0;
 token_t *get_next_token_psa(token_buffer_t * token_buf) {
         if (buffer_position < token_buf->length) {
@@ -129,6 +130,8 @@ token_t *get_next_token_psa(token_buffer_t * token_buf) {
         }
 }
 
+/* evaluation of all individual rules in precedence analysis rules*/
+/* 3-address code instructions are inserted on the current instruction tape*/
 int choose_rule(PStack * P) {
 
         PStack_item *top_item = PSTopTermPtr(P);
@@ -148,28 +151,28 @@ int choose_rule(PStack * P) {
                 switch (top_item->value.data_type) {
 
                 case INT:
-                        result_item.value.data_type = INT; // TODO odmazat potom
+                        result_item.value.data_type = INT; 
                         d_int(top_item->expr->i);
                         result_item.expr = top_item->expr;
-                        //result_item.is_constant = true;
+                       
                         break;
                 case DOUBLE:
                         result_item.value.data_type = DOUBLE;
                         d_dob(top_item->expr->d);
                         result_item.expr = top_item->expr;
-                        //result_item.is_constant = true;
+                        
                         break;
                 case STRING:
                         result_item.value.data_type = STRING;
                         d_str(top_item->expr->s);
                         result_item.expr = top_item->expr;
-                        //result_item.is_constant = true;
+                        
                         break;
                 case BOOLEAN:
                         result_item.value.data_type = BOOLEAN;
                         d_bol(top_item->expr->b);
                         result_item.expr = top_item->expr;
-                        //result_item.is_constant = true;
+                        
                         break;
 
                 }
@@ -228,7 +231,7 @@ int choose_rule(PStack * P) {
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
 
-
+                        //check expression for using inc instruction
                         bool is_inc = INC_DEC_ON && expr_in_function && expr_len == 3 && (op_1->i == 1 || op_2->i == 1) && strcmp(function_variable.id_name, expr_var_name) == 0;
 
                         if (is_inc) {
@@ -246,6 +249,7 @@ int choose_rule(PStack * P) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_ADD, var, op_2, tmp));
@@ -253,34 +257,37 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
                                 InsertLast(work_tape, generate(I_ADD, op_1, var, tmp));
                         }
-
+                /*double + double */
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_ADD, op_1, op_2, tmp));
-
+                /*string concatenation*/
                 } else if (first_operand == STRING
                            && (second_operand == INT || second_operand == DOUBLE || second_operand == BOOLEAN)) {
                         // d_int(P->top->expr->i);
+                        /*int,double or boolean operand conversion to string*/
                         result_item.value.data_type = STRING;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_TO_STRING, op_2, NULL, var));
                         InsertLast(work_tape, generate(I_CAT, op_1, var, tmp));
 
-
+                /*string concatenation*/
                 } else if (second_operand == STRING
                            && (first_operand == INT || first_operand == DOUBLE || first_operand == BOOLEAN)) {
-
+                        /*int,double or boolean operand conversion to string*/
                         result_item.value.data_type = STRING;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_TO_STRING, op_1, NULL, var));
                         InsertLast(work_tape, generate(I_CAT, var, op_2, tmp));
+                /*string + string concatenation*/        
                 } else if (first_operand == STRING && second_operand == STRING) {
                         result_item.value.data_type = STRING;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_CAT, op_1, op_2, tmp));
+                /*boolean + boolean - error*/        
                 } else if (first_operand == BOOLEAN || second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -289,7 +296,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
                 break;
 
-/* E -> E - E */
+        /* E -> E - E */
         case P_SUB:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -301,12 +308,12 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
-
+                /*int - int*/
                 if (first_operand == INT && second_operand == INT) {
 
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
-
+                        //check expression for using dec instruction
                         bool is_dec = INC_DEC_ON && expr_in_function && expr_len == 3 && (op_1->i == 1 || op_2->i == 1) && strcmp(function_variable.id_name, expr_var_name) == 0;
 
                         if (is_dec) {
@@ -316,13 +323,14 @@ int choose_rule(PStack * P) {
                         } else {
                                 InsertLast(work_tape, generate(I_SUB, op_1, op_2, tmp));
                         }
-                }
+                }/*int - double or double - int*/
                 else if ((first_operand == INT && second_operand == DOUBLE)
                          || (second_operand == INT && first_operand == DOUBLE)) {
                         result_item.value.data_type = DOUBLE;
 
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_SUB, var, op_2, tmp));
@@ -330,6 +338,7 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
                                 InsertLast(work_tape, generate(I_SUB, op_1, var, tmp));
                         }
+                /* double - double */        
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
@@ -338,7 +347,7 @@ int choose_rule(PStack * P) {
                 } else if (first_operand == STRING || second_operand == STRING) {
                         printf("Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-
+                /*boolean - boolean - error*/
                 } else if (first_operand == BOOLEAN || second_operand == BOOLEAN) {
                         printf("Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -347,7 +356,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-/* E -> E * E */
+        /* E -> E * E */
         case    P_MUL:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -359,6 +368,7 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
+                /* int * int */
                 if (first_operand == INT && second_operand == INT) {
 
                         result_item.value.data_type = INT;
@@ -366,13 +376,13 @@ int choose_rule(PStack * P) {
                         InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
 
 
-
+                /* int * double or double * int */
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (second_operand == INT && first_operand == DOUBLE)) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_MUL, var, op_2, tmp));
@@ -380,14 +390,16 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
                                 InsertLast(work_tape, generate(I_MUL, op_1, var, tmp));
                         }
-
+                /* double * double */
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
+                /*string * string - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         printf("Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean * boolean - error*/        
                 } else if (first_operand == BOOLEAN || second_operand == BOOLEAN) {
                         printf("Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -396,7 +408,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-/* E -> E / E */
+        /* E -> E / E */
         case    P_DIV:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -409,21 +421,20 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
-
+                /* int / int */
                 if (first_operand == INT && second_operand == INT) {
 
 
-                        //zatial sa nekontroluje delenie 0
                         result_item.value.data_type = INT;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
-
+                /* int / double or double / int */
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (second_operand == INT && first_operand == DOUBLE)) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(result_item.value.data_type);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_DIV, var, op_2, tmp));
@@ -431,14 +442,16 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
                                 InsertLast(work_tape, generate(I_DIV, op_1, var, tmp));
                         }
-
+                /* double / double */
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = DOUBLE;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_DIV, op_1, op_2, tmp));
+                /*string / string - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean / boolean*/        
                 } else if (first_operand == BOOLEAN || second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -448,8 +461,8 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
-/* E -> (E) */
-        case    P_RB:
+        /* E -> (E) */
+        case P_RB:
                 if (PSTopTermPtr(P)->LPtr->term != P_EXPR || PSTopTermPtr(P)->LPtr->LPtr->term != P_LB) {
                         fprintf(stderr, "Unexpected expression.\n");
                         expr_exit(SYNTACTIC_ANALYSIS_ERROR);
@@ -471,7 +484,8 @@ int choose_rule(PStack * P) {
                 result_item.expr = P->top->LPtr->expr;
 
                 break;
-        case            P_LESS:
+        /* E -> E < E*/        
+        case P_LESS:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
                         expr_exit(SYNTACTIC_ANALYSIS_ERROR);
@@ -482,17 +496,18 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
+                /*int < int */
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
-
+                /*int < double or double < int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_L, var, op_2, tmp));
@@ -501,23 +516,27 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_L, op_1, var, tmp));
                         }
 
-
+                /* double < double*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_L, op_1, op_2, tmp));
+                /*comparing strings - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SYNTACTIC_ANALYSIS_ERROR);
+                /*boolean < boolean - error*/        
                 } else if ((first_operand == BOOLEAN && second_operand == BOOLEAN)
                            || (second_operand == BOOLEAN && first_operand == BOOLEAN)) {
                         result_item.value.data_type = BOOLEAN;
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                        //TODO nemozeme porovnavat 2 bool hodnoty
+                
+                /*boolean < int or double - error*/        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*int or double  < boolean - error*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
@@ -526,7 +545,7 @@ int choose_rule(PStack * P) {
 
                 result_item.expr = tmp;
                 break;
-
+        /*E -> E <= E*/
         case P_LESSE:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -538,17 +557,19 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
+                /*int <= int*/
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
 
+                /*int <= double or double <= int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_LE, var, op_2, tmp));
@@ -557,20 +578,24 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_LE, op_1, var, tmp));
                         }
 
-
+                /*double <= double*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_LE, op_1, op_2, tmp));
+                /*comparing strings - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean <= boolean - error*/        
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean <= int or double */        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*int or double <= boolean*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
@@ -579,7 +604,7 @@ int choose_rule(PStack * P) {
 
                 result_item.expr = tmp;
                 break;
-
+        /*E -> E > E */
         case P_GRT:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -591,17 +616,20 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_print("First operand data_type: %d\n", first_operand);
                 d_print("Second operand data_type: %d\n", second_operand);
+
+                /*int > int*/
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
 
+                /*int > double or double > int */
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_G, var, op_2, tmp));
@@ -610,20 +638,24 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_G, op_1, var, tmp));
                         }
 
-
+                /*double > double*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_G, op_1, op_2, tmp));
+                /* comparing string - error*/
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing 2 booleans - error*/    
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing boolean with int or double - error*/        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                 /*comparing boolean with int or double - error*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
@@ -633,6 +665,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
+        /*E -> E >= E*/        
         case P_GRE:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -642,17 +675,18 @@ int choose_rule(PStack * P) {
                 second_operand = P->top->value.data_type;
                 op_1 = P->top->LPtr->LPtr->expr;
                 op_2 = P->top->expr;
+                /* int >= int*/
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
-
+                /*int >= double or double >= int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_GE, var, op_2, tmp));
@@ -661,21 +695,25 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_GE, op_1, var, tmp));
                         }
 
-
+                /*double >= double*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_GE, op_1, op_2, tmp));
+                /*comparing string - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                 /*comparing boolean with int or double - error*/        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                 /*comparing boolean with int or double - error*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing 2 booleans - error*/         
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -683,7 +721,7 @@ int choose_rule(PStack * P) {
 
                 result_item.expr = tmp;
 
-
+        /*E -> E == E*/
         case P_EQL:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -693,17 +731,18 @@ int choose_rule(PStack * P) {
                 second_operand = P->top->value.data_type;
                 op_1 = P->top->LPtr->LPtr->expr;
                 op_2 = P->top->expr;
+                /*int == int*/
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
-
+                /*int == double or double == int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_E, var, op_2, tmp));
@@ -712,21 +751,25 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_E, op_1, var, tmp));
                         }
 
-
+                /*double == double*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
+                /*comparing string - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing boolean and int or double */  
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing boolean and int or double */          
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing 2 booleans = error*/        
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -735,6 +778,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
+        /*E -> E != E*/        
         case P_NEQL:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -744,17 +788,18 @@ int choose_rule(PStack * P) {
                 second_operand = P->top->value.data_type;
                 op_1 = P->top->LPtr->LPtr->expr;
                 op_2 = P->top->expr;
+                /*int != int*/
                 if (first_operand == INT && second_operand == INT) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
-
+                /*int != double or double != int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         var = generate_tmp_var(DOUBLE);
-
+                        /*int operand conversion to double*/
                         if (first_operand == INT) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_1, NULL, var));
                                 InsertLast(work_tape, generate(I_NE, var, op_2, tmp));
@@ -763,17 +808,20 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_NE, op_1, var, tmp));
                         }
 
-
+                /*comparing string = error*/
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing boolean and int or double */        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing boolean and int or double */        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*comparing 2 booleans = error*/       
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -782,6 +830,7 @@ int choose_rule(PStack * P) {
                 result_item.expr = tmp;
 
                 break;
+        /* E -> E && E*/        
         case P_AND:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -793,34 +842,38 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_bol(op_1->b);
                 d_bol(op_2->b);
-
+                /* int && int - error*/
                 if (first_operand == INT && second_operand == INT) {
 
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
-
+                /*int && double or double && int*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
 
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
-
+                /*double && double - error*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*string in logical expression - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean && boolean */        
                 } else if ((first_operand == BOOLEAN && second_operand == BOOLEAN)
                            || (second_operand == BOOLEAN && first_operand == BOOLEAN)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_AND, op_1, op_2, tmp));
+                /*boolean && int or double - error*/        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*boolean && int or double - error*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
@@ -829,7 +882,7 @@ int choose_rule(PStack * P) {
 
                 result_item.expr = tmp;
                 break;
-
+        /*E-> E || E*/
         case P_OR:
                 if (!expr_check(P)) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -841,33 +894,38 @@ int choose_rule(PStack * P) {
                 op_2 = P->top->expr;
                 d_bol(op_1->b);
                 d_bol(op_2->b);
+               /* int || int - error*/ 
                 if (first_operand == INT && second_operand == INT) {
 
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
-
+                /* int || double or double || int - error*/
                 } else if ((first_operand == INT && second_operand == DOUBLE)
                            || (first_operand == DOUBLE && second_operand == INT)) {
 
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
 
-
+                /* double || double - error*/
                 } else if (first_operand == DOUBLE && second_operand == DOUBLE) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*string in logical expression - error*/        
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /* boolean || boolean*/        
                 } else if ((first_operand == BOOLEAN && second_operand == BOOLEAN)
                            || (second_operand == BOOLEAN && first_operand == BOOLEAN)) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_OR, op_1, op_2, tmp));
+                /* boolean || int or double - error*/        
                 } else if (first_operand == BOOLEAN && (second_operand == DOUBLE || second_operand == INT)) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /* boolean || int or double - error*/        
                 } else if ((first_operand == INT || first_operand == DOUBLE)
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
@@ -875,6 +933,7 @@ int choose_rule(PStack * P) {
                 }
                 result_item.expr = tmp;
                 break;
+        /*E -> !E*/        
         case P_NOT:
                 if (P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_HANDLE) {
                         fprintf(stderr, "Unexpected expression.\n");
@@ -883,16 +942,20 @@ int choose_rule(PStack * P) {
                 first_operand = P->top->value.data_type;
                 op_1 = P->top->expr;
                 d_bol(P->top->expr->b);
+                /*!boolean*/
                 if (first_operand == BOOLEAN) {
                         result_item.value.data_type = BOOLEAN;
                         tmp = generate_tmp_var(result_item.value.data_type);
                         InsertLast(work_tape, generate(I_NOT, op_1, NULL, tmp));
+                /*!int - error*/        
                 } else if (first_operand == INT) {
                         fprintf(stderr, "Incompatible data type.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*!double - error*/        
                 } else if (first_operand == DOUBLE) {
                         fprintf(stderr, "Incompatible data type.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                /*!string - error*/        
                 } else if (first_operand == STRING) {
                         fprintf(stderr, "Incompatible data type.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
@@ -906,13 +969,15 @@ int choose_rule(PStack * P) {
                 fprintf(stderr, "Unexpected expression.\n");
                 expr_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
+        /*reducing nonterminals from stack*/
         while (P->top->term != P_HANDLE) {
                 PSPop(P);
         }
         PSPop(P);
+        /*push new item (result of previous rule) on top of a stack*/
         PSPush(P, P_EXPR);
         d_print("Term: %d\n", P->top->term);
-
+        /*result data type and address of structure where is the result value is assigned to a nonterminal on the top*/
         P->top->value.data_type = result_item.value.data_type;
         P->top->expr = result_item.expr;
         d_bol(P->top->expr->b);
@@ -920,7 +985,7 @@ int choose_rule(PStack * P) {
         return 1;
 }
 
-
+/*initialize nonterminal on the top of stack with address of structure where is the value of input token*/
 int init_item(PStack * P, token_t * t) {
 
         PStack_item *push_item = P->top;
@@ -929,14 +994,15 @@ int init_item(PStack * P, token_t * t) {
         switch (t->type) {
 
         case ID:
-
+                /* id needs to be searched in the symbol table of function or class*/
                 if (current_function.id_name != NULL) {
-
+                        /*if we are in function, we need to check function symbol table*/
                         symbol_table_t *function = get_symbol_table_for_function(current_class,
                                                                                  current_function.id_name);
                         d_print("Current function is:%s\n", current_function.id_name);
                         d_print("premenna %s \n", t->string_value);
                         item = get_symbol_table_function_item(function, t->string_value);
+                        /*we are using variable declared in class*/
                         if (item == NULL) {
                                 item = get_symbol_table_class_item(current_class, t->string_value);
                         }
@@ -971,6 +1037,7 @@ int init_item(PStack * P, token_t * t) {
                         }
 
                 } else {
+                        /*we are in class*/
                         item = get_symbol_table_class_item(current_class, t->string_value);
 
                         switch (item->variable.data_type) {
@@ -1006,7 +1073,7 @@ int init_item(PStack * P, token_t * t) {
                 break;
         case SPECIAL_ID:
                 d_print("Value of literal is:%s\n", t->string_value);
-
+                /*get symbol table for special id*/
                 item = get_symbol_table_special_id_item(t->string_value);
 
                 expr_var_name = t->string_value;
@@ -1048,51 +1115,41 @@ int init_item(PStack * P, token_t * t) {
 
                 push_item->value.i = t->int_value;
                 push_item->value.data_type = INT;
-
+                /*int constant is inserted to a list of constants*/
                 tVar *i = insert_int_const(&mem_constants, t->int_value);
                 push_item->expr = i;
-                //push_item->is_constant = true;
-                //d_bol(push_item->is_constant);
                 break;
         case DOUBLE_LITERAL:
 
                 push_item->value.d = t->double_value;
                 push_item->value.data_type = DOUBLE;
-
+                /*double constant is inserted to a list of constants*/
                 tVar *d = insert_double_const(&mem_constants, t->double_value);
                 push_item->expr = d;
-                //push_item->is_constant = true;
-                //d_bol(push_item->is_constant);
                 break;
         case STRING_LITERAL:
 
                 push_item->value.s = t->string_value;
                 push_item->value.data_type = STRING;
-
+                /*string constant is inserted to a list of constants*/
                 tVar *s = insert_string_const(&mem_constants, t->string_value);
                 push_item->expr = s;
-                //push_item->is_constant = true;
-                //d_bol(push_item->is_constant);
                 break;
         case TRUE:
 
                 push_item->value.b = true;
                 push_item->value.data_type = BOOLEAN;
-
+                /*boolean constant is inserted to a list of constants*/
                 tVar *bt = insert_boolean_const(&mem_constants, true);
                 push_item->expr = bt;
-                //push_item->is_constant = true;
-                //d_bol(push_item->is_constant);
                 break;
         case FALSE:
 
                 push_item->value.b = false;
                 push_item->value.data_type = BOOLEAN;
-
+                /*boolean constant is inserted to a list of constants*/
                 tVar *bf = insert_boolean_const(&mem_constants, false);
                 push_item->expr = bf;
-                //push_item->is_constant = true;
-                //d_bol(push_item->is_constant);
                 break;
 
         }
@@ -1100,6 +1157,7 @@ int init_item(PStack * P, token_t * t) {
         return 1;
 }
 
+/*generating tmp variable used in generating instructions, it is stored in symbol table*/
 tVar *generate_tmp_var(int data_type) {
         if (current_function.id_name != NULL) {
                 top_expr_variable = &insert_tmp_variable_symbol_table_function(current_function.id_name, data_type)->variable;
@@ -1109,7 +1167,7 @@ tVar *generate_tmp_var(int data_type) {
 
         return top_expr_variable;
 }
-
+/*checks expression in ifj16print function*/
 void check_expr_ifj_print(token_buffer_t * buffer, int expr_end_data_type) {
         if (buffer == NULL) {
                 return;
@@ -1138,6 +1196,7 @@ void check_expr_ifj_print(token_buffer_t * buffer, int expr_end_data_type) {
         }
 }
 
+/*PSA function*/
 int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr_result) {
         expr_token_buffer = buffer;
         expr_len = buffer->length;
@@ -1145,17 +1204,19 @@ int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr
         d_print("class %s\n", current_class);
         if (current_function.id_name != NULL) {
                 d_print("vo funkcii %s\n", current_function.id_name);
-                symbol_table_item_t *function = get_symbol_table_class_item(current_class,
-                                                                            current_function.id_name);
+                symbol_table_item_t *function = get_symbol_table_class_item(current_class,current_function.id_name);
+                /*set current instruction tape to function tape*/
                 work_tape = function->function.instruction_tape;
                 expr_in_function = true;
         } else {
+                /*actual tape is global tape*/
                 work_tape = global_inst_tape;
 
         }
         int psa_result;
         token_t *t = NULL;
         token_t end;
+        /*endmark token needs to be placed at the end of token buffer, then we will know when to stop analysis*/
         end.type = ENDMARK;
         add_token_to_buffer(buffer, &end);
 
