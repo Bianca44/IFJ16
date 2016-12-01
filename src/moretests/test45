@@ -1,0 +1,14 @@
+class Main {
+	static void run() {
+		ifj16.print("Zadaj cislo: ");
+		int a = ifj16.readInt();
+
+		if (a != 0) {
+			ifj16.print("ok");
+		}
+
+		else {
+			ifj16.print("je to nula");
+		}
+	}
+}
