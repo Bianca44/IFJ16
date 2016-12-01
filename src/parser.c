@@ -105,11 +105,6 @@ int parse_expression(bool ends_semicolon) {
                                 break;
 
 
-                        if (t.type == ASSIGN) {
-                                fprintf(stderr, "Cannot assign value in expression.\n");
-                                exit(SYNTACTIC_ANALYSIS_ERROR);
-                        }
-
                         add_token_to_buffer(&tb, &t);
 
                         if (t.type == SPECIAL_ID) {
@@ -284,11 +279,6 @@ int parse_expression(bool ends_semicolon) {
 
                         if (t.type == COMMA)
                                 break;
-                }
-
-                if (t.type == ASSIGN) {
-                        fprintf(stderr, "Cannot assign value in expression.\n");
-                        exit(SYNTACTIC_ANALYSIS_ERROR);
                 }
 
                 if (is_second_pass) {

@@ -1,13 +1,9 @@
-//allright
 class Main
 {
-    static void run()
-    {
-        String h = "k";
-        String g  = "kg";
+	static int x = 9/4;
+	static void run() {
 
-        String juntos = h = g;
-
-
-    }
+		int p = x , 0;
+		ifj16.print(p);
+	}
 }
