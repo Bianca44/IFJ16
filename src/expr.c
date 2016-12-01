@@ -74,6 +74,7 @@ char precedence_table[SIZE][SIZE] = {
 
 
 /*decoding input token names to precedence analysis tokens */
+/*extra tokens are added to avoid unexpected behaviour*/
 int decode_token_array[ENUM_SIZE] = {
         [ADD] = P_ADD,
         [SUB] = P_SUB,
@@ -97,8 +98,30 @@ int decode_token_array[ENUM_SIZE] = {
         [ID] = P_ID,
         [SPECIAL_ID] = P_ID,
         [EQUAL] = P_EQL,
-        [ENDMARK] = P_ENDMARK
+        [ENDMARK] = P_ENDMARK,
+        [LEFT_CURVED_BRACKET] = -1,
+        [RIGHT_CURVED_BRACKET] = -1,
+        [ASSIGN] = -1,
+        [COMMA] = -1,
+        [CLASS] = -1,
+        [DO] = -1,
+        [BOOLEAN] = -1,
+        [BREAK] = -1, 
+        [CONTINUE] = -1,
+        [DOUBLE] = -1,
+        [ELSE] = -1,
+        [FOR]  = -1,
+        [IF] = -1,
+        [INT] = -1, 
+        [RETURN] = -1,
+        [STRING] = -1,
+        [STATIC] = -1,
+        [VOID] = -1,
+        [WHILE] = -1,
 };
+
+
+
 /*control for nonterminals*/
 int expr_check(PStack * P) {
         if (P->top->term != P_EXPR || P->top->LPtr->LPtr->term != P_EXPR) {
@@ -116,7 +139,10 @@ void expr_exit(int exit_code) {
 /*decoding symbol in precedence table*/
 char decode_table(int top_term, int input_token) {
 
-
+        if(input_token == -1){
+            fprintf(stderr,"Unexpected expression\n");
+            expr_exit(SYNTACTIC_ANALYSIS_ERROR);
+        }
         return precedence_table[top_term][input_token];
 
 }
@@ -769,10 +795,11 @@ int choose_rule(PStack * P) {
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                /*comparing 2 booleans = error*/
+                /*comparing 2 booleans */
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
-                        fprintf(stderr, "Incompatible data types.\n");
-                        expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                        result_item.value.data_type = BOOLEAN;
+                        tmp = generate_tmp_var(result_item.value.data_type);
+                        InsertLast(work_tape, generate(I_E, op_1, op_2, tmp));
                 }
 
                 result_item.expr = tmp;
@@ -821,10 +848,11 @@ int choose_rule(PStack * P) {
                            && second_operand == BOOLEAN) {
                         fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                /*comparing 2 booleans = error*/
+                /*comparing 2 booleans*/
                 } else if (first_operand == BOOLEAN && second_operand == BOOLEAN) {
-                        fprintf(stderr, "Incompatible data types.\n");
-                        expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                       result_item.value.data_type = BOOLEAN;
+                        tmp = generate_tmp_var(result_item.value.data_type);
+                        InsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
                 }
 
                 result_item.expr = tmp;
