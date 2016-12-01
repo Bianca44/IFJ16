@@ -22,7 +22,7 @@ class Main
         double result_2 = result_1*c+d;
 
         ifj16.print("Zadaj akekolvek cislo: ");
-        double e = ifj16.readDouble();
+        d12.3ouble e = ifj16.readDouble();
 
         ifj16.print("Zadaj akekolvek cislo: ");
         double f = ifj16.readDouble();
