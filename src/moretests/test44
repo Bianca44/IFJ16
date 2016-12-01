@@ -11,16 +11,20 @@ class Main {
 }
 
 class Hladaj {
+
+	
 	static void search (String name, String letter){
-		int nasiel = ifj16.find(name, letter);
+
+		int nasiel = ifj16.find(name, letter);	
 		ifj16.print("nasiel = "+nasiel);
 
+		int fav_num;
 		if (nasiel != -1) {
 
 			ifj16.print("Toto pismenko sa nahadza v tvojom mene na " +nasiel+ ". pozicii");
 			ifj16.print("Teraz zadaj svoje oblubene cislo: ");
-			int fav_num = ifj16.readInt();
-			Cisla.number (fav_num); 
+			fav_num = ifj16.readInt();
+			Cisla.number (fav_num); */
 
 		}
 
@@ -28,15 +32,15 @@ class Hladaj {
 
 			ifj16.print("Toto pismenko sa v tvojom mene nenahadza");
 			ifj16.print("Teraz zadaj svoje oblubene cislo: ");
-			int fav_num = ifj16.readInt();
+			fav_num = ifj16.readInt();
 			Cisla.number (fav_num);
 	
 		} 
 	}
 }
-
+/*
 class Cisla {
 	static void number (int favorite) {
 		ifj16.print("Tvoje oblubene cislo je "+favorite);
-	}
+	} /*
 }

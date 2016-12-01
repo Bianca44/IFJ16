@@ -1,0 +1,21 @@
+class Main {
+	static void run () {
+		boolean a = true;
+		boolean b = false;
+
+		boolean result_1 = (((a || b) && a) ||b); //should be true OK
+		boolean result_2 = a || b || a || b && a || b; //should be true OK
+		boolean result_3 = ((a || b) && a && b) || b; //should be false OK
+		boolean result_4 = a && a && b && a; //should be false OK
+		boolean result_5 = (((a == b) || b) && b); // should be false OK
+		boolean result_6 = a != b && a || ((b || b) || a); //should be true 
+
+		ifj16.print("1: " +result_1);  
+		ifj16.print("2: " +result_2);
+		ifj16.print("3: " +result_3);
+		ifj16.print("4: " +result_4);
+		ifj16.print("5: " +result_5);
+		ifj16.print("6: " +result_6);
+
+	}
+}
