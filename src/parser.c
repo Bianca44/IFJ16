@@ -336,8 +336,8 @@ int parse_return_value() {
                     || t.type == TRUE || t.type == FALSE) {
                         if (is_first_pass) {
                                 if (current_function.function.return_type == VOID) {
-                                        fprintf(stderr, "Return in function \'%s\' with void return type.\n", current_function.id_name);
-                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                        fprintf(stderr, "Return expression in void-typed function \'%s\'.\n", current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
                         }
 
