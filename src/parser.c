@@ -1445,19 +1445,21 @@ int parse_declaration() {
         } else if (t.type == ASSIGN || t.type == SEMICOLON) {
                 current_function.id_name = NULL;
 
+                if (is_first_pass) {
+                    if (!is_declared(current_variable.id_name)) {
+                            insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type,
+                                                         CONSTANT);
+                    } else {
+                            fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name,
+                                    current_class);
+                            exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                    }
+                }
+
                 if (parse_value()) {
                         if (t.type == SEMICOLON) {
                                 if (is_first_pass) {
                                         is_static_variable_declaration = false;
-                                        if (!is_declared(current_variable.id_name)) {
-                                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type,
-                                                                             CONSTANT);
-                                        } else {
-                                                fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name,
-                                                        current_class);
-                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        }
-
                                         if (expr_var_result != NULL) {
                                                 tVar *to = &get_symbol_table_class_item(current_class,
                                                                                         current_variable.id_name)->variable;

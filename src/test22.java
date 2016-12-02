@@ -1,9 +1,7 @@
 class Main
 {
-    static void run()
-    {
-
+    static int a = 1+a;
+    static void run() {
+        ifj16.print(a);
     }
-
-    static int roman () { return; }
 }
