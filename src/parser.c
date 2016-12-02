@@ -367,6 +367,12 @@ int parse_return_value() {
                                 }
                         }
                 } else if (t.type == SEMICOLON) {
+                        if (is_first_pass) {
+                                if (current_function.function.return_type != VOID) {
+                                        fprintf(stderr, "Missing expression in non void-typed function \'%s\'.\n", current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                }
+                        }
                         if (is_second_pass) {
                                 InsertLast(function_inst_tape, generate(I_RETURN, NULL, NULL, NULL));
                         }

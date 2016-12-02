@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TESTS_COUNT=1
+TESTS_COUNT=5
 
 cd ./tests
 
@@ -18,7 +18,7 @@ do
    then
        echo -n "OK"
    else
-       echo -n "FAIL"
+       echo "FAIL (expected/real)"
    	   echo "${TEST}"
    fi
 
@@ -28,7 +28,7 @@ do
    then
        echo "OK"
    else
-       echo "FAIL"
+       echo "FAIL (expected/real)"
    	   echo "${EXIT}"
    fi
 
