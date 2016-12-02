@@ -212,7 +212,6 @@ int parse_expression(bool ends_semicolon) {
                                                                 }
 
                                                                 tVar *res = &var->variable;
-                                                                res->initialized = true;
                                                                 expr_var_result = res;
 
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
@@ -967,7 +966,6 @@ int parse_statement() {
                                         if (expr_var_result != NULL) {
                                                 tVar *to = &item->variable;
 
-                                                to->initialized = true;
                                                 tVar *from = expr_var_result;
 
                                                 InsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
@@ -1200,7 +1198,6 @@ int parse_method_element() {
                                                         }
                                                         tVar *to = &item->variable;
 
-                                                        to->initialized = true;
                                                         tVar *from = expr_var_result;
 
                                                         InsertLast(function_inst_tape, generate(I_ASSIGN, from, NULL, to));
@@ -1463,7 +1460,6 @@ int parse_declaration() {
                                         if (expr_var_result != NULL) {
                                                 tVar *to = &get_symbol_table_class_item(current_class,
                                                                                         current_variable.id_name)->variable;
-                                                to->initialized = true;
                                                 tVar *from = expr_var_result;
 
                                                 InsertLast(global_inst_tape, generate(I_ASSIGN, from, NULL, to));
