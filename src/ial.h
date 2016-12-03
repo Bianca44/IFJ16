@@ -32,7 +32,7 @@ typedef struct tHTable {
         unsigned ht_size;   //size of table
         unsigned (*hash_code_ptr)(const tKey, unsigned ht_size); // hash function
         void (*dispose_func_ptr)(tData data); //function which will be used to free data
-        unsigned n_items;   // number of items in table TODO
+        unsigned n_items;   // number of items in table
         tSTitem *ptr[]; // flexible array member
 } tHTable;
 

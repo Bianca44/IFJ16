@@ -1,3 +1,12 @@
+/*
+ * Project: Interpret for IFJ16
+ * Date: November 2016, FIT VUT
+ * Team: 026
+ * Author: Martin Marušiak, xmarus07
+ */
+
+/* this file contain macros for debug puporses */
+
 #ifndef DEBUG_H
 #define DEBUG_H
 
@@ -5,19 +14,22 @@
 
 #ifdef NDEBUG
 
-#define d_print(str, ...)
-#define d_message(str)
-#define d_inst_name()
+#define d_print(str, ...) //as printf but with default \n 
+#define d_message(str) //only pritns string - char *, \n is default
+#define d_inst_name() // pritns name of function in which this macro is used
 
-#define d_int(i)
-#define d_dob(d)
-#define d_bol(b)
-#define d_str(str)
-#define d_intp(i, ptr)
-#define d_dobp(d, ptr)
-#define d_bolp(b, ptr)
-#define d_strp(str, ptr)
-#define d_ptr(p)
+#define d_int(i) //prints integer
+#define d_dob(d) //prints double
+#define d_bol(b) //prints boolean
+#define d_str(str) //prints string 
+#define d_ptr(p) //prints value of pointer
+
+/*these macros are being used in other macros*/
+#define d_intp(i, ptr) //prints integer value and adress
+#define d_dobp(d, ptr) //prints double value and adress
+#define d_bolp(b, ptr) //prints boolean value and adress
+#define d_strp(str, ptr) //prints string value
+/*uses macros mentioned above and prints value and adress of tVar*/
 #define d_tVarPtr(s)
 
 

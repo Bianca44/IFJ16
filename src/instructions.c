@@ -16,6 +16,7 @@
 #include "list.h"
 
 #define UNUSED(x) (void)(x)
+//size of array for converting other datatypes to string
 #define LOAD_BUFFER 256
 
 int push_counter;

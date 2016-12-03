@@ -1,0 +1,9 @@
+class Main
+{
+static void run()
+{
+int a = 5;
+int b = 5 + a;
+String c = 5 + 5 + "ahoj";
+ifj16.print(a + a + b + c + "\n");
+}}

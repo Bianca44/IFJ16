@@ -30,16 +30,8 @@ void Last(tList *);
 #define Last_M(List) List->Act = List->Last
 void CopyFirst(tList *, void **);
 void CopyLast(tList *, void **);
-//void DLDeleteFirst (tList *);
-//void DLDeleteLast (tList *);
-//void DLPostDelete (tList *);
-//void DLPreDelete (tList *);
-//void DLPostInsert (tList *, void *);
-//void DLPreInsert (tList *, void*);
 #define Copy_M(List, val) val = List->Act->data
-//void Copy (tList *, void **);
 void Actualize(tList *, void *);
-//void DLPred (tList *);
 #define Succ_M(List) (List->Act = List->Act->ptr)
 #define Active_M(List) (List->Act != NULL)
 #define GetActiveElem_M(List) (List->Act)

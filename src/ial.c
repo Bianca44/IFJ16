@@ -14,7 +14,7 @@
 #include "error_codes.h"
 
 
-/* Hash function */
+/* Hash function was chosen according to http://www.cse.yorku.ca/~oz/hash.html */
 unsigned hash_code(const tKey key, unsigned ht_size) {
     unsigned h = 0;
     const unsigned char *p;
@@ -41,18 +41,18 @@ tHTable *ht_init(unsigned ht_size, unsigned (*hash_code_ptr) (const tKey, unsign
     new_table->n_items = 0;
 
     for (unsigned i = 0; i < ht_size; i++) {
-	new_table->ptr[i] = NULL;
+	    new_table->ptr[i] = NULL;
     }
 
     return new_table;
 }
-
+/* searching item */
 tSTitem *ht_search(tHTable * ptrht, const tKey key) {
     /* getting the index */
     unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
     /* accesing the list of synonyms */
     tSTitem *first = ptrht->ptr[index];
-
+    /* going through list of synonyms */
     while (first != NULL) {
 	    if (strcmp(first->key, key) == 0) {
 	        return first;
@@ -60,39 +60,39 @@ tSTitem *ht_search(tHTable * ptrht, const tKey key) {
 
 	    first = first->next;
     }
-    /* if not found */
+    /* item wasn't find */
     return NULL;
 }
-
+/* inserting/actualizing item */
 void ht_insert(tHTable * ptrht, const tKey key, tData data) {
 
     tSTitem *item = ht_search(ptrht, key);
     if (item == NULL) {
-	    /* getting the index */
+	    /* getting the index to the table*/
 	    unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
 	    /* accesing the list of synonyms */
 	    tSTitem *first = ptrht->ptr[index];
 
-	    /* adding item */
+	    /* adding item at the beginning*/
 	    tSTitem *new;
-
+        /* allocating space for item */
 	    if ((new = malloc(sizeof(tSTitem))) == NULL) {
             fprintf(stderr,"Could not allocate memory\n");
 	        exit(INTERNAL_INTERPRET_ERROR);
 	    }
-
+        /* allocating space for key */
 	    if ((new->key = malloc(sizeof(char) * (strlen(key) + 1))) == NULL) {
 	        free(new);
             fprintf(stderr,"Could not allocate memory\n");
 	        exit(INTERNAL_INTERPRET_ERROR);
 	    }
-
+        /* coping key and data */
 	    strcpy(new->key, key);
 	    new->data = data;
 	    /* adding to the beginning */
 	    new->next = first;
 	    ptrht->ptr[index] = new;
-
+        /* inicreaing number of items in table */
     	ptrht->n_items += 1;
         }
     else {
@@ -101,20 +101,20 @@ void ht_insert(tHTable * ptrht, const tKey key, tData data) {
     }
 
 }
-
+/* getting the value of item */
 tData ht_read(tHTable * ptrht, const tKey key) {
 
     tSTitem *item;
 
     if ((item = ht_search(ptrht, key)) == NULL) {
-        return NULL;
+        return NULL; // item isn't in table
     }
 
     return item->data;
 }
-
+/*   */
 void ht_delete(tHTable * ptrht, tKey key) {
-    /* getting the index */
+    /* getting index to the table */
     unsigned index = ptrht->hash_code_ptr(key, ptrht->ht_size);
     /* accesing the list of synonyms */
     tSTitem *tmp = ptrht->ptr[index];
@@ -122,11 +122,11 @@ void ht_delete(tHTable * ptrht, tKey key) {
 
     while (tmp != NULL) {
 	    if (strcmp(tmp->key, key) == 0) {
-	    /* if the deleting item is the first one */
+	        /* item is first */
 	        if (tmp == tmp_prev) {
 		        ptrht->ptr[index] = tmp->next;
 	        }
-            else {
+            else { 
 		        tmp_prev->next = tmp->next;
 	        }
 	        /* freeing the item */
@@ -142,7 +142,7 @@ void ht_delete(tHTable * ptrht, tKey key) {
 
     return;
 }
-
+/* deleting all items from table, but not table itself, table can be reused */
 void ht_clear_all(tHTable * ptrht) {
 
     tSTitem *first, *tmp;
@@ -154,7 +154,7 @@ void ht_clear_all(tHTable * ptrht) {
         if (first == NULL) {
             continue;
         }
-        /* the list of synonyms is not empty */
+        /* disposing list of synonyms */
         while (first != NULL) {
             tmp = first;
             first = first->next;
@@ -168,7 +168,7 @@ void ht_clear_all(tHTable * ptrht) {
 
     ptrht->n_items = 0;
 }
-
+/* freeing items and table itself */
 void ht_free(tHTable * ptrht) {
 
     ht_clear_all(ptrht);
