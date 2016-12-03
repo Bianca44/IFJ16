@@ -96,7 +96,12 @@ int get_next_token(token_t * t) {
         while (1) {
                 c = fgetc(file);
                 if (c == EOF) {
-                        return save_token(t, (state > SPACE) ? LEXICAL_ERROR : EOF, NULL);
+                        if (state > SPACE && state != LINE_COMMENT_END) {
+                                return save_token(t,LEXICAL_ERROR, NULL);
+                        }
+                        else {
+                                return save_token(t,  EOF, NULL);
+                        }
                 }
 
                 switch (state) {
