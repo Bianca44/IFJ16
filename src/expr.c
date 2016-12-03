@@ -746,6 +746,7 @@ int choose_rule(PStack * P) {
                 }
 
                 result_item.expr = tmp;
+                break;
 
         /*E -> E == E*/
         case P_EQL:
