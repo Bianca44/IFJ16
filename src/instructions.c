@@ -609,7 +609,7 @@ void i_len(tVar *op1, tVar *op2, tVar *result){
 void set_label(tElemPtr jump, tElemPtr where){
     ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
 }
-
+/* returns new instruction that can be added to instruction tape */
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
 
     tInst * new_inst;
@@ -617,12 +617,12 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     if((new_inst = malloc(sizeof(tInst))) == NULL){
         exit(INTERNAL_INTERPRET_ERROR);
     }
-
+    // assigning operands and result to new instruction
     new_inst->op1 = op1;
     new_inst->op2 = op2;
     new_inst->result = result;
     new_inst->f = NULL;
-
+    // choosing instrucion operator - function
     switch(instruction){
          /* INPUT */
         case I_RINT:
