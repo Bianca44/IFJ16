@@ -746,6 +746,7 @@ int choose_rule(PStack * P) {
                 }
 
                 result_item.expr = tmp;
+                break;
 
         /*E -> E == E*/
         case P_EQL:
@@ -834,7 +835,10 @@ int choose_rule(PStack * P) {
                                 InsertLast(work_tape, generate(I_CONV_I_TO_D, op_2, NULL, var));
                                 InsertLast(work_tape, generate(I_NE, op_1, var, tmp));
                         }
-
+                }else if (first_operand == DOUBLE && second_operand == DOUBLE) {
+                        result_item.value.data_type = BOOLEAN;
+                        tmp = generate_tmp_var(result_item.value.data_type);
+                        InsertLast(work_tape, generate(I_NE, op_1, op_2, tmp));
                 /*comparing string = error*/
                 } else if (first_operand == STRING || second_operand == STRING) {
                         fprintf(stderr, "Incompatible data types.\n");

@@ -23,22 +23,25 @@ int push_counter;
 constant_t * tape_ref;
 constant_t * labels;
 tFrameStack frame_stack;
-
+/* freeing instruction */
 void dispose_inst(void * inst){
     free((tInst *)(inst));
 }
 /* INPUT */
+/* read int */
 void i_rint(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
-
+    
     d_inst_name();
+    
     if(result != NULL)
         result->i = read_int();
-    else
+    else //missing result
         read_int();
 
 }
+/* read double */
 void i_rdbl(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
@@ -46,10 +49,11 @@ void i_rdbl(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     if(result != NULL)
         result->d = read_double();
-    else
+    else //missing result
         read_double();
 
 }
+/* read string */
 void i_rstr(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
@@ -62,36 +66,37 @@ void i_rstr(tVar *op1, tVar *op2, tVar *result){
 
         result->s = read_string();
     }
-    else{
+    else{ //missing result
         free(read_string());
     }
 }
 /* ARITHMETIC */
+/* add integers */
 void i_add_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->i = op1->i + op2->i;
 
 }
-
+/* add doubles */
 void i_add_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->d = op1->d + op2->d;
 }
-
+/* subtract integers */
 void i_sub_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->i = op1->i - op2->i;
 }
-
+/* subtract doubles */
 void i_sub_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->d = op1->d - op2->d;
 }
-
+/* increase integer */
 void i_inc_i(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -100,8 +105,7 @@ void i_inc_i(tVar *op1, tVar *op2, tVar *result){
 
     op1->i = op1->i + 1;
 }
-
-
+/* decrease integer */
 void i_dec_i(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -110,20 +114,19 @@ void i_dec_i(tVar *op1, tVar *op2, tVar *result){
 
     op1->i = op1->i - 1;
 }
-
-
+/* multiply integers */
 void i_mul_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->i = op1->i * op2->i;
 }
-
+/* multiply double */
 void i_mul_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->d = op1->d * op2->d;
 }
-
+/* dividing integers */
 void i_div_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -133,7 +136,7 @@ void i_div_i(tVar *op1, tVar *op2, tVar *result){
     }
     result->i = op1->i / op2->i;
 }
-
+/* divinding doubles */
 void i_div_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -145,6 +148,7 @@ void i_div_d(tVar *op1, tVar *op2, tVar *result){
 }
 
 /* CONVERSIONS */
+/* converts integer to double */
 void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -152,18 +156,18 @@ void i_conv_i_to_d(tVar *op1, tVar *op2, tVar *result){
 
     result->d = (double)op1->i;
 }
-
+/* converts integer, double or boolean to string */
 void i_to_str(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
 
     char load[LOAD_BUFFER];
-    char *new = NULL;
-    int n;
+    char *new = NULL; //new string
+    int n; //number of characters
 
     switch(op1->data_type){
-        case INT: //_sprintf
+        case INT:
             n = snprintf(load, LOAD_BUFFER - 1,"%d",op1->i);
             n = n + 1;
             if((new = malloc(sizeof(char)*n)) == NULL){
@@ -186,7 +190,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
                 new = copy_string("false");
             break;
         default:
-            fprintf(stderr, "Chyba pti konverzii stringu");
+            fprintf(stderr, "Error while converting to string");
             exit(INTERNAL_INTERPRET_ERROR);
     }
 
@@ -198,6 +202,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
 }
 
 /* ASSIGNS */
+/* assign integer */
 void i_assign_i(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -206,7 +211,7 @@ void i_assign_i(tVar *op1, tVar *op2, tVar *result){
     result->i = op1->i;
 
 }
-
+/* assign double */
 void i_assign_d(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -214,7 +219,7 @@ void i_assign_d(tVar *op1, tVar *op2, tVar *result){
 
     result->d = op1->d;
 }
-
+/* assign boolean */
 void i_assign_b(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -222,7 +227,7 @@ void i_assign_b(tVar *op1, tVar *op2, tVar *result){
 
     result->b = op1->b;
 }
-
+/* assign string */
 void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -235,11 +240,7 @@ void i_assign_s(tVar *op1, tVar *op2, tVar *result){
     }
 }
 
-/* first parameter instruction tape
-** op1 - bool
-** op2 - label
-**/
-
+/* sets active element of instruction tape to element stored in result */
 void i_goto(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
@@ -248,29 +249,31 @@ void i_goto(tVar *op1, tVar *op2, tVar *result){
 
     SetActiveElem_M(processed_tape, (tElemPtr)result->s);
 }
-
+/* jump if not true */
 void i_jnt(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
 
     if(!op1->b){
+        // changing active element of instruction tape
         SetActiveElem_M(processed_tape, (tElemPtr)result->s);
         d_print("%p",(void *)result);
     }
 }
-
+/* jump if true */
 void i_jt(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
     d_inst_name();
 
     if(op1->b){
+        // changing active element of instruction tape
         SetActiveElem_M(processed_tape, (tElemPtr)result->s);
         d_print("%p", (void *) result);
     }
 }
-
+/* no operation */
 void i_nop(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
@@ -604,12 +607,13 @@ void i_len(tVar *op1, tVar *op2, tVar *result){
     if(result != NULL)
         result->i = strlen(op1->s);
 }
+
 /* GENERATING INSTRUCTIONS */
 
 void set_label(tElemPtr jump, tElemPtr where){
     ((tInst *)(jump->data))->result = insert_special_const(&labels, (void *)where);
 }
-
+/* returns new instruction that can be added to instruction tape */
 tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
 
     tInst * new_inst;
@@ -617,12 +621,12 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
     if((new_inst = malloc(sizeof(tInst))) == NULL){
         exit(INTERNAL_INTERPRET_ERROR);
     }
-
+    // assigning operands and result to new instruction
     new_inst->op1 = op1;
     new_inst->op2 = op2;
     new_inst->result = result;
     new_inst->f = NULL;
-
+    // choosing instrucion operator - function
     switch(instruction){
          /* INPUT */
         case I_RINT:

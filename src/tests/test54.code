@@ -1,0 +1,13 @@
+class Main {
+	static void run() {
+		double a = 1.5;
+
+		if (a <= 2) {										
+			ifj16.print ("1" + "\n");
+		} 
+
+		else {
+			ifj16.print ("2" + "\n");
+		} 
+	}
+}

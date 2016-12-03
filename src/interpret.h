@@ -30,7 +30,7 @@ typedef struct tFrameStack{
 extern tFrameStack frame_stack;
 extern tList * processed_tape;
 
-int interpret_tac(tList *inst_tape);
+void interpret_tac(tList *inst_tape);
 
 void init_frame_stack(tFrameStack *stack);
 tFrame * top_frame(tFrameStack *stack);

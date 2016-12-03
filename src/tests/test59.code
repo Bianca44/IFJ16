@@ -1,0 +1,95 @@
+class Main {
+	static void run () {
+
+		String s = "\124\141\155\141\162\141";
+		ifj16.print("string: " +s+ "\n");
+
+		int dlzka = ifj16.length(s);
+		ifj16.print("dlzka stringu: " +dlzka+ "\n");
+		
+		if (dlzka == 6) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		}
+
+		String same = "Tamara";
+		int rovnake = ifj16.compare(s, same);
+		ifj16.print("Vysledok by mal byt 0 a je: " +rovnake+ "\n");
+
+		if (rovnake == 0) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		}
+
+
+		String greater = "tamara";
+		int vacsie = ifj16.compare(s, greater);
+		ifj16.print("Vysledok by mal byt -1 a je: " +vacsie+ "\n");
+
+		if (vacsie < 0) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		} 
+
+
+		String less = "TAMARA";
+		int mensie = ifj16.compare(s, less);
+		ifj16.print("Vysledok by mal byt 1 a je: " +mensie+ "\n");
+
+		if (mensie == 1) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		} 
+
+		String substring = ifj16.substr (s, 1, 3);
+		ifj16.print("substring od indexu 0 s dlzkou 3: " +substring+ "\n");
+
+		String na_porovnanie = "Tam";
+		int porovnaj = ifj16.compare (substring, na_porovnanie);
+
+		if (porovnaj == 0) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		}
+
+		int najdi = ifj16.find(s, substring);
+
+		ifj16.print ("Substring sa v stringu nachadza na pozicii: " +najdi+ "\n");
+		
+		if (najdi == 0) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		}
+
+		String zorad = ifj16.sort(s);
+		ifj16.print ("Zoradeny string: " +zorad+ "\n");
+		String spravne_zoradeny = "Taaamr";
+		int rovnaju_sa = ifj16.compare (zorad, spravne_zoradeny);
+
+		if (rovnaju_sa == 0) {
+			ifj16.print("IT'S OK! \n");
+		}
+
+		else {
+			ifj16.print("IT'S NOT OKAY! \n");
+		}
+	}
+}

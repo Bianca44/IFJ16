@@ -12,7 +12,7 @@ class Next {
 	static int x = Main.i;
 	static int recursion() {
 		int y;
-		if (x >= 10) {						//if (x >= Y), kde y je cele cislo, nevypise ziadne hodnoty
+		if (x >= 10) {			
 			ifj16.print("x: " + x + "\n");
 			x = x - 1;
 			y = recursion();
