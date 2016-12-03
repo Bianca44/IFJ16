@@ -1,0 +1,24 @@
+
+class Main {
+	static int i = 20;
+
+	static void run() {
+		int v = Next.recursion();
+		ifj16.print("Vysledok: " + v + "\n");
+	}
+}
+
+class Next {
+	static int x = Main.i;
+	static int recursion() {
+		int y;
+		if (x > 0) {
+			ifj16.print("x: " + x + "\n");
+			x = x - 1;
+			y = recursion();
+			return y;
+		}
+
+		return 1;
+	}
+}
