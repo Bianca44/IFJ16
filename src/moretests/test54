@@ -1,11 +1,7 @@
 
-/* v podmienke if ak porovnavas cislo "a" akymkolvek 
-** relacnym operatorom s cislom bez desatinej ciarky 
-** je to ok, rovnako je to ok aj ked porovnavas
-** cislo "a" s cislom s desatinnou ciarkou
-** nehlasi to ziadnu chybu ale neporovnava to vzdy spravne
+/* >= nefunguje spravne
 ** 
-** chyba nastava v pripade, ak 
+** chyba nastava aj v pripade, ak 
 ** porovnavas cislo "a" operatorom != za ktorym
 ** nasleduje double v tvare xx.xx (segmentation fault)
 */
@@ -13,7 +9,7 @@ class Main {
 	static void run() {
 		double a = 1.5;
 
-		if (a >= 1) {										
+		if (a <= 2) {										
 			ifj16.print ("1" + "\n");
 		} 
 
