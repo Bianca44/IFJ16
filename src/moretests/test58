@@ -11,6 +11,8 @@
 
 class Main {
 	static void run () {
-		ifj16.print("\046");
+		ifj16.print("Najrajsie meno pod slnkom: \124\141\155\141\162\141" + "\n");
+		ifj16.print("Ake? ");
+		ifj16.print("\124\101\115\101\122\101 \041\041\041" + "\n");
 	}
 }
