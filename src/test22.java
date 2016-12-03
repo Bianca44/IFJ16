@@ -1,16 +1,6 @@
 class Main {
     static void run() {
-        String s = "toto je moj super text";
-        Triedicka.bezkaj(s);
+        double cislo = 2e3;
 
     }
-}
-
-class Triedicka {
-	static void bezkaj (String retazcek) {
-		String str = ifj16.sort(retazcek);
-		ifj16.print("zoradeny retazcek: " +str);
-		return;
-	}
-
 }

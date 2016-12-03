@@ -174,6 +174,9 @@ int get_next_token(token_t * t) {
                         if (c == '.') {
                                 append_char(&s, c);
                                 state = NUM_DOUBLE;
+                        } else if (c == 'e' || c == 'E') {
+                                append_char(&s, c);
+                                state = SCIENTIC_DOUBLE;
                         } else if (isdigit(c)) {
                                 append_char(&s, c);
                         } else {
