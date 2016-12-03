@@ -1,25 +1,8 @@
-/* zoradi cisla od najmensieho
-** po najvacsie (snad)
-**/
-
+/*lexical analysis failed ?
 class Main {
-
-	static int zero = 0;
 	static void run () {
-
-		int nine = 9;
-		int one = 1;
-		int seven = 7;
-		int two = 2;
-		int four = 4;
-		int three = 3;
-		int eight = 8;
-		int six = 6;
-		int five = 5;
-
-		A.sort_first_three_numbers (nine, one, seven);
-		A.sort_second_three_numbers (two, four, three);
-		A.sort_third_three_numbers (eight, six, five);
-
+		ifj16.print("");
 	}
 }
+
+// \150 
