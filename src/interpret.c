@@ -47,7 +47,7 @@ tFrame * init_frame(unsigned size){
         tFrame * new_frame;
         int i = 0;
 
-        /* frames buffer - recycling frames, the list item of array is stop*/
+        /* frames buffer - recycling frames, the last item of array is stop*/
         while(frame_buffer[i] != NULL){
             if(frame_buffer[i]->size >= size){
                 new_frame = frame_buffer[i];
@@ -140,7 +140,7 @@ void pop_frame(tFrameStack *stack){
 }
 
 //processes 3-adress code
-int interpret_tac(tList *inst_tape){
+void interpret_tac(tList *inst_tape){
         d_message("processing new instruction tape");
         First_M(inst_tape); //setting active instruction to first instruction in instruction tape
         d_message("beginning of tape");
@@ -165,5 +165,5 @@ int interpret_tac(tList *inst_tape){
                 Succ_M(inst_tape);//sets activity to next instruction
         }
 
-        return 0;
+        return ;
 }
