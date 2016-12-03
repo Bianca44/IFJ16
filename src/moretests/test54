@@ -3,7 +3,9 @@
 ** relacnym operatorom s cislom bez desatinej ciarky 
 ** je to ok, rovnako je to ok aj ked porovnavas
 ** cislo "a" s cislom s desatinnou ciarkou
-** chyba nastava v jedinom pripade a to vtedy, ak 
+** nehlasi to ziadnu chybu ale neporovnava to vzdy spravne
+** 
+** chyba nastava v pripade, ak 
 ** porovnavas cislo "a" operatorom != za ktorym
 ** nasleduje double v tvare xx.xx
 */
@@ -11,7 +13,7 @@ class Main {
 	static void run() {
 		double a = 1.5;
 
-		if (a != 1.5) {					//segmentation fault					
+		if (a >= 1) {					//segmentation fault					
 			ifj16.print ("1" + "\n");
 		} 
 
