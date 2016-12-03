@@ -106,13 +106,13 @@ int decode_token_array[ENUM_SIZE] = {
         [CLASS] = -1,
         [DO] = -1,
         [BOOLEAN] = -1,
-        [BREAK] = -1, 
+        [BREAK] = -1,
         [CONTINUE] = -1,
         [DOUBLE] = -1,
         [ELSE] = -1,
         [FOR]  = -1,
         [IF] = -1,
-        [INT] = -1, 
+        [INT] = -1,
         [RETURN] = -1,
         [STRING] = -1,
         [STATIC] = -1,
@@ -423,11 +423,11 @@ int choose_rule(PStack * P) {
                         InsertLast(work_tape, generate(I_MUL, op_1, op_2, tmp));
                 /*string * string - error*/
                 } else if (first_operand == STRING || second_operand == STRING) {
-                        printf("Incompatible data types.\n");
+                        fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                 /*boolean * boolean - error*/
                 } else if (first_operand == BOOLEAN || second_operand == BOOLEAN) {
-                        printf("Incompatible data types.\n");
+                        fprintf(stderr, "Incompatible data types.\n");
                         expr_exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                 }
 

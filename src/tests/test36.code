@@ -1,0 +1,5 @@
+class Main
+{
+static int _x;
+static void run()
+{}}

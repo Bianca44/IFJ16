@@ -1,0 +1,7 @@
+class Main{
+    static void run(){
+
+        int i = ifj16.compare("good", "good");
+        return ifj16.print(i);
+    }
+}

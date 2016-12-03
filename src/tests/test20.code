@@ -1,0 +1,11 @@
+//error 4
+class Main
+{
+    static void run()
+    {
+        int a = 0;
+        while (42) {
+            a = a + 1;
+        }
+      }
+}
