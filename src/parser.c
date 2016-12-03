@@ -468,7 +468,7 @@ int parse_next_param_value() {
                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                 }
 
-                                bool is_var = (t.type != ID && t.type != SPECIAL_ID);
+                                bool is_const = (t.type != ID && t.type != SPECIAL_ID);
 
                                 switch (expected_param_type) {
                                 case 's':
@@ -477,7 +477,7 @@ int parse_next_param_value() {
                                                         function_name_call);
                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
-                                        if (is_var)
+                                        if (is_const)
                                                 second_param = insert_string_const(&mem_constants, t.string_value);
                                         break;
                                 case 'b':
@@ -488,7 +488,7 @@ int parse_next_param_value() {
                                         }
 
                                         bool val = (t.type == TRUE);
-                                        if (is_var)
+                                        if (is_const)
                                                 second_param = insert_boolean_const(&mem_constants, val);
                                         break;
                                 case 'i':
@@ -497,14 +497,14 @@ int parse_next_param_value() {
                                                         function_name_call);
                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
-                                        if (is_var)
+                                        if (is_const)
                                                 second_param = insert_int_const(&mem_constants, t.int_value);
                                         break;
                                 case 'd':
                                         if (data_type == INT) {
                                                 second_param = &item->variable;
                                                 double val = (double) t.int_value;
-                                                if (is_var) {
+                                                if (is_const) {
                                                         second_param = insert_double_const(&mem_constants, val);
                                                 } else {
                                                         second_param->data_type = DOUBLE;
@@ -520,7 +520,7 @@ int parse_next_param_value() {
                                                         function_name_call);
                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         } else {
-                                                if (is_var)
+                                                if (is_const)
                                                         second_param = insert_double_const(&mem_constants, t.double_value);
                                         }
                                         break;
@@ -645,7 +645,7 @@ int parse_param_value() {
                                                 exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                         }
 
-                                        bool is_var = (t.type != ID && t.type != SPECIAL_ID);
+                                        bool is_const = (t.type != ID && t.type != SPECIAL_ID);
 
                                         int expected_param_type = function_item->function.param_data_types[params_counter];
                                         params_counter++;
@@ -657,7 +657,7 @@ int parse_param_value() {
                                                                 params_counter, function_name_call);
                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
-                                                if (is_var)
+                                                if (is_const)
                                                         first_param = insert_string_const(&mem_constants, t.string_value);
                                                 break;
                                         case 'b':
@@ -668,7 +668,7 @@ int parse_param_value() {
                                                 }
 
                                                 bool val = (t.type == TRUE);
-                                                if (is_var)
+                                                if (is_const)
                                                         first_param = insert_boolean_const(&mem_constants, val);
                                                 break;
                                         case 'i':
@@ -677,13 +677,13 @@ int parse_param_value() {
                                                                 function_name_call);
                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 }
-                                                if (is_var)
+                                                if (is_const)
                                                         first_param = insert_int_const(&mem_constants, t.int_value);
                                                 break;
                                         case 'd':
                                                 if (data_type == INT) {
                                                         double val = (double) t.int_value;
-                                                        if (is_var) {
+                                                        if (is_const) {
                                                                 first_param = insert_double_const(&mem_constants, val);
                                                         } else {
                                                                 first_param->data_type = DOUBLE;
@@ -699,7 +699,7 @@ int parse_param_value() {
                                                                 params_counter, function_name_call);
                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                 } else {
-                                                        if (is_var)
+                                                        if (is_const)
                                                                 first_param = insert_double_const(&mem_constants, t.double_value);
                                                 }
                                                 break;
