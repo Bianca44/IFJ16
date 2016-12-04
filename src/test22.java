@@ -1,6 +1,12 @@
-class Main {
-    static int x;
-    static void run() {
-        x = ifj16.print("d");
-    }
+class Main
+{
+	static void run()
+	{
+        test();
+	}
+
+	static void test()
+	{
+		return 4;
+	}
 }
