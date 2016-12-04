@@ -1,0 +1,8 @@
+class Main {
+    static int a;
+    static void run() {	
+	String str1 = "Retazec jeden dva jeden dva";
+	a = ifj16.find(str1, "dva");
+	ifj16.print(a);
+    }
+}
