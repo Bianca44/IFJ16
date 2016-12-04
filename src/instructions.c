@@ -165,7 +165,7 @@ void i_to_str(tVar *op1, tVar *op2, tVar *result){
     char load[LOAD_BUFFER];
     char *new = NULL; //new string
     int n; //number of characters
-
+    // choosing the right datatype and converting it to string with snprintf
     switch(op1->data_type){
         case INT:
             n = snprintf(load, LOAD_BUFFER - 1,"%d",op1->i);
@@ -280,94 +280,96 @@ void i_nop(tVar *op1, tVar *op2, tVar *result){
     UNUSED(result);
 }
 /* LOGICAL */
-/* equal */
+/* equality of integers*/
 void i_e_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->i == op2->i);
 }
-
+/* equality of doubles*/
 void i_e_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->d == op2->d);
 }
+/* equalit of booleans*/
 void i_e_b(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->b == op2->b);
 }
-/* not equal */
+/* non equality of integers */
 void i_ne_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->i != op2->i);
 }
-
+/* non equality of doubles */
 void i_ne_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->d != op2->d);
 }
+/* non equality of booleans */
 void i_ne_b(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->b != op2->b);
 }
 
-/* less */
+/* less - integer*/
 void i_l_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->i < op2->i);
 }
-
+/* less - double */
 void i_l_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->d < op2->d);
 }
 
-/* greater */
+/* greater - integer*/
 void i_g_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->i > op2->i);
 }
-
+/* greater - double */
 void i_g_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (op1->d > op2->d);
 }
 
-/* less or equal */
+/* less or equal - integer*/
 void i_le_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (bool)(op1->i <= op2->i);
 }
-
+/* less or equal - dobule */
 void i_le_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (bool)(op1->d <= op2->d);
 }
 
-/* greater or equal */
+/* greater or equal - integer */
 void i_ge_i(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (bool)(op1->i >= op2->i);
 }
-
+/* greater or equal - double*/
 void i_ge_d(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
     result->b = (bool)(op1->d >= op2->d);
 }
 
-/* not */
+/* logical not */
 void i_not(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -375,7 +377,7 @@ void i_not(tVar *op1, tVar *op2, tVar *result){
 
     result->b = !op1->b;
 }
-
+/* logical and */
 void i_and(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -383,7 +385,7 @@ void i_and(tVar *op1, tVar *op2, tVar *result){
 
     result->b = op1->b && op2->b;
 }
-
+/* logical or */
 void i_or(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -395,8 +397,7 @@ void i_or(tVar *op1, tVar *op2, tVar *result){
 /* FUNCTIONS */
 
 /* initialization of the frame */
-/* op1 size of the frame */
-
+/* @param op1 function - item in symbol table*/
 void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -406,14 +407,14 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
     symbol_table_item_t *fun = (symbol_table_item_t *)(op1->s);
     int i = fun->function.params_count;
     char *s = fun->function.local_vars_data_types;
+    // getting frame of suitable size
     frame_stack.prepared = init_frame(fun->function.params_local_vars_count);
-
+    // debug prints
     d_int(i);
     d_int(fun->function.params_local_vars_count);
     d_str(fun->function.local_vars_data_types);
-
+    // preparing variables on frame - decoding their types and setting them to uninitialized
     for(; *s != '\0'; s++){
-
         switch (*s) {
         case 'i':
             frame_stack.prepared->local[i].data_type = INT;
@@ -428,7 +429,7 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
             frame_stack.prepared->local[i].data_type = STRING;
             break;
         default:
-            d_message("Chyba pri dekodovani typov");
+            d_message("Error while decoding types");
             exit(INTERNAL_INTERPRET_ERROR);
         }
 
@@ -436,18 +437,19 @@ void i_init_frame(tVar *op1, tVar *op2, tVar *result){
         i++;
     }
 }
-/* push */
+/* pushing parameters */
 void i_push_param(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
 
     d_inst_name();
-
+    // coping value of variable to frame
     frame_stack.prepared->local[push_counter] = *op1;
     if(op1->data_type == STRING){
         frame_stack.prepared->local[push_counter].s = copy_string(op1->s);
     }
     d_tVarPtr(op1);
+    // increasing push counter
     push_counter++;
 }
 /* function call */
@@ -474,7 +476,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
     //realoading previous state of instruction tape
     processed_tape = parent_tape;
     SetActiveElem_M(processed_tape, pi);
-    //saving the result
+    //assigning the result if function isnt't void
     if(result != NULL){
         if(frame_stack.top->frame->ret_val != NULL){
             switch(result->data_type){
@@ -494,7 +496,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
                     break;
                 case BOOLEAN:
                     result->b = frame_stack.top->frame->ret_val->b;
-                    d_print("%d ==VYSL== ", result->b);
+                    d_print("%d ==RESULT== ", result->b);
                     break;
                 default:
                     fprintf(stderr, "Error in return value\n");
@@ -506,22 +508,23 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
             exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }
-    //poping the frame of function 
+    //poping the frame of current function 
     pop_frame(&frame_stack);
     d_message("Leaving instruction i_f_call");
 }
-
+/* return */
 void i_return(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
     d_inst_name();
-
+    // assigning return value to frame's return value
     frame_stack.top->frame->ret_val = op1;
+    // jump to the end of instruction tape 
     Last_M(processed_tape);
 }
 
 /* BUILT-IN */
-
+/* concatenates two strings */
 void i_cat(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -533,8 +536,9 @@ void i_cat(tVar *op1, tVar *op2, tVar *result){
     if((new = malloc(sizeof(char)*(n+m+1))) == NULL){
         exit(INTERNAL_INTERPRET_ERROR);
     }
-
+    //coping n characters without '\0'
     memcpy(new, op1->s, n);
+    //coping m + 1 characters includes '\0'
     memcpy(new + n, op2->s, m+1);
 
     if(result->initialized)
@@ -542,20 +546,20 @@ void i_cat(tVar *op1, tVar *op2, tVar *result){
 
     result->s = new;
 }
-
+/* compares two strings */
 void i_strcmp(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     if(result != NULL){
         result->i = compare(op1->s, op2->s);
     }
 }
-
+/* returns substring of string, determined by start position in string and by number of characters of substring*/
 void i_substr(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
 
     d_inst_name();
-
+    // using frame to pass parametrs to the function
     push_counter = 0;
     if(result != NULL){
         if(result->initialized)
@@ -567,7 +571,7 @@ void i_substr(tVar *op1, tVar *op2, tVar *result){
     free(frame_stack.prepared);
     frame_stack.prepared = NULL;
 }
-
+/* finds first occurance of substring op2 in op1 and returns its position */
 void i_find(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
 
@@ -575,7 +579,7 @@ void i_find(tVar *op1, tVar *op2, tVar *result){
         result->i = find(op1->s, op2->s);
     }
 }
-
+/* sorts string according to ordinal value - ascending */
 void i_sort(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
@@ -590,7 +594,7 @@ void i_sort(tVar *op1, tVar *op2, tVar *result){
         sort(result->s);
     }
 }
-
+/* prints value of first operand */
 void i_print(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
     UNUSED(result);
@@ -599,7 +603,7 @@ void i_print(tVar *op1, tVar *op2, tVar *result){
 
     print(op1);
 }
-
+/* length of string */
 void i_len(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op2);
 
