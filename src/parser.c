@@ -214,6 +214,11 @@ int parse_expression(bool ends_semicolon) {
                                                                 tVar *res = &var->variable;
                                                                 expr_var_result = res;
 
+                                                                if (call_function->function.return_type == VOID) {
+                                                                    fprintf(stderr, "Incompatible types to assign value to variable %s.\n", function_variable.id_name);
+                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                }
+
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
                                                                 } else if (strcmp(function_name_call, "ifj16.readInt") == 0) {
@@ -354,7 +359,7 @@ int parse_return_value() {
                                                                         fprintf(stderr, "Bad return expression. Function in return expression is not allowed.\n");
                                                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                                 } else {
-                                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
+                                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign value to variable.\n");
                                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
                                                         }
@@ -808,7 +813,7 @@ int parse_call_assign() {
                 } else if (t.type == ASSIGN || t.type == SEMICOLON) {
                         if (is_second_pass) {
                                 if (var->is_function) {
-                                        fprintf(stderr, "Can\'t assign value to function \'%s\'\n", function_name_call);
+                                        fprintf(stderr, "Can\'t assign value to variable to function \'%s\'\n", function_name_call);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
@@ -1367,7 +1372,7 @@ int parse_value() {
                                                                            generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
                                                                 expr_var_result = conv_res;
                                                         } else {
-                                                                fprintf(stderr, "Incompatible types to assign value.\n");
+                                                                fprintf(stderr, "Incompatible types to assign value to variable.\n");
                                                                 if (expr_data_type == VOID) {
                                                                         exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {
@@ -1391,7 +1396,7 @@ int parse_value() {
                                                                            generate(I_CONV_I_TO_D, expr_var_result, NULL, conv_res));
                                                                 expr_var_result = conv_res;
                                                         } else {
-                                                                fprintf(stderr, "Incompatible types to assign value %s.\n", function_variable.id_name);
+                                                                fprintf(stderr, "Incompatible types to assign value to variable %s.\n", function_variable.id_name);
                                                                 if (expr_data_type == VOID) {
                                                                         exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
                                                                 } else {
