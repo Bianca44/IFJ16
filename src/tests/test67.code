@@ -1,0 +1,13 @@
+class Main {
+	static void run () {
+		int a = 23;
+		double vysledok = Desatinne.cislo(a);
+		ifj16.print("Po pricitani hodnoty sa a = "+vysledok+ "\n");
+	}
+}
+
+class Desatinne {
+	static double cislo (double x) {
+		return (x + 2.5);
+	}
+}
