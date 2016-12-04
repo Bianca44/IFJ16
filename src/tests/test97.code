@@ -1,0 +1,11 @@
+class Main {
+	static void run () {
+		String str = "Toto je nejaky string";
+		int dlzka = ifj16.length(str);
+
+		int a = dlzka;
+		int temp = a - dlzka;
+		a = a/temp;					//zero division
+		ifj16.print(a+"\n");
+	}
+}

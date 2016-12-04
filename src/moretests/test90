@@ -3,7 +3,7 @@
 class Main {
 	static void run () {
 		int a = 0;
-		int no = 87654;
+		int no = 879940006;
 
 		if (no < 0) {
 			no = no * (0-1);

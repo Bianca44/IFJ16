@@ -9,7 +9,7 @@ class Main {
 	static void run() {
 		double a = 1.5;
 
-		if (a != 2) {										
+		if (a >= 2) {										
 			ifj16.print ("1" + "\n");
 		} 
 

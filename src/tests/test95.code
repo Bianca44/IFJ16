@@ -1,0 +1,16 @@
+class Main {
+	static int x = 5;
+	static void run () {
+		x = Game.x;
+		ifj16.print("x v run () = "+x+"\n");		//10
+		Game.play();
+	}
+}
+
+class Game {
+	static int x = 10;
+	static void play () {
+		x=Main.x;
+		ifj16.print("x v play () = "+x+"\n");		//10 ?
+	}
+}

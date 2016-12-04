@@ -1,0 +1,12 @@
+class Main {
+	static void run () {
+		int a = 1 - 200;
+		if (a > 0) {					//porovnavanie so zapornym cislom OK 
+			ifj16.print("a > 0\n");
+		}
+
+		else {
+			ifj16.print("a < 0\n");
+		}
+	}
+}
