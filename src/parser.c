@@ -350,8 +350,13 @@ int parse_return_value() {
                                                                 InsertLast(function_inst_tape,
                                                                            generate(I_CONV_I_TO_D, expr_var_result, NULL, expr_var_result));
                                                         } else {
-                                                                fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
-                                                                exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                if (expr_result.is_function) {
+                                                                        fprintf(stderr, "Bad return expression. Function in return expression is not allowed.\n");
+                                                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                                                } else {
+                                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign value.\n");
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                }
                                                         }
                                                 }
                                         }
@@ -1443,14 +1448,14 @@ int parse_declaration() {
                 current_function.id_name = NULL;
 
                 if (is_first_pass) {
-                    if (!is_declared(current_variable.id_name)) {
-                            insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type,
-                                                         CONSTANT);
-                    } else {
-                            fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name,
-                                    current_class);
-                            exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                    }
+                        if (!is_declared(current_variable.id_name)) {
+                                insert_variable_symbol_table(current_variable.id_name, current_variable.variable.data_type,
+                                                             CONSTANT);
+                        } else {
+                                fprintf(stderr, "Variable \'%s\' in class \'%s\' was redeclared.\n", current_variable.id_name,
+                                        current_class);
+                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                        }
                 }
 
                 if (parse_value()) {
