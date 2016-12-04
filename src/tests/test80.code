@@ -1,0 +1,11 @@
+class Main {
+    static void run() {
+	int a = first (3);
+	ifj16.print(a + "\n");
+	ifj16.print(a + 3 + "\n");
+    }
+    static int first(int x) {
+	int a = 2;
+	return x+a;
+    }
+}
