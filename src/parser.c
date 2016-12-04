@@ -171,7 +171,6 @@ int parse_expression(bool ends_semicolon) {
 
                 if (is_function) {
                         function_name_call = t.string_value;
-                        expr_result = *item;
                         get_token();
                         if (t.type == LEFT_ROUNDED_BRACKET) {
                                 if (parse_param_value()) {
@@ -184,6 +183,8 @@ int parse_expression(bool ends_semicolon) {
                                                                 } else {
                                                                         call_function = get_symbol_table_class_item(current_class, function_name_call);
                                                                 }
+
+                                                                expr_result = *call_function;
 
                                                                 if (call_function->function.params_count != params_counter) {
                                                                         fprintf(stderr, "Too many arguments when calling function \'%s\'\n",
@@ -213,11 +214,6 @@ int parse_expression(bool ends_semicolon) {
 
                                                                 tVar *res = &var->variable;
                                                                 expr_var_result = res;
-
-                                                                if (call_function->function.return_type == VOID) {
-                                                                    fprintf(stderr, "Incompatible types to assign value to variable %s.\n", function_variable.id_name);
-                                                                    exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
-                                                                }
 
                                                                 if (strcmp(function_name_call, "ifj16.print") == 0) {
                                                                         InsertLast(function_inst_tape, generate(I_PRINT, first_param, NULL, NULL));
@@ -359,7 +355,7 @@ int parse_return_value() {
                                                                         fprintf(stderr, "Bad return expression. Function in return expression is not allowed.\n");
                                                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                                                 } else {
-                                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign value to variable.\n");
+                                                                        fprintf(stderr, "Bad return expression. Incompatible types to assign as return value.\n");
                                                                         exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
                                                                 }
                                                         }

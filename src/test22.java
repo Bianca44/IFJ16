@@ -1,13 +1,6 @@
 class Main {
     static int x;
     static void run() {
-        x = 2;
-        Print.napis();
-    }
-}
-
-class Print {
-    static void napis (){
-        ifj16.print("x = "+Main.x+"\n");
+        x = ifj16.print("d");
     }
 }
