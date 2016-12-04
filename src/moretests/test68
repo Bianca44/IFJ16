@@ -1,0 +1,18 @@
+class Main {
+	static void run () {
+		String try = ifj16.print("Tabulator je takto:\tdlhy a novy riadok pride teraz\na pokracuje lomitko\\\t a cislo \071 teraz zase novy riadok\na nasledne 5 lomitok \\\\\\\\\\\n");		
+	}
+}
+
+
+		/*ifj16.print("Vypis string try: " +try);
+
+		String right = "Tabulator je takto:\tdlhy a novy riadok pride teraz\na pokracuje //lomitko\\\t a cislo \071 teraz zase novy riadok\na nasledne 5 lomitok \\\\\\\\\\\n"; 
+
+		int porovnaj = ifj16.compare(try, right);
+		if (porovnaj == 0) {
+			ifj16.print("Vsetko funguje OK\n");
+		}
+		else {
+			ifj16.print("Nieco nefunguje spravne");
+		} */
