@@ -157,9 +157,9 @@ int parse_expression(bool ends_semicolon) {
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
-                        if (item != NULL) {
-                                is_function = item->is_function;
-                        }
+
+                        is_function = item->is_function;
+
                 } else if (t.type == SPECIAL_ID) {
                         item = get_symbol_table_special_id_item(t.string_value);
                         if (item == NULL) {
