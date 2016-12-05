@@ -1,0 +1,18 @@
+class Main {
+	static void run() {
+		int a = 5;
+		int b = 4;
+		int c = 3;
+
+		if (a > b) {
+			ifj16.print("a > b \n");
+			{()}
+			//;
+		}
+		
+		else {
+			ifj16.print("a < b \n");
+			{}
+		}
+	}
+}

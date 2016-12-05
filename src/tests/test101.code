@@ -1,0 +1,14 @@
+class Main {
+	static int a = 5;
+	static void run() {
+		First.ran(a);
+			}
+}
+
+class First {
+	static int ran(int a) {
+		int x = a + 5;
+		ifj16.print(x);
+		return a;
+	}
+}

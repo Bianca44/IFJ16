@@ -1,0 +1,12 @@
+class Main {
+	static void run() {
+		int x = 2*3+9*1;
+		ifj16.print("vysledok je:"+x+"\n");
+		double y = x*6;
+		ifj16.print("vysledok je:"+y+"\n");
+		String s = "Ahoj\t";
+		ifj16.print(s+x+"\n");
+		int a =6/0;
+		ifj16.print("vysledok je:"+a+"\n");
+	}
+}

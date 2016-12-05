@@ -1,0 +1,25 @@
+class Main {
+	static void run() {
+		int a = 5;
+		int b = 4;
+		int c = 3;
+
+		while (c < a) {
+			First.x(b);
+			ifj16.print("c="+c+" je mensie ako a="+a+"\n");
+			c = c+1;
+			if (c == a) {
+				ifj16.print("c=a\n");
+			}
+			else {
+				ifj16.print("pokracujeme \n");
+			}
+		}
+	}
+}
+class First {
+	static int x (int b) {
+		ifj16.print("tralala \n");
+		return 1;
+	}
+}
