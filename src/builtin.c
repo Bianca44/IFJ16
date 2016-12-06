@@ -89,7 +89,7 @@ double read_double() {
                 c = getchar();
                 if (c == '\n' || c == EOF) {
 
-                        if (state > 0) {
+                        if (s.length == 0 || state > 0) {
                                 free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
                                 exit(RUN_INPUT_ERROR);
