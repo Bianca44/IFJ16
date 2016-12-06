@@ -58,7 +58,7 @@ int read_int() {
         while (1) {
                 c = getchar();
                 if (c == '\n' || c == EOF) {
-                        long int num = strtol(s.data, NULL, 10);
+                        long int num = atol(s.data);
                         free_string(&s);
                         if (num > INT_MAX) {
                                 fprintf(stderr, "Wrongly entered integer from input.\n");

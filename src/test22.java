@@ -1,10 +1,8 @@
 class Main
 {
 	static void run() {
-	}
 
-
-	static void ahoj(String run) {
-
+		double a = ifj16.readInt();
+		ifj16.print(a);
 	}
 }
