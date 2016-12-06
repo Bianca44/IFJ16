@@ -817,7 +817,7 @@ int parse_call_assign() {
                 } else if (t.type == ASSIGN) {
                         if (is_second_pass) {
                                 if (var->is_function) {
-                                        fprintf(stderr, "Can\'t assign value to variable to function \'%s\'\n", function_name_call);
+                                        fprintf(stderr, "Can\'t assign value to function \'%s\'\n", function_name_call);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
