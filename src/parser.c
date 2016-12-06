@@ -212,14 +212,6 @@ int parse_expression(bool ends_semicolon) {
                                                                         }
                                                                 }
 
-                                                                if (call_function->function.return_type == VOID) {
-                                                                        fprintf(stderr, "Incompatible types to assign value to variable.\n");
-                                                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
-                                                                } else if (call_function->function.return_type != var->variable.data_type) {
-                                                                        fprintf(stderr, "Incompatible types to assign value to variable.\n");
-                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
-                                                                }
-
                                                                 tVar *res = &var->variable;
                                                                 expr_var_result = res;
 
@@ -823,13 +815,13 @@ int parse_call_assign() {
                         }
                         return parse_value();
                 } else if (t.type == SEMICOLON) {
-                    if (is_second_pass) {
-                            if (var->is_function) {
-                                    fprintf(stderr, "\'%s\' is a function, not a variable.\n", function_name_call);
-                                    exit(SYNTACTIC_ANALYSIS_ERROR);
-                            }
-                    }
-                    return PARSED_OK;
+                        if (is_second_pass) {
+                                if (var->is_function) {
+                                        fprintf(stderr, "\'%s\' is a function, not a variable.\n", function_name_call);
+                                        exit(SYNTACTIC_ANALYSIS_ERROR);
+                                }
+                        }
+                        return PARSED_OK;
                 }
         }
 
@@ -921,21 +913,21 @@ int parse_statement() {
                                                 p->is_function ? p->function.return_type : p->variable.data_type;
                                 }
                         } else if (t.type == ID) {
-                                if (!is_declared(t.string_value)) {
-                                        symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
-                                                                                                              current_function.id_name);
-                                        if (!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                symbol_table_t *function_symbol_table = get_symbol_table_for_function(current_class,
+                                                                                                      current_function.id_name);
+                                if (!is_declared_in_function(function_symbol_table, t.string_value)) {
+                                        if (!is_declared(t.string_value)) {
                                                 fprintf(stderr,
                                                         "Neither variable \'%s\' in function \'%s.%s\' was not declared nor in the class \'%s\'.\n",
                                                         t.string_value, current_class, current_function.id_name, current_class);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         } else {
-                                                p = get_symbol_table_function_item(function_symbol_table, t.string_value);
+                                                p = get_symbol_table_class_item(current_class, t.string_value);
                                                 function_variable.variable.data_type =
                                                         p->is_function ? p->function.return_type : p->variable.data_type;
                                         }
                                 } else {
-                                        p = get_symbol_table_class_item(current_class, t.string_value);
+                                        p = get_symbol_table_function_item(function_symbol_table, t.string_value);
                                         function_variable.variable.data_type =
                                                 p->is_function ? p->function.return_type : p->variable.data_type;
                                 }

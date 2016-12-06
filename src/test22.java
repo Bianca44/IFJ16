@@ -1,5 +1,6 @@
 class Main {
     static void run() {
-        ifj16.print("csas" + );
+        double a = ifj16.readDouble();
+		ifj16.print(a);
     }
 }
