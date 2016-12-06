@@ -1,0 +1,6 @@
+class Main {
+	static int run() {
+		int a = 5;
+		return a;
+	}
+}

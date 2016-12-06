@@ -1,0 +1,21 @@
+class Main {
+	static void run () {			//ok
+		
+		//telo obsahuje len
+		/*
+		** same komentare
+		*/
+
+		main.program();
+	}
+
+	static void Run () { 			//ok
+
+	}
+}
+
+class main {						//ok
+	static void program () {
+
+	}
+}

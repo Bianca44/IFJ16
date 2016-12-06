@@ -1,0 +1,15 @@
+class Main {
+	static int x;
+	static void run () {
+		//Game.play();
+	}
+}
+
+class Game {
+	static int x;
+	x = 6;					// je toto error?
+	static int play () {
+
+		return x;					
+	}
+}

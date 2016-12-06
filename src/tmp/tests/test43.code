@@ -1,0 +1,14 @@
+class Main{
+    static int y=0;
+    static void run(){
+
+        foo();
+        Main.foo();
+    }
+
+    static void foo() {
+        ifj16.print(y);
+        ifj16.print(Main.y);
+    }
+
+}

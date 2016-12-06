@@ -1655,6 +1655,12 @@ int parse(tList * inst_tape) {
                                         fprintf(stderr, "Missing function \'Main.run\'.\n");
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 } else {
+                                        if (!run_method->is_function) {
+                                                fprintf(stderr, "\'Main.run\' is not a function.\n");
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
+
+
                                         if (!(run_method->function.return_type == VOID)
                                             || !(run_method->function.params_count == 0)) {
                                                 fprintf(stderr, "Bad signature of function \'Main.run\'.\n");

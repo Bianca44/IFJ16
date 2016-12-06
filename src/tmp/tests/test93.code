@@ -1,0 +1,14 @@
+class Main {
+	static int x;
+	static void run () {
+		//Game.play();
+	}
+}
+
+class Game {
+	static int x;
+	static int play () {
+
+		return x;					
+	}
+}

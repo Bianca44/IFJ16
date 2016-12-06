@@ -1,0 +1,5 @@
+class Main {
+    static void run() {
+        int y = 2;
+    } 						//prvy komentar
+} 						//druhy komentar

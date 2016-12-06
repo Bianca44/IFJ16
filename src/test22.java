@@ -1,12 +1,10 @@
 class Main
 {
-	static void run()
-	{
-        test();
+	static void run() {
 	}
 
-	static void test()
-	{
-		return 4;
+
+	static void ahoj(String run) {
+
 	}
 }

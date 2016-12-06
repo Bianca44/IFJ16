@@ -1,0 +1,8 @@
+class Main {
+    static void run () {	
+	int _a = 4;	
+	int $a = 3;
+	int $as_a___$ = 2;
+	int _ = 5;
+    }
+}
