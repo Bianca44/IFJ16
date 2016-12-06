@@ -32,9 +32,9 @@ void dispose_inst(void * inst){
 void i_rint(tVar *op1, tVar *op2, tVar *result){
     UNUSED(op1);
     UNUSED(op2);
-    
+
     d_inst_name();
-    
+
     if(result != NULL)
         result->i = read_int();
     else //missing result
@@ -508,7 +508,7 @@ void i_f_call(tVar *op1, tVar *op2, tVar *result){
             exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
         }
     }
-    //poping the frame of current function 
+    //poping the frame of current function
     pop_frame(&frame_stack);
     d_message("Leaving instruction i_f_call");
 }
@@ -519,7 +519,7 @@ void i_return(tVar *op1, tVar *op2, tVar *result){
     d_inst_name();
     // assigning return value to frame's return value
     frame_stack.top->frame->ret_val = op1;
-    // jump to the end of instruction tape 
+    // jump to the end of instruction tape
     Last_M(processed_tape);
 }
 
@@ -566,6 +566,8 @@ void i_substr(tVar *op1, tVar *op2, tVar *result){
             free(result->s);
 
         result->s = substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
+    } else {
+        substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
     }
     free(frame_stack.prepared->local[0].s);
     free(frame_stack.prepared);

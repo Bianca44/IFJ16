@@ -1,8 +1,12 @@
-class Main
-{
-	static void run() {
+class Main {
+    static void run() {
+        int a;
+        int b;
+    }
+    static int test(int a) {
 
-		double a = ifj16.readInt();
-		ifj16.print(a);
-	}
+    }
+    static int test(int a) {
+
+    }
 }

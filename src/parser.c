@@ -212,6 +212,14 @@ int parse_expression(bool ends_semicolon) {
                                                                         }
                                                                 }
 
+                                                                if (call_function->function.return_type == VOID) {
+                                                                        fprintf(stderr, "Incompatible types to assign value to variable.\n");
+                                                                        exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                                                } else if (call_function->function.return_type != var->variable.data_type) {
+                                                                        fprintf(stderr, "Incompatible types to assign value to variable.\n");
+                                                                        exit(SEMANTIC_ANALYSIS_TYPE_COMPATIBILITY_ERROR);
+                                                                }
+
                                                                 tVar *res = &var->variable;
                                                                 expr_var_result = res;
 
@@ -806,7 +814,7 @@ int parse_call_assign() {
                                         }
                                 }
                         }
-                } else if (t.type == ASSIGN || t.type == SEMICOLON) {
+                } else if (t.type == ASSIGN) {
                         if (is_second_pass) {
                                 if (var->is_function) {
                                         fprintf(stderr, "Can\'t assign value to variable to function \'%s\'\n", function_name_call);
@@ -814,6 +822,14 @@ int parse_call_assign() {
                                 }
                         }
                         return parse_value();
+                } else if (t.type == SEMICOLON) {
+                    if (is_second_pass) {
+                            if (var->is_function) {
+                                    fprintf(stderr, "\'%s\' is a function, not a variable.\n", function_name_call);
+                                    exit(SYNTACTIC_ANALYSIS_ERROR);
+                            }
+                    }
+                    return PARSED_OK;
                 }
         }
 
