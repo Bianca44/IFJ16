@@ -567,7 +567,8 @@ void i_substr(tVar *op1, tVar *op2, tVar *result){
 
         result->s = substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
     } else {
-        substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
+        char * tmp = substr(frame_stack.prepared->local[0].s, frame_stack.prepared->local[1].i, frame_stack.prepared->local[2].i);
+        free(tmp);
     }
     free(frame_stack.prepared->local[0].s);
     free(frame_stack.prepared);
