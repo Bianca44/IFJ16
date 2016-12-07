@@ -1,6 +1,8 @@
 class Main {
     static void run() {
-        double a = ifj16.readDouble();
-		ifj16.print(a);
+    }
+
+    static int x(int a) {
+        return 1;
     }
 }

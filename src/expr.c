@@ -28,7 +28,7 @@ extern char *current_class;
 extern symbol_table_item_t current_function;
 extern tList *global_inst_tape;
 extern constant_t *mem_constants;
-extern char * function_name_call;
+extern char * call_function_name;
 
 bool expr_in_function;
 
@@ -1300,7 +1300,7 @@ int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr
         st_item->variable.data_type = P->top->value.data_type;
         *expr_result = P->top->expr;
 
-        if (function_name_call != NULL && strcmp(function_name_call, "ifj16.print") == 0) {
+        if (call_function_name != NULL && strcmp(call_function_name, "ifj16.print") == 0) {
                 check_expr_ifj_print(buffer, P->top->value.data_type);
         }
 
