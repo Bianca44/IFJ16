@@ -120,8 +120,10 @@ void pop_frame(tFrameStack *stack){
                 /* free the strings allocated "in" frame */
                 for(int i = tmp->frame->size; i--;) {
                         if(tmp->frame->local[i].data_type == STRING) {
-                                if(tmp->frame->local[i].initialized)
+                                if(tmp->frame->local[i].initialized){
                                     free(tmp->frame->local[i].s);
+                                    tmp->frame->local[i].initialized = false;
+                                }
                         }
                 }
                 /* adding poped frame to frame buffer (the last one item will always be NULL - the stop)*/
