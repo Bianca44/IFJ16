@@ -278,11 +278,11 @@ int get_next_token(token_t * t) {
                                 return save_token(t, STRING_LITERAL, &s);
                         } else if (c == '\\') {
                                 state = LITERAL_SLASH;
-                        } else if (c > 31) {
-                                append_char(&s, c);
-                        } else {
+                        } else if (c <= 31) {
                                 ungetc(c, file);
                                 return save_token(t, LEXICAL_ERROR, NULL);
+                        } else {
+                                append_char(&s, c);
                         }
                         break;
 
