@@ -806,14 +806,9 @@ int parse_call_assign() {
                         }
                 } else if (t.type == ASSIGN) {
                         if (is_first_pass) {
-                                if (var == NULL) {
-                                        if (strchr(function_variable.id_name, '.') == NULL) {
-                                                fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
-                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                        } else {
-                                                fprintf(stderr, "Variable \'%s\' in function \'%s\' is not initialized.\n", function_variable.id_name, current_function.id_name);
-                                                exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
-                                        }
+                                if (var == NULL && strchr(function_variable.id_name, '.') == NULL) {
+                                        fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
 
@@ -1278,6 +1273,14 @@ int parse_next_param() {
                                                         function_variable.id_name, current_function.id_name);
                                                 exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                         }
+                                } else {
+                                        symbol_table_item_t * item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                        if (item != NULL && item->is_function) {
+                                                fprintf(stderr, "Variable \'%s\' in function \'%s\' has same name as function in the class \'%s\'.\n", function_variable.id_name,
+                                                        current_function.id_name, current_class);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        }
+
                                 }
                                 if (t.type == RIGHT_ROUNDED_BRACKET || t.type == COMMA) {
                                         return parse_next_param();
@@ -1320,6 +1323,13 @@ int parse_param_list() {
                                 } else {
                                         fprintf(stderr, "Variable \'%s\' in function \'%s\' was redeclared.\n", function_variable.id_name,
                                                 current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                }
+                        } else {
+                                symbol_table_item_t * item = get_symbol_table_class_item(current_class, function_variable.id_name);
+                                if (item != NULL && item->is_function) {
+                                        fprintf(stderr, "Variable \'%s\' in function \'%s\' has same name as function in the class \'%s\'.\n", function_variable.id_name,
+                                                current_function.id_name, current_class);
                                         exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                                 }
                         }
