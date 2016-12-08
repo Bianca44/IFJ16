@@ -1,6 +1,3 @@
-/*
- * See alse: https://wis.fit.vutbr.cz/FIT/st/phorum-msg-show.php?id=45642
- */
 
 class Main {
     static void run() {

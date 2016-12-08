@@ -112,7 +112,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (!is_special_id_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
-                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_special_id_item(t.string_value);
                                         if (item->is_function) {
@@ -125,7 +125,7 @@ int parse_expression(bool ends_semicolon) {
                                 if (!is_declared(t.string_value)) {
                                         fprintf(stderr, "Expression: Variable %s was not declared.\n", t.string_value);
                                         free_token_buffer_local(&tb);
-                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        exit(SEMANTIC_ANALYSIS_OTHER_ERROR);
                                 } else {
                                         symbol_table_item_t *item = get_symbol_table_class_item(current_class,
                                                                                                 t.string_value);
@@ -756,20 +756,20 @@ int parse_param_value() {
 int parse_call_assign() {
         if (t.type == ID || t.type == SPECIAL_ID) {
                 call_function_name = t.string_value;
-                symbol_table_item_t *var = NULL;
-                if (is_second_pass) {
-                        if (strchr(function_variable.id_name, '.') != NULL) {
-                                var = get_symbol_table_special_id_item(function_variable.id_name);
-                        } else {
 
-                                symbol_table_item_t *function = get_symbol_table_class_item(current_class,
-                                                                                            current_function.id_name);
-                                var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
-                                if (var == NULL) {
-                                        var = get_symbol_table_class_item(current_class, function_variable.id_name);
-                                }
+                symbol_table_item_t *var = NULL;
+                if (strchr(function_variable.id_name, '.') != NULL) {
+                        var = get_symbol_table_special_id_item(function_variable.id_name);
+                } else {
+
+                        symbol_table_item_t *function = get_symbol_table_class_item(current_class,
+                                                                                    current_function.id_name);
+                        var = get_symbol_table_function_item(function->function.symbol_table, function_variable.id_name);
+                        if (var == NULL) {
+                                var = get_symbol_table_class_item(current_class, function_variable.id_name);
                         }
                 }
+
                 get_token();
                 if (t.type == LEFT_ROUNDED_BRACKET) {
                         if (is_second_pass) {
@@ -805,6 +805,13 @@ int parse_call_assign() {
                                 }
                         }
                 } else if (t.type == ASSIGN) {
+                        if (is_first_pass) {
+                                if (var == NULL && strchr(function_variable.id_name, '.') == NULL) {
+                                        fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
+                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                }
+                        }
+
                         if (is_second_pass) {
                                 if (var->is_function) {
                                         fprintf(stderr, "Can\'t assign value to function \'%s\'\n", call_function_name);
