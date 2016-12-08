@@ -806,9 +806,14 @@ int parse_call_assign() {
                         }
                 } else if (t.type == ASSIGN) {
                         if (is_first_pass) {
-                                if (var == NULL && strchr(function_variable.id_name, '.') == NULL) {
-                                        fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
-                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                if (var == NULL) {
+                                        if (strchr(function_variable.id_name, '.') == NULL) {
+                                                fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
+                                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
+                                        } else {
+                                                fprintf(stderr, "Variable \'%s\' in function \'%s\' is not initialized.\n", function_variable.id_name, current_function.id_name);
+                                                exit(RUN_UNINITIALIZED_VARIABLE_ERROR);
+                                        }
                                 }
                         }
 
