@@ -290,25 +290,9 @@ int get_next_token(token_t * t) {
                         if (isdigit(c)) {
                                 if (octal_number_length < 3) {
                                         int digit = c - '0';
-                                        switch (octal_number_length) {
-                                        case 0:
-                                                if (digit > 3) {
-                                                        ungetc(c, file);
-                                                        return save_token(t, LEXICAL_ERROR, NULL);
-                                                }
-                                                break;
-                                        case 1:
-                                                if (digit > 7) {
-                                                        ungetc(c, file);
-                                                        return save_token(t, LEXICAL_ERROR, NULL);
-                                                }
-                                                break;
-                                        case 2:
-                                                if (digit == 0 || digit > 7) {
-                                                        ungetc(c, file);
-                                                        return save_token(t, LEXICAL_ERROR, NULL);
-                                                }
-                                                break;
+                                        if (digit > 7) {
+                                                ungetc(c, file);
+                                                return save_token(t, LEXICAL_ERROR, NULL);
                                         }
 
                                         octal_escape[octal_number_length] = c;
@@ -316,10 +300,15 @@ int get_next_token(token_t * t) {
                                         if (octal_number_length == 3) {
                                                 octal_escape[octal_number_length] = '\0';
                                                 int octal_char = strtol(octal_escape, NULL, 8);
-                                                append_char(&s, octal_char);
-                                                octal_number_length = 0;
-                                                octal_escape[octal_number_length] = '\0';
-                                                state = LITERAL;
+                                                if (octal_char >= 1 && octal_char <= 377) {
+                                                        append_char(&s, octal_char);
+                                                        octal_number_length = 0;
+                                                        octal_escape[octal_number_length] = '\0';
+                                                        state = LITERAL;
+                                                } else {
+                                                        ungetc(c, file);
+                                                        return save_token(t, LEXICAL_ERROR, NULL);
+                                                }
                                         }
                                 }
                         } else if (c == '"' || c == 'n' || c == 't' || c == '\\') {

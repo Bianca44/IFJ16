@@ -1,6 +1,6 @@
 class Main {
 static void run() {
         int a;
-        a = ;
+        String b = "fwf\287";
     }
 }
