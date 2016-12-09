@@ -1388,7 +1388,7 @@ int parse_method_declaration() {
 int parse_value() {
         if (t.type == ASSIGN) {
                 get_token();
-                if (t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID
+                if (t.type == SEMICOLON || t.type == LEFT_ROUNDED_BRACKET || t.type == NEG || t.type == ID
                     || t.type == SPECIAL_ID || t.type == INT_LITERAL || t.type == DOUBLE_LITERAL || t.type == STRING_LITERAL
                     || t.type == TRUE || t.type == FALSE) {
                         if (parse_expression(true)) {

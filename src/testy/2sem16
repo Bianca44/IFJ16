@@ -1,0 +1,10 @@
+class Main
+{	
+	static void run()
+	{	
+		double argument = 9;
+		int find = ifj16.find( "tady nic neni", argument);
+		ifj16.print(find);
+	}
+}
+

@@ -1,0 +1,15 @@
+class Main
+{
+	static int fun()
+	{
+		int a = 5;
+		return 5;
+	}
+	
+	static void run()
+	{	
+		fun(99);
+	}
+	
+}
+

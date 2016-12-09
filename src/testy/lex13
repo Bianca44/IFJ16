@@ -1,0 +1,8 @@
+class Main
+{
+	static void run()
+	{
+		"konec literálu
+		na novém řádku"
+	}
+}

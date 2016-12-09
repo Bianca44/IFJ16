@@ -1,0 +1,7 @@
+class Main
+{
+	static void run()
+	{
+		"Neplatná sekvence \41a"
+	}
+}

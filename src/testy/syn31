@@ -1,0 +1,10 @@
+class Main
+{
+  static void run()
+  {
+    fun(x y);
+  }
+  static int fun(int a, int b)
+  {
+  }
+}

@@ -1,0 +1,33 @@
+class Main
+{	
+	static void run()
+	{	
+		int a = 0;
+		if(a > "string")
+		{
+			ifj16.print("a je větší než nula\n");
+			if(a > 1)
+			{
+				ifj16.print("a je vetší než jedna\n");
+				if(a > 2)
+				{
+					ifj16.print("a je vetší než dva\n");
+				}
+				else
+				{
+					ifj16.print("a je menší než dva\n");
+				}
+			}
+			else
+			{
+				ifj16.print("a je menší než jedna\n");
+			}
+		}
+		else
+		{
+			ifj16.print("a je menší než 0\n");
+		}
+		ifj16.print("KONEC\n");
+	}
+}
+
