@@ -805,13 +805,6 @@ int parse_call_assign() {
                                 }
                         }
                 } else if (t.type == ASSIGN) {
-                        if (is_first_pass) {
-                                if (var == NULL && strchr(function_variable.id_name, '.') == NULL) {
-                                        fprintf(stderr, "Local variable \'%s\' in function \'%s\' is not declared locally or globally.\n", function_variable.id_name, current_function.id_name);
-                                        exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
-                                }
-                        }
-
                         if (is_second_pass) {
                                 if (var->is_function) {
                                         fprintf(stderr, "Can\'t assign value to function \'%s\'\n", call_function_name);
