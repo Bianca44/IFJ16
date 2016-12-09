@@ -1,5 +1,5 @@
 class Main {
-    static void run() {
+static void run() {
         int a;
         a = ;
     }

@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
         FILE *source_file = init_scanner(argv[1]);
         if (source_file == NULL) {
-                fprintf(stderr, "Wrong path, file does not exists.\n");
+                fprintf(stderr, "Wrong path, file does not exist.\n");
                 return INTERNAL_INTERPRET_ERROR;
         }
 
@@ -35,8 +35,6 @@ int main(int argc, char *argv[]) {
 
         tList inst_tape;
         InitList(&inst_tape, dispose_inst);
-
-
 
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
