@@ -1,6 +1,5 @@
 class Main {
-static void run() {
-        int a;
-        String b = "\28";
+    static void run() {
+        String invalid_es = "fwf\400";
     }
 }

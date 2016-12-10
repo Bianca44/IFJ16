@@ -299,9 +299,10 @@ int get_next_token(token_t * t) {
                                         octal_number_length++;
                                         if (octal_number_length == 3) {
                                                 octal_escape[octal_number_length] = '\0';
-                                                int octal_char = strtol(octal_escape, NULL, 8);
-                                                if (octal_char >= 1 && octal_char <= 377) {
-                                                        append_char(&s, octal_char);
+                                                int octal_num = atoi(octal_escape);
+                                                if (octal_num >= 1 && octal_num <= 377) {
+                                                        int c = strtol(octal_escape, NULL, 8);
+                                                        append_char(&s, c);
                                                         octal_number_length = 0;
                                                         octal_escape[octal_number_length] = '\0';
                                                         state = LITERAL;
