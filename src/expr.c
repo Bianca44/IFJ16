@@ -1024,7 +1024,7 @@ int init_item(PStack * P, token_t * t) {
         symbol_table_item_t *item;
 
         switch (t->type) {
-
+        //variable initialization
         case ID:
                 /* id needs to be searched in the symbol table of function or class*/
                 if (current_function.id_name != NULL) {
@@ -1032,7 +1032,7 @@ int init_item(PStack * P, token_t * t) {
                         symbol_table_t *function = get_symbol_table_for_function(current_class,
                                                                                  current_function.id_name);
                         d_print("Current function is:%s\n", current_function.id_name);
-                        d_print("premenna %s \n", t->string_value);
+                        d_print("variable %s \n", t->string_value);
                         item = get_symbol_table_function_item(function, t->string_value);
                         /*we are using variable declared in class*/
                         if (item == NULL) {
@@ -1142,7 +1142,7 @@ int init_item(PStack * P, token_t * t) {
 
                 break;
 
-
+        //initialization of constants
         case INT_LITERAL:
 
                 push_item->value.i = t->int_value;
@@ -1257,7 +1257,7 @@ int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr
         PSPush(P, P_ENDMARK);
 
         expr_buffer_position = 0;
-        d_print("in PSO %d:\n", buffer->length);
+        d_print("in PSA %d:\n", buffer->length);
 
         t = get_next_token_psa(buffer);
         do {
@@ -1299,17 +1299,17 @@ int get_psa(token_buffer_t * buffer, symbol_table_item_t * st_item, tVar ** expr
         st_item->variable = *P->top->expr;
         st_item->variable.data_type = P->top->value.data_type;
         *expr_result = P->top->expr;
-
+        //check for ifj16print function
         if (call_function_name != NULL && strcmp(call_function_name, "ifj16.print") == 0) {
                 check_expr_ifj_print(buffer, P->top->value.data_type);
         }
 
-        d_print("TOP (dollar) term je : %d\n", PSTopTerm(P));
-        d_print("TOP term je : %d\n", PSTopTermPtr(P)->RPtr->term);
+        d_print("TOP (dollar) term is : %d\n", PSTopTerm(P));
+        d_print("TOP term is : %d\n", PSTopTermPtr(P)->RPtr->term);
         if (PSTopTermPtr(P)->RPtr->RPtr == NULL) {
-                d_message("Uspech\n");
+                d_message("Success\n");
         }
-        d_message("Na konci:\n");
+        d_message("In the end:\n");
         PSPrint(P);
         d_print("Data type of result is:%d\n", P->top->value.data_type);
         psa_result = P->top->value.data_type;
