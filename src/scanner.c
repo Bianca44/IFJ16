@@ -15,9 +15,10 @@
 #include "parser.h"
 #include "memory_constants.h"
 
-
+/* Linked list of constants in an interpreted code */
 extern constant_t *mem_constants;
 
+/* Source file */
 FILE *file;
 
 /* List of keywords */
@@ -25,7 +26,7 @@ char *keywords[KEYWORDS_COUNT] = { "boolean", "break", "class", "continue", "do"
                                    "for", "if", "int", "return", "String", "static", "true", "void", "while"};
 
 
-/*Saves the token. Frees the attr part in case we do not need it */
+/* Saves the token. Frees the attr part in case we do not need it */
 int save_token(token_t * t, int type, string_t * attr) {
         t->type = type;
         if (attr != NULL) {

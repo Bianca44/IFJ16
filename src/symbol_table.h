@@ -93,13 +93,16 @@ symbol_table_item_t *insert_tmp_variable_symbol_table_function(char
                                                                *function_name, int data_type);
 tList *create_function_instr_tape();
 
+/* Jump stack item */
 typedef struct js_item {
         tElemPtr data;
         struct js_item *next;
 } js_item;
 
+/* Head of jump stack */
 js_item *head;
 
+/* Jump stack control functions */
 void js_init();
 void js_push(tElemPtr instr);
 tElemPtr js_top();

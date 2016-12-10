@@ -17,7 +17,10 @@
 #include "parser.h"
 #include "memory_constants.h"
 
+/* List of all classes and their symbol tables */
 symbol_table_t *class_list;
+
+/* Current class name */
 char *current_class;
 
 /* Frees the class list table */

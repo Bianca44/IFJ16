@@ -19,23 +19,40 @@
 #include "error_codes.h"
 #include "debug.h"
 
+/* Function params counter, for semantic controls */
 int params_counter = 0;
+
+/* Whether in first or second pass */
 bool is_first_pass = true;
 bool is_second_pass = false;
+
+/* Whether function has return, for semantic controls */
 bool has_function_return = false;
+
+/* Whether in static variable declarion, for expression processing */
 bool is_static_variable_declaration = false;
+
+/* Whether to skip expression precedence analysis of expression, mainly for first pass */
 bool skip_precedence_analysis = false;
 
+/* Linked list of constants in an interpreted code */
 constant_t *mem_constants = NULL;
-tList *global_inst_tape;
 
+/* Global instruction tape */
+tList *global_inst_tape;
+/* Iinstruction tape of current function */
 tList *function_inst_tape;
+
+/* Loaded token */
 token_t t;
+
+/* Global token buffer for second pass */
 token_buffer_t global_token_buffer;
 
 #define PARSE_ERROR 0
 #define PARSED_OK 1
 
+/* Needed for semantic controls */
 string_t param_data_types;
 string_t local_vars_data_types;
 symbol_table_item_t current_variable;
@@ -43,16 +60,19 @@ symbol_table_item_t function_variable;
 symbol_table_item_t current_function;
 symbol_table_item_t expr_result;
 
-
+/* Result of expression processing */
 tVar *expr_var_result;
 
+/* First, second param to be function called with */
 tVar *first_param;
 tVar *second_param;
 
+/* Current class/function name */
 char *current_class;
 char *current_function_name;
 char *call_function_name;
 
+/* Source file */
 extern FILE *file;
 
 
@@ -258,7 +278,7 @@ int parse_expression(bool ends_semicolon) {
                 init_token_buffer(&tb);
         }
 
-        /* Parse expresions */
+        /* Parse expressions */
         while (1) {
                 if (ends_semicolon) {
                         if (t.type == SEMICOLON)
@@ -1683,7 +1703,7 @@ void add_builtin_functions() {
         insert_function_symbol_table("readString", STRING, 0, 0, NULL, NULL, NULL);
 }
 
-/* Parse input file according to the created rules */
+/* Parses input file according to LL gramatic rules */
 int parse(tList * inst_tape) {
         global_inst_tape = inst_tape;
 
