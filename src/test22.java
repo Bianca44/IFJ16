@@ -1,10 +1,11 @@
 class Main
 {
 
-    static int Main;
+    static String Main;
 	static void run()
 	{
-		Main.Main = _Main;
+		int a = _Main();
+        ifj16.print(a+Main);
 	}
 
     static int _Main() {
