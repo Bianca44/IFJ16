@@ -1,11 +1,14 @@
+/*
+		 * a je double, tj. 5 / a je double, tj. snažíme se do int uložit
+		 * hodnotu double
+		 */
 class Main
 {
 
     static String Main;
 	static void run()
 	{
-		int a = _Main();
-        ifj16.print(a+Main);
+
 	}
 
     static int _Main() {

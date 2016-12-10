@@ -367,6 +367,8 @@ int get_next_token(token_t * t) {
                 case BLOCK_COMMENT_END:
                         if (c == '/') {
                                 state = SPACE;
+                        } else {
+                                state = COMMENT;
                         }
                         break;
 
