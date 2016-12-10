@@ -88,7 +88,6 @@ double read_double() {
         while (1) {
                 c = getchar();
                 if (c == '\n' || c == EOF) {
-
                         if (s.length == 0 || state > 0) {
                                 free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
@@ -156,7 +155,7 @@ double read_double() {
                 case 4:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = 6;
+                                state = 0;
                         } else if (c == '+' || c == '-') {
                                 append_char(&s, c);
                                 state = 5;
@@ -171,7 +170,7 @@ double read_double() {
                 case 5:
                         if (isdigit(c)) {
                                 append_char(&s, c);
-                                state = 6;
+                                state = 0;
                         } else {
                                 free_string(&s);
                                 fprintf(stderr, "Wrongly entered double from input.\n");
@@ -179,17 +178,6 @@ double read_double() {
                         }
 
                         break;
-
-                case 6:
-                        if (isdigit(c)) {
-                                append_char(&s, c);
-                        } else {
-                                free_string(&s);
-                                fprintf(stderr, "Wrongly entered double from input.\n");
-                                exit(RUN_INPUT_ERROR);
-                        }
-                        break;
-
                 }
         }
 }

@@ -8,7 +8,11 @@ class Main
     static String Main;
 	static void run()
 	{
+        double a = ifj16.readDouble();
+        String s = a +"";
+        String f = ifj16.sort(s);
 
+        ifj16.print(f);
 	}
 
     static int _Main() {
