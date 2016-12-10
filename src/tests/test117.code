@@ -4,7 +4,7 @@ class Main
     static int Main;
 	static void run()
 	{
-		Main.Main = _Main;
+		Main.Main = Main._Main;
 	}
 
     static int _Main() {

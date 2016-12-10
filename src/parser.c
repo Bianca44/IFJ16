@@ -249,6 +249,9 @@ int parse_expression(bool ends_semicolon) {
                                                 }
                                         }
                                 }
+                        } else {
+                                fprintf(stderr, "Expression: Variable %s is declared as function.\n", call_function_name);
+                                exit(SEMANTIC_ANALYSIS_PROGRAM_ERROR);
                         }
                 }
         }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TESTS_COUNT=116
+TESTS_COUNT=117
 
 cd ./tests
 
