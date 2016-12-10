@@ -146,10 +146,10 @@ void interpret_tac(tList *inst_tape){
         d_message("processing new instruction tape");
         First_M(inst_tape); //setting active instruction to first instruction in instruction tape
         d_message("beginning of tape");
-        register tVar *op1; //first operand
-        register tVar *op2; //second operand
-        register tVar*result; //result
-        register tInst * inst; //operator - pointer to function
+        tVar *op1; //first operand
+        tVar *op2; //second operand
+        tVar*result; //result
+        tInst * inst; //operator - pointer to function
         //going through instruction tape
         while(Active_M(inst_tape)) {
                 Copy_M(inst_tape, inst); //gets active instruction from instruction tape
