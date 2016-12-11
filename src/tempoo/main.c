@@ -17,30 +17,32 @@
 #include "interpret.h"
 #include "builtin.h"
 
-extern constant_t *mem_constants;
-
 int main(int argc, char *argv[]) {
         if (argc != 2) {
-                fprintf(stderr, "Wrong arguments. Run as: ./main file.\n");
+                fprintf(stderr, "Wrong arguments. Run as: ./ifj16 file.\n");
                 return INTERNAL_INTERPRET_ERROR;
         }
 
+        // init scanner
         FILE *source_file = init_scanner(argv[1]);
         if (source_file == NULL) {
                 fprintf(stderr, "Wrong path, file does not exist.\n");
                 return INTERNAL_INTERPRET_ERROR;
         }
 
+        // cleanup allocated memory after exit
         atexit(cleanup_resources);
 
         tList inst_tape;
         InitList(&inst_tape, dispose_inst);
 
+        // first pass
         if (parse(&inst_tape) == SYNTACTIC_ANALYSIS_ERROR) {
                 fprintf(stderr, "Syntactic analysis failed.\n");
                 exit(SYNTACTIC_ANALYSIS_ERROR);
         }
 
+        // second pass
         parse(&inst_tape);
 
         symbol_table_item_t *run_method = get_symbol_table_class_item("Main", "run");
@@ -51,6 +53,8 @@ int main(int argc, char *argv[]) {
 
         processed_tape = &inst_tape;
         init_frame_stack(&frame_stack);
+
+        // start interpret
         interpret_tac(&inst_tape);
 
         exit(INTERPRET_OK);

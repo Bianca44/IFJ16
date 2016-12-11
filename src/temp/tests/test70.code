@@ -1,9 +1,0 @@
-//ok
-class Main {
-	static void run () {
-		ifj16.print("Tabulator je takto:\tdlhy a novy riadok pride teraz\na pokracuje lomitko\\\t a cislo \071 teraz zase novy riadok\na nasledne 5 lomitok \\\\\\\\\\\n");		
-	}
-}
-
-
-		

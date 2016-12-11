@@ -176,7 +176,7 @@ symbol_table_item_t *insert_function_symbol_table(char *id_name, int data_type,
         p->function.params_local_vars_count = params_count + local_vars_count;
         p->function.param_data_types = param_data_types;
         if (local_vars_data_types == NULL) {
-            p->function.local_vars_data_types = copy_string("");
+                p->function.local_vars_data_types = copy_string("");
         }
         p->function.symbol_table = symbol_table;
         p->is_function = true;
@@ -396,12 +396,12 @@ void free_class_list() {
         ht_free(class_list);
 }
 
-/* Stack for jumps initialization*/
+/* Stack for jumps initialization */
 void js_init() {
         head = NULL;
 }
 
-/* Pushes instruction into the jumop stack */
+/* Pushes instruction into the jump stack */
 void js_push(tElemPtr instr) {
         js_item *p = malloc(sizeof(js_item));
         if (p == NULL) {
@@ -419,6 +419,8 @@ tElemPtr js_top() {
 
 /* Pops the top jump stack item */
 void js_pop() {
+        if (head == NULL)
+                return;
         js_item *tmp = head;
         head = head->next;
         free(tmp);
