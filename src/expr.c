@@ -23,31 +23,37 @@
 #define INC_DEC_ON 0
 #define SIZE 18
 
-
+/*name of current class*/
 extern char *current_class;
+/*symbol table of current function*/
 extern symbol_table_item_t current_function;
+/*global instruction tape*/
 extern tList *global_inst_tape;
+/*list of constants*/
 extern constant_t *mem_constants;
+/*name of called function*/
 extern char * call_function_name;
-
+/*check for ifj16print function*/
 bool expr_in_function;
 
-
+/*variable name*/
 char * expr_var_name;
-
+/*length of expression*/
 int expr_len;
 
-
+/*token buffer for precedence syntactic analysis*/
 token_buffer_t *expr_token_buffer;
 
-
+/*result of expression*/
 tVar *top_expr_variable;
-
+/*actual instruction tape*/
 tList *work_tape;
+/*operands*/
 tVar *op_1;
 tVar *op_2;
 tVar *tmp;
-tVar *var = NULL;
+tVar *var;
+/*precedence table*/
 char precedence_table[SIZE][SIZE] = {
 
 /*token   +   -   *   /   (   )    <    >    <=  >=    ==   !=  &&    ||  id    lit  $   !   stack top   */
@@ -160,6 +166,7 @@ token_t *get_next_token_psa(token_buffer_t * token_buf) {
 /* 3-address code instructions are inserted on the current instruction tape*/
 int choose_rule(PStack * P) {
 
+        /*top terminal on stack*/
         PStack_item *top_item = PSTopTermPtr(P);
         PStack_item result_item;
         result_item.expr = NULL;
@@ -175,7 +182,7 @@ int choose_rule(PStack * P) {
 
                 d_print("Data type je: %d\n", top_item->value.data_type);
                 switch (top_item->value.data_type) {
-
+                /*check datatype*/
                 case INT:
                         result_item.value.data_type = INT;
                         d_int(top_item->expr->i);
@@ -210,7 +217,7 @@ int choose_rule(PStack * P) {
 
                 d_print("Data type je: %d\n", top_item->value.data_type);
                 switch (top_item->value.data_type) {
-
+                /*check datatype*/
                 case INT:
                         result_item.value.data_type = INT;
                         result_item.expr = top_item->expr;
@@ -1001,10 +1008,11 @@ int choose_rule(PStack * P) {
                 fprintf(stderr, "Unexpected expression.\n");
                 expr_exit(SYNTACTIC_ANALYSIS_ERROR);
         }
-        /*reducing nonterminals from stack*/
+        /*reducing actual expression from stack*/
         while (P->top->term != P_HANDLE) {
                 PSPop(P);
         }
+        /*we need to pop handle*/
         PSPop(P);
         /*push new item (result of previous rule) on top of a stack*/
         PSPush(P, P_EXPR);
