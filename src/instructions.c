@@ -16,13 +16,15 @@
 #include "list.h"
 
 #define UNUSED(x) (void)(x)
-//size of array for converting other datatypes to string
+//size of array that is used for converting other datatypes to string
 #define LOAD_BUFFER 256
-
+/* counter - used as offset when pushing parameters to frame */
 int push_counter;
-constant_t * tape_ref;
+/* used for storing labels */
 constant_t * labels;
+/* stack of frames */
 tFrameStack frame_stack;
+
 /* freeing instruction */
 void dispose_inst(void * inst){
     free((tInst *)(inst));
@@ -800,7 +802,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
         /* ASSOCIATED WITH FUNCTIONS */
         case I_INIT_FRAME:
             /* converting to tVar due to unified access */
-            new_inst->op1 = insert_special_const(&tape_ref, op1);
+            new_inst->op1 = insert_special_const(&labels, op1);
             new_inst->f = i_init_frame;
 			break;
         case I_PUSH_PARAM:
@@ -808,7 +810,7 @@ tInst * generate(tInstId instruction, void *op1, void *op2, void *result){
 			break;
         case I_F_CALL:
             /* converting to tVAR due to unified access */
-            new_inst->op1 = insert_special_const(&tape_ref, op1);
+            new_inst->op1 = insert_special_const(&labels, op1);
             new_inst->f = i_f_call;
 			break;
         case I_RETURN:

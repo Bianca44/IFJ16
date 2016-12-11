@@ -85,7 +85,6 @@ void cleanup_resources() {
         js_free();
         free_constants(&mem_constants);
         free_constants(&labels);
-        free_constants(&tape_ref);
         free_class_list();
         DisposeList(global_inst_tape);
         dispose_frame_buffer();

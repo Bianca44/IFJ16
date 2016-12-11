@@ -13,11 +13,13 @@
 #include "memory_constants.h"
 #include "interpret.h"
 
+/* instruction function */
 typedef void tInst_fun(tVar *op1, tVar *op2, tVar *result);
 
+/* used for storing labels */
 extern constant_t * labels;
-extern constant_t * tape_ref;
 
+/* instruction */
 typedef struct tInst{
     tInst_fun *f;
     tVar *op1;
@@ -25,6 +27,7 @@ typedef struct tInst{
     tVar *result;
 } tInst;
 
+/* dispose function for instruction*/
 void dispose_inst(void *);
 
 typedef enum instructions {

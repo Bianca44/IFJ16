@@ -12,9 +12,8 @@
 #include "debug.h"
 #include "error_codes.h"
 
-
-#define pr_er \
-        fprintf(stderr, "Using uninitialized variable\n") \
+// prints error message
+#define pr_er fprintf(stderr, "Using uninitialized variable\n")
 //this makto initialize variable
 #define initialize(var) (var != NULL) ? (var->initialized = true, var) : (NULL)
 //checks if the operand is initialized
@@ -35,11 +34,14 @@
 //instruction tape that is actually being processed
 tList * processed_tape;
 
+// buffer used for frames
 tFrame * frame_buffer[FRAME_BUFFER_SIZE];
+// is used to store size of frame buffer - number of frames in frame buffer
 int frame_buf_size; 
-
+// buffer for stack
 tFSElem stack_buffer[STACK_BUFFER_SIZE];
-int stack_buf_size;
+// size of stack - number of frames that are on stack
+int stack_size;
 
 //frame initialization
 tFrame * init_frame(unsigned size){
@@ -94,16 +96,16 @@ tFrame * top_frame(tFrameStack *stack){
 void push_frame(tFrameStack *stack, tFrame * frame){
 
         tFSElem *ptr;
-        if(stack_buf_size >= STACK_BUFFER_SIZE){
+        if(stack_size >= STACK_BUFFER_SIZE){
             if((ptr = malloc(sizeof(tFSElem))) == NULL) {
                     exit(INTERNAL_INTERPRET_ERROR);
             }
         }
         else{
             //preallocated buffer
-            ptr = &stack_buffer[stack_buf_size];
+            ptr = &stack_buffer[stack_size];
         }
-        stack_buf_size++;
+        stack_size++;
         ptr->frame = frame;
         ptr->next = stack->top;
         stack->top = ptr;
@@ -135,9 +137,9 @@ void pop_frame(tFrameStack *stack){
                     frame_buffer[0] = tmp->frame;
                 }
                 //if stack size is greater than max buffer size, item was allocated on heap so we need to free it
-                if(stack_buf_size > STACK_BUFFER_SIZE)
+                if(stack_size > STACK_BUFFER_SIZE)
                     free(tmp);
-                stack_buf_size--;
+                stack_size--;
         }
 }
 
@@ -148,7 +150,7 @@ void interpret_tac(tList *inst_tape){
         d_message("beginning of tape");
         tVar *op1; //first operand
         tVar *op2; //second operand
-        tVar*result; //result
+        tVar *result; //result
         tInst * inst; //operator - pointer to function
         //going through instruction tape
         while(Active_M(inst_tape)) {
