@@ -146,12 +146,12 @@ bool is_top_terminal(int term) {
 void PSPrint(PStack * P) {
 
     if (P->first == NULL) {
-	printf("Je null");
+	printf("NULL");
     }
     
     PStack_item *tmp = P->top;
     while (tmp != NULL) {
-	d_print("Prvok zasobnika je: %s\n", prec_names[tmp->term]);
+	d_print("Item is: %s\n", prec_names[tmp->term]);
 	tmp = tmp->LPtr;
     }
     return;

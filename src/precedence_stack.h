@@ -46,6 +46,7 @@ typedef struct PStack_item {
     /* type of the terminal */
     enum Terminals term;
     tVar value;
+    /*pointer to variable which holds the value*/
     tVar *expr;
     bool is_constant;
 } PStack_item;
