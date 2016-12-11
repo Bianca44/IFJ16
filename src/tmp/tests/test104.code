@@ -1,7 +1,0 @@
-class Main {
-	static void run() {
-		int 8 = a;
-		//8 = int a;
-		ifj16.print(a);
-	}
-}

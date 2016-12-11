@@ -1,5 +1,0 @@
-class main {
-	static void run() {
-		int a = 5;
-	}
-}

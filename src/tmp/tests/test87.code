@@ -1,5 +1,0 @@
-cla/**/ss Main {				//toto je error
-	static /**/void /**/ run (/**/) {
-		int /**/ a = /**/ 6; 	// toto je ok
-	} /**/						// toto je ok
-} /**/							// toto je ok
