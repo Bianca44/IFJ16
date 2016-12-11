@@ -296,7 +296,6 @@ int find_bma(char *p, char *t) {
     int char_jump[ASCII_SIZE];
     int match_jump[m];
 
-    /*  */
     compute_char_jump(p, char_jump);
     compute_match_jump(p, match_jump);
 
