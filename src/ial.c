@@ -227,6 +227,7 @@ void partition(char *str, int left, int right, int indexes[]) {
     indexes[1] = j;
 }
 
+/* First heuristics of BMA */
 void compute_char_jump(char *p, int char_jump[]) {
 
     int length_p = strlen(p) - 1;
@@ -240,6 +241,7 @@ void compute_char_jump(char *p, int char_jump[]) {
     }
 }
 
+/* Second heuristics of BMA */
 void compute_match_jump(char *p, int match_jump[]) {
 
     int length_p = strlen(p);
@@ -248,6 +250,7 @@ void compute_match_jump(char *p, int match_jump[]) {
     int qq = 0;
     int backup[ASCII_SIZE];
 
+    /* set match_jump index to 2 * length of pattern - current letter */
     for (k = 0; k < length_p + 1; k++) {
 	match_jump[k] = 2 * length_p - k;
     }
@@ -258,52 +261,64 @@ void compute_match_jump(char *p, int match_jump[]) {
     while (k > 0) {
 	backup[k] = q;
 	while (q <= length_p && p[k - 1] != p[q - 1]) {
+	    /* make match_jump smaller value between match_jump[q] and length of patter - k */
 	    match_jump[q] = MIN(match_jump[q], length_p - k);
 	    q = backup[q];
 	}
 	k--;
 	q--;
     }
-
+    /* make values in match_jump to smaller value between this and length of pattern + q - k */
     for (k = 0; k < q + 1; k++) {
 	match_jump[k] = MIN(match_jump[k], length_p + q - k);
     }
 
+    /* set to qq the load value from backup */
     qq = backup[q];
 
+    /* while part of pattern is smaller than length of pattern */
     while (q <= length_p) {
 	while (q <= qq) {
+	    /* make match_jump  smaller value between this and qq - q + length of pattern */
 	    match_jump[q] = MIN(match_jump[q], qq - q + length_p);
 	    q++;
 	}
+	/* set to qq the load value from backup */
 	qq = backup[qq];
     }
 }
 
+/* BMA to find the pattern in the text. */
 int find_bma(char *p, char *t) {
-    /* BMA */
     int m = strlen(p);
     int n = strlen(t);
     int j = m;
     int char_jump[ASCII_SIZE];
     int match_jump[m];
 
+    /*  */
     compute_char_jump(p, char_jump);
     compute_match_jump(p, match_jump);
 
     while (j <= n && m > 0) {
+	/* if text and pattern are same */
 	if (t[j - 1] == p[m - 1]) {
+	    /* back one position */
 	    j--;
 	    m--;
 	} else {
+	    /* text and pattern are not same, jump about bigger value of the two */
 	    j = j + MAX(char_jump[(int) t[j]], match_jump[m]);
 	    m = strlen(p);
 	}
     }
+
+    /* java indexes from 0 */
     if (m == 0) {
-	/* java indexes from 0 */
-	return j;
+	/*find position*/
+	return j; 
     } else {
+	/* not find position */
 	return -1;
     }
 }
