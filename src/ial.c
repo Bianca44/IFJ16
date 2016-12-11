@@ -288,7 +288,7 @@ void compute_match_jump(char *p, int match_jump[]) {
     }
 }
 
-/* BMA to find the pattern in the text. */
+/* BMA to find the pattern in the text */
 int find_bma(char *p, char *t) {
     int m = strlen(p);
     int n = strlen(t);
@@ -314,7 +314,7 @@ int find_bma(char *p, char *t) {
 
     /* java indexes from 0 */
     if (m == 0) {
-	/*find position*/
+	/* find position */
 	return j; 
     } else {
 	/* not find position */
