@@ -5,17 +5,12 @@
 class Main
 {
 
-    static String Main;
-	static void run()
-	{
-        double a = ifj16.readDouble();
-        String s = a +"";
-        String f = ifj16.sort(s);
+    static void kokot() {}
 
-        ifj16.print(f);
-	}
-
-    static int _Main() {
-        return 2;
-    }
+static void run() {
+int a;
+if(false){
+a = kokot();
+}
+}
 }

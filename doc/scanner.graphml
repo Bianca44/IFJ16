@@ -2232,29 +2232,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e63" source="n34" target="n34">
-      <data key="d10">
-        <y:GenericEdge configuration="com.yworks.bpmn.Connection">
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="1405.9214461114047" y="569.3474442735192"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="delta"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="28.3515625" x="51.20647455109611" y="5.782498779481671">else<y:LabelModel>
-              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="0.9256535769233767" distanceToCenter="true" position="left" ratio="-19.243932130642854" segment="-1"/>
-            </y:ModelParameter>
-            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
-          <y:StyleProperties>
-            <y:Property class="com.yworks.yfiles.bpmn.view.BPMNTypeEnum" name="com.yworks.bpmn.type" value="CONNECTION_TYPE_SEQUENCE_FLOW"/>
-          </y:StyleProperties>
-        </y:GenericEdge>
-      </data>
-    </edge>
-    <edge id="e64" source="n1" target="n10">
+    <edge id="e63" source="n1" target="n10">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2274,7 +2252,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e65" source="n1" target="n1">
+    <edge id="e64" source="n1" target="n1">
       <data key="d10">
         <y:ArcEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2286,7 +2264,7 @@
         </y:ArcEdge>
       </data>
     </edge>
-    <edge id="e66" source="n1" target="n47">
+    <edge id="e65" source="n1" target="n47">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2303,7 +2281,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e67" source="n1" target="n46">
+    <edge id="e66" source="n1" target="n46">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2320,7 +2298,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e68" source="n1" target="n45">
+    <edge id="e67" source="n1" target="n45">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2337,7 +2315,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e69" source="n4" target="n48">
+    <edge id="e68" source="n4" target="n48">
       <data key="d10">
         <y:QuadCurveEdge straightness="0.1">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2354,7 +2332,7 @@
         </y:QuadCurveEdge>
       </data>
     </edge>
-    <edge id="e70" source="n48" target="n27">
+    <edge id="e69" source="n48" target="n27">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2374,7 +2352,7 @@
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e71" source="n48" target="n26">
+    <edge id="e70" source="n48" target="n26">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.bpmn.Connection">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2394,6 +2372,18 @@
         </y:GenericEdge>
       </data>
     </edge>
+    <edge id="e71" source="n48" target="n48">
+      <data key="d10">
+        <y:ArcEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="201.78634643554688" y="1009.9945678710938"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
+        </y:ArcEdge>
+      </data>
+    </edge>
     <edge id="e72" source="n48" target="n48">
       <data key="d10">
         <y:ArcEdge>
@@ -2407,18 +2397,6 @@
       </data>
     </edge>
     <edge id="e73" source="n48" target="n48">
-      <data key="d10">
-        <y:ArcEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="201.78634643554688" y="1009.9945678710938"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:Arc height="0.0" ratio="1.0" type="fixedRatio"/>
-        </y:ArcEdge>
-      </data>
-    </edge>
-    <edge id="e74" source="n48" target="n48">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2438,7 +2416,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e75" source="n50" target="n49">
+    <edge id="e74" source="n50" target="n49">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2448,7 +2426,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e76" source="n2" target="n50">
+    <edge id="e75" source="n2" target="n50">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2466,7 +2444,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e77" source="n50" target="n51">
+    <edge id="e76" source="n50" target="n51">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2484,7 +2462,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e78" source="n3" target="n14">
+    <edge id="e77" source="n3" target="n14">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2502,7 +2480,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e79" source="n13" target="n38">
+    <edge id="e78" source="n13" target="n38">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2518,6 +2496,26 @@
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e79" source="n34" target="n33">
+      <data key="d10">
+        <y:ArcEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="1432.079833984375" y="611.8480834960938"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="28.3515625" x="-0.8498622231600166" y="37.076957351411465">else<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:Arc height="-34.221168518066406" ratio="-0.7336449027061462" type="fixedRatio"/>
+        </y:ArcEdge>
       </data>
     </edge>
   </graph>
