@@ -196,6 +196,12 @@ char *read_string() {
         }
 }
 
+/* Return length of a string */
+
+int length(char *s) {
+    return strlen(s);
+}
+
 /* Compares two strings */
 int compare(char *s1, char *s2) {
         int comparison = strcmp(s1, s2);
