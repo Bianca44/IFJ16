@@ -1,5 +1,0 @@
-class Main {
-	static void run () {
-		String try = ifj16.print("blabla");		//skontrolovat ci hlasi spravny error
-	}
-}

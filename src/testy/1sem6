@@ -1,7 +1,0 @@
-class Main
-{
-	static void run()
-	{	
-		a = b + 3;	//nedefinované proměnné
-	}
-}

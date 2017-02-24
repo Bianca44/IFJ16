@@ -1,7 +1,0 @@
-class Main
-{
-	static void run()
-	{
-		_Pokus.42
-	}
-}

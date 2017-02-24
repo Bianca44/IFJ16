@@ -1,5 +1,0 @@
-class Main {
-    static void run() {
-        int a = ifj16.readInt();
-    }
-}

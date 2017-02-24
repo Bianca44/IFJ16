@@ -1,7 +1,0 @@
-class Main{
-    static void run(){
-
-        int i = ifj16.find("good", "o");
-        ifj16.print(i);
-    }
-}

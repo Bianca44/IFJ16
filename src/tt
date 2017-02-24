@@ -1,8 +1,0 @@
-class Main
-{
-    static void run()
-    {
-        //String input = "aa";
-        String output = ifj16.substr("aa", -2, 2);
-    }
-}

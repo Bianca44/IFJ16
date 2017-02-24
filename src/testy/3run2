@@ -1,9 +1,0 @@
-class Main
-{
-  static void run()
-  {
-    double a = 5;
-    double b = 0;
-    a = a / b;
-  }
-}

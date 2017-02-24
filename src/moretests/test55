@@ -1,9 +1,0 @@
-/* lexical analysis failed
-** ak tam das len jeden riadkovy komentar 
-** je to ok, ak uz pridas dalsi, hlasi chybu
-**/
-class Main {
-    static void run() {
-        int y = 2;
-    } 						//prvy komentar
-} 							//druhy komentar

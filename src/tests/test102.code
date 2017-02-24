@@ -1,6 +1,0 @@
-class Main {
-	static void run() {
-		String str = "Jeden\077 \121\074dva \ttri /*aaaa*/styri t\\ext.\n";
-		ifj16.print(str + 8 + "\n");
-	}
-}

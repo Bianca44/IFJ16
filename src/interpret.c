@@ -12,6 +12,8 @@
 #include "debug.h"
 #include "error_codes.h"
 
+#define likely(x)       __builtin_expect((x),1)
+
 // prints error message
 #define pr_er fprintf(stderr, "Using uninitialized variable\n")
 //this makto initialize variable
@@ -37,7 +39,7 @@ tList * processed_tape;
 // buffer used for frames
 tFrame * frame_buffer[FRAME_BUFFER_SIZE];
 // is used to store size of frame buffer - number of frames in frame buffer
-int frame_buf_size; 
+int frame_buf_size;
 // buffer for stack
 tFSElem stack_buffer[STACK_BUFFER_SIZE];
 // size of stack - number of frames that are on stack
@@ -88,7 +90,7 @@ void init_frame_stack(tFrameStack *stack){
         stack->top = NULL;
         stack->prepared = NULL;
 }
-//returns top frame 
+//returns top frame
 tFrame * top_frame(tFrameStack *stack){
         return stack->top->frame;
 }

@@ -1,7 +1,0 @@
-class Main
-{
-  static void run()
-  {
-    String substr = ifj16.substr("Ahoj", 10, 2);
-  }
-}

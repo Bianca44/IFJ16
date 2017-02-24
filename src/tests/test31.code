@@ -1,9 +1,0 @@
-class Main
-{
-    static void run()
-    {
-
-    	String h = "toto je moj string /*blablabla*/ so zanorenym komentarom"; //OK
-        ifj16.print(""+h);
-    }
-}
