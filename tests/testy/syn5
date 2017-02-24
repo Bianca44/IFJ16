@@ -1,0 +1,10 @@
+class Main
+{
+	static void run()
+	{
+		int a = 4;
+		if(a>5)
+		{}
+		//chybí else
+	}
+}

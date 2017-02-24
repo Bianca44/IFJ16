@@ -1,0 +1,9 @@
+class Main
+{	
+	static void run()
+	{	
+		int delka = ifj16.lenght(13);
+		ifj16.print(delka);
+	}
+}
+

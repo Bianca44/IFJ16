@@ -1,0 +1,24 @@
+<<<<<<< HEAD
+class Main {
+	static void run () {
+	
+	}
+}
+
+
+
+
+/*class Main {
+	static void run () {
+
+	}
+} */
+=======
+//OK
+
+class Main {
+	static void run () {
+
+	}
+}
+>>>>>>> d1c7ba26014a085ccc59b88abf2040c2a2b54aa5

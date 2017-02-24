@@ -1,0 +1,10 @@
+class Main
+{	
+	static void run()
+	{	
+		int a = 5;
+		String sorted = ifj16.sort(a);
+		ifj16.print(sorted);
+	}
+}
+

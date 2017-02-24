@@ -1,0 +1,18 @@
+/* znak v retazci moze byt zadany aj pomocou
+** oktalovej escape sekvencie '\ddd' kde ddd 
+** je cislo od 001 do 377
+** u nas to v prikaze
+** ifj16.print("\ddd"); 
+** funguje iba pre \O41, \042
+** \043, \044, \045, \046 a \047
+** pre ostatne kombinacie nie :)
+**/
+
+
+class Main {
+	static void run () {
+		ifj16.print("Najrajsie meno pod slnkom: \124\141\155\141\162\141" + "\n");
+		ifj16.print("Ake? ");
+		ifj16.print("\124\101\115\101\122\101 \041\041\041" + "\n");
+	}
+}

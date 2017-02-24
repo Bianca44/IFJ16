@@ -1,0 +1,7 @@
+class Main {
+    static void run () {
+        String text = "a\"text\"";
+        String sorted = ifj16.sort(text);
+        ifj16.print(sorted+"\n");
+    }
+}

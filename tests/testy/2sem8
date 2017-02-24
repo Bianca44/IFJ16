@@ -1,0 +1,12 @@
+class Main
+{	
+	static void run()
+	{	
+		double a = 5;
+		String c = "ahoj";
+		while( a != c )
+		{
+		}
+	}
+}
+

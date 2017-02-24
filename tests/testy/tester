@@ -1,0 +1,163 @@
+#!/bin/sh
+
+NAME=ifj16
+LEX=$(find ./testy -type f -name 'lex*' | wc -l)
+SYN=$(find ./testy -type f -name 'syn*' | wc -l)
+SEM1=$(find ./testy -type f -name '1sem*' | wc -l)
+SEM2=$(find ./testy -type f -name '2sem*' | wc -l)
+RUN1=$(find ./testy -type f -name '1run*' | wc -l)
+RUN2=$(find ./testy -type f -name '2run*' | wc -l)
+RUN3=$(find ./testy -type f -name '3run*' | wc -l)
+RUN4=$(find ./testy -type f -name '4run*' | wc -l)
+
+#Spuštění lexikálních testů
+echo "Lexikální analyzátor"
+echo "********************"
+
+for i in $( seq $LEX )
+do
+	./$NAME ./testy/lex$i >&- 2>&-
+	RETURN=$(echo $?)
+
+	if [ $RETURN -eq 1 ]; then 
+		printf "Test #%02d: OK\n" $i
+	else
+		printf "Test #%02d: Failed!\n" $i
+	fi
+done
+
+#Spuštění syntaktických testů
+echo "\nSyntaktický analyzátor"
+echo "**********************"
+
+for i in $( seq $SYN )
+do
+        ./$NAME ./testy/syn$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 2 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+#Spuštění sémantických testů
+echo "\nSémantický analyzátor-chyba 3"
+echo "*********************"
+
+for i in $( seq $SEM1 )
+do
+        ./$NAME ./testy/1sem$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 3 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+#Spuštění sémantických testů
+echo "\nSémantický analyzátor-chyba 4"
+echo "*********************"
+
+for i in $( seq $SEM2 )
+do
+        ./$NAME ./testy/2sem$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 4 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+#Spuštění testů na běhové chyby
+echo "\nBěhové chyby"
+echo "************"
+
+echo "Chyba načítání číselné hodnoty ze vstupu"
+for i in $( seq $RUN1 )
+do
+        ./$NAME ./testy/1run$i <testy/input >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 7 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+echo "\nPráce s neinicializovanou proměnou"
+for i in $( seq $RUN2 )
+do
+        ./$NAME ./testy/2run$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 8 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+echo "\nChyba dělení nulou"
+for i in $( seq $RUN3 )
+do
+        ./$NAME ./testy/3run$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 9 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+
+echo "\nOstatní běhové chyby"
+for i in $( seq $RUN4 )
+do
+        ./$NAME ./testy/4run$i >&- 2>&-
+        RETURN=$(echo $?)
+
+        if [ $RETURN -eq 10 ]; then 
+                printf "Test #%02d: OK\n" $i
+        else
+                printf "Test #%02d: Failed!\n" $i
+        fi
+done
+echo "\n"
+#Nepovedení otevření souboru
+./$NAME neexistujici >&- 2>&-
+RETURN=$(echo $?)
+
+if [ $RETURN -eq 99 ]; then 
+	echo "Otevření neexistujícího souboru: OK"
+else
+	echo "Otevření neexistujícího souboru: Failed!"
+fi
+
+#Moc parametrů
+./$NAME moc parametru >&- 2>&-
+RETURN=$(echo $?)
+
+if [ $RETURN -eq 99 ]; then 
+        echo "Moc vstupních parametrů: OK"
+else
+        echo "Moc vstupních parametrů: Failed!"
+fi
+
+#Málo parametrů
+./$NAME >&- 2>&-
+RETURN=$(echo $?)
+
+if [ $RETURN -eq 99 ]; then 
+        echo "Málo vstupních parametrů: OK"
+else
+        echo "Málo vstupních parametrů: Failed!"
+fi
+
+

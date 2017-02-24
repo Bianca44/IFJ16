@@ -1,0 +1,18 @@
+//ok
+class Main
+{
+    static void run()
+    {
+        ifj16.print("Zadaje slovo: ");
+        String prvy = ifj16.readString();
+
+        ifj16.print("Zadaje slovo: ");
+        String druhy = ifj16.readString();
+
+        int vysledok = ifj16.compare(prvy, druhy);
+
+        ifj16.print("Vysledok ? " + vysledok);
+
+
+    }
+}

@@ -1,0 +1,10 @@
+class Main
+{	
+	static void run()
+	{	
+		String text = "tady";
+		int comp = ifj16.compare( 99, text);
+		ifj16.print(comp);
+	}
+}
+

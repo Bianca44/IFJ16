@@ -1,0 +1,10 @@
+class Main()
+{
+  static void run()
+  {
+    if(a > 0)
+    {
+    else
+    {}
+  }
+}
