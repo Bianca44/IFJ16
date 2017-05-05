@@ -1,0 +1,25 @@
+Dobrý den,
+
+soutěžní týmy sice již znají své bodové ohodnocení, ale nejen oni jsou jistě zvědavy na výsledky rychlostní soutěže.
+
+Test rychlosti byl prováděn nad speciálně vytvořenou množinou testů. Skript měřil dobu, za kterou váš interpret tyto testy interpretuje. Kontrolovala se samozřejmě i správnost interpretace (tj. výstupy testovaných programů). Pokud byl výstup některého testu nekorektní (případně se počítal neúměrně dlouho; limit byl 150 s), tak byl projekt ze soutěže vyřazen. Níže je uveden seznam časů všech týmů, které testy úspěšně dokončily.
+
+vedoucí - body - varianta (čas [s])
+----------------------------------
+xbolva00 - 3,0 - hash (25,44)
+xcharv16 - 2,5 - hash (27,58)
+xsubaa00 - 2,0 - bvs (34,09)
+xkiral01 - 1,5 - hash (82,04)
+xmikfi00 - 1,0 - hash (102,29)
+xjudap00 - 0,5 - bvs (115,99)
+----------------------------------
+xurban66 -     - hash (140,24)
+xkolcu00 -     - hash (186,63)
+xsemri00 -     - hash (201,23)
+xricht25 -     - hash (330,87)
+
+
+Jak vidíte, tak nakonec bylo úspěšných pouze 10 týmů. Navíc jsme se rozhodli ocenit i 6. tým. Gratulujeme všem úspěšným týmům.
+Někoho by z výsledků mohlo napadnout, že měly týmy s variantou tabulky rozptýlených položek výhodu, ale po interní analýze výsledků jednotlivých testů jsme zjistili, že testy nejvíce zatěžující tabulku symbolů vycházely trochu lépe spíše u variant s binárním vyhledávacím stromem, takže stále obhajujeme tvrzení, že záleží hlavně na celkové implementaci projektu a vhodných optimalizacích.
+
+S ovacemi tedy do síně slávy rychlostní soutěže projektů IFJ nově uvádíme pětičlenný tým Dávida Bolvanského a srdečně blahopřejeme!

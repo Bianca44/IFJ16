@@ -1,0 +1,23 @@
+Vaše hodnocení části 1): 22,23 bodů
+  Komentář hodnocení části 1): LCOM (parser.c)
+Vaše hodnocení části 2): 3,8 bodů
+  Komentář hodnocení části 2): Rychlostní soutěž +3 b.|Aktivita na fóru +0,8 b.|
+Vaše hodnocení části 3): 5 bodů
+  Komentář hodnocení části 3): KA
+
+Pokud jste obdrželi výsledek částí 1) + 2) mimo interval <0,25> bodů, tak
+bude oříznut, tak že získáte za projekt alespoň 0 a ne více jak 25 bodů.
+
+Procentuální hodnocení modulů interpretu: 
+Lexikální analýza (detekce chyb): 100% (240/240)
+Syntaktická analýza (detekce chyb): 100% (247/247)
+Sémantická analýza (detekce chyb): 98% (322/326)
+Interpretační chyby (detekce): 94% (187/197)
+Interpretace: 95% (951/991)
+CYCLES 0% (0/150)
+UNARY 0% (0/100)
+BASE 0% (0/50)
+FUNEXP 0% (0/100)
+BOOLOP 100% (100/100)
+SIMPLE 75% (75/100)
+Celkem bez rozšíření: 97% (1947/2001)
